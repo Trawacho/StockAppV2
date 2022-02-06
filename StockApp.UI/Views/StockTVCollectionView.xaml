@@ -38,11 +38,17 @@
             <Button Content="StockTV suchen" 
                 Command="{Binding Path=DiscoverCommand}"  
                 HorizontalAlignment="Left"  
-                Width="150" Height="50" /> 
+                Width="150" Height="50" Margin="10 0"/> 
             <Button Content="neu sortieren" 
-                Command="{Binding Path=RecreateViews}"  
+                Command="{Binding Path=RecreateViewsCommand}"  
                 HorizontalAlignment="Left"  
-                Width="150" Height="50" Margin="20,0"/>
+                Width="150" Height="50" Margin="10 0"/>
+            <Button Content="Namen senden" 
+                    Command="{Binding Path=SendTeamNamesCommand}"
+                    Width="150"
+                    Height="50" 
+                    Margin="10 0" 
+                    ToolTip="Mannschaftsnamen aus Spielplan an StockTVs senden" />
         </StackPanel>
 
         <ItemsControl ItemsSource="{Binding StockTvViewModels}" Grid.Row="2" Margin="0 15 0 0">

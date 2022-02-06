@@ -109,7 +109,7 @@ namespace StockApp.UI
 
         private INavigationService<StockTVCollectionViewModel> CreateStockTVsNavigationService()
         {
-            return new NavigationService<StockTVCollectionViewModel>(_navigationStore, () => new StockTVCollectionViewModel(_stockTVService, _stockTVCommandStore));
+            return new NavigationService<StockTVCollectionViewModel>(_navigationStore, () => new StockTVCollectionViewModel(_stockTVService, _stockTVCommandStore, _turnierStore));
         }
 
         private INavigationService<ResultsViewModel> CreateResultsNavigationService()

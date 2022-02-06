@@ -37,6 +37,7 @@ namespace StockApp.Comm.NetMqStockTV
         void ClearMarketingImage();
         void ShowMarketing();
 
+        void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen);
 
         void RemoveFromCollection();
 

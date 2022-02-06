@@ -75,6 +75,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
                 var teamA = teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamA);
                 var teamB = teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamB);
                 var newGame = Game.Create(teamA, teamB, game.GameNumber, game.RoundOfGame, game.GameNumberOverAll);
+                newGame.CourtNumber = game.CourtNumber;
+                newGame.IsTeamA_Starting = game.IsTeamA_Starting;
                 newGame.Spielstand.SetMasterTeamAValue(game.SerialisableSpielstand.A);
                 newGame.Spielstand.SetMasterTeamBValue(game.SerialisableSpielstand.B);
                 teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamA).AddGame(newGame);
