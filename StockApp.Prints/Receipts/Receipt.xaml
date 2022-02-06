@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="StockApp.Prints.Receipts.Receipt"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StockApp.Prints.Receipts"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Border Padding="20" 
+            BorderThickness="0" BorderBrush="Black" Width="17cm" >
+        <StackPanel Background="White">
+            <Border Background="LightGray" HorizontalAlignment="Stretch">
+                <TextBlock Text="Q u i t t u n g" 
+                           FontSize="40" Margin="10,2"  
+                           Foreground="Black"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+            </Border>
+
+            <Grid Margin="10,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Grid.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                        <Setter Property="Margin" Value="10,0"/>
+                        <Setter Property="FontSize" Value="18"/>
+                    </Style>
+                </Grid.Resources>
+
+                <Label Grid.Row="0" Grid.Column="0" FontWeight="Bold"
+                       Content="Zweck:" />
+                <Label Grid.Row="0" Grid.Column="1" 
+                       x:Name="labelZweck" 
+                       HorizontalContentAlignment="Left"/>
+
+                <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" FontWeight="Bold"
+                       Content="Betrag:"/>
+
+                    <Label Grid.Row="0" Grid.Column="1" 
+                       x:Name="labelEUR" 
+                       HorizontalContentAlignment="Left"/>
+
+                    <Label Grid.Row="0" Grid.Column="3" FontWeight="Bold"
+                       Content="in Worten:" />
+                    <Label Grid.Row="0" Grid.Column="4" 
+                       x:Name="labelVerbal" 
+                       HorizontalContentAlignment="Left"/>
+                </Grid>
+
+
+                <Label Grid.Row="3" Grid.Column="0" FontWeight="Bold"
+                       Content="Von:" />
+                <Label Grid.Row="3" Grid.Column="1" 
+                       x:Name="labelVon" 
+                       HorizontalContentAlignment="Left"/>
+
+                <Label Grid.Row="4" Grid.Column="0" FontWeight="Bold"
+                       Content="An:" />
+                <Label Grid.Row="4" Grid.Column="1" 
+                       x:Name="labelAn" 
+                       HorizontalContentAlignment="Left"/>
+
+            </Grid>
+            <TextBlock Text="created by StockApp" FontSize="7" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+
+            <StackPanel Orientation="Horizontal" Margin="10,0,10,10">
+                <Label Content="Ort/Datum:" Margin="10,0"/>
+                <Label x:Name="labelOrtDatum" />
+                <Label Content="Unterschrift:" Margin="50,0"/>
+            </StackPanel>
+
+        </StackPanel>
+    </Border>
+</UserControl>

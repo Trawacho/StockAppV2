@@ -1,0 +1,109 @@
+﻿<UserControl x:Class="StockApp.UI.Components.TeamPlayersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StockApp.UI.Components"
+             mc:Ignorable="d" >
+
+    <d:DesignerProperties.DesignStyle x:Name="designBackground">
+        <Style TargetType="UserControl">
+            <Setter Property="Background" Value="White"/>
+        </Style>
+    </d:DesignerProperties.DesignStyle>
+    
+    
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Spieler" 
+                   Style="{StaticResource VmHeader}" FontSize="16"/>
+        
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+            
+            <!--Buttons to Add and Remove Player-->
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Hinzufügen" Margin="5" Padding="10" Command="{Binding AddPlayerCommand}"/>
+                <Button Content="Entfernen" Margin="5" Padding="10" Command="{Binding RemovePlayerCommand}"/>
+            </StackPanel>
+            
+            
+            <!-- Grid to list Playser -->
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding TeamPlayers}" 
+                      SelectedItem="{Binding SelectedPlayer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Margin="5 10" 
+                      AutoGenerateColumns="False"
+                      SelectionMode="Single"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      CanUserResizeColumns="False"
+                      CanUserReorderColumns="False"
+                      RowHeaderWidth="0">
+                <DataGrid.Resources>
+
+                    <Style TargetType="DataGridCell">
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="Green"/>
+                            </Trigger>
+                        </Style.Triggers>
+
+                    </Style>
+
+                    <Style x:Key="colHeaderCenter" TargetType="DataGridColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+
+                    <Style x:Key="verticalCenter" TargetType="{x:Type TextBlock}">
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="TextAlignment" Value="Center"/>
+                    </Style>
+                    <Style x:Key="editTextBox" TargetType="{x:Type TextBox}">
+                        <Setter Property="TextAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="Green"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+
+                    <DataGridTextColumn Header="Nachname" 
+                                        Binding="{Binding Path=LastName}"
+                                        MinWidth="100"
+                                        HeaderStyle="{StaticResource colHeaderCenter}" 
+                                        ElementStyle="{StaticResource verticalCenter}"
+                                        EditingElementStyle="{StaticResource editTextBox}" 
+                                        Width="2*"/>
+
+
+                    <DataGridTextColumn Header="Vorname" 
+                                        Binding="{Binding Path=FirstName}"
+                                        MinWidth="100"
+                                        HeaderStyle="{StaticResource colHeaderCenter}" 
+                                        ElementStyle="{StaticResource verticalCenter}"
+                                        EditingElementStyle="{StaticResource editTextBox}" 
+                                        Width="2*"/>
+
+                    <DataGridTextColumn Header="Pass#" 
+                                        Binding="{Binding Path=LicenseNumber}"
+                                        MinWidth="50"
+                                        HeaderStyle="{StaticResource colHeaderCenter}" 
+                                        ElementStyle="{StaticResource verticalCenter}"
+                                        EditingElementStyle="{StaticResource editTextBox}" 
+                                        Width="*"/>
+
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Grid>
+</UserControl>

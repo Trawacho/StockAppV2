@@ -1,0 +1,145 @@
+﻿<UserControl x:Class="StockApp.UI.Components.ResultInputPerTeamView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StockApp.UI.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <d:DesignerProperties.DesignStyle x:Name="designBackground">
+        <Style TargetType="UserControl">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Width" Value="600"/>
+            <Setter Property="Height" Value="800"/>
+        </Style>
+    </d:DesignerProperties.DesignStyle>
+    
+    
+    <UserControl.Resources>
+
+        <Style TargetType="DataGridCell" x:Key="DisableSelection">
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <ListView Grid.Column="0" 
+                  Padding="10" 
+                  Margin="10 0" 
+                  ItemsSource="{Binding Teams, Mode=OneWay}"
+                  SelectedItem="{Binding SelectedTeam, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+        <StackPanel Grid.Column="1">
+            <Label Content="{Binding Path=SelectedTeam.TeamName}" 
+                   Padding="10"/>
+
+            <DataGrid ItemsSource="{Binding Path=PointsPerTeam, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                      x:Name="dataGridTeamResults"
+                      Width="auto"
+                      MaxHeight="800"
+                      RowHeaderWidth="0"
+                      AutoGenerateColumns="False"
+                      SelectionMode="Single"
+                      SelectionUnit="Cell"
+                      CanUserAddRows="False"
+                      CanUserResizeColumns="False"
+                      CanUserDeleteRows="False"
+                      CanUserReorderColumns="False">
+
+                <DataGrid.Resources>
+
+                    <Style TargetType="DataGridCell">
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="Green"/>
+                            </Trigger>
+                        </Style.Triggers>
+
+                    </Style>
+
+                    <Style x:Key="colHeaderCenter" TargetType="DataGridColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+
+                    <Style x:Key="verticalCenter" TargetType="{x:Type TextBlock}">
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="TextAlignment" Value="Center"/>
+                    </Style>
+
+                    <Style x:Key="editTextBox" TargetType="{x:Type TextBox}">
+                        <Setter Property="TextAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="Green"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                </DataGrid.Resources>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsBreakGame}" Value="True">
+                                <Setter Property="Background" Value="DarkGray"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+
+                <DataGrid.Columns>
+
+                    <DataGridTextColumn Header="Spiel" 
+                                        Binding="{Binding Path=GameNumber, Mode=OneWay}"
+                                        Width="auto" 
+                                        CellStyle="{StaticResource DisableSelection}"
+                                        HeaderStyle="{StaticResource colHeaderCenter}" 
+                                        ElementStyle="{StaticResource verticalCenter}"
+                                        IsReadOnly="True"/>
+
+                    <DataGridTextColumn Header="Team" 
+                                        Binding="{Binding Path=StockPunkte, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Width="75"
+                                        HeaderStyle="{StaticResource colHeaderCenter}" 
+                                        ElementStyle="{StaticResource verticalCenter}"
+                                        EditingElementStyle="{StaticResource editTextBox}"/>
+
+                    <DataGridTextColumn Header="Gegner"  
+                                        Binding="{Binding Path=StockPunkteGegner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        HeaderStyle="{StaticResource colHeaderCenter}" 
+                                        ElementStyle="{StaticResource verticalCenter}"
+                                        EditingElementStyle="{StaticResource editTextBox}"
+                                        Width="75"/>
+
+                    <DataGridTextColumn Header="--->"  
+                                        Binding="{Binding Path=Gegner, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource DisableSelection}"
+                                        IsReadOnly="True"
+                                        HeaderStyle="{StaticResource colHeaderCenter}" 
+                                        ElementStyle="{StaticResource verticalCenter}"
+                                        Width="auto"/>
+
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+        </StackPanel>
+
+
+    </Grid>
+</UserControl>

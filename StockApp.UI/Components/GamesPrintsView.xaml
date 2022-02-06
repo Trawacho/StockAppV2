@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="StockApp.UI.Components.GamesPrintsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StockApp.UI.Components"
+             mc:Ignorable="d" >
+    <d:DesignerProperties.DesignStyle x:Name="designBackground">
+        <Style TargetType="UserControl">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Width" Value="600"/>
+            <Setter Property="Height" Value="800"/>
+        </Style>
+    </d:DesignerProperties.DesignStyle>
+    
+    <StackPanel Orientation="Vertical">
+
+        <TextBlock Text="Ausdrucke" 
+                   Style="{StaticResource VmHeader}" FontSize="18"/>
+
+        <TextBlock Text="Quittung / Wertungskarte / Bahnblock" 
+                   Style="{StaticResource VmHeader}" FontSize="16"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Kehren:"
+                       Grid.Row="0" Grid.Column="0"
+                       Style="{StaticResource TextBlockGrid}"/>
+            <CheckBox Content="8 Kehren pro Spiel"
+                      Grid.Row="0" Grid.Column="1" Style="{StaticResource CheckBoxGrid}"
+                      IsChecked="{Binding Has8Turns}"/>
+
+            <TextBlock Text="Spielrunden:"
+                       Grid.Row="1" Grid.Column="0"
+                        Style="{StaticResource TextBlockGrid}"/>
+            <CheckBox Content="Alle Runden auf Wertungskarte zusammenfassen"
+                      Grid.Row="1" Grid.Column="1" Style="{StaticResource CheckBoxGrid}"
+                      IsChecked="{Binding HasSummarizedScoreCards}"/>
+
+            <TextBlock Text="Mannschaftsnamen:"
+                       Grid.Row="2" Grid.Column="0"
+                       Style="{StaticResource TextBlockGrid}"/>
+            <CheckBox Content="Namen der Mannschaften auf Wertungskarten"
+                      Grid.Row="2" Grid.Column="1" Style="{StaticResource CheckBoxGrid}"
+                      IsChecked="{Binding HasNamesOnScoreCard}"/>
+
+            <TextBlock Text="StockTV:"
+                       Grid.Row="3" Grid.Column="0" 
+                       Style="{StaticResource TextBlockGrid}"/>
+            <CheckBox Content="Ausgabe der Wertungskarten für StockTV optimiert"
+                      Grid.Row="3" Grid.Column="1" Style="{StaticResource CheckBoxGrid}"
+                      IsChecked="{Binding HasScoreCardsOptimizedForStockTV}"/>
+
+
+            <Button Content="Wertungskarte"
+                    Grid.Row="4" Grid.Column="0"
+                    Margin="5" Padding="10"
+                    Command="{Binding PrintScoreCardsCommand}"/>
+
+            <Button Content="Bahnblock"
+                    Grid.Row="5" Grid.Column="0"
+                    Margin="5" Padding="10"
+                    Command="{Binding PrintCourtCardsCommand}"/>
+
+            <Button Content="Quittungen"
+                    Grid.Row="6" Grid.Column="0"
+                    Margin="5" Padding="10"
+                    Command="{Binding PrintReceiptsCommand}"/>
+
+        </Grid>
+
+    </StackPanel>
+</UserControl>

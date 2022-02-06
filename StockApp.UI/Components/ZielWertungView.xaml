@@ -1,0 +1,213 @@
+﻿<UserControl x:Class="StockApp.UI.Components.ZielWertungView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:StockApp.UI.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <converters:NumberGE0ToTextConverter x:Key="NumberToTextConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolenToVisibilityConverter"/>
+    </UserControl.Resources>
+    <StackPanel >
+
+        <TextBlock Text="Wertung" FontWeight="Bold" FontSize="16" />
+
+        <Grid HorizontalAlignment="Center" 
+                      Width="{Binding ElementName=dgDisziplinen, Path=ActualWidth}">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" 
+                                Grid.Column="0" 
+                                HorizontalAlignment="Left">
+                <Label Content="# " 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Path=Nummer}" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right">
+                <Label Content="Gesamt: " HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Path=GesamtPunkte}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+
+        <DataGrid ItemsSource="{Binding Path=ZielDisziplinViewModels}"
+                          x:Name="dgDisziplinen"
+                          IsReadOnly="{Binding Path=IsOnline}"
+                          SelectionMode="Single"
+                          RowHeaderWidth="0"
+                          CanUserReorderColumns="False"
+                          CanUserSortColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          HorizontalAlignment="Left"
+                          AutoGenerateColumns="False"
+                          Width="auto">
+
+            <DataGrid.Resources>
+
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="Background" Value="Green"/>
+                        </Trigger>
+                    </Style.Triggers>
+
+                </Style>
+
+                <Style x:Key="colHeaderCenter" TargetType="DataGridColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+
+                <Style x:Key="verticalCenter" TargetType="{x:Type TextBlock}">
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="TextAlignment" Value="Center"/>
+                </Style>
+                <Style x:Key="editTextBox" TargetType="{x:Type TextBox}">
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter Property="Background" Value="Green"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+            </DataGrid.Resources>
+
+
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="Disziplin"
+                                            Width="auto"
+                                            HeaderStyle="{StaticResource colHeaderCenter}" 
+                                            ElementStyle="{StaticResource verticalCenter}"
+                                            EditingElementStyle="{StaticResource editTextBox}"
+                                            Binding="{Binding Path=Name, Mode=OneWay}">
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="1"
+                                            Width="*" 
+                                            HeaderStyle="{StaticResource colHeaderCenter}" 
+                                            ElementStyle="{StaticResource verticalCenter}"
+                                            EditingElementStyle="{StaticResource editTextBox}"  
+                                            Binding="{Binding Path=Versuch1, 
+                                                              Converter={StaticResource NumberToTextConverter},
+                                                              UpdateSourceTrigger=LostFocus}">
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="2" 
+                                            HeaderStyle="{StaticResource colHeaderCenter}" 
+                                            ElementStyle="{StaticResource verticalCenter}"
+                                            EditingElementStyle="{StaticResource editTextBox}"
+                                            Width="*"
+                                            Binding="{Binding Path=Versuch2, 
+                                                              Converter={StaticResource NumberToTextConverter},
+                                                              UpdateSourceTrigger=LostFocus}">
+
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="3"
+                                    Width="*"
+                                    HeaderStyle="{StaticResource colHeaderCenter}" 
+                                    ElementStyle="{StaticResource verticalCenter}"
+                                    EditingElementStyle="{StaticResource editTextBox}"  
+                                    Binding="{Binding Path=Versuch3, 
+                                                      Converter={StaticResource NumberToTextConverter},
+                                                      UpdateSourceTrigger=LostFocus}">
+
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="4"
+                                            Width="*"
+                                            HeaderStyle="{StaticResource colHeaderCenter}" ElementStyle="{StaticResource verticalCenter}"
+                                            EditingElementStyle="{StaticResource editTextBox}"  
+                                            Binding="{Binding Path=Versuch4, 
+                                                              Converter={StaticResource NumberToTextConverter},
+                                                              UpdateSourceTrigger=LostFocus}">
+
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="5"
+                                            Width="*"
+                                            HeaderStyle="{StaticResource colHeaderCenter}" ElementStyle="{StaticResource verticalCenter}"
+                                            EditingElementStyle="{StaticResource editTextBox}"  
+                                            Binding="{Binding Path=Versuch5, 
+                                                              Converter={StaticResource NumberToTextConverter},
+                                                              UpdateSourceTrigger=LostFocus}">
+
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="6"
+                                            Width="*"
+                                            HeaderStyle="{StaticResource colHeaderCenter}" ElementStyle="{StaticResource verticalCenter}"
+                                            EditingElementStyle="{StaticResource editTextBox}"  
+                                            Binding="{Binding Path=Versuch6, 
+                                                              Converter={StaticResource NumberToTextConverter},
+                                                              UpdateSourceTrigger=LostFocus}">
+
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Summe"
+                                            Width="2*"
+                                            HeaderStyle="{StaticResource colHeaderCenter}" ElementStyle="{StaticResource verticalCenter}"
+                                            Binding="{Binding Path=Summe, Mode=OneWay}">
+                </DataGridTextColumn>
+
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+
+
+        <StackPanel Orientation="Horizontal"
+                            Width="{Binding ElementName=dgDisziplinen, Path=ActualWidth}"
+                            Margin="0,10"
+                            Grid.Column="0" 
+                            HorizontalAlignment="Left" Grid.ColumnSpan="2">
+
+            <Label Content="Auf Bahn# "
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+            <Label Content="{Binding Path=AktuelleBahn}"
+                           Visibility="{Binding Path=IsOnline, Converter={StaticResource BoolenToVisibilityConverter}}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+            <ComboBox ItemsSource="{Binding Path=FreieBahnen}"
+                              SelectedItem="{Binding Path=SelectedBahn}"
+                              Visibility="{Binding Path=IsOffline, 
+                                                   Converter={StaticResource BoolenToVisibilityConverter}}"
+                              MinWidth="50"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+
+            <Button Command="{Binding Path=SetWertungOnlineCommand}"
+                    Visibility="{Binding IsOffline, Converter={StaticResource BoolenToVisibilityConverter}}"
+                    Content="Online" 
+                    Margin="10,0"
+                    Padding="5"/>
+            <Button Command="{Binding Path=SetWertungOfflineCommand}"
+                    Visibility="{Binding IsOnline, Converter={StaticResource BoolenToVisibilityConverter}}"
+                    Content="Offline" 
+                    Margin="10,0"
+                    Padding="5"/>
+
+            <Label Content="Online"
+                           Foreground="Red"
+                           FontWeight="Bold"
+                           Visibility="{Binding Path=IsOnline, Converter={StaticResource BoolenToVisibilityConverter}}"
+                           Margin="10,0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+        </StackPanel>
+
+
+    </StackPanel>
+
+</UserControl>

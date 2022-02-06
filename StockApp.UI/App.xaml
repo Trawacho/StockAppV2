@@ -1,0 +1,129 @@
+﻿<Application x:Class="StockApp.UI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:components="clr-namespace:StockApp.UI.Components"
+             xmlns:vm="clr-namespace:StockApp.UI.ViewModels"
+             xmlns:vs="clr-namespace:StockApp.UI.Views"
+             >
+
+
+    <Application.Resources>
+
+        <DataTemplate DataType="{x:Type vm:TurnierViewModel}">
+            <vs:TurnierView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:WettbewerbsartViewModel}">
+            <vs:WettbewerbsartView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:NavigationViewModel}">
+            <vs:NavigationView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:NavigationTeamViewModel}">
+            <vs:NavigationTeamView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:NavigtaionZielViewModel}">
+            <vs:NavigationZielView/>
+        </DataTemplate>
+
+
+        <DataTemplate DataType="{x:Type vm:EntryFeeViewModel}">
+            <components:EntryFeeView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ExecutiveViewModel}">
+            <components:ExecutiveView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:TeamsViewModel}">
+            <vs:TeamsView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:TeamViewModel}">
+            <components:TeamView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:TeamPlayersViewModel}">
+            <components:TeamPlayersView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:GamesViewModel}">
+            <vs:GamesView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:GamesPrintsViewModel}">
+            <components:GamesPrintsView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ResultsViewModel}">
+            <vs:ResultsView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ResultInputAfterGameViewModel}">
+            <components:ResultInputAfterGameView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ResultInputPerTeamViewModel}">
+            <components:ResultInputPerTeamView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:StockTVCollectionViewModel}">
+            <vs:StockTVCollectionView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:StockTVViewModel}">
+            <components:StockTvView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ZielBewerbViewModel}">
+            <vs:ZielBewerbView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:TeilnehmerViewModel}">
+            <components:ZielSpielerDatenView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:LiveResultsZielViewModel}">
+            <vs:LiveResultZielView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ZielWertungenViewModel}">
+            <components:ZielWertungenView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ZielWertungViewModel}">
+            <components:ZielWertungView/>
+        </DataTemplate>
+
+
+        <Style  TargetType="TextBlock" x:Key="VmHeader">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontStretch" Value="ExtraExpanded"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="10 0 0 20"/>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="TextBlockGrid">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+
+        <Style TargetType="CheckBox" x:Key="CheckBoxGrid">
+            <Setter Property="IsThreeState" Value="False"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+
+    </Application.Resources>
+    
+</Application>

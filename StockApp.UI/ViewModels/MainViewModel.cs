@@ -1,0 +1,148 @@
+﻿namespace StockApp.UI.ViewModels;
+
+using StockApp.UI.Commands;
+using StockApp.UI.Stores;
+using System;
+using System.ComponentModel;
+using System.Reflection;
+using System.Windows.Input;
+
+public class MainViewModel : ViewModelBase
+{
+    #region Fields
+
+    private readonly INavigationStore _navigationStore;
+    private readonly ITurnierStore _turnierStore;
+    private bool _isModalOpen;
+
+    #endregion
+
+    #region RequestClose [Event]
+
+    public event EventHandler<CancelEventArgs> RequestClose;
+    private void OnRequestClose(CancelEventArgs e)
+    {
+        var handler = RequestClose;
+        handler?.Invoke(this, e);
+    }
+    private void RaiseOnRequestClose(CancelEventArgs e)
+    {
+        if (_turnierStore.IsDuty())
+        {
+            IsModalOpen = true;
+
+            if (e != null)
+                e.Cancel = true;
+        }
+        else
+        {
+            OnRequestClose(e);
+        }
+    }
+
+    #endregion
+
+    #region Constructor
+
+    public MainViewModel()
+    {
+
+    }
+
+    public MainViewModel(INavigationViewModel navigationViewModel, INavigationStore navigationStore, ITurnierStore turnierStore)
+    {
+        _navigationStore = navigationStore;
+        _turnierStore = turnierStore;
+
+        NewTournamentCommand = new RelayCommand(
+            (p) =>
+            {
+                _turnierStore.Turnier?.Reset();
+                NavigationViewModel.NavigationReset();
+            });
+
+        SaveAsTournamentCommand = new RelayCommand((p) => _turnierStore.SaveAs());
+        OpenTournamentCommand = new RelayCommand(
+            (p) =>
+            {
+                _turnierStore.Load();
+                NavigationViewModel.NavigationReset();
+            });
+        SaveTournamentCommand = new RelayCommand((p) => _turnierStore.Save());
+
+        ExitApplicationCommand = new RelayCommand((p) => RaiseOnRequestClose(null));
+        ClosingCommand = new RelayCommand<CancelEventArgs>((p) => RaiseOnRequestClose(p));
+
+        ModalOkCommand = new RelayCommand(
+            (p) =>
+            {
+                IsModalOpen = false;
+                OnRequestClose(null);
+            });
+        ModalCancelCommand = new RelayCommand(
+            (p) =>
+            {
+                IsModalOpen = false;
+            });
+
+
+        _turnierStore.FileNameChanged += TurnierStore_FileNameChanged;
+        _navigationStore.CurrentViewModelChanged += CurrentViewModelChanged;
+
+
+        NavigationViewModel = navigationViewModel;
+    }
+    #endregion
+
+    #region RaisePropertyChanged
+
+    private void TurnierStore_FileNameChanged(object sender, EventArgs e)
+    {
+        RaisePropertyChanged(nameof(FileName));
+    }
+
+    private void CurrentViewModelChanged(object sender, EventArgs e)
+    {
+        RaisePropertyChanged(nameof(CurrentViewModel));
+    }
+
+    #endregion
+
+
+
+    #region Properties
+
+    public bool IsModalOpen
+    {
+        get => _isModalOpen;
+        set
+        {
+            _isModalOpen = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public ViewModelBase CurrentViewModel { get => _navigationStore.CurrentViewModel; }
+
+    public INavigationViewModel NavigationViewModel { get; }
+
+    public string WindowTitle { get; } = $"StockApp by Daniel Sturm";
+
+    /// <summary>
+    /// Zeigt die Versionsnummer vom Assembly
+    /// </summary>
+    public string VersionNumber { get; } = $"Version: {Assembly.GetExecutingAssembly().GetName().Version}";
+    public string FileName => _turnierStore.FileName == null ? string.Empty : $"Datei: {_turnierStore.FileName}";
+
+    public ICommand NewTournamentCommand { get; init; }
+    public ICommand ExitApplicationCommand { get; init; }
+    public ICommand OpenTournamentCommand { get; init; }
+    public ICommand SaveTournamentCommand { get; init; }
+    public ICommand SaveAsTournamentCommand { get; init; }
+    public ICommand ClosingCommand { get; init; }
+
+    public ICommand ModalOkCommand { get; set; }
+    public ICommand ModalCancelCommand { get; set; }
+
+    #endregion
+}

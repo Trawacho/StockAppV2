@@ -1,0 +1,120 @@
+﻿<Window x:Class="StockApp.UI.Views.LiveResultTeamView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StockApp.UI.Views"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
+        mc:Ignorable="d"
+        Title="LiveResultTeamView" Height="450" Width="800">
+    
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Closed">
+            <b:InvokeCommandAction Command="{Binding CloseCommand}"/>
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
+
+    <Window.Resources>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <Style x:Key="ColumnElementLeftAlignStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="5,0,5,0"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+        </Style>
+
+        <Style x:Key="ColumnElementCenterAlignStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="5,0,5,0"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
+
+    </Window.Resources>
+    
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Viewbox VerticalAlignment="Top" Margin="10" Grid.Row="0" HorizontalAlignment="Stretch">
+
+            <DataGrid ItemsSource="{Binding Path=RankedTeamList, Mode=OneWay}"
+                      RowHeaderWidth="0"
+                      IsReadOnly="True"
+                      Margin="0"
+                      CanUserSortColumns="False"
+                      AutoGenerateColumns="False">
+
+                <DataGrid.Columns>
+
+                    <DataGridTextColumn Header="Platz"
+                                        Binding="{Binding Rank}"/>
+
+                    <DataGridTextColumn Header="Name" 
+                                        ElementStyle="{StaticResource ColumnElementLeftAlignStyle}"
+                                        Binding="{Binding TeamName}"/>
+
+                    <DataGridTextColumn Header="Punkte" 
+                                        ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                        Binding="{Binding SpielPunkte}"/>
+
+                    <DataGridTextColumn Header="Stockpunkte" 
+                                        ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                        Binding="{Binding StockPunkte}"
+                                        Visibility="{Binding Path=IsChecked, 
+                                                             Source={x:Reference checkBoxShowStockPunkte},
+                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                    <DataGridTextColumn Header="Stocknote" 
+                                        ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                        Binding="{Binding StockNote}"/>
+
+                    <DataGridTextColumn Header="Differenz" 
+                                        ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                        Binding="{Binding StockPunkteDifferenz}"
+                                        Visibility="{Binding Path=IsChecked,
+                                                             Source={x:Reference checkBoxShowDifferenz},
+                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
+               
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+        </Viewbox>
+
+        <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+
+            <CheckBox IsChecked="{Binding Path=ShowDifferenz, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Content="Differenz"
+                      x:Name="checkBoxShowDifferenz"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      VerticalAlignment="Stretch"
+                      VerticalContentAlignment="Center"
+                      Margin="10" Padding="10" IsThreeState="False"/>
+
+            <CheckBox IsChecked="{Binding Path=ShowStockPunkte, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Content="StockPunkte"
+                      x:Name="checkBoxShowStockPunkte"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      VerticalAlignment="Stretch"
+                      VerticalContentAlignment="Center"
+                      Margin="10" Padding="10" IsThreeState="False"/>
+
+            <CheckBox IsChecked="{Binding Path=IsLive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Content="Refresh nach jeder Kehre" 
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      HorizontalContentAlignment="Left"
+                      VerticalContentAlignment="Center"
+                      Margin="10" Padding="10" IsThreeState="False"/>
+
+            <Button Content="Close" 
+                Command="{Binding Path=CloseCommand}"
+                Margin="10" Padding="20,10" HorizontalAlignment="Right"/>
+
+        </WrapPanel>
+
+    </Grid>
+</Window>

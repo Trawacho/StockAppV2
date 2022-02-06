@@ -1,0 +1,158 @@
+﻿using StockApp.Comm.Broadcasting;
+using StockApp.Comm.NetMqStockTV;
+using StockApp.UI.Services;
+using StockApp.UI.Stores;
+using StockApp.UI.ViewModels;
+using StockApp.UI.Views;
+using System.ComponentModel;
+using System.Windows;
+
+namespace StockApp.UI
+{
+
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        private readonly INavigationStore _navigationStore;
+        private readonly ITurnierStore _turnierStore;
+        private readonly IDialogStore _dialogStore;
+        private readonly INavigationViewModel _navigationViewModel;
+        private readonly IStockTVService _stockTVService;
+        private readonly IStockTVCommandStore _stockTVCommandStore;
+        private readonly ITurnierNetworkManager _turnierNetworkManager;
+        private readonly IBroadcastService _broadCastService;
+        private readonly MainViewModel _mainViewModel;
+        private readonly MainWindow _mainWindow;
+
+        public App()
+        {
+            _dialogStore = new DialogStore(null);
+            _dialogStore.Register<LiveResultsTeamViewModel, LiveResultTeamView>();
+            _dialogStore.Register<LiveResultsZielViewModel, LiveResultZielView>();
+
+            _navigationStore = new NavigationStore();
+
+            _turnierStore = new TurnierStore();
+
+
+            _stockTVService = new StockTVService();
+            _broadCastService = new BroadcastService();
+
+            _stockTVCommandStore = new StockTVCommandStore(_stockTVService);
+
+            _turnierNetworkManager = new TurnierNetworkManager(_turnierStore, _stockTVService, _broadCastService);
+
+            _navigationViewModel = new NavigationViewModel(_turnierStore,
+                                                            CreateContestNavigationService(),
+                                                            CreateTurnierNavigationService(),
+                                                            CreateTeamsNavigationService(),
+                                                            CreateGamesNavigationService(),
+                                                            CreateResultsNavigationService(),
+                                                            CreateStockTVsNavigationService(),
+                                                            CreateLiveResultsTeamDialogService(),
+                                                            CreateZielTeilnehmerNavigationService(),
+                                                            CreateLiveReusltsZielDialogService());
+
+            _mainViewModel = new MainViewModel(_navigationViewModel, _navigationStore, _turnierStore);
+            _mainWindow = new MainWindow() { DataContext = _mainViewModel };
+        }
+
+
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            INavigationService<TurnierViewModel> turnierNavigationService = CreateTurnierNavigationService();
+            turnierNavigationService.Navigate();
+            _stockTVService.Discover();
+
+            _mainViewModel.RequestClose += RequestCloseHandler;
+            MainWindow = _mainWindow;
+
+
+            _dialogStore.SetOwner(MainWindow);
+            _mainWindow.Show();
+
+            base.OnStartup(e);
+        }
+
+        private void RequestCloseHandler(object sender, CancelEventArgs e)
+        {
+            _mainViewModel.RequestClose -= RequestCloseHandler;
+            App.Current.Shutdown();
+        }
+
+        #region CreateDialogServices
+        private IDialogService<LiveResultsTeamViewModel> CreateLiveResultsTeamDialogService()
+        {
+            return new DialogService<LiveResultsTeamViewModel>(_dialogStore, () => new LiveResultsTeamViewModel(_turnierStore), false);
+        }
+
+        private IDialogService<LiveResultsZielViewModel> CreateLiveReusltsZielDialogService()
+        {
+            return new DialogService<LiveResultsZielViewModel>(_dialogStore, () => new LiveResultsZielViewModel(_turnierStore), false);
+        }
+        #endregion
+
+        #region CreateNavigationServices
+
+        private INavigationService<TurnierViewModel> CreateTurnierNavigationService()
+        {
+            return new NavigationService<TurnierViewModel>(_navigationStore, () => new TurnierViewModel(_turnierStore));
+        }
+
+        private INavigationService<WettbewerbsartViewModel> CreateContestNavigationService()
+        {
+            return new NavigationService<WettbewerbsartViewModel>(_navigationStore, () => new WettbewerbsartViewModel(_turnierStore));
+        }
+
+        private INavigationService<StockTVCollectionViewModel> CreateStockTVsNavigationService()
+        {
+            return new NavigationService<StockTVCollectionViewModel>(_navigationStore, () => new StockTVCollectionViewModel(_stockTVService, _stockTVCommandStore));
+        }
+
+        private INavigationService<ResultsViewModel> CreateResultsNavigationService()
+        {
+            return new NavigationService<ResultsViewModel>(_navigationStore, () => new ResultsViewModel(_turnierStore, _turnierNetworkManager));
+        }
+
+        private INavigationService<GamesViewModel> CreateGamesNavigationService()
+        {
+            return new NavigationService<GamesViewModel>(_navigationStore, () => new GamesViewModel(_turnierStore));
+        }
+
+        private INavigationService<TeamsViewModel> CreateTeamsNavigationService()
+        {
+            return new NavigationService<TeamsViewModel>(_navigationStore, () => new TeamsViewModel(_turnierStore));
+        }
+
+        private INavigationService<ZielBewerbViewModel> CreateZielTeilnehmerNavigationService()
+        {
+            return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager));
+        }
+
+        #endregion
+
+
+
+
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            try
+            {
+                _turnierNetworkManager?.Dispose();
+                _stockTVService?.Dispose();
+                _broadCastService?.Dispose();
+            }
+            finally
+            {
+                _navigationViewModel.Dispose();
+
+                base.OnExit(e);
+            }
+            Application.Current.Shutdown(0);
+        }
+    }
+}
