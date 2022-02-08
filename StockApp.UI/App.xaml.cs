@@ -63,6 +63,12 @@ namespace StockApp.UI
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            for (int i = 0; i != e.Args.Length; ++i)
+            {
+                if (e.Args[i].EndsWith(".skmr"))
+                    _turnierStore.Load(e.Args[i]);
+            }
+
             INavigationService<TurnierViewModel> turnierNavigationService = CreateTurnierNavigationService();
             turnierNavigationService.Navigate();
             _stockTVService.Discover();
@@ -153,6 +159,11 @@ namespace StockApp.UI
                 base.OnExit(e);
             }
             Application.Current.Shutdown(0);
+        }
+
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+
         }
     }
 }

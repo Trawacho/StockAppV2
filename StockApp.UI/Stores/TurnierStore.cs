@@ -10,6 +10,7 @@ public interface ITurnierStore
     event EventHandler CurrentTurnierChanged;
     event EventHandler FileNameChanged;
     void Load();
+    void Load(string fullFileName);
 
     void Save();
     void SaveAs();
@@ -52,6 +53,7 @@ public class TurnierStore : ITurnierStore
     }
     public string FileName => _xmlFileService.FullFilePath;
     public void Load() => _xmlFileService.Load(ref _turnier);
+    public void Load(string fullFileName) => _xmlFileService.Load(ref _turnier, fullFileName);
     public void Save() => _xmlFileService.Save(ref _turnier);
     public void SaveAs() => _xmlFileService.SaveAs(ref _turnier);
     public bool IsDuty() => _xmlFileService.IsDuty(ref _turnier);

@@ -9,6 +9,7 @@ namespace StockApp.UI.Services
     {
         string FullFilePath { get; set; }
         void Load(ref ITurnier turnier);
+        void Load(ref ITurnier turnier, string fullFilePath);
         void Save(ref ITurnier turnier);
         void SaveAs(ref ITurnier turnier);
         bool IsDuty(ref ITurnier turnier);
@@ -38,8 +39,12 @@ namespace StockApp.UI.Services
 
         public string FullFilePath
         {
-            get { return _fullFilePath; }
-            set { _fullFilePath = value; RaiseFullFilePathChanged(); }
+            get => _fullFilePath;
+            set
+            {   if (_fullFilePath == value) return;
+                _fullFilePath = value;
+                RaiseFullFilePathChanged();
+            }
         }
 
         public void SaveAs(ref ITurnier turnier)
@@ -49,11 +54,10 @@ namespace StockApp.UI.Services
                 Filter = _fileFilter,
                 FilterIndex = 1
             };
+
             if (fileDialog.ShowDialog() == true)
             {
-                FullFilePath = fileDialog.FileName;
-                SavingModule.Save(ref turnier, FullFilePath);
-                _xmlTurnierString = SavingModule.ConvertToXml(ref turnier);
+                Save(ref turnier, fileDialog.FileName);
             }
         }
 
@@ -65,9 +69,15 @@ namespace StockApp.UI.Services
             }
             else
             {
-                SavingModule.Save(ref turnier, FullFilePath);
-                _xmlTurnierString = SavingModule.ConvertToXml(ref turnier);
+                Save(ref turnier, FullFilePath);
             }
+        }
+
+        private void Save(ref ITurnier turnier, string fullFileName)
+        {
+            FullFilePath = fullFileName;
+            SavingModule.Save(ref turnier, FullFilePath);
+            _xmlTurnierString = SavingModule.ConvertToXml(ref turnier);
         }
 
         public void Load(ref ITurnier turnier)
@@ -77,12 +87,18 @@ namespace StockApp.UI.Services
                 Filter = _fileFilter,
                 FilterIndex = 1
             };
+
             if (openFileDialog.ShowDialog() == true)
             {
-                FullFilePath = openFileDialog.FileName;
-                LoadingModule.Load(ref turnier, FullFilePath);
-                _xmlTurnierString = SavingModule.ConvertToXml(ref turnier);
+                Load(ref turnier, openFileDialog.FileName);
             }
+        }
+
+        public void Load(ref ITurnier turnier, string fullFilePath)
+        {
+            FullFilePath = fullFilePath;
+            LoadingModule.Load(ref turnier, FullFilePath);
+            _xmlTurnierString = SavingModule.ConvertToXml(ref turnier);
         }
 
         public bool IsDuty(ref ITurnier turnier) => !string.Equals(SavingModule.ConvertToXml(ref turnier), _xmlTurnierString);
