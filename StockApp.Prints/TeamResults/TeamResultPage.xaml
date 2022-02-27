@@ -9,7 +9,10 @@
       FontFamily="Bahnschrift"
       FontSize="16"
       >
-
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+        
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
         <Style TargetType="UserControl">
             <Setter Property="Background" Value="White"/>
@@ -54,6 +57,7 @@
             <Label Grid.Row="2" Grid.Column="0"
                    Margin="5"
                    Content="Veranstalter:" 
+                   Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
                    HorizontalContentAlignment="Right"/>
             <Label Content="{Binding Veranstalter}" 
                    FontWeight="Bold"
@@ -61,7 +65,9 @@
                    Margin="5" HorizontalContentAlignment="Left"/>
 
             <Label Grid.Row="2" Grid.Column="2"
-                   Content="Durchführer:" HorizontalContentAlignment="Right"
+                   Content="Durchführer:" 
+                   Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   HorizontalContentAlignment="Right"
                    Margin="5"/>
             <Label Content="{Binding Durchführer}" 
                    Grid.Row="2"  Grid.Column="3" Margin="5" 
@@ -149,6 +155,7 @@
                            TextAlignment="Center"
                            HorizontalAlignment="Stretch"/>
                 <TextBlock Text="(Schiedsrichter)"
+                           Visibility="{Binding HasReferee, Converter={StaticResource BooleanToVisibilityConverter}}"
                            HorizontalAlignment="Stretch"
                            TextAlignment="Center"/>
             </StackPanel>
@@ -162,9 +169,9 @@
                            TextAlignment="Center"
                            HorizontalAlignment="Stretch"/>
                 <TextBlock Text="(Rechenbüro)"
+                           Visibility="{Binding HasComputingOfficer, Converter={StaticResource BooleanToVisibilityConverter}}"
                            HorizontalAlignment="Stretch"
-                           TextAlignment="Center"
-                       />
+                           TextAlignment="Center"/>
             </StackPanel>
 
             <StackPanel Orientation="Vertical"
@@ -176,6 +183,7 @@
                            TextAlignment="Center"
                            HorizontalAlignment="Stretch"/>
                 <TextBlock Text="(Wettbewerbsleiter)"
+                           Visibility="{Binding HasCompetitionManager, Converter={StaticResource BooleanToVisibilityConverter}}"
                            HorizontalAlignment="Stretch"
                            TextAlignment="Center"/>
             </StackPanel>

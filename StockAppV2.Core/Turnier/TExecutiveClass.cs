@@ -8,7 +8,10 @@ public interface IExecutive
 
 public abstract class TExecutiveClass : IExecutive
 {
-    public string Name { get; set; }
+    private string _name;
+    private string _clubName;
 
-    public string ClubName { get; set; }
+    public string Name { get => _name; set => _name = value.Trim(); }
+
+    public string ClubName { get => _clubName; set => _clubName = value.Trim(); }
 }

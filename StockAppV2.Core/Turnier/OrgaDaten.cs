@@ -30,30 +30,36 @@ public interface IOrgaDaten
 
 public class OrgaDaten : IOrgaDaten
 {
+    private string _venue;
+    private string _organizer;
+    private DateTime _dateOfTournament;
+    private string _operator;
+    private string _tournamentName;
+
     /// <summary>
     /// Veranstaltungsort
     /// </summary>
-    public string Venue { get; set; }
+    public string Venue { get => _venue; set => _venue = value.Trim(); }
 
     /// <summary>
     /// Organisator / Veranstalter
     /// </summary>
-    public string Organizer { get; set; }
+    public string Organizer { get => _organizer; set => _organizer = value.Trim(); }
 
     /// <summary>
     /// Datum / Zeit des Turniers
     /// </summary>
-    public DateTime DateOfTournament { get; set; }
+    public DateTime DateOfTournament { get => _dateOfTournament; set => _dateOfTournament = value; }
 
     /// <summary>
     /// Durchführer
     /// </summary>
-    public string Operator { get; set; }
+    public string Operator { get => _operator; set => _operator = value.Trim(); }
 
     /// <summary>
     /// Turniername
     /// </summary>
-    public string TournamentName { get; set; }
+    public string TournamentName { get => _tournamentName; set => _tournamentName = value.Trim(); }
 
     /// <summary>
     /// Startgebühr pro Mannschaft
