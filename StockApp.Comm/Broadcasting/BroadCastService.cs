@@ -122,12 +122,15 @@ public class BroadcastService : IBroadcastService
 
             r = u?.BeginReceive(new AsyncCallback(ReceiveCallback), _state);
         }
+#if DEBUG
         catch (Exception e)
         {
-#if DEBUG
             System.Diagnostics.Debug.WriteLine($" Error while receiving Broadcast: {e.Message}");
-#endif
         }
+#endif
+#if RELEASE
+        catch(Exception){}
+#endif
     }
 
     static byte[] DeCompress(byte[] data)

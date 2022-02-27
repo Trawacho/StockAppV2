@@ -43,7 +43,7 @@ public class TeamResultPageViewModel
 
     public string CompetitionManagerName => _turnier.OrgaDaten.CompetitionManager.Name;
     public string CompetitionManagerClub => _turnier.OrgaDaten.CompetitionManager.ClubName;
-    public bool HasCompetitionManger => !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.CompetitionManager.Name);
+    public bool HasCompetitionManager => !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.CompetitionManager.Name);
 
 
     public IList<RankedTeamViewModel> RankedTeams { get; } = new List<RankedTeamViewModel>();

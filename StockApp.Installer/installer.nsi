@@ -1,51 +1,57 @@
 ﻿;--------------------------------
 !include FileAssociation.nsh 
+!include LogicLib.nsh
 !include MUI2.nsh 
 
 
 !ifndef FULL_VERSION
-!define FULL_VERSION			"1.0.0.0"
+!define FULL_VERSION      "1.0.0.0"
 !endif
+
 !ifndef SOURCE_DIR
-!define SOURCE_DIR				"..\StockApp.UI\bin\Release\net6.0-windows\win-x64"
+!define SOURCE_DIR        "..\StockApp.UI\bin\Release\net6.0-windows\win-x64\publish"
 !endif
+
 !ifndef INSTALLER_FILENAME
-!define INSTALLER_FILENAME		"StockAppInstaller.exe"
+!define INSTALLER_FILENAME    "StockAppInstaller.exe"
 !endif
 
 !ifndef COMPANY_NAME
-!define COMPANY_NAME			""
+!define COMPANY_NAME      "Sturm Daniel"
 !endif
 
 !ifndef COPYRIGHT_TXT
-!define COPYRIGHT_TXT			"(c) Copyright 2022"
+!define COPYRIGHT_TXT     "(c) Copyright 2022"
 !endif
 
 !ifndef FILE_DESC
-!define FILE_DESC			    "StockApp"
+!define FILE_DESC         "StockApp"
 !endif
 
 !ifndef ICON_FILE
-!define ICON_FILE				"..\StockApp.UI\Ressources\StockApp.ico"
+!define ICON_FILE         "..\StockApp.UI\Ressources\StockApp.ico"
 !endif
 
 !ifndef IMAGE_FINISHED
-!define IMAGE_FINISHED			"..\StockApp.UI\Ressources\StockApp.bmp"
+!define IMAGE_FINISHED    "..\StockApp.UI\Ressources\StockApp.bmp"
 !endif
 
+!ifndef LICENCSEFILE
+!define LICENSEFILE       "..\LICENSE"
+!endif
 
 !ifndef PRODUCT_NAME
-!define PRODUCT_NAME			"StockApp"
+!define PRODUCT_NAME      "StockApp"
 !endif
 
-!define APP_NAME				"${PRODUCT_NAME}"
-!define SHORT_NAME				"${PRODUCT_NAME}"
-!define APP_EXE                 "StockApp.UI.exe"
+!define APP_NAME          "${PRODUCT_NAME}"
+!define SHORT_NAME        "${PRODUCT_NAME}"
+!define APP_EXE           "StockApp.UI.exe"
 
-;;USAGE:
-!define MIN_FRA_MAJOR "2"
-!define MIN_FRA_MINOR "0"
-!define MIN_FRA_BUILD "*"
+#USAGE:
+!define VERSIONMAJOR "0"
+!define VERSIONMINOR "1"
+!define VERSIONBUILD "*"
 
 !addplugindir		"."
 
@@ -55,126 +61,118 @@
 Name "${APP_NAME}"
 Caption "${APP_NAME}"
 BrandingText "${APP_NAME}"
+Icon "${ICON_FILE}"
 
 ; The file to write
 OutFile "${INSTALLER_FILENAME}"
 
 ; The default installation directory
-InstallDir "$PROGRAMFILES32\${APP_NAME}"
+InstallDir "$PROGRAMFILES\${APP_NAME}"
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
-InstallDirRegKey HKCU "Software\Runner" "Install_Dir"
+InstallDirRegKey HKCU "Software\StockApp" "Install_Dir"
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel highest
 
-
-VIProductVersion "${FULL_VERSION}"
-VIAddVersionKey /LANG=1031 "FileVersion" "${FULL_VERSION}"
-VIAddVersionKey /LANG=1031 "ProductVersion" "${FULL_VERSION}"
-VIAddVersionKey /LANG=1031 "ProductName" "${PRODUCT_NAME}"
-VIAddVersionKey /LANG=1031 "CompanyName" "${PRODUCT_PUBLISHER}"
-VIAddVersionKey /LANG=1031 "LegalCopyright" "${COPYRIGHT_TXT}"
-VIAddVersionKey /LANG=1031 "FileDescription" "${FILE_DESC}"
+page license
+page directory
+page instfiles
 
 
+!macro VerifyUserIsAdmin
+UserInfo::GetAccountType
+pop $0
+${If} $0 != "admin" ;Require admin rights on NT4+
+        messageBox mb_iconstop "Administrator rights required!"
+        setErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
+        quit
+${EndIf}
+!macroend
 
-!define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP_NOSTRETCH
-!define MUI_ICON 						"${ICON_FILE}"
-;!define MUI_WELCOMEFINISHPAGE_BITMAP	"${IMAGE_FINISHED}"
-!define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
-
+function .onInit
+	setShellVarContext all
+	!insertmacro VerifyUserIsAdmin
+functionEnd
 
 ;--------------------------------
 
-; Pages
-!insertmacro MUI_PAGE_COMPONENTS
-!insertmacro MUI_PAGE_DIRECTORY
-!insertmacro MUI_PAGE_INSTFILES
-    # These indented statements modify settings for MUI_PAGE_FINISH
-    !define MUI_FINISHPAGE_NOAUTOCLOSE
-    !define MUI_FINISHPAGE_RUN_TEXT "Start ${PRODUCT_NAME}"
-    !define MUI_FINISHPAGE_RUN "$INSTDIR\${APP_EXE}"
-!insertmacro MUI_PAGE_FINISH
-
-
-UninstPage uninstConfirm
-UninstPage instfiles
-
-!insertmacro MUI_LANGUAGE "German"
-;--------------------------------
-
-; The stuff to install
-Section `${APP_NAME}`
-  SectionIn RO
+# The stuff to install
+Section "install"
   
-  ; Set output path to the installation directory.
+  # Set output path to the installation directory.
   SetOutPath $INSTDIR
   
-  ; Put file there
-;;;  File "${LICENSE_NAME}"
-  File /r "${SOURCE_DIR}\*.*"
-  
-  ; Write the uninstall keys for Windows
-  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "DisplayName" "${APP_NAME}"
-  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "NoModify" 1
-  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "NoRepair" 1
+  # Put file there
+  File /r  /x *.pdb "${SOURCE_DIR}\*.*"
+
   WriteUninstaller $INSTDIR\uninstall.exe
+
+  # Start Menu
+  CreateDirectory "$SMPROGRAMS\${APP_NAME}"
+  CreateShortCut "$SMPROGRAMS\${APP_NAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe"
+  CreateShortCut "$SMPROGRAMS\${APP_NAME}\${APP_NAME}.lnk" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}"
+
+  # Desktop ShortCut
+  CreateShortCut "$DESKTOP\${APP_NAME}.lnk" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}"
   
+  # Write the uninstall keys for Windows
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "DisplayName" "${APP_NAME}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "InstallLocation" "$\"$INSTDIR$\""
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "DisplayVersion" "$\"${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}$\""
+
+  # There is no option for modifying or repairing the install
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "NoRepair" 1
+
+  # File Association
   ${registerExtension} "$INSTDIR\${APP_EXE}" ".skmr" "StockAPP File"
   
-  
-  ; Add an application to the firewall exception list - All Networks - All IP Version - Enabled
+  # Add an application to the firewall exception list - All Networks - All IP Version - Enabled
   SimpleFC::AddApplication "${APP_NAME}" "$INSTDIR\${APP_EXE}" 0 2 "" 1
   Pop $0 ; return error(1)/success(0)
 
 SectionEnd
 
-; Optional section (can be disabled by the user)
-Section "Start Menu Shortcuts"
-
-  CreateDirectory "$SMPROGRAMS\${APP_NAME}"
-  CreateShortCut "$SMPROGRAMS\${APP_NAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${APP_NAME}\${APP_NAME}.lnk" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}" 0
-  
-SectionEnd
+# --------------------------------
 
 
-; Optional section (can be enabled by the user)
-Section /o "Desktop shortcut"
+# Uninstaller
 
-	CreateShortCut "$DESKTOP\${APP_NAME}.lnk" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}"
-  
-SectionEnd
-
-
-;--------------------------------
-
-; Uninstaller
+function un.onInit
+	SetShellVarContext all
+ 
+	#Verify the uninstaller - last chance to back out
+	MessageBox MB_OKCANCEL "Permanantly remove ${APPNAME}?" IDOK next
+		Abort
+	next:
+	!insertmacro VerifyUserIsAdmin
+functionEnd
 
 Section "Uninstall"
-  ; Remove registry keys
-  DeleteRegKey SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}"
+  
+  # Remove registry keys
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}"
 
+  # Remove FileAssociation
   ${unregisterExtension} ".skmr" "StockAPP File"
 
-  ; Remove an application from the firewall exception list
+  # Remove an application from the firewall exception list
   SimpleFC::RemoveApplication "$INSTDIR\${APP_EXE}"
   Pop $0 ; return error(1)/success(0)
 	
-  ; Remove files and uninstaller (everything)
+  # Remove files and uninstaller (everything)
   RMDir /r "$INSTDIR"
 
-  ; Remove desktop icon
+  # Remove desktop icon
   Delete "$DESKTOP\${APP_NAME}.lnk" 
 
-  ; Remove shortcuts, if any
+  # Remove shortcuts, if any
   Delete "$SMPROGRAMS\${APP_NAME}\*.*"
 
-  ; Remove directories used
+  # Remove directories used
   RMDir "$SMPROGRAMS\${APP_NAME}"
   RMDir "$INSTDIR"
 

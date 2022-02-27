@@ -8,6 +8,7 @@
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
+	<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
