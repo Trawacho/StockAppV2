@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:StockApp.UI.Views"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
         mc:Ignorable="d"
-        Title="LiveResultTeamView" Height="450" Width="800">
+        Title="{Binding WindowTitle}" Height="450" Width="800">
     
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Closed">

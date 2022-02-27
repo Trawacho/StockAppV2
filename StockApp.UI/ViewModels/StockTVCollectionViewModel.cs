@@ -76,22 +76,26 @@ public class StockTVCollectionViewModel : ViewModelBase
 
     private void SendTeamNames()
     {
-        var allGames = (_turnierStore.Turnier.Wettbewerb as ITeamBewerb).GetAllGames(false);
-        foreach (var game in allGames.GroupBy(g => g.CourtNumber))
+        if(_turnierStore.Turnier.Wettbewerb is ITeamBewerb teamBewerb)
         {
-            var tv = _stockTVService.StockTVCollection.FirstOrDefault(c => c.TVSettings.Bahn == game.Key);
-            var begegnungen = new List<StockTVBegegnung>();
-            foreach (var item in game)
+            var allGames = teamBewerb.GetAllGames(false);
+            foreach (var game in allGames.GroupBy(g => g.CourtNumber))
             {
-                begegnungen.Add(new StockTVBegegnung()
+                var tv = _stockTVService.StockTVCollection.FirstOrDefault(c => c.TVSettings.Bahn == game.Key && c.TVSettings.Spielgruppe == teamBewerb.SpielGruppe);
+                var begegnungen = new List<StockTVBegegnung>();
+                foreach (var item in game)
                 {
-                    SpielNummer = item.GameNumberOverAll,
-                    TeamNameA = item.TeamA.TeamName,
-                    TeamNameB = item.TeamB.TeamName
-                });
+                    begegnungen.Add(new StockTVBegegnung()
+                    {
+                        SpielNummer = item.GameNumberOverAll,
+                        TeamNameA = item.TeamA.TeamName,
+                        TeamNameB = item.TeamB.TeamName
+                    });
+                }
+                tv?.SendTeamNames(begegnungen);
             }
-            tv?.SendTeamNames(begegnungen);
         }
+        
     }
 
 

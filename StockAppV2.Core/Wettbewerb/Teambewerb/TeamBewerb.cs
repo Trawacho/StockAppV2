@@ -590,6 +590,7 @@ public class TeamBewerb : ITeamBewerb
          * 
          */
         if (telegram.StockTVModus == 100) return;
+        if (telegram.SpielGruppe != SpielGruppe) return;
         if (telegram.Equals(_lastTelegram))
         {
 #if DEBUG

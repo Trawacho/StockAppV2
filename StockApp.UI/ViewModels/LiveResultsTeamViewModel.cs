@@ -44,6 +44,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         IsLive = true;
     }
 
+
     private void TeamBewerb_GamesChanged(object sender, EventArgs e)
     {
         Dispose();
@@ -71,6 +72,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         }
     }
 
+    public string WindowTitle => TeamBewerb?.SpielGruppe > 0 ? $"Live-Ergebnis der Spielgruppe {Core.Converter.GameGroupStringConverter.Convert(TeamBewerb?.SpielGruppe ?? 0)}" : "Live-Ergebnis";
 
     private bool _showStockPunkte;
     public bool ShowStockPunkte
