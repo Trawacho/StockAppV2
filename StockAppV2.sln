@@ -13,7 +13,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockApp.UI", "StockApp.UI\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockApp.Prints", "StockApp.Prints\StockApp.Prints.csproj", "{F6C61993-4DF7-4023-A6EA-486B52F93E97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockApp.XML", "StockApp.XML\StockApp.XML.csproj", "{DA60849A-746F-428F-9761-B37A8BFA8E05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockApp.XML", "StockApp.XML\StockApp.XML.csproj", "{DA60849A-746F-428F-9761-B37A8BFA8E05}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StockApp.Installer", "StockApp.Installer", "{74B9B5D8-4C8C-47C7-A21B-D426A58FEBDC}"
+	ProjectSection(SolutionItems) = preProject
+		StockApp.Installer\Dockerfile = StockApp.Installer\Dockerfile
+		StockApp.Installer\FileAssociation.nsh = StockApp.Installer\FileAssociation.nsh
+		StockApp.Installer\installer.nsi = StockApp.Installer\installer.nsi
+		StockApp.Installer\README.txt = StockApp.Installer\README.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
