@@ -1,7 +1,6 @@
 ﻿;--------------------------------
 !include FileAssociation.nsh 
 !include LogicLib.nsh
-!include MUI2.nsh 
 
 
 !ifndef FULL_VERSION
@@ -32,12 +31,8 @@
 !define ICON_FILE         "..\StockApp.UI\Ressources\StockApp.ico"
 !endif
 
-!ifndef IMAGE_FINISHED
-!define IMAGE_FINISHED    "..\StockApp.UI\Ressources\StockApp.bmp"
-!endif
-
 !ifndef LICENCSEFILE
-!define LICENSEFILE       "..\LICENSE"
+!define LICENCSEFILE       "License.txt"
 !endif
 
 !ifndef PRODUCT_NAME
@@ -48,10 +43,12 @@
 !define SHORT_NAME        "${PRODUCT_NAME}"
 !define APP_EXE           "StockApp.UI.exe"
 
+
 #USAGE:
-!define VERSIONMAJOR "0"
-!define VERSIONMINOR "1"
-!define VERSIONBUILD "*"
+#!define VERSIONMAJOR "0"
+#!define VERSIONMINOR "1"
+#!define VERSIONBUILD "*"
+
 
 !addplugindir		"."
 
@@ -67,7 +64,9 @@ Icon "${ICON_FILE}"
 OutFile "${INSTALLER_FILENAME}"
 
 ; The default installation directory
-InstallDir "$PROGRAMFILES\${APP_NAME}"
+InstallDir "$PROGRAMFILES64\${APP_NAME}"
+
+LicenseData "${LICENCSEFILE}"
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
@@ -94,13 +93,14 @@ ${EndIf}
 function .onInit
 	setShellVarContext all
 	!insertmacro VerifyUserIsAdmin
+ 
 functionEnd
 
 ;--------------------------------
 
 # The stuff to install
 Section "install"
-  
+
   # Set output path to the installation directory.
   SetOutPath $INSTDIR
   
@@ -121,7 +121,7 @@ Section "install"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "DisplayName" "${APP_NAME}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "InstallLocation" "$\"$INSTDIR$\""
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "DisplayVersion" "$\"${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}$\""
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "DisplayVersion" "$\"${FULL_VERSION}$\""
 
   # There is no option for modifying or repairing the install
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${SHORT_NAME}" "NoModify" 1
@@ -145,7 +145,7 @@ function un.onInit
 	SetShellVarContext all
  
 	#Verify the uninstaller - last chance to back out
-	MessageBox MB_OKCANCEL "Permanantly remove ${APPNAME}?" IDOK next
+	MessageBox MB_OKCANCEL "Permanantly remove ${APP_NAME}?" IDOK next
 		Abort
 	next:
 	!insertmacro VerifyUserIsAdmin
