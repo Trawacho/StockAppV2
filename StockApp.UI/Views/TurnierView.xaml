@@ -69,7 +69,7 @@
           
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Turniername:" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OrgaDaten.TournamentName}"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OrgaDaten.TournamentName}" TextWrapping="Wrap" AcceptsReturn="True"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Veranstaltungsort:" />
             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding OrgaDaten.Venue}"/>

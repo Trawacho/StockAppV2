@@ -33,25 +33,26 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="2cm"/>
+                <RowDefinition Height="4cm"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <Viewbox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
+            <Viewbox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="3cm 0cm">
                 <TextBlock Text="{Binding Title}"
                            FontWeight="Bold"
+                           TextAlignment="Center"
                            TextWrapping="Wrap"/>
             </Viewbox>
 
             <Label Grid.Row="1" Grid.Column="0" 
-                   Margin="5 20 5 0"
+                   Margin="5 10 5 0"
                    FontWeight="Light"
                    Content="Austragungsort:" HorizontalContentAlignment="Right"/>
             <Label Content="{Binding Ort}"
                    FontWeight="Bold"
                    Grid.Row="1" Grid.Column="1"
-                   Margin="5 20 5 0" 
+                   Margin="5 10 5 0" 
                    HorizontalContentAlignment="Left"/>
 
             <Label Grid.Row="2" Grid.Column="0"
@@ -79,10 +80,10 @@
             <Label Grid.Row="1" Grid.Column="2" 
                    Content="Datum:" HorizontalContentAlignment="Right"
                    FontWeight="Light"
-                   Margin="5 20 5 0"/>
+                   Margin="5 10 5 0"/>
             <Label Content="{Binding Datum}" 
                    Grid.Row="1" Grid.Column="3" 
-                   Margin="5 20 5 0" 
+                   Margin="5 10 5 0" 
                    HorizontalContentAlignment="Left" FontWeight="Bold"/>
 
         </Grid>
