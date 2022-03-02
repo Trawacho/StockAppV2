@@ -42,6 +42,25 @@ namespace StockApp.Test.Comm
 
         }
 
+        [Test]
+        public void AddManualTest()
+        {
+            if(_service == null) _service = new StockTVService();
+            _service.AddManual("hostname", "192.168.100.136");
+            var manual = _service.StockTVCollection.First();
+            Assert.IsNotNull(manual);
+            manual.TVSettings.ColorModus = ColorMode.Dark;
+            manual.TVSettingsSend();
+            
+            Thread.Sleep(500);
+            manual.TVSettings.ColorModus = ColorMode.Normal;
+            manual.TVSettingsSend();
 
+            Thread.Sleep(500);
+            manual.TVSettings.ColorModus = ColorMode.Dark;
+            manual.TVSettingsSend();
+
+            _service?.Dispose();
+        }
     }
 }

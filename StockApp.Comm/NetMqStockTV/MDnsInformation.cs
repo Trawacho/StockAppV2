@@ -15,20 +15,23 @@ namespace StockApp.Comm.NetMqStockTV
 
     internal class MDnsInformation : IMDnsInformation
     {
+        private readonly string _hostname;
         public MDnsInformation(DomainName domainName, string ipAddress)
         {
             DomainName = domainName;
+            _hostname = DomainName.Labels[0];
+
             IpAddress = ipAddress;
             Informations = new HashSet<string>();
         }
 
-        public DomainName DomainName { get; private set; }
+        public DomainName DomainName { get;  }
 
-        public string HostName => DomainName.Labels[0];
+        public string HostName => _hostname;
 
-        public string IpAddress { get; private set; }
+        public string IpAddress { get;  }
 
-        public HashSet<string> Informations { get; private set; }
+        public HashSet<string> Informations { get; }
 
         public string FW => Informations?
                         .First(i => i.StartsWith("pkg"))?
