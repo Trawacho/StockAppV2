@@ -36,7 +36,7 @@ internal class StockTVCommandStore : IStockTVCommandStore
         ConnectCommand = new RelayCommand((p) => (p as IStockTV)?.Connect(), (p) => !(p as IStockTV)?.IsConnected ?? false);
         DisconnectCommand = new RelayCommand((p) => (p as IStockTV)?.Disconnect(), (p) => (p as IStockTV)?.IsConnected ?? false);
         ResetResultCommand = new RelayCommand((p) => (p as IStockTV)?.TVResultReset(), (p) => (p as IStockTV)?.IsConnected ?? false);
-        GetResultCommand = new RelayCommand((p) => (p as IStockTV)?.TVSettingsGet(), (p) => (p as IStockTV)?.IsConnected ?? false);
+        GetResultCommand = new RelayCommand((p) => (p as IStockTV)?.TVResultGet(), (p) => (p as IStockTV)?.IsConnected ?? false);
         ShowMarketingCommand = new RelayCommand((p) => (p as IStockTV)?.ShowMarketing(), (p) => (p as IStockTV)?.IsConnected ?? false);
         StockTvOpenWebsiteCommand = new RelayCommand((p) => OpenWebsite((p as IStockTV)?.Url));
         StockTvSerivceDiscoverCommand = new RelayCommand((p) => stockTVService?.Discover());

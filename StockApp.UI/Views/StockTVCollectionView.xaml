@@ -38,7 +38,7 @@
             <Button Content="StockTV suchen" 
                 Command="{Binding Path=DiscoverCommand}"  
                 HorizontalAlignment="Left"  
-                Width="150" Height="50" Margin="10 0"/> 
+                Width="150" Height="50" Margin="10 0"/>
             <Button Content="neu sortieren" 
                 Command="{Binding Path=RecreateViewsCommand}"  
                 HorizontalAlignment="Left"  
@@ -49,6 +49,17 @@
                     Height="50" 
                     Margin="10 0" 
                     ToolTip="Mannschaftsnamen aus Spielplan an StockTVs senden" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20 0">
+                <StackPanel>
+                    <Label Content="IP-Adresse:"/>
+                    <TextBox MinWidth="150" Margin="0 0 10 0" Height="25"
+                         HorizontalContentAlignment="Center"
+                         VerticalContentAlignment="Center"
+                         Text="{Binding Path=IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <Button Content="Add" Padding="10" 
+                        Width="75" Command="{Binding Path=AddManualCommand}"/>
+            </StackPanel>
         </StackPanel>
 
         <ItemsControl ItemsSource="{Binding StockTvViewModels}" Grid.Row="2" Margin="0 15 0 0">

@@ -5,6 +5,7 @@ using StockApp.UI.Stores;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -13,6 +14,7 @@ public class StockTVCollectionViewModel : ViewModelBase
     private readonly IStockTVService _stockTVService;
     private readonly IStockTVCommandStore _stockTVCommandStore;
     private readonly ITurnierStore _turnierStore;
+    private string _ipAddress;
 
     public StockTVCollectionViewModel(IStockTVService stockTVService, IStockTVCommandStore stockTVCommandStore, ITurnierStore turnierStore)
     {
@@ -76,7 +78,7 @@ public class StockTVCollectionViewModel : ViewModelBase
 
     private void SendTeamNames()
     {
-        if(_turnierStore.Turnier.Wettbewerb is ITeamBewerb teamBewerb)
+        if (_turnierStore.Turnier.Wettbewerb is ITeamBewerb teamBewerb)
         {
             var allGames = teamBewerb.GetAllGames(false);
             foreach (var game in allGames.GroupBy(g => g.CourtNumber))
@@ -95,8 +97,25 @@ public class StockTVCollectionViewModel : ViewModelBase
                 tv?.SendTeamNames(begegnungen);
             }
         }
-        
+
     }
 
+    public string IpAddress { get => _ipAddress; set => SetProperty(ref _ipAddress, value); }
+
+    private ICommand _addManualCommand;
+    public ICommand AddManualCommand => _addManualCommand ??= new RelayCommand(
+        (p) =>
+        {
+            if (IPAddress.TryParse(IpAddress, out var ipA))
+            {
+                IpAddress = ipA.ToString();
+                var hostname = ipA.GetAddressBytes().Last().ToString();
+                _stockTVService.AddManual(hostname, ipA.ToString());
+            }
+        },
+        (p) =>
+        {
+            return IPAddress.TryParse(IpAddress, out IPAddress ipAddress);
+        });
 
 }
