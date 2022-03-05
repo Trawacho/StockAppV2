@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# StockAppInstaller.exe
+StockApp.Installer/StockAppInstaller.exe
+
 # User-specific files
 *.rsuser
 *.suo

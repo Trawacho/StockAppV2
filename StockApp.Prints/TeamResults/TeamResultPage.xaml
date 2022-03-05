@@ -97,7 +97,7 @@
                FontWeight="Bold"/>
         </Viewbox>
 
-        <Viewbox Height="650"  VerticalAlignment="Top"  Margin="0 20 0 0">
+        <Viewbox Height="585"  VerticalAlignment="Top"  Margin="0 20 0 0">
 
             <StackPanel Orientation="Vertical">
 
