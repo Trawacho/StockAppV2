@@ -1,6 +1,4 @@
-﻿using Makaretu.Dns;
-
-namespace StockApp.Comm.NetMqStockTV;
+﻿namespace StockApp.Comm.NetMqStockTV;
 
 internal static class StockTVFactory
 {
@@ -11,10 +9,6 @@ internal static class StockTVFactory
     internal static IStockTVAppClient Create(string ipAddress, int port, string identifier)
     {
         return new StockTVAppClient(ipAddress, port, identifier);
-    }
-    internal static IMDnsInformation CreateMDnsService(DomainName domainName, string ipAddress)
-    {
-        return new MDnsInformation(domainName, ipAddress);
     }
 
     internal static IStockTVSettings CreateDefaultSettings(GameMode gameMode)

@@ -1,5 +1,5 @@
-﻿using Makaretu.Dns;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using StockApp.Comm.MDns;
 
 namespace StockApp.Comm.NetMqStockTV;
 
@@ -21,8 +21,7 @@ public interface IStockTVService : IDisposable
 public class StockTVService : IStockTVService
 {
     private readonly List<IStockTV> _stockTvList;
-    private readonly ServiceDiscovery _serviceDiscovery;
-    private readonly ServiceProfile _serviceProfile = new("", "_stockTV._tcp", 0);
+    private readonly IMdnsService _mdnsService;
     private readonly object _lock = new();
     private bool _disposed;
 
@@ -78,59 +77,35 @@ public class StockTVService : IStockTVService
     public StockTVService()
     {
         _stockTvList = new List<IStockTV>();
-        _serviceDiscovery = new ServiceDiscovery();
-
-        _serviceDiscovery.ServiceInstanceDiscovered += Discovery_ServiceInstanceDiscovered;
-        _serviceDiscovery.ServiceInstanceShutdown += Discovery_ServiceInstanceShutdown;
+        
+        _mdnsService = new MDnsService();
+        
+        _mdnsService.StockTVDiscovered += MdnsService_StockTVDiscovered;
     }
+
+   
 
     #region mDNS Implementation
 
     public void AddManual(string hostname, string ipAddress)
     {
-        var mdns = new MDnsInformation(new DomainName($"{hostname}._stockTV._tcp.local"), ipAddress);
-        mdns.Informations.Add("pubSvc=4748");
-        mdns.Informations.Add("ctrSvc=4747");
-        mdns.Informations.Add("pkgVer=1.3.0.0");
-        mdns.Informations.Add("txtvers=1");
-        AddNewStockTV(mdns);
+        var host = MDnsHost.Create(hostname, ipAddress, 4747, 4748, "n.a.");
+        AddNewStockTV(host);
+
     }
 
-    public void Discover() => _serviceDiscovery.QueryServiceInstances(_serviceProfile.ServiceName);
-
-    private void Discovery_ServiceInstanceShutdown(object sender, ServiceInstanceShutdownEventArgs args)
+    public void Discover() => _mdnsService.Discover();
+    
+    private void MdnsService_StockTVDiscovered(object sender, IMDnsHost e)
     {
-        var mDns = StockTVFactory.CreateMDnsService(args.ServiceInstanceName,
-                                    args.Message.AdditionalRecords.OfType<ARecord>().FirstOrDefault()?.Address.ToString() ?? "");
-
-        StockTVCollection.FirstOrDefault(s => s.IPAddress == mDns.IpAddress)?.RemoveFromCollection();
-
+        AddNewStockTV(e);
     }
-
-    private void Discovery_ServiceInstanceDiscovered(object sender, ServiceInstanceDiscoveryEventArgs args)
-    {
-        var mDns = StockTVFactory.CreateMDnsService(args.ServiceInstanceName,
-                                     args.Message.AdditionalRecords.OfType<ARecord>().FirstOrDefault()?.Address.ToString() ?? "");
-
-        foreach (var item in args.Message.AdditionalRecords.OfType<TXTRecord>())
-        {
-            foreach (var s in item.Strings)
-            {
-                mDns.Informations.Add(s);
-            }
-        }
-
-        if (mDns.DomainName.BelongsTo(_serviceProfile.FullyQualifiedName))
-        {
-            AddNewStockTV(mDns);
-        }
-    }
-
-    private void AddNewStockTV(IMDnsInformation mDns)
+       
+    private void AddNewStockTV(IMDnsHost mDns) 
     {
         lock (_lock)
         {
-            if (!_stockTvList.Any(s => s.IPAddress == mDns.IpAddress))
+            if (!_stockTvList.Any(s => s.IPAddress == mDns.IPAddress))
             {
                 IStockTV newTV = new StockTV(mDns);
 
@@ -221,6 +196,7 @@ public class StockTVService : IStockTVService
 
                 StockTVResultChanged = null;
                 StockTVCollectionChanged = null;
+                _mdnsService?.Dispose();
             }
             _disposed = true;
         }
