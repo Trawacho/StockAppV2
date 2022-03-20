@@ -7,12 +7,12 @@
 	  <PublishSingleFile>true</PublishSingleFile>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
+    <ApplicationIcon>Ressources\StockAPP_512.ico</ApplicationIcon>
 	<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Ressources\StockApp.ico" />
+    <Content Include="Ressources\StockAPP_512.ico" />
   </ItemGroup>
 
   <ItemGroup>
