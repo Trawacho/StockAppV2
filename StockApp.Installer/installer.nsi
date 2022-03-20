@@ -28,7 +28,7 @@
 !endif
 
 !ifndef ICON_FILE
-!define ICON_FILE         "..\StockApp.UI\Ressources\StockApp.ico"
+!define ICON_FILE         "..\StockApp.UI\Ressources\StockApp_512.ico"
 !endif
 
 !ifndef LICENCSEFILE
