@@ -43,7 +43,8 @@
                                            HorizontalAlignment="Stretch" 
                                            VerticalAlignment="Stretch"
                                            TextAlignment="Center"
-                                           Background="DarkSlateBlue"
+                                           Background="#FF063852"
+                                           Foreground="#FFE6DF44"
                                            Padding="15 20"/>
                             </ControlTemplate>
                         </Setter.Value>
