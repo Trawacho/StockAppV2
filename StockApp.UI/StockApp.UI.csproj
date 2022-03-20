@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\StockAPP_512.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Ressources\StockAPP_512.ico" />
   </ItemGroup>
 
@@ -28,6 +32,10 @@
     <ProjectReference Include="..\StockApp.Prints\StockApp.Prints.csproj" />
     <ProjectReference Include="..\StockApp.XML\StockApp.XML.csproj" />
     <ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Components\StockAPP_512.png" />
   </ItemGroup>
 
   <ItemGroup>
