@@ -32,8 +32,8 @@
                                            HorizontalAlignment="Stretch" 
                                            VerticalAlignment="Stretch"
                                            TextAlignment="Center"
-                                           Background="#FF063852"
-                                           Foreground="#FFE6DF44"
+                                           Background="#FFF0810F"
+                                           Foreground="#FF011A27"
                                            Padding="15 20"/>
                             </ControlTemplate>
                         </Setter.Value>
@@ -57,7 +57,7 @@
         </Style>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
-    <StackPanel Orientation="Vertical" Background="#FF0A2A40">
+    <StackPanel Orientation="Vertical" Background="#FF063852">
         <Button Content="Teilnehmer" Command="{Binding NavigateTeilnehmerCommand}"/>
         <Button Content="Live Ergebnisse" Command="{Binding NavigateLiveResultCommand}"/>
     </StackPanel>
