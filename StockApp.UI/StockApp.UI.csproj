@@ -7,12 +7,16 @@
 	  <PublishSingleFile>true</PublishSingleFile>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
+    <ApplicationIcon>Ressources\StockAPP_512.ico</ApplicationIcon>
 	<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Ressources\StockApp.ico" />
+    <None Remove="Components\StockAPP_512.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Ressources\StockAPP_512.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +32,10 @@
     <ProjectReference Include="..\StockApp.Prints\StockApp.Prints.csproj" />
     <ProjectReference Include="..\StockApp.XML\StockApp.XML.csproj" />
     <ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Components\StockAPP_512.png" />
   </ItemGroup>
 
   <ItemGroup>

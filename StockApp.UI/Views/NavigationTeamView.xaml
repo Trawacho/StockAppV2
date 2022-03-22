@@ -32,7 +32,8 @@
                                            HorizontalAlignment="Stretch" 
                                            VerticalAlignment="Stretch"
                                            TextAlignment="Center"
-                                           Background="DarkSlateBlue"
+                                           Background="#FFF0810F"
+                                           Foreground="#FF011A27"
                                            Padding="15 20"/>
                             </ControlTemplate>
                         </Setter.Value>
@@ -58,7 +59,7 @@
     </UserControl.Resources>
 
     <StackPanel Orientation="Vertical" 
-                    Background="#FF0A2A40">
+                    Background="#FF063852">
 
         <Button Content="Mannschaften" Command="{Binding NavigateTeamsCommand}"/>
 

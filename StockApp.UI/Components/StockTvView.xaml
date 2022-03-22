@@ -27,7 +27,7 @@
 
     <Border BorderThickness="2" BorderBrush="#FF2D2C2C" Margin="0" >
         <!--<Viewbox >-->
-        <StackPanel Orientation="Vertical" Background="#FFA8BFA5">
+        <StackPanel Orientation="Vertical" Background="#FFE6DF44">
 
             <!--Header-->
             <Grid Margin="0" Background="#FF5A5A5A">
@@ -64,7 +64,7 @@
             </Grid>
 
             <!--Informations-->
-            <Grid Background="DarkOliveGreen" Margin="2">
+            <Grid Background="#FFF0810F" Margin="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
@@ -250,7 +250,7 @@
 
             </Grid>
 
-            <Grid Background="DarkOliveGreen" Margin="2">
+            <Grid Background="#FFF0810F" Margin="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>

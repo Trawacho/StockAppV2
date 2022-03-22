@@ -8,16 +8,25 @@
              Name="TopHeaderControl"
              d:DesignWidth="800" 
              Margin="0 0 0 30">
-    <Border Background="#FF0A2A40">
-        
-        <TextBlock Text="{Binding TopHeaderText, ElementName=TopHeaderControl}" 
-                   Foreground="White" 
-                   VerticalAlignment="Center" 
-                   HorizontalAlignment="Left"
-                   TextAlignment="Left"
-                   FontWeight="Normal" 
-                   FontStretch="ExtraExpanded"
-                   FontSize="22"
-                   Margin="16"/>
+    <Border Background="#FF063852" >
+        <Grid >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Text="{Binding TopHeaderText, ElementName=TopHeaderControl}" 
+                       Grid.Column="0"
+                       Foreground="White" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Left"
+                       TextAlignment="Left"
+                       FontWeight="Normal" 
+                       FontStretch="ExtraExpanded"
+                       FontSize="24"
+                       Margin="16"/>
+            <Image Source="/Components/StockAPP_512.png"  Grid.Column="1" Margin="4" Height="60"/>
+        </Grid>
+
     </Border>
 </UserControl>

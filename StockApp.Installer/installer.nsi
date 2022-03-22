@@ -4,7 +4,7 @@
 
 
 !ifndef FULL_VERSION
-!define FULL_VERSION      "1.0.0.0"
+!define FULL_VERSION      1.0.0.0
 !endif
 
 !ifndef SOURCE_DIR
@@ -28,7 +28,7 @@
 !endif
 
 !ifndef ICON_FILE
-!define ICON_FILE         "..\StockApp.UI\Ressources\StockApp.ico"
+!define ICON_FILE         "..\StockApp.UI\Ressources\StockApp_512.ico"
 !endif
 
 !ifndef LICENCSEFILE
@@ -130,9 +130,8 @@ Section "install"
   # File Association
   ${registerExtension} "$INSTDIR\${APP_EXE}" ".skmr" "StockAPP File"
   
-  # Add an application to the firewall exception list - All Networks - All IP Version - Enabled
-  SimpleFC::AddApplication "${APP_NAME}" "$INSTDIR\${APP_EXE}" 0 2 "" 1
-  Pop $0 ; return error(1)/success(0)
+  # Add application to the firewall exception list - All Networks - All IP Version - Enabled
+  ExecWait 'netsh advfirewall firewall add rule name="${APP_NAME}" dir=in action=allow program="$INSTDIR\${APP_EXE}" enable=yes profile=public,private'
 
 SectionEnd
 
@@ -159,9 +158,9 @@ Section "Uninstall"
   # Remove FileAssociation
   ${unregisterExtension} ".skmr" "StockAPP File"
 
-  # Remove an application from the firewall exception list
-  SimpleFC::RemoveApplication "$INSTDIR\${APP_EXE}"
-  Pop $0 ; return error(1)/success(0)
+  # Remove application from the firewall exception list
+  ExecWait 'netsh advfirewall firewall delete rule name="${APP_NAME}"'
+
 	
   # Remove files and uninstaller (everything)
   RMDir /r "$INSTDIR"
