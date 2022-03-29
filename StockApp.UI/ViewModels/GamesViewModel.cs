@@ -4,6 +4,7 @@ using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.UI.Commands;
 using StockApp.UI.Stores;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 
@@ -34,14 +35,14 @@ public class GamesViewModel : ViewModelBase
         }
     }
 
-    public bool HasTwoBreaks
+    public int BreaksCount
     {
-        get => _teamBewerb.TwoPauseGames;
+        get => _teamBewerb.BreaksCount;
         set
         {
-            if (_teamBewerb.TwoPauseGames == value) return;
-            _teamBewerb.TwoPauseGames = value;
-            RaisePropertyChanged(nameof(HasTwoBreaks));
+            if (_teamBewerb.BreaksCount == value) return;
+            _teamBewerb.BreaksCount = value;
+            RaisePropertyChanged();
         }
     }
 
@@ -75,19 +76,58 @@ public class GamesViewModel : ViewModelBase
         set => SetProperty(ref _isCreatingGames, value);
     }
 
-#pragma warning disable IDE0052 // Remove unread private members
-    private IOrderedEnumerable<IFactoryGame> _factoryGames; //muss noch implementiert werden, aktuell werden die Spiele noch im TeamBewerb erstellt.
-#pragma warning restore IDE0052 // Remove unread private members
+    private IEnumerable<IFactoryGame> _factoryGames;
 
 
     public ICommand CreateGamesCommand => _createGamesCommand ??= new RelayCommand
         ((p) =>
         {
             IsCreatingGames = true;
-            _teamBewerb.CreateGames();
-            _factoryGames = GameFactory.CreateGames(9, false, 1, false)
+
+            _teamBewerb.RemoveAllVirtualTeams();
+
+            if (_teamBewerb.Teams.Count(t => !t.IsVirtual) % 2 == 0 && BreaksCount == 1) //Gerade Anzahl an Mannschaften (ohne virtuelle) und 1 Aussetzer
+            {
+                _factoryGames = GameFactory.CreateGames2(_teamBewerb.Teams.Count(), SpielRunden);
+            }
+            else if (_teamBewerb.Teams.Count(t => !t.IsVirtual) % 2 == 0 && BreaksCount == 0)//Gerade Anzahl an Mannschaften (ohne virtuelle) und 0 Aussetzer
+            {
+                _factoryGames = GameFactory.CreateGames(
+                                           _teamBewerb.Teams.Count(),
+                                           BreaksCount,
+                                           SpielRunden,
+                                           HasChangeStart)
+                                     .OrderBy(g => g.GameNumberOverAll)
+                                     .ThenBy(g => g.CourtNumber);
+            }
+            else if (_teamBewerb.Teams.Count(t => !t.IsVirtual) % 2 == 0 && BreaksCount == 2)//Gerade Anzahl an Mannschaften (ohne virtuelle) und 2 Aussetzer
+            {
+                _factoryGames = GameFactory.CreateGames(
+                                           _teamBewerb.Teams.Count(),
+                                           BreaksCount,
+                                           SpielRunden,
+                                           HasChangeStart)
+                                     .OrderBy(g => g.GameNumberOverAll)
+                                     .ThenBy(g => g.CourtNumber);
+
+                _teamBewerb.AddVirtualTeams(2);
+            }
+            else if (_teamBewerb.Teams.Count(t => !t.IsVirtual) % 2 != 0 && BreaksCount == 1) //Ungerade Anzahl an Mannschaften (ohne Virtuelle) und 1 Aussetzer
+            {
+                _factoryGames = GameFactory.CreateGames(
+                                            _teamBewerb.Teams.Count(),
+                                            BreaksCount,
+                                            SpielRunden,
+                                            HasChangeStart)
                                       .OrderBy(g => g.GameNumberOverAll)
                                       .ThenBy(g => g.CourtNumber);
+
+                _teamBewerb.AddVirtualTeams(1);
+                
+
+            }
+
+            GameFactoryWrapper.MatchTeamAndGames(_factoryGames, _teamBewerb.Teams);
 
 
             IsCreatingGames = false;
