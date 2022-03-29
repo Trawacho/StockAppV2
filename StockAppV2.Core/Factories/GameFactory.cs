@@ -106,7 +106,7 @@
         /// <param name="roundCount"></param>
         /// <param name="isStartingChange"></param>
         /// <returns></returns>
-        public static IEnumerable<IFactoryGame> CreateGames(int teamsCount, bool twoBreaks = false, int roundCount = 1, bool isStartingChange = false)
+        public static IEnumerable<IFactoryGame> CreateGames(int teamsCount, int breakCount = 1, int roundCount = 1, bool isStartingChange = false)
         {
             int iBahnCor = 0;               //Korrektur-Wert für Bahn
 
@@ -122,7 +122,7 @@
             {
                 //Gerade Anzahl an Mannschaften
                 //Entweder kein Aussetzer oder ZWEI Aussetzer
-                if (twoBreaks)
+                if (breakCount == 2)
                 {
                     virtualTeamsCount = 2;
                 }
@@ -243,7 +243,139 @@
             }
         }
 
+        /// <summary>
+        /// Erzeugt einen Spielplan bei einer geraden Anzahl an Mannschaften mit nur einem Aussetzer
+        /// </summary>
+        /// <param name="teamsCount"></param>
+        /// <param name="roundCount"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static IEnumerable<IFactoryGame> CreateGames2(int teamsCount, int roundCount = 1)
+        {
+            if (teamsCount % 2 != 0) throw new Exception("Es ist nur eine gerade Anzahl an Mannschaften für diese Berechnung erlaubt");
 
+            var games = new List<IFactoryGame>();
+
+            for (int round = 1; round <= roundCount; round++)
+            {
+                #region Erste Spielhälfte ohne Aussetzer
+
+                // Array für die erste Spielhälfte
+                var games1 = new IFactoryGame[teamsCount / 2, teamsCount / 2];
+
+                for (int y = 0; y < teamsCount / 2; y++)
+                {
+                    for (int x = 0; x < teamsCount / 2; x++)
+                    {
+                        int teamA = 1 - (y + 1) + (x + 1);
+                        if (teamA <= 0) teamA = teamsCount + teamA;
+                        int teamB = teamsCount - y - x;
+
+                        var newGame = new FactoryGame(
+                            round,                              //Runde
+                            ((round - 1) * teamsCount)+(y + 1),                    //Spielnummer gesamt
+                            y + 1,                              //Spielnummer
+                            x + 1,                              //Bahnnummer
+                            teamA,                              //Startnummer Mannschaft A
+                            teamB,                              //Startnummer Mannschaft B
+                            (x + 1) % 2 != 0,                   //Anspiel für Mannschaft A
+                            false,                              //Aussetzer    
+                            false);                             //Wird Anspiel gedreht
+
+                        games1[y, x] = newGame;
+                        games.Add(newGame);
+                    }
+                }
+
+                #endregion
+
+                #region Zweite Spielhälfte auf einer Bahn weniger
+                // Array für die zweite Spielhälfte
+                var games2 = new IFactoryGame[teamsCount / 2, (teamsCount / 2) - 1];
+
+                var letztesSpielAufBahn1 = games.OrderBy(o => o.GameNumberOverAll).Last(g => g.CourtNumber == 1);
+
+                int A2 = games1[(teamsCount / 2) - 1, 0].TeamA;
+                int B2 = games1[(teamsCount / 2) - 1, 0].TeamB;
+
+                for (int y = 0; y < teamsCount / 2; y++)
+                {
+                    var gamesProGameNumber = new List<IFactoryGame>();
+                    for (int x = 0; x < (teamsCount / 2) - 1; x++)
+                    {
+                        int teamA = A2 + x - y;
+                        int teamB = B2 - x - y - 1;
+                        if (teamB <= 0) teamB = teamsCount + teamB;
+
+                        var newGame = new FactoryGame(
+                            round,                              //Runde
+                            ((round - 1) * teamsCount) + (y + 1) + (teamsCount / 2), //Spielnummer gesamt
+                            y + 1 + (teamsCount / 2),           //Spielnummer    
+                            x + 1,                              //Bahnnummer
+                            teamA,                              //Startnummer Mannschaft A
+                            teamB,                              //Startnummer Mannschaft B
+                            (x + 1) % 2 != 0,                   //Anspiel für Mannschaft A
+                            false,                              //Aussetzer
+                            false);                             //Wird Anspiel gedreht
+
+                        gamesProGameNumber.Add(newGame);
+                        games2[y, x] = newGame;
+                        games.Add(newGame);
+                    }
+
+                    #region Aussetzer
+                    // Die beiden Mannschaften, die kein Spiel haben, finden und als Aussetzer definieren
+                    var playingTeams = gamesProGameNumber.SelectMany(x => new[] { x.TeamA, x.TeamB });
+                    var pauseTeams = Enumerable.Range(1, teamsCount).Except(playingTeams);
+                    if (pauseTeams.Count() > 2) throw new Exception("Es dürften nur 2 Mannschaften in der Liste enthalten sein, die einen Aussetzer haben");
+                    var pauseGame = new FactoryGame(
+                        round,                              //Runde
+                        ((round - 1) * teamsCount) + (y + 1) + (teamsCount / 2), //Spielnummer gesamt
+                        y + 1 + (teamsCount / 2),           //Spielnummer
+                        0,                                  //Bahnnummer
+                        pauseTeams.First(),                 //Startnummer Mannschaft A
+                        pauseTeams.Last(),                  //Startnummer Mannschaft B
+                        false,                              //Anspiel für Mannschaft A
+                        true,                               //Aussetzer
+                        false);                             //Wird Anspiel gedreht
+
+                    games.Add(pauseGame);
+                    #endregion
+                }
+                #endregion
+            }
+            return games.OrderBy(o => o.GameNumberOverAll).ThenBy(o => o.CourtNumber);
+        }
+    }
+
+    public static class GameFactoryWrapper
+    {
+        public static void MatchTeamAndGames(IEnumerable<IFactoryGame> factoryGames, IEnumerable<Wettbewerb.Teambewerb.ITeam> teams)
+        {
+            //Entferne alle Spiele von allen Teams
+            foreach (var t in teams)
+                t.ClearGames();
+
+            //Ein liste für normale "Spiele" erzeugen
+            var games = new List<Wettbewerb.Teambewerb.IGame>();
+
+            //normale Spiele erzeugen und Mannschaften zuweisen
+            foreach (var factoryGame in factoryGames)
+            {
+                var game = Wettbewerb.Teambewerb.Game.Create(factoryGame);
+                game.TeamA = teams.FirstOrDefault(t => t.StartNumber == factoryGame.TeamA);
+                game.TeamB = teams.FirstOrDefault(t => t.StartNumber == factoryGame.TeamB);
+                games.Add(game);
+            }
+
+            // den Mannschaften die Spiele zuweisen
+            foreach (var team in teams)
+            {
+                var teamGames = games.Where(g => g.TeamA.StartNumber == team.StartNumber || g.TeamB?.StartNumber == team.StartNumber);
+                foreach (var game in teamGames)
+                    team.AddGame(game);
+            }
+        }
     }
 
     public class FactoryGame : IFactoryGame
@@ -268,8 +400,10 @@
             IsBreakGame = isBreakGame;
 
             CheckAnspiel(isStartingChange);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(ToStringExtended());
+#endif
         }
-
 
         public int RoundOfGame { get; }
         public int CourtNumber { get; }
@@ -279,6 +413,8 @@
         public int TeamA { get; private set; }
         public int TeamB { get; private set; }
         public bool IsBreakGame { get; }
+
+        public override string ToString() => ToStringExtended();
 
         public string ToStringExtended()
         {
@@ -296,7 +432,7 @@
             if (CourtNumber % 2 != 0)
             {
                 //Spiel auf Bahn 1, 3, 5, 7,...
-                if (IsTeamA_Starting)
+                if (!IsTeamA_Starting)
                 {
                     var t1 = TeamA;
                     var t2 = TeamB;
@@ -336,6 +472,6 @@
         public int TeamB { get; }
         public bool IsBreakGame { get; }
         public string ToStringExtended();
-
     }
+
 }
