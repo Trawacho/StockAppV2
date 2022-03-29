@@ -24,7 +24,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         }
 
         NumberOfGameRounds = bewerb.NumberOfGameRounds;
-        TwoPauseGames = bewerb.TwoPauseGames;
+        BreaksCount = bewerb.BreaksCount;
         Is8TurnsGame = bewerb.Is8TurnsGame;
         StartingTeamChange = bewerb.StartingTeamChange;
         SpielGruppe = bewerb.SpielGruppe;
@@ -52,10 +52,10 @@ public class SerialisableTeamBewerb : ITeamBewerb
     {
         {
             teamBewerb.NumberOfGameRounds = NumberOfGameRounds;
-            teamBewerb.TwoPauseGames = TwoPauseGames;
             teamBewerb.Is8TurnsGame = Is8TurnsGame;
             teamBewerb.StartingTeamChange = StartingTeamChange;
             teamBewerb.SpielGruppe = SpielGruppe;
+            teamBewerb.BreaksCount = BreaksCount;
 
             // Alle Teams erzeugen
             for (int i = 0; i < SerialisableTeams.Count; i++)
@@ -89,8 +89,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "SpielRunden")]
     public int NumberOfGameRounds { get; set; }
 
-    [XmlElement(ElementName = "ZweiAussetzer")]
-    public bool TwoPauseGames { get; set; }
+    [XmlElement(ElementName = "AnzahlAussetzer")]
+    public int BreaksCount { get; set; }
 
     [XmlElement(ElementName = "AchtKehren")]
     public bool Is8TurnsGame { get; set; }
@@ -172,6 +172,16 @@ public class SerialisableTeamBewerb : ITeamBewerb
     }
 
     public void Reset() { }
+
+    public void AddVirtualTeams(int count)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveAllVirtualTeams()
+    {
+        throw new NotImplementedException();
+    }
     #endregion
 
     #endregion
