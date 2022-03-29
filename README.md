@@ -1,9 +1,15 @@
-![StockAppBanner](/StockApp.UI/Ressources/Banner_640_320.png)
+![StockAppBanner](/Bilder/StockApp-Banner.jpg)
 # StockApp
 
 ist ein Programm für den Stocksport.
-Es ist damit möglich eine Turnierauswertung zu erstellen, Bahnblöcke, Wertungskarten, Quittungen und Ergebnislisten zu drucken. 
-Abgebildet werden kann aktuell das Mannschaftsspiel mit Standardspielplan (jeder gegen jeden) sowie ein Zielbewerb.
-Ausserdem besteht die Möglichket der Kombination mit StockTV. In der StockAPP kann sowohl eine Konfiguration der einzelnen StockTVs vorgenommen werden,
-als auch eine LiveÜbertragung der Eingaben von StockTV genutzt werden. Dadurch ist es möglich, dass während eines Turnier 
-eine Livetabelle für eine offene Wertung gezeigt werden kann, und dass ohne zeitlichen Verzug!
+Mit der StockApp können Sie ihr Stockturnier von der Vorbereitung bis zur Ergebnisliste darstellen.
+- Auswertung von Turnieren sowohl im Team-Bewerb als auch im Zielbewerb
+- Drucken von Wertungskarten und Bahnblöcken
+- Anzeige von Livetabellen im Team- oder Zielbewerb
+- Verbindung zu StockTV
+- weitere Funktionen wie etwa Stammdaten sind in Vorbereitung
+
+## Livetabelle
+Ein im Stocksport völlig neues Feature ist die Livetabelle. In Verbindung mit StockTV werden die Ergebnisse sofort nach Eingabe durch die Spieler in einer Tabelle angezeigt. So können Zuschauer in Echtzeit den Spielstand des Turniers im Auge behalten. Auch die Stockschützen brauchen nicht mehr auf eine manuelle Auswertung und den Aushang von Listen warten, sondern sehen sofort auf welchem Platz die Mannschaft ist. Eine offene Wertung ohne zeitlichen Verzug.
+Die Livetabelle ist sowohl im Teambewerb als auch beim Zielschiessen möglich. 
+
