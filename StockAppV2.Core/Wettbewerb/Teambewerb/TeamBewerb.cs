@@ -20,18 +20,15 @@ public interface ITeamBewerb : IBewerb
     /// </summary>
     int NumberOfCourts { get; }
 
-
     /// <summary>
     /// Number of rounds to play (default 1) 
     /// </summary>
     int NumberOfGameRounds { get; set; }
 
-
     /// <summary>
-    /// If true, on even number of Teams, there are two games as pause
+    /// Anzahl der Aussetzer, bei ungerader Anzahl an Mannschaften (nicht virtuell) immer 1
     /// </summary>
-    bool TwoPauseGames { get; set; }
-
+    int BreaksCount { get; set; }
 
     /// <summary>
     /// On True, the TurnCard has 8 instead of 7 Turns per Team
@@ -53,8 +50,11 @@ public interface ITeamBewerb : IBewerb
 
     void AddNewTeam();
 
+    void AddVirtualTeams(int count);
 
     void RemoveTeam(ITeam team);
+
+    void RemoveAllVirtualTeams();
 
     /// <summary>
     /// Occours after adding or removing a team
@@ -117,8 +117,8 @@ public class TeamBewerb : ITeamBewerb
     #region Fields
 
     private readonly List<ITeam> _teams = new();
-    private bool _twoPauseGames = false;
     private int _numberOfGameRounds = 1;
+    private int _breakCount = 1;
 
     #endregion
 
@@ -154,21 +154,14 @@ public class TeamBewerb : ITeamBewerb
         }
     }
 
+
     /// <summary>
-    /// True, if every Team has two pause
+    /// Anzahl der Aussetzer, bei ungerader Anzahl an Mannschaften (nicht virtuell) immer 1
     /// </summary>
-    public bool TwoPauseGames
+    public int BreaksCount
     {
-        get
-        {
-            return Teams.Count(t => !t.IsVirtual) % 2 == 0
-                        && _twoPauseGames;
-        }
-        set
-        {
-            if (value == _twoPauseGames) return;
-            _twoPauseGames = value;
-        }
+        get => Teams.Count(t => !t.IsVirtual) % 2 == 0 ? _breakCount : 1;
+        set => _breakCount = value;
     }
 
     /// <summary>
@@ -302,15 +295,20 @@ public class TeamBewerb : ITeamBewerb
         }
     }
 
-    internal void RemoveAllVirtualTeams() => _teams.RemoveAll(t => t.IsVirtual);
+    public void RemoveAllVirtualTeams() => _teams.RemoveAll(t => t.IsVirtual);
 
     internal void RemoveAllTeams() => _teams.Clear();
 
-    public void AddNewTeam() => AddTeam(Team.Create($"default {Teams.Count() + 1}", false));
+    public void AddNewTeam()
+    {
+        RemoveAllVirtualTeams();
+        AddTeam(Team.Create($"default {Teams.Count() + 1}", false));
+    }
 
     /// <summary>
-    /// Adds a Team to the Tournament.
-    /// - All Games were deleted
+    /// Adds a Team to the Tournament.<br></br>
+    /// - Deletes all virtual Teams<br></br>
+    /// - All Games were deleted<br></br>
     /// - Startnumbers were reOrganized
     /// </summary>
     /// <param name="team">The <see cref="Team"/> to add</param>
@@ -392,8 +390,7 @@ public class TeamBewerb : ITeamBewerb
         {
             //Gerade Anzahl an Mannschaften
             //Entweder kein Aussetzer oder ZWEI Aussetzer
-            //if (NumberOfPauseGames == 2)
-            if (TwoPauseGames)
+            if (BreaksCount==2)
             {
                 AddVirtualTeams(2);
             }
@@ -417,7 +414,7 @@ public class TeamBewerb : ITeamBewerb
 
                 #region Bahn Berechnen
 
-                if (game.IsPauseGame())
+                if(game.TeamA.IsVirtual || game.TeamB.IsVirtual)
                 {
                     game.CourtNumber = 0;
                 }
@@ -490,7 +487,7 @@ public class TeamBewerb : ITeamBewerb
 
                     #region Bahn berechnen
 
-                    if (game.IsPauseGame())
+                    if(game.TeamA.IsVirtual || game.TeamB.IsVirtual)
                     {
                         game.CourtNumber = 0;
                     }
