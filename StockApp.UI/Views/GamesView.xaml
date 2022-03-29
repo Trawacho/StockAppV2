@@ -76,7 +76,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="Spielgruppe:" Grid.Row="0" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
-          
+
             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" >
                 <TextBlock Text="{Binding GameGroup, Mode=OneWay, Converter={StaticResource GameGroupStringConverter}}" 
                            Margin="5" Width="10" TextAlignment="Center"
@@ -102,10 +102,16 @@
 
 
             <TextBlock Text="Anzahl der Aussetzer:" Grid.Row="2" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
-            <CheckBox Grid.Row="2" Grid.Column="1" Content="2 Aussetzer pro Mannschaft"
-                      Style="{StaticResource CheckBoxGrid}"
-                      IsChecked="{Binding HasTwoBreaks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      IsEnabled="{Binding CountOfNonVirtualTeamsIsEqual, Mode=OneWay}"/>
+            <StackPanel  Grid.Row="2" Grid.Column="1" Orientation="Horizontal" MinWidth="300">
+                <TextBlock Text="{Binding BreaksCount, Mode=OneWay}" 
+                           Margin="5" Width="10" TextAlignment="Center"
+                           Background="White"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Slider Value="{Binding BreaksCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        IsEnabled="{Binding CountOfNonVirtualTeamsIsEqual, Mode=OneWay}"
+                        Minimum="0" Maximum="2" TickPlacement="BottomRight"
+                        Margin="5" Width="105"/>
+            </StackPanel>
 
 
             <TextBlock Text="Anspiel-Wechsel:" Grid.Row="3" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
