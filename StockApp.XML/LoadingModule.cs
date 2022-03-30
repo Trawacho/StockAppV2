@@ -9,13 +9,18 @@ public static class LoadingModule
     public static void Load(ref ITurnier turnier, string filename)
     {
         var serializer = new XmlSerializer(typeof(SerialisableTurnier));
-        SerialisableTurnier serialisableTurnier;
-        using (XmlReader reader = XmlReader.Create(filename))
+        try
         {
-            serialisableTurnier = (SerialisableTurnier)serializer.Deserialize(reader);
+            SerialisableTurnier serialisableTurnier;
+            using (XmlReader reader = XmlReader.Create(filename))
+            {
+                serialisableTurnier = (SerialisableTurnier)serializer.Deserialize(reader);
+            }
+            serialisableTurnier.ToNormal(turnier);
         }
-
-        serialisableTurnier.ToNormal(turnier);
+        catch 
+        {
+        }
     }
 
     public static string Load(string fileName)
