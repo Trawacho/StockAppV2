@@ -1,54 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-	  <PublishReadyToRun>true</PublishReadyToRun>
-	  <PublishSingleFile>true</PublishSingleFile>
-    <Nullable>disable</Nullable>
-    <UseWPF>true</UseWPF>
-    <ApplicationIcon>Ressources\StockAPP_512.ico</ApplicationIcon>
-	<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<PublishSingleFile>true</PublishSingleFile>
+		<Nullable>disable</Nullable>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
+		<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Components\StockAPP_512.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Ressources\StockApp.ico" />
+		<None Remove="Ressources\StockAPP_512.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Ressources\StockAPP_512.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Ressources\StockApp.ico">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="LoadingSpinner.WPF" Version="1.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-    <PackageReference Include="Prism.Core" Version="8.1.97" />
-    <PackageReference Include="SimpleModal.WPF" Version="1.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Ressources\StockAPP_512.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="LoadingSpinner.WPF" Version="1.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+		<PackageReference Include="Prism.Core" Version="8.1.97" />
+		<PackageReference Include="SimpleModal.WPF" Version="1.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\StockApp.Comm\StockApp.Comm.csproj" />
-    <ProjectReference Include="..\StockApp.Prints\StockApp.Prints.csproj" />
-    <ProjectReference Include="..\StockApp.XML\StockApp.XML.csproj" />
-    <ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Components\StockAPP_512.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Views\LiveResultZielView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Views\LiveResultZielView.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\StockApp.Comm\StockApp.Comm.csproj" />
+		<ProjectReference Include="..\StockApp.Prints\StockApp.Prints.csproj" />
+		<ProjectReference Include="..\StockApp.XML\StockApp.XML.csproj" />
+		<ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
+	</ItemGroup>
 
 </Project>

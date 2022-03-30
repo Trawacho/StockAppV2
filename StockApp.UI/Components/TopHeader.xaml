@@ -25,7 +25,7 @@
                        FontStretch="ExtraExpanded"
                        FontSize="24"
                        Margin="16"/>
-            <Image Source="/Components/StockAPP_512.png"  Grid.Column="1" Margin="4" Height="60"/>
+            <Image Source="/Ressources/StockAPP_512.png"  Grid.Column="1" Margin="4" Height="60"/>
         </Grid>
 
     </Border>
