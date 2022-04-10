@@ -3,9 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:components="clr-namespace:StockApp.UI.Components"
              xmlns:vm="clr-namespace:StockApp.UI.ViewModels"
-             xmlns:vs="clr-namespace:StockApp.UI.Views"
-             
-             >
+             xmlns:vs="clr-namespace:StockApp.UI.Views">
 
 
     <Application.Resources>
