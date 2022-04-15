@@ -20,5 +20,8 @@
 
 
 
-
-
+Build-Publish:
+rm .\StockApp.UI\bin\Release -r
+dotnet publish StockApp.UI\StockApp.UI.csproj -r win-x64 -c Release -p:Version=1.0.1.0 --sc 
+copy .\LICENSE .\StockApp.Installer\License.txt
+docker run -it --rm -v C:\Users\daniel\source\repos\StockAppV2:/build nsisimage /build/StockApp.Installer/installer.nsi
