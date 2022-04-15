@@ -5,7 +5,7 @@
 ..StockAppV2>rm .\StockApp.UI\bin\Release -r
 
 # die Executable erstellen
-..StockAppV2>dotnet publish StockApp.UI\StockApp.UI.csproj -r win-x64 -c Release -p:Version=1.0.0.1 --sc 
+..StockAppV2>dotnet publish StockApp.UI\StockApp.UI.csproj -r win-x64 -c Release -p:Version=1.0.1.0 --sc 
 
 # Aus dem Dockerfile ein Image erstellen (nur, wenn das Image noch nicht vorhanden ist)
 ..StockAppV2>docker build -f .\StockApp.Installer\Dockerfile -t nsisimage .
