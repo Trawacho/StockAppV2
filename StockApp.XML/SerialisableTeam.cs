@@ -36,6 +36,9 @@ public class SerialisableTeam : ITeam
     public bool IsVirtual { get; set; }
     public int StartNumber { get; set; }
     public string TeamName { get; set; }
+    
+    [XmlIgnore]
+    public string TeamNameShort { get; }
     public string Nation { get; set; }
 
 

@@ -5,6 +5,11 @@ public interface ITeam : IEquatable<ITeam>
     public bool IsVirtual { get; set; }
     public int StartNumber { get; set; }
     public string TeamName { get; set; }
+
+    /// <summary>
+    /// the first 25 characters from <see cref="TeamName"/>
+    /// </summary>
+    public string TeamNameShort { get; }
     public string Nation { get; set; }
     public IEnumerable<IPlayer> Players { get; }
     public IReadOnlyCollection<IGame> Games { get; }
@@ -95,6 +100,8 @@ public class Team : ITeam
     /// Teamname
     /// </summary>
     public string TeamName { get; set; }
+
+    public string TeamNameShort => new string(TeamName?.Take(25).ToArray() ?? new char[] { });
 
     /// <summary>
     /// Info über Kreis, Bezirk, Verband oder Nation
