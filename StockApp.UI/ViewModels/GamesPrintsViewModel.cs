@@ -16,6 +16,7 @@ public class GamesPrintsViewModel : ViewModelBase
     private bool _hasSummarizedScoreCards;
     private bool _hasNamesOnScoreCard;
     private bool _hasScoreCardsOptimizedForStockTV;
+    private bool _hasOpponentOnScoreCard;
 
     public bool Has8Turns
     {
@@ -25,6 +26,8 @@ public class GamesPrintsViewModel : ViewModelBase
             if (_teamBewerb.Is8TurnsGame == value) return;
             _teamBewerb.Is8TurnsGame = value;
             RaisePropertyChanged();
+            if (value)
+                HasOpponentOnScoreCard = false;
         }
     }
 
@@ -43,13 +46,32 @@ public class GamesPrintsViewModel : ViewModelBase
     public bool HasScoreCardsOptimizedForStockTV
     {
         get => _hasScoreCardsOptimizedForStockTV;
-        set => SetProperty(ref _hasScoreCardsOptimizedForStockTV, value);
+        set
+        {
+            SetProperty(ref _hasScoreCardsOptimizedForStockTV, value);
+            if (value)
+                HasOpponentOnScoreCard = false;
+        }
+    }
+
+    public bool HasOpponentOnScoreCard
+    {
+        get => _hasOpponentOnScoreCard;
+        set
+        {
+            SetProperty(ref _hasOpponentOnScoreCard, value);
+            if (value)
+            {
+                Has8Turns = false;
+                HasScoreCardsOptimizedForStockTV = false;
+            }
+        }
     }
 
     public ICommand PrintScoreCardsCommand => _printScoreCardsCommand ??= new RelayCommand(
         (p) =>
         {
-            _ = Prints.ScoreCards.ScoreCardsFactory.CreateScoreCards(Prints.PageSizes.A4Size, _teamBewerb, HasSummarizedScoreCards, HasNamesOnScoreCard, HasScoreCardsOptimizedForStockTV).ShowAsDialog();
+            _ = Prints.ScoreCards.ScoreCardsFactory.CreateScoreCards(Prints.PageSizes.A4Size, _teamBewerb, HasSummarizedScoreCards, HasNamesOnScoreCard, HasScoreCardsOptimizedForStockTV, HasOpponentOnScoreCard).ShowAsDialog();
         },
         (p) => _teamBewerb.GetCountOfGames() > 0);
 

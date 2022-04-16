@@ -12,7 +12,7 @@
             <Setter Property="Height" Value="800"/>
         </Style>
     </d:DesignerProperties.DesignStyle>
-    
+
     <StackPanel Orientation="Vertical">
 
         <TextBlock Text="Ausdrucke" 
@@ -29,6 +29,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -56,10 +57,16 @@
 
             <TextBlock Text="Mannschaftsnamen:"
                        Grid.Row="2" Grid.Column="0"
-                       Style="{StaticResource TextBlockGrid}"/>
-            <CheckBox Content="Namen der Mannschaften auf Wertungskarten"
-                      Grid.Row="2" Grid.Column="1" Style="{StaticResource CheckBoxGrid}"
+                       Style="{StaticResource TextBlockGrid}"
+                       VerticalAlignment="Top"/>
+            <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" >
+                <CheckBox Content="Name der Mannschaft auf Wertungskarte"
+                      Style="{StaticResource CheckBoxGrid}"
                       IsChecked="{Binding HasNamesOnScoreCard}"/>
+                <CheckBox Content="Namen der Gegner auf Wertungskarte"
+                      Style="{StaticResource CheckBoxGrid}"
+                      IsChecked="{Binding HasOpponentOnScoreCard}"/>
+            </StackPanel>
 
             <TextBlock Text="StockTV:"
                        Grid.Row="3" Grid.Column="0" 

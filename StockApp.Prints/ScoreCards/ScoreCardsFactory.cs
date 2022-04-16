@@ -11,10 +11,9 @@ namespace StockApp.Prints.ScoreCards
 {
     public static class ScoreCardsFactory
     {
-
-        public static FixedDocument CreateScoreCards(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized)
+        public static FixedDocument CreateScoreCards(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized, bool opponentOnScoreCards)
         {
-            return new ScoreCardHelper(pageSize, bewerb, summarizedScoreCards, namesOnScoreCard, stockTvOptimized).CreateScoreCards();
+            return new ScoreCardHelper(pageSize, bewerb, summarizedScoreCards, namesOnScoreCard, stockTvOptimized, opponentOnScoreCards).CreateScoreCards();
         }
     }
 
@@ -24,14 +23,17 @@ namespace StockApp.Prints.ScoreCards
         private readonly bool _summarizedScoreCards;
         private readonly bool _namesOnScoreCard;
         private readonly bool _stockTvOptimized;
+        private readonly bool _opponentOnScoreCards;
 
-        internal ScoreCardHelper(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized) : base(pageSize)
+        internal ScoreCardHelper(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized, bool opponentOnScoreCards) : base(pageSize)
         {
             _teamBewerb = bewerb;
             _summarizedScoreCards = summarizedScoreCards;
             _namesOnScoreCard = namesOnScoreCard;
             _stockTvOptimized = stockTvOptimized;
+            _opponentOnScoreCards = opponentOnScoreCards;
         }
+
 
         internal FixedDocument CreateScoreCards()
         {
@@ -42,14 +44,17 @@ namespace StockApp.Prints.ScoreCards
             {
                 if (_summarizedScoreCards)
                 {
+
                     teamPanels.Add(
                         GetTeamPanel(
                             team,
                             team.Games
                                 .OrderBy(g => g.GameNumberOverAll),
                             _teamBewerb.Is8TurnsGame,
-                            0
+                            0,
+                            _opponentOnScoreCards
                             ));
+
                 }
                 else
                 {
@@ -63,8 +68,9 @@ namespace StockApp.Prints.ScoreCards
                                     .Where(g => g.RoundOfGame == gameRound)
                                     .OrderBy(r => r.GameNumber),
                                 _teamBewerb.Is8TurnsGame,
-                                maxRounds == 1 ? 0 : gameRound
+                                maxRounds == 1 ? 0 : gameRound, _opponentOnScoreCards
                                 ));
+
                     }
 
 
@@ -84,7 +90,7 @@ namespace StockApp.Prints.ScoreCards
         /// <param name="is8TurnGame">Wenn TRUE, dann werden 8 anstatt 7 Kehren gedruckt</param>
         /// <param name="numberOfGameRound">optional, wenn >0, dann wird eine Information der Runde angedruckt</param>
         /// <returns></returns>
-        private StackPanel GetTeamPanel(ITeam team, IEnumerable<IGame> games, bool is8TurnsGame, int numberOfGameRound)
+        private StackPanel GetTeamPanel(ITeam team, IEnumerable<IGame> games, bool is8TurnsGame, int numberOfGameRound, bool opponentOnScoreCards)
         {
             // alles was eine Wertungskarte braucht, kommt in ein Stackpanel
             var panel = new StackPanel();
@@ -93,25 +99,28 @@ namespace StockApp.Prints.ScoreCards
             panel.Children.Add(Components.CutterLineTop());
 
             // Kopfzeile mit Mannschaftsnamen und weitere Infos
-            panel.Children.Add(new ScoreCardHeader(team.StartNumber, team.TeamName, _namesOnScoreCard, is8TurnsGame, numberOfGameRound, _stockTvOptimized));
+            panel.Children.Add(new ScoreCardHeader(team.StartNumber, team.TeamName, _namesOnScoreCard, is8TurnsGame, numberOfGameRound, _stockTvOptimized, opponentOnScoreCards));
 
             // Spaltenüberschriften
-            panel.Children.Add(new ScoreCardHeaderGrid(is8TurnsGame, _stockTvOptimized));
+            panel.Children.Add(new ScoreCardHeaderGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
 
 
             // pro Spiel eine weitere Zeile
             foreach (var game in games)
             {
-                panel.Children.Add(new GameGrid(game, team, is8TurnsGame, _stockTvOptimized));
+                panel.Children.Add(new GameGrid(game, team, is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
             }
 
             // Summenzeile am Ende
-            panel.Children.Add(new GameSummaryGrid(is8TurnsGame, _stockTvOptimized));
+            panel.Children.Add(new GameSummaryGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
 
             // Schneidelinie unten
             panel.Children.Add(Components.CutterLine());
 
             return panel;
         }
+
+
+
     }
 }

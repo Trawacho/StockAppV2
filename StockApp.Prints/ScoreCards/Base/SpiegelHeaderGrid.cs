@@ -6,14 +6,19 @@ namespace StockApp.Prints.ScoreCards.Base
 {
     internal class ScoreCardHeaderGrid : ScoreCardGrid
     {
-        public ScoreCardHeaderGrid(bool is8TurnsGame, bool forStockTV) : base(is8TurnsGame, forStockTV)
+        internal ScoreCardHeaderGrid(bool is8TurnsGame, bool forStockTV, bool opponentOnScoreCards) 
+            : base(is8TurnsGame, forStockTV, opponentOnScoreCards)
         {
             //Two Rows
             RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PixelConverter.CmToPx(0.60)) });
             RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PixelConverter.CmToPx(0.60)) });
 
             int colCounter = 0;
-            int kehrenColSpan = is8TurnsGame ? 8 : 7;
+            int kehrenColSpan = opponentOnScoreCards
+                                    ? 6
+                                    : is8TurnsGame
+                                        ? 8
+                                        : 7;
 
             #region Texte  Moarschaft
 
@@ -39,7 +44,7 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(BorderAnspiel);
             colCounter++;
 
-            if (forStockTV)
+            if (!opponentOnScoreCards && forStockTV)
             {
                 var BorderEingabe = new ScoreCardField("Eingabe", 0);
                 SetColumn(BorderEingabe, 4);
@@ -49,14 +54,11 @@ namespace StockApp.Prints.ScoreCards.Base
                 colCounter++;
             }
 
-
             var BorderKehre = new ScoreCardField("K e h r e n");
             SetColumnSpan(BorderKehre, kehrenColSpan);
             SetColumn(BorderKehre, colCounter);
             SetRow(BorderKehre, 0);
             Children.Add(BorderKehre);
-
-
 
             var BorderKehre1 = new ScoreCardField("1");
             SetColumn(BorderKehre1, colCounter);
@@ -94,18 +96,22 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(BorderKehre6);
             colCounter++;
 
-            var BorderKehre7 = new ScoreCardField("7");
-            SetColumn(BorderKehre7, colCounter);
-            SetRow(BorderKehre7, 1);
-            Children.Add(BorderKehre7);
-            colCounter++;
-            if (is8TurnsGame)
+            if (!opponentOnScoreCards)
             {
-                var BorderKehre8 = new ScoreCardField("8");
-                SetColumn(BorderKehre8, colCounter);
-                SetRow(BorderKehre8, 1);
-                Children.Add(BorderKehre8);
+                var BorderKehre7 = new ScoreCardField("7");
+                SetColumn(BorderKehre7, colCounter);
+                SetRow(BorderKehre7, 1);
+                Children.Add(BorderKehre7);
                 colCounter++;
+
+                if (is8TurnsGame)
+                {
+                    var BorderKehre8 = new ScoreCardField("8");
+                    SetColumn(BorderKehre8, colCounter);
+                    SetRow(BorderKehre8, 1);
+                    Children.Add(BorderKehre8);
+                    colCounter++;
+                }
             }
 
             var BorderSumme = new ScoreCardField("Summe", 0);
@@ -115,7 +121,7 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(BorderSumme);
             colCounter++;
 
-            if (!forStockTV)
+            if (!opponentOnScoreCards && !forStockTV)
             {
                 var BorderStrafSumme = new ScoreCardField("Straf-\r\npunkte", 0);
                 SetColumn(BorderStrafSumme, colCounter);
@@ -135,7 +141,6 @@ namespace StockApp.Prints.ScoreCards.Base
             #endregion
 
             colCounter++;
-
 
             #region Texte Gegner
 
@@ -187,19 +192,22 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(BorderKehre6G);
             colCounter++;
 
-            var BorderKehre7G = new ScoreCardField("7");
-            SetColumn(BorderKehre7G, colCounter);
-            SetRow(BorderKehre7G, 1);
-            Children.Add(BorderKehre7G);
-            colCounter++;
-
-            if (is8TurnsGame)
+            if (!opponentOnScoreCards)
             {
-                var BorderKehre8G = new ScoreCardField("8");
-                SetColumn(BorderKehre8G, colCounter);
-                SetRow(BorderKehre8G, 1);
-                Children.Add(BorderKehre8G);
+                var BorderKehre7G = new ScoreCardField("7");
+                SetColumn(BorderKehre7G, colCounter);
+                SetRow(BorderKehre7G, 1);
+                Children.Add(BorderKehre7G);
                 colCounter++;
+
+                if (is8TurnsGame)
+                {
+                    var BorderKehre8G = new ScoreCardField("8");
+                    SetColumn(BorderKehre8G, colCounter);
+                    SetRow(BorderKehre8G, 1);
+                    Children.Add(BorderKehre8G);
+                    colCounter++;
+                }
             }
 
             var BorderSummeG = new ScoreCardField("Summe", 0);
@@ -210,7 +218,7 @@ namespace StockApp.Prints.ScoreCards.Base
             colCounter++;
 
 
-            if (!forStockTV)
+            if (!opponentOnScoreCards && !forStockTV)
             {
                 var BorderStrafSummeG = new ScoreCardField("Straf-\r\npunkte", 0);
                 SetColumn(BorderStrafSummeG, colCounter);
@@ -225,8 +233,18 @@ namespace StockApp.Prints.ScoreCards.Base
             SetRowSpan(BorderPunkteG, 2);
             Children.Add(BorderPunkteG);
 
+            if (opponentOnScoreCards)
+            {
+                colCounter++;
+                var BorderNameG = new ScoreCardField("Gegner", 0);
+                SetColumn(BorderNameG, colCounter);
+                SetRowSpan(BorderNameG, 2);
+                Children.Add(BorderNameG);
+            }
+
             #endregion
 
         }
+   
     }
 }

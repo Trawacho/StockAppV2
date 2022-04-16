@@ -6,7 +6,7 @@ namespace StockApp.Prints.ScoreCards.Base
 {
     internal class GameSummaryGrid : ScoreCardGrid
     {
-        internal GameSummaryGrid(bool is8TurnsGame, bool forStockTv) : base(is8TurnsGame, forStockTv)
+        internal GameSummaryGrid(bool is8TurnsGame, bool forStockTv, bool opponentOnScoreCards) : base(is8TurnsGame, forStockTv, opponentOnScoreCards)
         {
             RowDefinitions.Add(new RowDefinition()
             {
@@ -23,10 +23,9 @@ namespace StockApp.Prints.ScoreCards.Base
             SetColumnSpan(textBlockWerbung, 8);
             Children.Add(textBlockWerbung);
 
-
             int startColumn = is8TurnsGame ? 9 : 8;
             startColumn += forStockTv ? 1 : 0;
-
+            if (opponentOnScoreCards) startColumn = 7;
 
 
             var textBlockGesamt = new TextBlockGesamt();
@@ -41,7 +40,7 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(BorderSumme);
             startColumn++;
 
-            if (!forStockTv)
+            if (!opponentOnScoreCards && !forStockTv)
             {
                 var BorderStrafSumme = new ScoreCardField(string.Empty, 0);
                 SetColumn(BorderStrafSumme, startColumn);
@@ -54,7 +53,11 @@ namespace StockApp.Prints.ScoreCards.Base
             SetColumn(BorderPunkte, startColumn);
             Children.Add(BorderPunkte);
 
-            startColumn = is8TurnsGame ? startColumn + 9 : startColumn + 8;
+            startColumn = opponentOnScoreCards
+                            ? startColumn + 7
+                            : is8TurnsGame
+                                ? startColumn + 9
+                                : startColumn + 8;
 
             var textBlockGesamtG = new TextBlockGesamt();
             SetColumn(textBlockGesamtG, startColumn);
@@ -68,7 +71,7 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(BorderSummeG);
             startColumn++;
 
-            if (!forStockTv)
+            if (!opponentOnScoreCards && !forStockTv)
             {
                 var BorderStrafSummeG = new ScoreCardField(string.Empty, 0);
                 SetColumn(BorderStrafSummeG, startColumn);

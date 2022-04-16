@@ -7,10 +7,17 @@ namespace StockApp.Prints.ScoreCards.Base
 {
     internal class GameGrid : ScoreCardGrid
     {
-        public GameGrid(IGame game, ITeam team, bool is8turnsGame, bool forStockTV) : base(is8turnsGame, forStockTV)
+        /// <summary>
+        /// 6,7 oder 8 Kehren mit optionalem Feld für die StockTV-Farbe oder Name für Gegener
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="team"></param>
+        /// <param name="is8turnsGame"></param>
+        /// <param name="forStockTV"></param>
+        public GameGrid(IGame game, ITeam team, bool is8turnsGame, bool forStockTV, bool opponentOnScoreCards) : base(is8turnsGame, forStockTV, opponentOnScoreCards)
         {
 
-            int colCounter = is8turnsGame ? 27 : 25;
+            int colCounter = this.ColumnDefinitions.Count;
             string NumberOfGame = game.GameNumberOverAll.ToString();
             string NumberOfArea = game.CourtNumber.ToString();
             string Opponent = team.StartNumber == game.TeamA.StartNumber ? game.TeamB.StartNumber.ToString() : game.TeamA.StartNumber.ToString();
@@ -24,9 +31,13 @@ namespace StockApp.Prints.ScoreCards.Base
 
             if (game.IsPauseGame())
             {
-                //In Spalte 14(15) die Spielnummer eintragen
+                //In Spalte 12,14 oder 15 die Spielnummer eintragen
                 var b1 = new ScoreCardField(NumberOfGame, 0);
-                if (is8turnsGame)
+                if (opponentOnScoreCards)
+                {
+                    SetColumn(b1, 12);
+                }
+                else if (is8turnsGame)
                 {
                     SetColumn(b1, 15);
                 }
@@ -42,16 +53,20 @@ namespace StockApp.Prints.ScoreCards.Base
                 SetColumnSpan(b2, 3);
                 Children.Add(b2);
 
-                for (int i = 3; i < colCounter; i++) //In die Spalten 3 bis 24 einen grauen block eintragen
+                for (int i = 3; i < colCounter; i++) //In die Spalten einen grauen block eintragen
                 {
-                    if (is8turnsGame)
+                    //Die Spalte Trennstrich und Spalte Spielnummer freilassen
+                    if (opponentOnScoreCards)
                     {
-                        if (i == 14 || i == 15) continue; //Die Spalte 13 (Trennstrich) und Spalte 14 (Spielnummer) freilassen
-
+                        if (i == 11 | i == 12) continue;
+                    }
+                    else if (is8turnsGame)
+                    {
+                        if (i == 14 || i == 15) continue;
                     }
                     else
                     {
-                        if (i == 13 || i == 14) continue; //Die Spalte 13 (Trennstrich) und Spalte 14 (Spielnummer) freilassen
+                        if (i == 13 || i == 14) continue;
                     }
                     var b = new ScoreCardField(Brushes.LightGray);
                     SetColumn(b, i);
@@ -63,20 +78,28 @@ namespace StockApp.Prints.ScoreCards.Base
                 for (int i = 0; i < colCounter; i++)
                 {
                     //leerer Spalt übersrpingen
-                    if (i == (is8turnsGame ? 14 : 13))
+                    if (i == (opponentOnScoreCards ? 11 : is8turnsGame ? 14 : 13))
                         i++;
 
-                    string t = i switch
+                    string text = i switch
                     {
                         0 => NumberOfArea,
                         1 => Opponent,
                         2 => StartOfGame,
-                        3 => forStockTV ? ColorName : string.Empty,
-                        14 => !is8turnsGame ? NumberOfGame : string.Empty,
-                        15 => is8turnsGame ? NumberOfGame : string.Empty,
+                        3 => !opponentOnScoreCards && forStockTV ? ColorName : string.Empty,
+                        12 => opponentOnScoreCards ? NumberOfGame : string.Empty,
+                        14 => !opponentOnScoreCards && !is8turnsGame ? NumberOfGame : string.Empty,
+                        15 => !opponentOnScoreCards && is8turnsGame ? NumberOfGame : string.Empty,
+                        21 => opponentOnScoreCards ? (game.TeamA.StartNumber == team.StartNumber) ? game.TeamB.TeamNameShort : game.TeamA.TeamNameShort : string.Empty,
                         _ => string.Empty,
                     };
-                    var b = new ScoreCardField(t, 0);
+                    var b = new ScoreCardField(text, 0);
+
+                    if (i == 21 && opponentOnScoreCards)
+                    {
+                        b.Textblock.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+                        b.Textblock.Padding = new System.Windows.Thickness(3, 0, 0, 0);
+                    }
 
                     SetColumn(b, i);
                     Children.Add(b);

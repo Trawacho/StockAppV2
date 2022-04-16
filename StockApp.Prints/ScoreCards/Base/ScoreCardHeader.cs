@@ -12,9 +12,15 @@ namespace StockApp.Prints.ScoreCards.Base
         private readonly string _startNummer;
         private readonly string _teamName;
 
-        private ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8, bool forStockTV) : base(kehren8, forStockTV)
+       
+        private ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8, bool forStockTV, bool opponentOnScoreCards) 
+            : base(kehren8, forStockTV, opponentOnScoreCards)
         {
-            int columnSpan = kehren8 ? 8 : 7;
+            int columnSpan = opponentOnScoreCards
+                                ? 5
+                                : kehren8
+                                    ? 8
+                                    : 7;
 
             _startNummer = startNumber.ToString();
             _teamName = teamName;
@@ -100,7 +106,8 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(textBlockGegner);
         }
 
-        internal ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8, int numberOfRound, bool forStockTV) : this(startNumber, teamName, printTeamName, kehren8, forStockTV)
+        internal ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8, int numberOfRound, bool forStockTV, bool opponentOnScoreCards)
+            : this(startNumber, teamName, printTeamName, kehren8, forStockTV, opponentOnScoreCards)
         {
             if (numberOfRound > 0)
             {
