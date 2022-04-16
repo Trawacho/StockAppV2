@@ -53,6 +53,8 @@ public interface ITeamBewerb : IBewerb
     void AddVirtualTeams(int count);
 
     void RemoveTeam(ITeam team);
+    
+    void RemoveAllTeams();
 
     void RemoveAllVirtualTeams();
 
@@ -297,7 +299,7 @@ public class TeamBewerb : ITeamBewerb
 
     public void RemoveAllVirtualTeams() => _teams.RemoveAll(t => t.IsVirtual);
 
-    internal void RemoveAllTeams() => _teams.Clear();
+    public void RemoveAllTeams() => _teams.Clear();
 
     public void AddNewTeam()
     {
