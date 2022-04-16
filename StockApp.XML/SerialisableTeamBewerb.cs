@@ -50,39 +50,51 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     internal void ToNormal(ITeamBewerb teamBewerb)
     {
+
+        teamBewerb.NumberOfGameRounds = NumberOfGameRounds;
+        teamBewerb.Is8TurnsGame = Is8TurnsGame;
+        teamBewerb.StartingTeamChange = StartingTeamChange;
+        teamBewerb.SpielGruppe = SpielGruppe;
+        teamBewerb.BreaksCount = BreaksCount;
+
+        //alle Teams löschen
+        teamBewerb.RemoveAllTeams();
+
+        // Alle Teams erzeugen
+        for (int i = 0; i < SerialisableTeams.Count; i++)
         {
-            teamBewerb.NumberOfGameRounds = NumberOfGameRounds;
-            teamBewerb.Is8TurnsGame = Is8TurnsGame;
-            teamBewerb.StartingTeamChange = StartingTeamChange;
-            teamBewerb.SpielGruppe = SpielGruppe;
-            teamBewerb.BreaksCount = BreaksCount;
+            teamBewerb.AddNewTeam();
+        }
+        // den erzeugten Teams die Eigenschaften zuweisen
+        foreach (var team in SerialisableTeams)
+        {
+            var normalTeam = teamBewerb.Teams.First(t => t.StartNumber == team.StartNumber);
+            team.ToNormal(normalTeam);
+        }
 
-            // Alle Teams erzeugen
-            for (int i = 0; i < SerialisableTeams.Count; i++)
-            {
-                teamBewerb.AddNewTeam();
-            }
-            // den erzeugten Teams die Eigenschaften zuweisen
-            foreach (var team in SerialisableTeams)
-            {
-                var normalTeam = teamBewerb.Teams.First(t => t.StartNumber == team.StartNumber);
-                team.ToNormal(normalTeam);
-            }
+        // jedem Spiel die Mannschaften zuweisen und dann jeder Mannschaft die Spiele zuweisen.
+        foreach (var game in SerialisableGames)
+        {
+            var teamA = teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamA);
+            var teamB = teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamB);
+            var newGame = Game.Create(teamA, teamB, game.GameNumber, game.RoundOfGame, game.GameNumberOverAll);
+            newGame.CourtNumber = game.CourtNumber;
+            newGame.IsTeamA_Starting = game.IsTeamA_Starting;
+            newGame.Spielstand.SetMasterTeamAValue(game.SerialisableSpielstand.A);
+            newGame.Spielstand.SetMasterTeamBValue(game.SerialisableSpielstand.B);
+            teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamA).AddGame(newGame);
+            teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamB).AddGame(newGame);
+        }
 
-            // jedem Spiel die Mannschaften zuweisen und dann jeder Mannschaft die Spiele zuweisen.
-            foreach (var game in SerialisableGames)
+        //Wenn alle Spielstände 0:0 sind, dann jeden Spielstand Resetten, damit IsSetByHand auf false steht
+        if (!teamBewerb.Teams.Any(t => t.GetStockPunkteDifferenz() != 0))
+        {
+            foreach (var game in teamBewerb.Games)
             {
-                var teamA = teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamA);
-                var teamB = teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamB);
-                var newGame = Game.Create(teamA, teamB, game.GameNumber, game.RoundOfGame, game.GameNumberOverAll);
-                newGame.CourtNumber = game.CourtNumber;
-                newGame.IsTeamA_Starting = game.IsTeamA_Starting;
-                newGame.Spielstand.SetMasterTeamAValue(game.SerialisableSpielstand.A);
-                newGame.Spielstand.SetMasterTeamBValue(game.SerialisableSpielstand.B);
-                teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamA).AddGame(newGame);
-                teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamB).AddGame(newGame);
+                game.Spielstand.Reset(true);
             }
         }
+
 
     }
 
@@ -157,6 +169,11 @@ public class SerialisableTeamBewerb : ITeamBewerb
     }
 
     public void RemoveTeam(ITeam team)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveAllTeams()
     {
         throw new NotImplementedException();
     }
