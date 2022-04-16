@@ -5,7 +5,7 @@
 ..StockAppV2>rm .\StockApp.UI\bin\Release -r
 
 # die Executable erstellen
-..StockAppV2>dotnet publish StockApp.UI\StockApp.UI.csproj -r win-x64 -c Release -p:Version=1.0.1.0 --sc 
+..StockAppV2>dotnet publish StockApp.UI\StockApp.UI.csproj -r win-x64 -c Release -p:Version=1.0.2.0 --sc 
 
 # Aus dem Dockerfile ein Image erstellen (nur, wenn das Image noch nicht vorhanden ist)
 ..StockAppV2>docker build -f .\StockApp.Installer\Dockerfile -t nsisimage .
@@ -20,8 +20,8 @@
 
 
 
-Build-Publish:
+Build-Publish: (Version ändern in dieser Datei 2x, installer.nsi, StockApp.UI)
 rm .\StockApp.UI\bin\Release -r
-dotnet publish StockApp.UI\StockApp.UI.csproj -r win-x64 -c Release -p:Version=1.0.1.0 --sc 
+dotnet publish StockApp.UI\StockApp.UI.csproj -r win-x64 -c Release -p:Version=1.0.2.0 --sc 
 copy .\LICENSE .\StockApp.Installer\License.txt
 docker run -it --rm -v C:\Users\daniel\source\repos\StockAppV2:/build nsisimage /build/StockApp.Installer/installer.nsi
