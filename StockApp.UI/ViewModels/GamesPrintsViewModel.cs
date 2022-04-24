@@ -13,6 +13,7 @@ public class GamesPrintsViewModel : ViewModelBase
     private ICommand _printScoreCardsCommand;
     private ICommand _printCourtCardsCommand;
     private ICommand _printReceiptsCommand;
+    private ICommand _printSpielPlanCommand;
     private bool _hasSummarizedScoreCards;
     private bool _hasNamesOnScoreCard;
     private bool _hasScoreCardsOptimizedForStockTV;
@@ -88,6 +89,13 @@ public class GamesPrintsViewModel : ViewModelBase
             _ = Prints.Receipts.ReceiptsFactory.CreateReceipts(Prints.PageSizes.A4Size, _turnierStore.Turnier).ShowAsDialog();
         },
         (p) => (_teamBewerb.Teams?.Count() ?? 0) > 0);
+
+    public ICommand PrintSpielPlanCommand => _printSpielPlanCommand ??= new RelayCommand(
+        (p) =>
+        {
+            _ = Prints.Spielplan.SpielPlanFactory.CreateSpielPlan(Prints.PageSizes.A4Size, _teamBewerb).ShowAsDialog();
+        },
+        (p) => _teamBewerb.GetCountOfGames() > 0);
 
     public GamesPrintsViewModel(ITeamBewerb teamBewerb, ITurnierStore turnierStore)
     {

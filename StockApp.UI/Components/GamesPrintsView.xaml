@@ -91,6 +91,11 @@
                     Margin="5" Padding="10"
                     Command="{Binding PrintReceiptsCommand}"/>
 
+            <Button Content="Spielplan"
+                    Grid.Row="7" Grid.Column="0"
+                    Margin="5" Padding="10"
+                    Command="{Binding PrintSpielPlanCommand}"/>
+
         </Grid>
 
     </StackPanel>
