@@ -53,7 +53,7 @@ public interface ITeamBewerb : IBewerb
     void AddVirtualTeams(int count);
 
     void RemoveTeam(ITeam team);
-    
+
     void RemoveAllTeams();
 
     void RemoveAllVirtualTeams();
@@ -392,7 +392,7 @@ public class TeamBewerb : ITeamBewerb
         {
             //Gerade Anzahl an Mannschaften
             //Entweder kein Aussetzer oder ZWEI Aussetzer
-            if (BreaksCount==2)
+            if (BreaksCount == 2)
             {
                 AddVirtualTeams(2);
             }
@@ -416,7 +416,7 @@ public class TeamBewerb : ITeamBewerb
 
                 #region Bahn Berechnen
 
-                if(game.TeamA.IsVirtual || game.TeamB.IsVirtual)
+                if (game.TeamA.IsVirtual || game.TeamB.IsVirtual)
                 {
                     game.CourtNumber = 0;
                 }
@@ -489,7 +489,7 @@ public class TeamBewerb : ITeamBewerb
 
                     #region Bahn berechnen
 
-                    if(game.TeamA.IsVirtual || game.TeamB.IsVirtual)
+                    if (game.TeamA.IsVirtual || game.TeamB.IsVirtual)
                     {
                         game.CourtNumber = 0;
                     }
@@ -612,22 +612,25 @@ public class TeamBewerb : ITeamBewerb
             var courtGames = GetGamesOfCourt(bahnNumber);   //Alle Spiele im Turnier auf dieser Bahn
 
 
-            int spielZähler = 1;
+            int spielZähler = 0;
 
             //Jedes verfügbare Spiel im Datagramm durchgehen, i+2, da jedes Spiel 2 Bytes braucht. Im ersten Byte der Wert für Links, das zweite Byte für den Wert rechts
             for (int i = 0; i < telegram.Values.Length; i += 2)
             {
+                spielZähler++;
+
+                //Prüfen ob das vorherige Spiel abgeschlossen ist und in den Master kopiert werden kann
                 var preGame = courtGames.FirstOrDefault(g => g.GameNumberOverAll == spielZähler - 1);
-                if (preGame != null)
-                {
-                    preGame.Spielstand.CopyLiveToMasterValues();
-                }
+                if (preGame != null) preGame.Spielstand.CopyLiveToMasterValues();
 
                 var game = courtGames.FirstOrDefault(g => g.GameNumberOverAll == spielZähler);
-                if (game == null)
-                    continue;
+                if (game == null) continue; //Wenn kein Spiel gefunden wird, sofort zur nächsten iteration gehen
 
-                game.Spielstand.Reset();        // game.NetworkTurn.Reset();
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine($"Spielstand schreiben für Game#OA:{game.GameNumberOverAll} -({spielZähler})- {string.Join("-", telegram.Values[i], telegram.Values[i + 1])}");
+#endif
+
+                game.Spielstand.Reset();
 
                 if (SpielrichtungRechtsNachLinks)
                 {
@@ -658,7 +661,7 @@ public class TeamBewerb : ITeamBewerb
                     }
                 }
 
-                spielZähler++;
+
             }
         }
         catch (Exception ex)
