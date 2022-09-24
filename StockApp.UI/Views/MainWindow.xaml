@@ -13,7 +13,7 @@
         Title="{Binding WindowTitle}" Height="800" Width="1200"
         MinWidth="800"
         MinHeight="600"
-        FontFamily="Verdana"
+        FontFamily="Calibri"
         FontSize="16" >
 
     <b:Interaction.Triggers>
