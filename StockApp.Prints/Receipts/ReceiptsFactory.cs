@@ -46,7 +46,7 @@ namespace StockApp.Prints.Receipts
                 receipt.labelVon.Content = team.TeamName;
                 receipt.labelEUR.Content = _turnier.OrgaDaten.EntryFee.Value.ToString("C");
                 receipt.labelVerbal.Content = $"-- {_turnier.OrgaDaten.EntryFee.Verbal} --";
-                receipt.labelZweck.Content = _turnier.OrgaDaten.TournamentName;
+                receipt.labelZweck.Content = "Startgebühr";
                 receipt.labelOrtDatum.Content = _turnier.OrgaDaten.Venue + ", " + _turnier.OrgaDaten.DateOfTournament.ToString("dd.MM.yyyy");
                 receiptStackPanel.Children.Add(receipt);
 
