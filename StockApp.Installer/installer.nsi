@@ -4,7 +4,7 @@
 
 
 !ifndef FULL_VERSION
-!define FULL_VERSION      1.0.3.0
+!define FULL_VERSION      1.0.4.0
 !endif
 
 !ifndef SOURCE_DIR
