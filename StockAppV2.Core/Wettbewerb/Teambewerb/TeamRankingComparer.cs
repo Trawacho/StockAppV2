@@ -72,7 +72,7 @@ public partial class TeamRankingComparer : IComparer<ITeam>
 
     }
 
-    internal int GetRandom()
+    private int GetRandom()
     {
         return (new Random().Next(int.MinValue, int.MaxValue) <= 0) ? -1 : 1;
     }

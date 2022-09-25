@@ -207,6 +207,8 @@ public class TeamRankingComparerTest
             Assert.That(teamListe[3].StartNumber == 5, Is.True);
             Assert.That(teamListe[4].StartNumber == 1, Is.True);
 
+            Assert.That(_comparer.Compare(teamListe[0], teamListe[1]), Is.EqualTo(-1));
+            Assert.That(_comparer.Compare(teamListe[4], teamListe[1]), Is.EqualTo(1));
         });
     }
 
