@@ -155,7 +155,7 @@ public class TeamRankingComparerTest
     [Test]
     public void TestCompareDirekterVergleich()
     {
-        var teamListe = _teamBewerb.Teams.Where(t => !t.IsVirtual).ToList();
+        var teamListe = _teamBewerb.Teams.Where(t => !t.IsVirtual);
 
         Assert.That(_comparer.CompareDirekterVergleich(teamListe.First(t => t.StartNumber == 2).Games, 2, 4, false), Is.EqualTo(0));
         Assert.That(_comparer.CompareDirekterVergleich(teamListe.First(t => t.StartNumber == 5).Games, 5, 1, false), Is.EqualTo(-1));
