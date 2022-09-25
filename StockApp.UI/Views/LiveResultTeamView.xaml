@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:StockApp.UI.Views"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
         xmlns:conv="clr-namespace:StockApp.UI.Converters"
+        xmlns:vm="clr-namespace:StockApp.UI.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:LiveResultsTeamViewModel, IsDesignTimeCreatable=True}"
         x:Name="LiveResultTeamViewWindow"
         Title="{Binding WindowTitle}" Height="450" Width="800">
 

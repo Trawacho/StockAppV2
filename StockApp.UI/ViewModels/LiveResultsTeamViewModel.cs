@@ -43,6 +43,13 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         IsLive = true;
     }
 
+    /// <summary>
+    /// only for Design Instance
+    /// </summary>
+    public LiveResultsTeamViewModel()
+    {
+
+    }
 
     private void TeamBewerb_GamesChanged(object sender, EventArgs e)
     {
