@@ -44,9 +44,8 @@ public interface ITeamBewerb : IBewerb
     /// Number of Top Teams, where the names of the players are on the printed Result
     /// </summary>
     int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
-
-
     int SpielGruppe { get; set; }
+    IERVersion IERVersion { get; set; }
 
     void AddNewTeam();
 
@@ -88,7 +87,7 @@ public interface ITeamBewerb : IBewerb
 
     public IEnumerable<IGame> GetAllGames(bool withBreaks = true);
 
-    public IEnumerable<ITeam> GetTeamsRanked(bool live = false);
+    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false);
 
 }
 
@@ -121,7 +120,7 @@ public class TeamBewerb : ITeamBewerb
     private readonly List<ITeam> _teams = new();
     private int _numberOfGameRounds = 1;
     private int _breakCount = 1;
-
+    private int _spielGruppe;
     #endregion
 
     #region Properties
@@ -180,9 +179,7 @@ public class TeamBewerb : ITeamBewerb
     /// Bei wieviel Mannschaften werden die Spielernamen auf der Ergebnisliste mit angedruckt
     /// </summary>
     public int NumberOfTeamsWithNamedPlayerOnResult { get; set; } = 3;
-
-
-    private int _spielGruppe;
+   
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind
@@ -197,6 +194,8 @@ public class TeamBewerb : ITeamBewerb
             this._spielGruppe = value;
         }
     }
+
+    public IERVersion IERVersion { get; set; } = IERVersion.v2022;
 
     #endregion
 
@@ -275,12 +274,11 @@ public class TeamBewerb : ITeamBewerb
     /// </summary>
     /// <param name="live"></param>
     /// <returns></returns>
-    public IEnumerable<ITeam> GetTeamsRanked(bool live = false)
+    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false)
     {
-        return Teams.Where(t => !t.IsVirtual)
-                 .OrderByDescending(a => a.GetSpielPunkte(live).positiv)
-                 .ThenByDescending(b => b.GetStockNote(live))
-                 .ThenByDescending(c => c.GetStockPunkteDifferenz(live));
+        var comparer = new TeamRankingComparer(live, IERVersion);
+
+        return Teams.Where(t => !t.IsVirtual).OrderBy(t => t, comparer);
     }
 
     #endregion

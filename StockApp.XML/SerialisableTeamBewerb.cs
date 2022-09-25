@@ -129,6 +129,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public int NumberOfCourts => throw new NotImplementedException();
     [XmlIgnore]
     public int NumberOfTeamsWithNamedPlayerOnResult { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    [XmlIgnore]
+    public IERVersion IERVersion { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 #pragma warning disable 67
     public event EventHandler TeamsChanged;
@@ -163,7 +165,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         throw new NotImplementedException();
     }
 
-    public IEnumerable<ITeam> GetTeamsRanked(bool live = false)
+    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false)
     {
         throw new NotImplementedException();
     }

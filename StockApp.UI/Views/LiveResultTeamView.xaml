@@ -5,9 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StockApp.UI.Views"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
+        xmlns:conv="clr-namespace:StockApp.UI.Converters"
         mc:Ignorable="d"
+        x:Name="LiveResultTeamViewWindow"
         Title="{Binding WindowTitle}" Height="450" Width="800">
-    
+
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Closed">
             <b:InvokeCommandAction Command="{Binding CloseCommand}"/>
@@ -17,6 +19,7 @@
     <Window.Resources>
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
 
         <Style x:Key="ColumnElementLeftAlignStyle" TargetType="TextBlock">
             <Setter Property="Margin" Value="5,0,5,0"/>
@@ -29,13 +32,14 @@
         </Style>
 
     </Window.Resources>
-    
+
     <Grid>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+
         <Viewbox VerticalAlignment="Top" Margin="10" Grid.Row="0" HorizontalAlignment="Stretch">
 
             <DataGrid ItemsSource="{Binding Path=RankedTeamList, Mode=OneWay}"
@@ -47,7 +51,7 @@
 
                 <DataGrid.Columns>
 
-                    <DataGridTextColumn Header="Platz"
+                    <DataGridTextColumn Header="Rang"
                                         Binding="{Binding Rank}"/>
 
                     <DataGridTextColumn Header="Name" 
@@ -58,6 +62,22 @@
                                         ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
                                         Binding="{Binding SpielPunkte}"/>
 
+
+                    <DataGridTextColumn Header="Stocknote" 
+                                        ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                        Binding="{Binding StockNote}"
+                                        Visibility="{Binding Path=IsChecked, 
+                                                             Source={x:Reference radioButtonIERVersion2022},
+                                                             Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
+
+
+                    <DataGridTextColumn Header="Differenz" 
+                                        ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                        Binding="{Binding StockPunkteDifferenz}"
+                                        Visibility="{Binding Path=IsChecked, 
+                                                             Source={x:Reference radioButtonIERVersion2022},
+                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
                     <DataGridTextColumn Header="Stockpunkte" 
                                         ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
                                         Binding="{Binding StockPunkte}"
@@ -65,17 +85,7 @@
                                                              Source={x:Reference checkBoxShowStockPunkte},
                                                              Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                    <DataGridTextColumn Header="Stocknote" 
-                                        ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
-                                        Binding="{Binding StockNote}"/>
 
-                    <DataGridTextColumn Header="Differenz" 
-                                        ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
-                                        Binding="{Binding StockPunkteDifferenz}"
-                                        Visibility="{Binding Path=IsChecked,
-                                                             Source={x:Reference checkBoxShowDifferenz},
-                                                             Converter={StaticResource BooleanToVisibilityConverter}}"/>
-               
                 </DataGrid.Columns>
 
             </DataGrid>
@@ -84,14 +94,15 @@
 
         <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
 
-            <CheckBox IsChecked="{Binding Path=ShowDifferenz, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      Content="Differenz"
-                      x:Name="checkBoxShowDifferenz"
-                      HorizontalAlignment="Stretch"
-                      HorizontalContentAlignment="Left"
-                      VerticalAlignment="Stretch"
-                      VerticalContentAlignment="Center"
-                      Margin="10" Padding="10" IsThreeState="False"/>
+            <RadioButton IsChecked="{Binding Path=IERVersion2022, Mode=OneWay}"
+                         Content="neue Regeleung 2022"
+                         x:Name="radioButtonIERVersion2022"
+                         HorizontalAlignment="Stretch"
+                         HorizontalContentAlignment="Left"
+                         VerticalAlignment="Stretch"
+                         VerticalContentAlignment="Center"
+                         IsEnabled="False"
+                         Margin="10" Padding="10"/>
 
             <CheckBox IsChecked="{Binding Path=ShowStockPunkte, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       Content="StockPunkte"

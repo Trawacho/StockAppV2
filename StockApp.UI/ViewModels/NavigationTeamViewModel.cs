@@ -15,7 +15,7 @@ public class NavigationTeamViewModel : ViewModelBase
                                     INavigationService<TeamsViewModel> teamsNavigationService,
                                     INavigationService<GamesViewModel> gamesNavigationService,
                                     INavigationService<ResultsViewModel> resultsNavigationService,
-                                    IDialogService<LiveResultsTeamViewModel> liveResultTeamDialogCommand)
+                                    IDialogService<LiveResultsTeamViewModel> liveResultTeamDialogService)
     {
         _turnierStore = turnierStore;
         TeamBewerb.TeamsChanged += TeamBewerb_TeamsChanged;
@@ -24,7 +24,7 @@ public class NavigationTeamViewModel : ViewModelBase
         NavigateTeamsCommand = new NavigateCommand<TeamsViewModel>(teamsNavigationService);
         NavigateGamesCommand = new NavigateCommand<GamesViewModel>(gamesNavigationService);
         NavigateResultsCommand = new NavigateCommand<ResultsViewModel>(resultsNavigationService);
-        NavigateLiveResultsCommand = new DialogCommand<LiveResultsTeamViewModel>(liveResultTeamDialogCommand);
+        NavigateLiveResultsCommand = new DialogCommand<LiveResultsTeamViewModel>(liveResultTeamDialogService);
     }
 
     protected override void Dispose(bool disposing)

@@ -47,6 +47,11 @@ public class ResultsViewModel : ViewModelBase
         set => SetProperty(ref _inputPerTeam, value, () => { if (value == true) ResultsEntryViewModel = new ResultInputPerTeamViewModel(_teamBewerb.Teams); });
     }
 
+    public bool RankingNewIERVersion
+    {
+        get => _teamBewerb.IERVersion == IERVersion.v2022;
+        set => _teamBewerb.IERVersion = value ? IERVersion.v2022 : IERVersion.v2018;
+    }
 
     public bool AcceptNetworkResults { get => _turnierNetworkManager.AcceptNetworkResult; set => _turnierNetworkManager.AcceptNetworkResult = value; }
 

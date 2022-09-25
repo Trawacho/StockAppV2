@@ -19,6 +19,14 @@ public class TeamResultPageViewModel
             RankedTeams.Add(new RankedTeamViewModel(rank, t, rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult));
             rank++;
         }
+        
+    }
+
+    /// <summary>
+    /// only for Design-Time
+    /// </summary>
+    internal TeamResultPageViewModel()
+    {
 
     }
 
@@ -45,9 +53,8 @@ public class TeamResultPageViewModel
     public string CompetitionManagerClub => _turnier.OrgaDaten.CompetitionManager.ClubName;
     public bool HasCompetitionManager => !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.CompetitionManager.Name);
 
-
     public IList<RankedTeamViewModel> RankedTeams { get; } = new List<RankedTeamViewModel>();
 
-
+    public bool IERVersion2022 => _teamBewerb?.IERVersion == IERVersion.v2022;
 }
 

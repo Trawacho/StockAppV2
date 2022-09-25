@@ -39,7 +39,6 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
             (p) => RaiseCloseRequest(null),
             (p) => true);
 
-        ShowDifferenz = true;
         ShowStockPunkte = true;
         IsLive = true;
     }
@@ -81,12 +80,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         set => SetProperty(ref _showStockPunkte, value);
     }
 
-    private bool _showDifferenz;
-    public bool ShowDifferenz
-    {
-        get => _showDifferenz;
-        set => SetProperty(ref _showDifferenz, value);
-    }
+    public bool IERVersion2022 { get => TeamBewerb.IERVersion == IERVersion.v2022; }
 
 
     private bool _isLive;

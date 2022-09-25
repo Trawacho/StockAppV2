@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StockApp.UI.Views" xmlns:components="clr-namespace:StockApp.UI.Components"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="800" >
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
         <Style TargetType="UserControl">
@@ -76,9 +76,31 @@
 
                 <TextBlock Text="Ausgabe" Style="{StaticResource VmHeader}" FontSize="18"/>
 
-                <StackPanel Orientation="Horizontal" >
-                    <Label Content="Mannschaften mit Spielernamen:"/>
-                    <TextBox Text="{Binding Path=NumberOfTeamsWithNamedPlayerOnResult,
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    
+                    <Label Grid.Row="0" Grid.Column="0" 
+                           Margin="0 0 5 0"
+                           HorizontalContentAlignment="Right"
+                           Content="Wertung nach Regelung seit 2022:"/>
+                    <CheckBox Grid.Row="0" Grid.Column="1" 
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              IsChecked="{Binding Path=RankingNewIERVersion}"
+                              />
+                    
+                    <Label Grid.Row="1" Grid.Column="0"
+                           HorizontalContentAlignment="Right"
+                           Margin="0 0 5 0"
+                           Content="Mannschaften mit Spielernamen:"/>
+                    <TextBox Grid.Row="1" Grid.Column="1"
+                        Text="{Binding Path=NumberOfTeamsWithNamedPlayerOnResult,
                                         Mode=TwoWay,
                                         UpdateSourceTrigger=PropertyChanged}"
                              MaxLength="2"
@@ -87,7 +109,7 @@
                              HorizontalAlignment="Stretch"
                              HorizontalContentAlignment="Center"
                              VerticalContentAlignment="Center"/>
-                </StackPanel>
+                </Grid>
                 <Button Content="Ergebnisliste" 
                         Margin="0,10" 
                         Padding="30,10" 
