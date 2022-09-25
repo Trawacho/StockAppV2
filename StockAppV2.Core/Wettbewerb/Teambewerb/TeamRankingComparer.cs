@@ -32,8 +32,8 @@ public partial class TeamRankingComparer : IComparer<ITeam>
     /// <param name="startNumberX">Startnummer von Mannschaft X</param>
     /// <param name="startNumberY">Startnummer von Mannschaft Y</param>
     /// <param name="isLive">Live oder Master - Werte bewerten</param>
-    /// <returns>-1 wenn X vor Y, 1 wenn Y vor X. Es wird keine 0 (Gelichstand) zurückgegeben.</returns>
-    private int CompareDirekterVergleich(IEnumerable<IGame> gamesTeamX, int startNumberX, int startNumberY, bool isLive)
+    /// <returns>-1 wenn X vor Y, 1 wenn Y vor X. 0 bei Gleichstand.</returns>
+    internal int CompareDirekterVergleich(IEnumerable<IGame> gamesTeamX, int startNumberX, int startNumberY, bool isLive)
     {
 
         int spielpunkteX = 0;
@@ -68,9 +68,13 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                          ? -1
                          : stockpunkteX < stockpunkteY
                              ? 1
-                             : (new Random().Next(int.MinValue, int.MaxValue) <= 0)
-                                    ? -1
-                                    : 1;
+                             : 0;
+
+    }
+
+    internal int GetRandom()
+    {
+        return (new Random().Next(int.MinValue, int.MaxValue) <= 0) ? -1 : 1;
     }
 
     private int CompareVersionUpFrom2022(ITeam x, ITeam y)
@@ -97,7 +101,10 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                 else
                 {
                     //direkter Vergleich
-                    return CompareDirekterVergleich(x.Games, x.StartNumber, y.StartNumber, _isLive);
+                    var direkterVergleich = CompareDirekterVergleich(x.Games, x.StartNumber, y.StartNumber, _isLive);
+                    return direkterVergleich != 0 
+                        ? direkterVergleich 
+                        : GetRandom();
                 }
             }
         }
