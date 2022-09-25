@@ -43,6 +43,13 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         IsLive = true;
     }
 
+    /// <summary>
+    /// only for Design Instance
+    /// </summary>
+    public LiveResultsTeamViewModel()
+    {
+
+    }
 
     private void TeamBewerb_GamesChanged(object sender, EventArgs e)
     {
@@ -80,7 +87,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         set => SetProperty(ref _showStockPunkte, value);
     }
 
-    public bool IERVersion2022 { get => TeamBewerb.IERVersion == IERVersion.v2022; }
+    public bool IERVersion2022 { get => TeamBewerb?.IERVersion == IERVersion.v2022; }
 
 
     private bool _isLive;
