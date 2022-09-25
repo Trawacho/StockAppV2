@@ -153,7 +153,7 @@ public class TeamRankingComparerTest
 
 
     [Test]
-    public void TestCompareDirekterVergleich() 
+    public void TestCompareDirekterVergleich()
     {
         var teamListe = _teamBewerb.Teams.Where(t => !t.IsVirtual).ToList();
 
@@ -182,24 +182,24 @@ public class TeamRankingComparerTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(teamListe[0].GetSpielPunkte().positiv == 12, Is.True);
-            Assert.That(teamListe[0].GetStockPunkte().positiv == 87, Is.True);
+            Assert.That(teamListe[0].GetSpielPunkte() == (12, 4), Is.True);
+            Assert.That(teamListe[0].GetStockPunkte() == (87, 65), Is.True);
             Assert.That(teamListe[0].GetStockPunkteDifferenz() == 22, Is.True);
 
-            Assert.That(teamListe[1].GetSpielPunkte().positiv == 8, Is.True);
-            Assert.That(teamListe[1].GetStockPunkte().positiv == 91, Is.True);
+            Assert.That(teamListe[1].GetSpielPunkte() == (8, 8), Is.True);
+            Assert.That(teamListe[1].GetStockPunkte() == (91, 80), Is.True);
             Assert.That(teamListe[1].GetStockPunkteDifferenz() == 11, Is.True);
 
-            Assert.That(teamListe[2].GetSpielPunkte().positiv == 8, Is.True);
-            Assert.That(teamListe[2].GetStockPunkte().positiv == 91, Is.True);
+            Assert.That(teamListe[2].GetSpielPunkte() == (8, 8), Is.True);
+            Assert.That(teamListe[2].GetStockPunkte() == (91, 80), Is.True);
             Assert.That(teamListe[2].GetStockPunkteDifferenz() == 11, Is.True);
 
-            Assert.That(teamListe[3].GetSpielPunkte().positiv == 6, Is.True);
-            Assert.That(teamListe[3].GetStockPunkte().positiv == 82, Is.True);
+            Assert.That(teamListe[3].GetSpielPunkte() == (6, 10), Is.True);
+            Assert.That(teamListe[3].GetStockPunkte() == (82, 104), Is.True);
             Assert.That(teamListe[3].GetStockPunkteDifferenz() == -22, Is.True);
 
-            Assert.That(teamListe[4].GetSpielPunkte().positiv == 6, Is.True);
-            Assert.That(teamListe[4].GetStockPunkte().positiv == 75, Is.True);
+            Assert.That(teamListe[4].GetSpielPunkte() == (6, 10), Is.True);
+            Assert.That(teamListe[4].GetStockPunkte() == (75, 97), Is.True);
             Assert.That(teamListe[4].GetStockPunkteDifferenz() == -22, Is.True);
 
             Assert.That(teamListe[0].StartNumber == 3, Is.True);
