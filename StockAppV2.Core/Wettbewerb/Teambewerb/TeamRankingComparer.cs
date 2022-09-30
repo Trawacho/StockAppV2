@@ -1,7 +1,19 @@
 ﻿namespace StockApp.Core.Wettbewerb.Teambewerb;
 
+public class DirectCompareException : Exception
+{
+    private string _message;
+    public DirectCompareException(string message)
+    {
+        _message = message;
+    }
+    public override string Message => _message;
+}
+
 public partial class TeamRankingComparer : IComparer<ITeam>
 {
+    private bool _isLive;
+    private IERVersion _version;
 
     public TeamRankingComparer(bool isLive, IERVersion version)
     {
@@ -9,11 +21,12 @@ public partial class TeamRankingComparer : IComparer<ITeam>
         _version = version;
     }
 
-    private bool _isLive;
-    private IERVersion _version;
+
 
     public int Compare(ITeam x, ITeam y)
     {
+        // x.DirectComparisonWithTeam = 0;
+        // y.DirectComparisonWithTeam = 0;
 
         switch (_version)
         {
@@ -26,57 +39,37 @@ public partial class TeamRankingComparer : IComparer<ITeam>
     }
 
     /// <summary>
-    /// führt den direkten Vergleich zweier Mannschaften durch
+    /// Direkter Vergleich zweier Mannschaften<br></br>
+    /// Bei Mehrfachrunden wird das letzt Spiel bewertet
     /// </summary>
     /// <param name="gamesTeamX">Alle Spiele von Mannschaft X</param>
     /// <param name="startNumberX">Startnummer von Mannschaft X</param>
     /// <param name="startNumberY">Startnummer von Mannschaft Y</param>
-    /// <param name="isLive">Live oder Master - Werte bewerten</param>
-    /// <returns>-1 wenn X vor Y, 1 wenn Y vor X. 0 bei Gleichstand.</returns>
-    internal int CompareDirekterVergleich(IEnumerable<IGame> gamesTeamX, int startNumberX, int startNumberY, bool isLive)
+    /// <param name="isLive">Live oder Master-Werte bewerten</param>
+    /// <returns>-1 wenn X vor Y, 1 wenn Y vor X. 0 bei Gleichstand</returns>
+    internal int CompareLastGame(IEnumerable<IGame> gamesTeamX, int startNumberX, int startNumberY, bool isLive)
     {
+        var game = gamesTeamX
+                        .OrderByDescending(g => g.RoundOfGame)
+                        .First(g => g.TeamA.StartNumber == startNumberY || g.TeamB.StartNumber == startNumberY);
 
-        int spielpunkteX = 0;
-        int spielpunkteY = 0;
-        int stockpunkteX = 0;
-        int stockpunkteY = 0;
-
-        foreach (var game in gamesTeamX.Where(g => g.TeamA.StartNumber == startNumberY || g.TeamB.StartNumber == startNumberY))  //alle Spiele von gamesTeamX reduziert auf die Spiele mit Gegner Y
+        if (game.TeamA.StartNumber == startNumberX)
         {
-            stockpunkteX += game.TeamA.StartNumber == startNumberX
-                                ? game.Spielstand.GetStockPunkteTeamA(isLive)
-                                : game.Spielstand.GetStockPunkteTeamB(isLive);
-
-            stockpunkteY += game.TeamA.StartNumber == startNumberX
-                                ? game.Spielstand.GetStockPunkteTeamB(isLive)
-                                : game.Spielstand.GetStockPunkteTeamA(isLive);
-
-            spielpunkteX += game.TeamA.StartNumber == startNumberX
-                                ? game.Spielstand.GetSpielPunkteTeamA(isLive)
-                                : game.Spielstand.GetSpielPunkteTeamB(isLive);
-
-            spielpunkteY += game.TeamA.StartNumber == startNumberX
-                                ? game.Spielstand.GetSpielPunkteTeamB(isLive)
-                                : game.Spielstand.GetSpielPunkteTeamA(isLive);
+            return game.Spielstand.GetStockPunkteTeamA(isLive) > game.Spielstand.GetStockPunkteTeamB(isLive)
+                ? -1
+                : game.Spielstand.GetStockPunkteTeamA(isLive) < game.Spielstand.GetStockPunkteTeamB(isLive)
+                    ? 1
+                    : 0;
         }
-
-        return spielpunkteX > spielpunkteY
-                 ? -1
-                 : spielpunkteX < spielpunkteY
-                     ? 1
-                     : stockpunkteX > stockpunkteY
-                         ? -1
-                         : stockpunkteX < stockpunkteY
-                             ? 1
-                             : 0;
-
+        else
+        {
+            return game.Spielstand.GetStockPunkteTeamB(isLive) > game.Spielstand.GetStockPunkteTeamA(isLive)
+                ? -1
+                : game.Spielstand.GetStockPunkteTeamB(isLive) < game.Spielstand.GetStockPunkteTeamA(isLive)
+                    ? 1
+                    : 0;
+        }
     }
-
-    private int GetRandom()
-    {
-        return (new Random().Next(int.MinValue, int.MaxValue) <= 0) ? -1 : 1;
-    }
-
     private int CompareVersionUpFrom2022(ITeam x, ITeam y)
     {
         //Spielpunkte
@@ -101,10 +94,13 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                 else
                 {
                     //direkter Vergleich
-                    var direkterVergleich = CompareDirekterVergleich(x.Games, x.StartNumber, y.StartNumber, _isLive);
-                    return direkterVergleich != 0 
-                        ? direkterVergleich 
-                        : GetRandom();
+                    var direkterVergleich = CompareLastGame(x.Games, x.StartNumber, y.StartNumber, _isLive);
+
+                    if (direkterVergleich != 0) return direkterVergleich;
+                    //kein Los-Entscheid!!
+                    //die Startnummer soll entscheiden
+                    return x.StartNumber < y.StartNumber ? -1 : 1;
+
                 }
             }
         }
@@ -129,7 +125,13 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                 else if (x.GetStockPunkteDifferenz(_isLive) < y.GetStockPunkteDifferenz(_isLive))
                     return 1;
                 else
-                    return 0;  //Wenn alles gleich, dann werden beide Mannschaften auf den selben Rang gesetzt
+                {
+                    var direkterVergleich = CompareLastGame(x.Games, x.StartNumber, y.StartNumber, _isLive);
+                    if (direkterVergleich != 0) return direkterVergleich;
+                    
+                    //die Startnummer soll entscheiden
+                    return x.StartNumber < y.StartNumber ? -1 : 1;
+                }
             }
         }
     }

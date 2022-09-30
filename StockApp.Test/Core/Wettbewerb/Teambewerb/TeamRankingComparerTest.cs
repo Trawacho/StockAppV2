@@ -7,13 +7,13 @@ namespace StockApp.Test;
 
 public class TeamRankingComparerTest
 {
-    private TeamRankingComparer _comparer;
+    //private TeamRankingComparer _comparer;
     ITeamBewerb _teamBewerb;
     [SetUp]
     public void Setup()
     {
 
-        _comparer = new TeamRankingComparer(false, IERVersion.v2022);
+        //_comparer = new TeamRankingComparer(false, IERVersion.v2022);
         _teamBewerb = TeamBewerb.Create();
         _teamBewerb.AddNewTeam();
         _teamBewerb.AddNewTeam();
@@ -151,16 +151,22 @@ public class TeamRankingComparerTest
         #endregion
     }
 
-
+   
     [Test]
-    public void TestCompareDirekterVergleich()
+    public void TestCompareLastGame()
     {
+        var comparer = new TeamRankingComparer(false, IERVersion.v2022);
+
         var teamListe = _teamBewerb.Teams.Where(t => !t.IsVirtual);
 
-        Assert.That(_comparer.CompareDirekterVergleich(teamListe.First(t => t.StartNumber == 2).Games, 2, 4, false), Is.EqualTo(0));
-        Assert.That(_comparer.CompareDirekterVergleich(teamListe.First(t => t.StartNumber == 5).Games, 5, 1, false), Is.EqualTo(-1));
-        Assert.That(_comparer.CompareDirekterVergleich(teamListe.First(t => t.StartNumber == 4).Games, 4, 1, false), Is.EqualTo(-1));
-        Assert.That(_comparer.CompareDirekterVergleich(teamListe.First(t => t.StartNumber == 1).Games, 1, 3, false), Is.EqualTo(1));
+        Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
+                                                            .Games.Where(g=>g.RoundOfGame==1), 2, 4, false), Is.EqualTo(1));
+        Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
+                                                            .Games.Where(g=>g.RoundOfGame==2), 2, 4, false), Is.EqualTo(-1));
+        Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
+                                                            .Games, 2, 4, false), Is.EqualTo(-1));
+
+
     }
 
     [Test]
@@ -174,10 +180,10 @@ public class TeamRankingComparerTest
         * 4. Team5 P 6:10  D -22  P 82:104 -> 0,788
         * 5. Team1 P 6:10  D -22  P 75:97  -> 0,773
         */
-
+        var comparer = new TeamRankingComparer(false, IERVersion.v2022);
         var teamListe = _teamBewerb.Teams
                             .Where(t => !t.IsVirtual)
-                            .OrderBy(t => t, _comparer)
+                            .OrderBy(t => t, comparer)
                             .ToList();
 
         Assert.Multiple(() =>
@@ -207,8 +213,8 @@ public class TeamRankingComparerTest
             Assert.That(teamListe[3].StartNumber == 5, Is.True);
             Assert.That(teamListe[4].StartNumber == 1, Is.True);
 
-            Assert.That(_comparer.Compare(teamListe[0], teamListe[1]), Is.EqualTo(-1));
-            Assert.That(_comparer.Compare(teamListe[4], teamListe[1]), Is.EqualTo(1));
+            Assert.That(comparer.Compare(teamListe[0], teamListe[1]), Is.EqualTo(-1));
+            Assert.That(comparer.Compare(teamListe[4], teamListe[1]), Is.EqualTo(1));
         });
     }
 
