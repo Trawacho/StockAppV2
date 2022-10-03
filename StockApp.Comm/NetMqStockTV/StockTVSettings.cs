@@ -13,6 +13,7 @@ public interface IStockTVSettings : IEquatable<IStockTVSettings>
     public GameMode GameModus { get; set; }
     public ColorMode ColorModus { get; set; }
     public int MidColumnLength { get; set; }
+    public int MessageVersion { get; set; }
     byte[] GetSettings();
     void SetSettings(byte[] messageValue);
 
@@ -32,6 +33,7 @@ public class StockTVSettings : IStockTVSettings
     private NextCourtMode _nextBahnModus;
     private GameMode _gameModus;
     private ColorMode _colorModus;
+    private int _messageVersion;
 
     public event EventHandler<PropertyChangedEventArgs> SettingsChanged;
     protected virtual void RaiseSettingsChanged([CallerMemberName] string propertyName = null)
@@ -90,7 +92,7 @@ public class StockTVSettings : IStockTVSettings
     }
     public ColorMode ColorModus { get => _colorModus; set { _colorModus = value; RaiseSettingsChanged(); } }
     public int MidColumnLength { get => _midColumnLength; set { _midColumnLength = value; RaiseSettingsChanged(); } }
-
+    public int MessageVersion { get => _messageVersion; set { _messageVersion = value; RaiseSettingsChanged(); } }
     #endregion
 
     #region Implementation IEquatable
@@ -103,7 +105,8 @@ public class StockTVSettings : IStockTVSettings
             && NextBahnModus == other.NextBahnModus
             && GameModus == other.GameModus
             && ColorModus == other.ColorModus
-            && MidColumnLength == other.MidColumnLength;
+            && MidColumnLength == other.MidColumnLength
+            && MessageVersion == other.MessageVersion;
     }
 
     #endregion
@@ -124,7 +127,7 @@ public class StockTVSettings : IStockTVSettings
         PointsPerTurn = value[5];
         TurnsPerGame = value[6];
         MidColumnLength = value[7];
-        _ = value[8];
+        MessageVersion = value[8];
         _ = value[9];
 
     }
@@ -144,7 +147,7 @@ public class StockTVSettings : IStockTVSettings
         s[5] = (byte)PointsPerTurn;                 //Anzahl max. Punkte pro Kehre
         s[6] = (byte)TurnsPerGame;                  //Anzahl der Kehren
         s[7] = (byte)MidColumnLength;               //Breite der mittleren Spalte (nur bei der Anzeige von TeamNamen relevant)
-        s[8] = 0;
+        s[8] = (byte)MessageVersion;                //Version des Datenpakets
         s[9] = 0;
 
         return s;
@@ -162,7 +165,8 @@ public class StockTVSettings : IStockTVSettings
             NextBahnModus = NextCourtMode.Left,
             ColorModus = ColorMode.Normal,
             GameModus = modus,
-            MidColumnLength = 10
+            MidColumnLength = 10,
+            MessageVersion = -1
         };
         switch (modus)
         {
@@ -188,6 +192,6 @@ public class StockTVSettings : IStockTVSettings
 
     public override string ToString()
     {
-        return $"Bahn:{Bahn} | Spielgruppe:{Spielgruppe} | GameModus:{GameModus} | NextBahn:{NextBahnModus} | ColorModus:{ColorModus} | PointsPerTurn:{PointsPerTurn} | TurnsPerGame:{TurnsPerGame} | MidColumnLength:{MidColumnLength}  ";
+        return $"Bahn:{Bahn} | Spielgruppe:{Spielgruppe} | GameModus:{GameModus} | NextBahn:{NextBahnModus} | ColorModus:{ColorModus} | PointsPerTurn:{PointsPerTurn} | TurnsPerGame:{TurnsPerGame} | MidColumnLength:{MidColumnLength} | MessageVersion:{MessageVersion} ";
     }
 }

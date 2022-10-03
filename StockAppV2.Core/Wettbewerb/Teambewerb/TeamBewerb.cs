@@ -179,7 +179,7 @@ public class TeamBewerb : ITeamBewerb
     /// Bei wieviel Mannschaften werden die Spielernamen auf der Ergebnisliste mit angedruckt
     /// </summary>
     public int NumberOfTeamsWithNamedPlayerOnResult { get; set; } = 3;
-   
+
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind
@@ -569,11 +569,43 @@ public class TeamBewerb : ITeamBewerb
         }
     }
 
+    public void SetStockTVResult(IStockTVResult tVResult)
+    {
+        if (tVResult.TVSettings.MessageVersion == 0)
+        {
+            SetBroadcastData(tVResult.AsBroadCastTelegram());
+            return;
+        }
+
+        if (tVResult.TVSettings.GameModus == GameMode.Ziel) return;
+        if (tVResult.TVSettings.Spielgruppe != SpielGruppe) return;
+
+        bool spielrichtungRechtsNachLinks = tVResult.TVSettings.NextBahnModus == NextCourtMode.Left;
+
+        var courtGames = GetGamesOfCourt(tVResult.TVSettings.Bahn);       //Alle Spiele im Turnier auf dieser Bahn
+
+#if DEBUG
+        System.Diagnostics.Debug.WriteLine($"Es wird für {tVResult.Results.Count} Spiel(e) das Ergebnis übergeben.");
+#endif
+        foreach (var gameResult in tVResult.Results)
+        {
+            //Prüfen ob das vorherige Spiel abgeschlossen ist und in den Master kopiert werden kann
+            var preGame = courtGames.FirstOrDefault(g => g.GameNumberOverAll == gameResult.GameNumber - 1);
+            if (preGame != null) preGame.Spielstand.CopyLiveToMasterValues();
+
+            var game = courtGames.FirstOrDefault(g => g.GameNumberOverAll == gameResult.GameNumber);
+            if (game == null) continue; //Wenn kein Spiel gefunden wird, sofort zur nächsten iteration gehen
+
+            game.Spielstand.Reset();
+            var kehren = gameResult.Turns.Select(t => Kehre.Convert(t, spielrichtungRechtsNachLinks)).OrderBy(k => k.KehrenNummer);
+            game.Spielstand.SetLiveValues(kehren);
+        }
+
+
+    }
 
 
     private IBroadCastTelegram _lastTelegram;
-    public void SetStockTVResult(IStockTVResult tVResult) => SetBroadcastData(tVResult.AsBroadCastTelegram());
-
     public void SetBroadcastData(IBroadCastTelegram telegram)
     {
         /* 
@@ -586,6 +618,8 @@ public class TeamBewerb : ITeamBewerb
          * dann der Wert der rechten Mannschaft
          * 
          */
+        if (telegram.MessageVersion != 0) return;
+
         if (telegram.StockTVModus == 100) return;
         if (telegram.SpielGruppe != SpielGruppe) return;
         if (telegram.Equals(_lastTelegram))
@@ -606,7 +640,6 @@ public class TeamBewerb : ITeamBewerb
             System.Diagnostics.Debug.WriteLine($"Bahnnummer:{telegram.BahnNummer} -- {string.Join("-", telegram.Values)}");
 #endif
             byte bahnNumber = telegram.BahnNummer;          // Im ersten Byte immer die Bahnnummer
-            byte groupNumber = telegram.SpielGruppe;        // Default 0
             var courtGames = GetGamesOfCourt(bahnNumber);   //Alle Spiele im Turnier auf dieser Bahn
 
 
@@ -665,10 +698,6 @@ public class TeamBewerb : ITeamBewerb
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine(ex.Message);
-        }
-        finally
-        {
-            //RaisePropertyChanged("");
         }
     }
 

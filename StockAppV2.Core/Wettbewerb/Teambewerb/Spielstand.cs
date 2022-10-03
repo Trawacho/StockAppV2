@@ -1,27 +1,40 @@
 ﻿namespace StockApp.Core.Wettbewerb.Teambewerb;
+
+
+/// <summary>
+/// Spielstand in einem Spiel, mit den Punkten für Mannschaft A und Mannschaft B <br></br>
+/// Die Werte können sowohl im Master als auch im Live gesetzt werden. Sobald Masterwerte gesetzt sind, können diese vom Live-Teil nicht mehr geändert werden, <see cref="IsSetByHand"/> TRUE wird
+/// </summary>
 public interface ISpielstand
 {
-    public int Punkte_Master_TeamA { get; }
-    public int Punkte_Master_TeamB { get; }
-    public int Punkte_Live_TeamA { get; }
-    public int Punkte_Live_TeamB { get; }
-    public bool IsSetByHand { get; }
+    int Punkte_Master_TeamA { get; }
+    int Punkte_Master_TeamB { get; }
+    int Punkte_Live_TeamA { get; }
+    int Punkte_Live_TeamB { get; }
+    IOrderedEnumerable<IKehre> Kehren_Live { get; }
+    IOrderedEnumerable<IKehre> Kehren_Master { get; }
+    bool IsSetByHand { get; }
     void CopyLiveToMasterValues();
     void Reset(bool force = false);
     void SetLiveValues(int teamA, int teamB);
+    void SetLiveValues(IOrderedEnumerable<IKehre> kehren);
     void SetMasterTeamAValue(int punkteTeamA);
     void SetMasterTeamBValue(int punkteTeamB);
+    void SetMasterValue(IKehre kehre);
     int GetSpielPunkteTeamA(bool live);
     int GetSpielPunkteTeamB(bool live);
     int GetStockPunkteTeamB(bool live);
     int GetStockPunkteTeamA(bool live);
+
+    int GetCountOfWinningTurnsTeamA(bool live);
+    int GetCountOfWinningTurnsTeamB(bool live);
 
     event EventHandler SpielStandChanged;
 }
 
 
 /// <summary>
-/// Spielstand in einem Spiel, mit den Punkten für Mannschaft A und Mannschaft B <br>    /// </br>
+/// Spielstand in einem Spiel, mit den Punkten für Mannschaft A und Mannschaft B <br></br>
 /// Die Werte können sowohl im Master als auch im Live gesetzt werden. Sobald Masterwerte gesetzt sind, können diese vom Live-Teil nicht mehr geändert werden, <see cref="IsSetByHand"/> TRUE wird
 /// </summary>
 public class Spielstand : ISpielstand
@@ -32,27 +45,30 @@ public class Spielstand : ISpielstand
     /// <summary>
     /// Punkte von TeamA
     /// </summary>
-    public int Punkte_Master_TeamA { get; set; }
+    public int Punkte_Master_TeamA { get => Kehren_Master?.Sum(k => k.PunkteTeamA) ?? 0; }
 
     /// <summary>
     /// Punkte von TeamB
     /// </summary>
-    public int Punkte_Master_TeamB { get; set; }
+    public int Punkte_Master_TeamB { get => Kehren_Master?.Sum(k => k.PunkteTeamB) ?? 0; }
 
     /// <summary>
     /// Punkte von TeamA aus dem NetzwerkService
     /// </summary>
-    public int Punkte_Live_TeamA { get; set; }
+    public int Punkte_Live_TeamA { get => Kehren_Live?.Sum(k => k.PunkteTeamA) ?? 0; }
 
     /// <summary>
     /// Punkte von TeamV aus dem NetzwerkService
     /// </summary>
-    public int Punkte_Live_TeamB { get; set; }
+    public int Punkte_Live_TeamB { get => Kehren_Live?.Sum(k => k.PunkteTeamB) ?? 0; }
 
     /// <summary>
     /// TRUE, wenn Werte in die Master-Punkte geschrieben werden (nicht, wenn  <see cref="CopyLiveToMasterValues"/> genutzt wird)
     /// </summary>
     public bool IsSetByHand { get; set; }
+
+    public IOrderedEnumerable<IKehre> Kehren_Live { get; private set; }
+    public IOrderedEnumerable<IKehre> Kehren_Master { get; private set; }
 
     #endregion
 
@@ -87,8 +103,26 @@ public class Spielstand : ISpielstand
     public void SetMasterTeamAValue(int punkteTeamA)
     {
         IsSetByHand = true;
-        Punkte_Master_TeamA = punkteTeamA;
-        Punkte_Live_TeamA = punkteTeamA;
+
+        if (Kehren_Live == null || !Kehren_Live.Any())
+        {
+            Kehren_Live = new List<IKehre>() { Kehre.Create(1, punkteTeamA, 0) }.OrderBy(k => k.KehrenNummer);
+        }
+        else
+        {
+            Kehren_Live.First().PunkteTeamA = punkteTeamA;
+        }
+
+        if (Kehren_Master == null || !Kehren_Master.Any())
+        {
+            Kehren_Master = new List<IKehre>() { Kehre.Create(1, punkteTeamA, 0) }.OrderBy(k => k.KehrenNummer);
+        }
+        else
+        {
+            Kehren_Master.First().PunkteTeamA = punkteTeamA;
+        }
+
+
         RaiseSpielstandChanged();
     }
 
@@ -100,8 +134,67 @@ public class Spielstand : ISpielstand
     public void SetMasterTeamBValue(int punkteTeamB)
     {
         IsSetByHand = true;
-        Punkte_Live_TeamB = punkteTeamB;
-        Punkte_Master_TeamB = punkteTeamB;
+
+        if (Kehren_Live == null || !Kehren_Live.Any())
+        {
+            Kehren_Live = new List<IKehre>() { Kehre.Create(1, 0, punkteTeamB) }.OrderBy(k => k.KehrenNummer);
+        }
+        else
+        {
+            Kehren_Live.First().PunkteTeamB = punkteTeamB;
+        }
+
+        if (Kehren_Master == null || !Kehren_Master.Any())
+        {
+            Kehren_Master = new List<IKehre>() { Kehre.Create(1, 0, punkteTeamB) }.OrderBy(k => k.KehrenNummer);
+        }
+        else
+        {
+            Kehren_Master.First().PunkteTeamB = punkteTeamB;
+        }
+
+        RaiseSpielstandChanged();
+    }
+
+    public void SetMasterValue(IKehre kehre)
+    {
+        IsSetByHand = true;
+
+
+        //Kehre LIVE
+        if (Kehren_Live == null || !Kehren_Live.Any())
+        {
+            Kehren_Live = new List<IKehre>() { kehre }.OrderBy(k => k.KehrenNummer);
+        }
+        else if (Kehren_Live.Any(k => k.KehrenNummer == kehre.KehrenNummer))
+        {
+            Kehren_Live.First(k => k.KehrenNummer == kehre.KehrenNummer).PunkteTeamA = kehre.PunkteTeamA;
+            Kehren_Live.First(k => k.KehrenNummer == kehre.KehrenNummer).PunkteTeamB = kehre.PunkteTeamB;
+        }
+        else
+        {
+            var kehrenLive = Kehren_Live.ToList();
+            kehrenLive.Add(kehre);
+            Kehren_Live = kehrenLive.OrderBy(k => k.KehrenNummer);
+        }
+
+        //Kehre MASTER
+        if (Kehren_Master == null || !Kehren_Master.Any())
+        {
+            Kehren_Master = new List<IKehre>() { kehre }.OrderBy(k => k.KehrenNummer);
+        }
+        else if (Kehren_Master.Any(k => k.KehrenNummer == kehre.KehrenNummer))
+        {
+            Kehren_Master.First(k => k.KehrenNummer == kehre.KehrenNummer).PunkteTeamA = kehre.PunkteTeamA;
+            Kehren_Master.First(k => k.KehrenNummer == kehre.KehrenNummer).PunkteTeamB = kehre.PunkteTeamB;
+        }
+        else
+        {
+            var kehrenMaster = Kehren_Master.ToList();
+            kehrenMaster.Add(kehre);
+            Kehren_Master = kehrenMaster.OrderBy(k => k.KehrenNummer);
+        }
+
         RaiseSpielstandChanged();
     }
 
@@ -131,8 +224,8 @@ public class Spielstand : ISpielstand
     {
         if (!IsSetByHand)
         {
-            Punkte_Master_TeamA = Punkte_Live_TeamA;
-            Punkte_Master_TeamB = Punkte_Live_TeamB;
+            Kehren_Master = Kehren_Live.OrderBy(k => k.KehrenNummer);
+
             RaiseSpielstandChanged();
         }
     }
@@ -144,10 +237,27 @@ public class Spielstand : ISpielstand
     /// <param name="teamB"></param>
     public void SetLiveValues(int teamA, int teamB)
     {
+#if DEBUG
+        System.Diagnostics.Debug.WriteLine($"Spielstand mit neuer Kehre schreiben -> TeamA:{teamA} - TeamB:{teamB} -> Kann geschrieben werden:{!IsSetByHand}");
+#endif
+
         if (!IsSetByHand)
         {
-            Punkte_Live_TeamA = teamA;
-            Punkte_Live_TeamB = teamB;
+            Kehren_Live = new List<IKehre>() { Kehre.Create(1, teamA, teamB) }.OrderBy(t => t.KehrenNummer);
+
+            RaiseSpielstandChanged();
+        }
+    }
+
+    public void SetLiveValues(IOrderedEnumerable<IKehre> kehren)
+    {
+#if DEBUG
+        System.Diagnostics.Debug.WriteLine($"Spielstand schreiben. Anzahl an Kehren:{kehren.Count()} -> kann geschrieben werden:{!IsSetByHand}");
+#endif
+
+        if (!IsSetByHand)
+        {
+            this.Kehren_Live = kehren;
             RaiseSpielstandChanged();
         }
     }
@@ -221,6 +331,14 @@ public class Spielstand : ISpielstand
     public int GetStockPunkteTeamA(bool live = false) => live ? Punkte_Live_TeamA : Punkte_Master_TeamA;
 
     public int GetStockPunkteTeamB(bool live = false) => live ? Punkte_Live_TeamB : Punkte_Master_TeamB;
+
+    public int GetCountOfWinningTurnsTeamA(bool live) => live
+            ? Kehren_Live?.Count(k => k.PunkteTeamA > k.PunkteTeamB) ?? 0
+            : Kehren_Master?.Count(k => k.PunkteTeamA > k.PunkteTeamB) ?? 0;
+
+    public int GetCountOfWinningTurnsTeamB(bool live) => live
+            ? Kehren_Live?.Count(k => k.PunkteTeamB > k.PunkteTeamA) ?? 0
+            : Kehren_Master?.Count(k => k.PunkteTeamB > k.PunkteTeamA) ?? 0;
 
     #endregion
 

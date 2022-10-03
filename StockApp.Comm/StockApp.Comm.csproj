@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="NetMQ" Version="4.0.1.6" />
+    <PackageReference Include="System.Text.Json" Version="6.0.6" />
     <PackageReference Include="Zeroconf" Version="3.6.11" />
   </ItemGroup>
 

@@ -25,9 +25,6 @@ public partial class TeamRankingComparer : IComparer<ITeam>
 
     public int Compare(ITeam x, ITeam y)
     {
-        // x.DirectComparisonWithTeam = 0;
-        // y.DirectComparisonWithTeam = 0;
-
         switch (_version)
         {
             case IERVersion.v2018:
@@ -59,7 +56,12 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                 ? -1
                 : game.Spielstand.GetStockPunkteTeamA(isLive) < game.Spielstand.GetStockPunkteTeamB(isLive)
                     ? 1
-                    : 0;
+                    : game.Spielstand.GetCountOfWinningTurnsTeamA(isLive) > game.Spielstand.GetCountOfWinningTurnsTeamB(isLive)
+                        ? -1
+                        : game.Spielstand.GetCountOfWinningTurnsTeamA(isLive) < game.Spielstand.GetCountOfWinningTurnsTeamB(isLive)
+                            ? 1
+                            : 0;
+                        
         }
         else
         {
@@ -67,7 +69,11 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                 ? -1
                 : game.Spielstand.GetStockPunkteTeamB(isLive) < game.Spielstand.GetStockPunkteTeamA(isLive)
                     ? 1
-                    : 0;
+                    : game.Spielstand.GetCountOfWinningTurnsTeamB(isLive) > game.Spielstand.GetStockPunkteTeamA(isLive)
+                        ? -1
+                        : game.Spielstand.GetCountOfWinningTurnsTeamB(isLive) < game.Spielstand.GetStockPunkteTeamA(isLive)
+                            ? 1
+                            : 0;
         }
     }
     private int CompareVersionUpFrom2022(ITeam x, ITeam y)
@@ -100,7 +106,6 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                     //kein Los-Entscheid!!
                     //die Startnummer soll entscheiden
                     return x.StartNumber < y.StartNumber ? -1 : 1;
-
                 }
             }
         }

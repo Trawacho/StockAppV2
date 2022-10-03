@@ -40,8 +40,6 @@ public interface IStockTV : IEquatable<IStockTV>, IComparable<IStockTV>, IDispos
     void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen);
 
     void RemoveFromCollection();
-
-
 }
 
 public class StockTV : IStockTV
@@ -255,7 +253,6 @@ public class StockTV : IStockTV
         if (_appClient == null)
         {
             _appClient = StockTVFactory.Create(IPAddress, this._mDnsHost.ControlServicePort, HostName);
-            //_appClient = StockTVFactory.Create(IPAddress, this._mDNSInformation.ControlServicePort, HostName);
             _appClient.ConnectedChanged += AppClient_ConnectedChanged;
             _appClient.MessageReceived += NetMQMessage_Received;
         }
@@ -265,7 +262,6 @@ public class StockTV : IStockTV
         if (_subscriberClient == null)
         {
             _subscriberClient = StockTVFactory.Create(IPAddress, this._mDnsHost.PublisherServicePort);
-            //_subscriberClient = StockTVFactory.Create(IPAddress, this._mDNSInformation.PublisherServicePort);
             _subscriberClient.SubscriberMessageReceived += NetMQMessage_Received;
         }
         _subscriberClient.Start();
@@ -294,26 +290,30 @@ public class StockTV : IStockTV
 
     private void NetMQMessage_Received(object sender, StockTVMessageReceivedEventArgs args)
     {
+        if (args.MessageTopic == MessageTopic.Alive)
+        {
+            if (args.MessageValue.Length > 0)
+            {
+                var aliveInfo = System.Text.Json.JsonSerializer.Deserialize<StockTVAliveInfo>(args.MessageValue);
+                this._mDnsHost.Update(aliveInfo);
+            }
+            return;
+        }
+
+#if DEBUG
+            Debug.WriteLine(sender.ToString() + " Receive: " + args.MessageTopic + " ==> " + string.Join("-", args));
+#endif
+
         if (args.MessageTopic == MessageTopic.GetResult)
         {
-#if DEBUG
-            Debug.WriteLine(sender.ToString() + " Receive: " + args.MessageTopic + " ==> " + string.Join("-", args.MessageValue));
-#endif
             TVResult?.SetResult(args.MessageValue);
         }
         else if (args.MessageTopic == MessageTopic.GetSettings)
         {
-#if DEBUG
-            Debug.WriteLine(sender.ToString() + " Receive: " + args.MessageTopic + " ==> " + string.Join("-", args.MessageValue));
-#endif
             TVSettings.SetSettings(args.MessageValue);
         }
-        else if (args.MessageTopic == MessageTopic.Alive)
-        {
-
-        }
     }
-
+    
     #endregion
 
     #region Methods to send commands to StockTV

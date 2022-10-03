@@ -1,10 +1,12 @@
 ﻿using StockApp.Comm.Broadcasting;
+using System.Text;
+using System.Text.Json;
 
 namespace StockApp.Comm.NetMqStockTV;
 
 
 
-public interface IStockTVResult : IEquatable<IStockTVResult>
+public interface IStockTVResult 
 {
     byte[] Data { get; }
     IStockTVSettings TVSettings { get; }
@@ -54,16 +56,34 @@ public class StockTVResult : IStockTVResult
             TVSettings?.SetSettings(array.Take(10).ToArray()); //_tvSettings = new StockTVSettings(array.Take(10).ToArray());
         }
 
-        byte gamenumber = 1;
-
-        Results.Clear();
-        foreach (var item in array.Skip(10).Split(2))
+        if (TVSettings.MessageVersion == 0)
         {
-            Results.Add(
-                new StockTVGameResult(gamenumber,
-                                      item.First(),
-                                      item.Last()));
-            gamenumber++;
+            byte gamenumber = 1;
+
+            Results.Clear();
+            foreach (var item in array.Skip(10).Split(2))
+            {
+                Results.Add(
+                    new StockTVGameResult(gamenumber,
+                                          item.First(),
+                                          item.Last()));
+                gamenumber++;
+            }
+
+        }
+        else if (TVSettings.MessageVersion == 1)
+        {
+            var jsonMessage = array.Skip(10);
+
+            var jsonString = Encoding.UTF8.GetString(jsonMessage.ToArray(), 0, jsonMessage.Count());
+
+            var jsonGames = JsonSerializer.Deserialize<List<StockTVGame>>(jsonString);
+            Results.Clear();
+            foreach (var game in jsonGames)
+            {
+                Results.Add(
+                    new StockTVGameResult(game.GameNumber, game.Turns));
+            }
         }
 
         RaiseResultChanged();
@@ -72,24 +92,11 @@ public class StockTVResult : IStockTVResult
     public StockTVResult()
     {
         Results = new List<IStockTVGameResult>();
-
     }
 
     public StockTVResult(byte[] array) : this()
     {
         SetResult(array);
-    }
-
-
-
-    /// <summary>
-    /// True, if Results and Settings are equal
-    /// </summary>
-    /// <param name="other"></param>
-    /// <returns></returns>
-    public bool Equals(IStockTVResult other)
-    {
-        return Data.Equals(other.Data);
     }
 
 
