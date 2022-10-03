@@ -117,7 +117,7 @@ public class BroadcastService : IBroadcastService
             byte[] receiveBytes = u?.EndReceive(ar, ref e);
             if (receiveBytes?.Length > 1)
             {
-                RaiseBroadCastReceived(e, DeCompress(receiveBytes));
+                RaiseBroadCastReceived(e, receiveBytes);
             }
 
             r = u?.BeginReceive(new AsyncCallback(ReceiveCallback), _state);

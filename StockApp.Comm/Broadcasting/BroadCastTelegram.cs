@@ -7,7 +7,7 @@
         byte BahnNummer { get; }
         byte[] Values { get; }
         byte SpielGruppe { get; }
-
+        byte MessageVersion { get; }
         byte[] Telegram { get; }
 
         IBroadCastTelegram Copy();
@@ -25,7 +25,6 @@
 
             _values = new byte[telegram.Length - 10];
             Array.Copy(telegram, 10, _values, 0, telegram.Length - 10);
-
         }
 
         public byte[] Telegram => _telegram;
@@ -50,6 +49,8 @@
         /// <br>1 = Rechts</br>
         /// </summary>
         public byte Spielrichtung => _telegram[3];
+
+        public byte MessageVersion => _telegram[8];
 
         public bool Equals(IBroadCastTelegram other)
         {
