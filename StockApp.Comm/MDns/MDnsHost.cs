@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using StockApp.Comm.NetMqStockTV;
+using System.Net;
 using Zeroconf;
 
 namespace StockApp.Comm.MDns;
@@ -10,6 +11,8 @@ public interface IMDnsHost
     int PublisherServicePort { get; }
     string Version { get; }
     string HostName { get; }
+
+    void Update(IStockTVAliveInfo aliveInfo);
 }
 internal class MDnsHostManual : IMDnsHost
 {
@@ -24,6 +27,14 @@ internal class MDnsHostManual : IMDnsHost
     public string Version { get; set; }
 
     public string HostName { get; set; }
+
+    public void Update(IStockTVAliveInfo aliveInfo)
+    {
+        if (aliveInfo == null) return;
+        if (aliveInfo.AppVersion != null && !string.IsNullOrWhiteSpace(aliveInfo.AppVersion) && aliveInfo.AppVersion != Version) Version = aliveInfo.AppVersion;
+        if (aliveInfo.HostName != null && !string.IsNullOrWhiteSpace(aliveInfo.HostName) && aliveInfo.HostName != HostName) HostName = aliveInfo.HostName;
+        if (aliveInfo.IpAddress != null && !string.IsNullOrWhiteSpace(aliveInfo.IpAddress) && aliveInfo.IpAddress != IPAddress) IPAddress = aliveInfo.AppVersion;
+    }
 }
 
 public class MDnsHost : IMDnsHost, IZeroconfHost
@@ -43,7 +54,7 @@ public class MDnsHost : IMDnsHost, IZeroconfHost
         return new MDnsHostManual()
         {
             HostName = hostname,
-            IPAddress = ipAddress,  
+            IPAddress = ipAddress,
             ControlServicePort = ctrPort,
             PublisherServicePort = pubPort,
             Version = version
@@ -77,6 +88,9 @@ public class MDnsHost : IMDnsHost, IZeroconfHost
     public int ControlServicePort => int.Parse(FirstPropertySet?.Where(a => a.Key == "ctrSvc").First().Value);
     public int PublisherServicePort => int.Parse(FirstPropertySet?.Where(a => a.Key == "pubSvc").First().Value);
     public string Version => FirstPropertySet?.Where(a => a.Key == "pkgVer").First().Value;
-
+    public void Update(IStockTVAliveInfo aliveInfo)
+    {
+        return;
+    }
 }
 
