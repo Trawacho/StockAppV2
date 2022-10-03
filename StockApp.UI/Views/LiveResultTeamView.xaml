@@ -97,7 +97,7 @@
         <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
 
             <RadioButton IsChecked="{Binding Path=IERVersion2022, Mode=OneWay}"
-                         Content="neue Regeleung 2022"
+                         Content="Wertung nach IER 2022"
                          x:Name="radioButtonIERVersion2022"
                          HorizontalAlignment="Stretch"
                          HorizontalContentAlignment="Left"
