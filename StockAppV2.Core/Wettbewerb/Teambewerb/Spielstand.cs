@@ -14,13 +14,58 @@ public interface ISpielstand
     IOrderedEnumerable<IKehre> Kehren_Live { get; }
     IOrderedEnumerable<IKehre> Kehren_Master { get; }
     bool IsSetByHand { get; }
+
+    /// <summary>
+    /// Wemn <see cref="IsSetByHand"/> FALSE ist, dann werden die Live-Punkte in die Master-Punkte kopiert
+    /// </summary>
     void CopyLiveToMasterValues();
+
+    /// <summary>
+    /// Wenn <see cref="IsSetByHand"/> FALSE ist, dann werden die Master-Punkte auf 0 gesetzt.<br></br>
+    /// Sobald der Parameter <paramref name="force"/> TRUE ist, werden die Master-Punkte auf 0 gesetzt und <see cref="IsSetByHand"/> auf FALSE
+    /// </summary>
+    /// <param name="force"></param>
     void Reset(bool force = false);
+
+    /// <summary>
+    /// Wenn <see cref="IsSetByHand"/> FALSE ist, werden erst alle Kehren in <see cref="Kehren_Live"/> gelöscht, <br>
+    /// </br> und eine neue Kehre mit den Werten angefügt
+    /// </summary>
+    /// <param name="teamA"></param>
+    /// <param name="teamB"></param>
     void SetLiveValues(int teamA, int teamB);
+
+    /// <summary>
+    /// Wenn <see cref="IsSetByHand"/> TRUE ist, werden alle Kehren in <see cref="Kehren_Live"/> gelöscht, <br>
+    /// </br>und dann alle übergegebenen Kehren angefügt
+    /// </summary>
+    /// <param name="kehren"></param>
     void SetLiveValues(IOrderedEnumerable<IKehre> kehren);
+
+    /// <summary>
+    /// Setzt <see cref="IsSetByHand"/> auf TRUE <br></br>
+    /// und schreibt in die erste Kehre von <see cref="Kehren_Master"/> und <see cref="Kehren_Live"/> den übergebenen Wert.<br></br>
+    /// !! Alle anderen Kehren werden gelöscht !!
+    /// </summary>
+    /// <param name="punkteTeamA"></param>
     void SetMasterTeamAValue(int punkteTeamA);
+    
+    /// <summary>
+    /// Setzt <see cref="IsSetByHand"/> auf TRUE <br></br>
+    /// und schreibt in die erste Kehre von <see cref="Kehren_Master"/> und <see cref="Kehren_Live"/> den übergebenen Wert.<br></br>
+    /// !! Alle anderen Kehren werden gelöscht !!
+    /// </summary>
+    /// <param name="punkteTeamB"></param>
     void SetMasterTeamBValue(int punkteTeamB);
+
+    /// <summary>
+    /// Setzt <see cref="IsSetByHand"/> auf TRUE<br></br>
+    /// Es wird die Kehre in  <see cref="Kehren_Live"/> und <see cref="Kehren_Master"/> gelöscht und dann neu angefügt
+    /// </summary>
+    /// <param name="kehre"></param>
     void SetMasterValue(IKehre kehre);
+
+
     int GetSpielPunkteTeamA(bool live);
     int GetSpielPunkteTeamB(bool live);
     int GetStockPunkteTeamB(bool live);
@@ -39,8 +84,7 @@ public interface ISpielstand
 /// </summary>
 public class Spielstand : ISpielstand
 {
-
-    #region Properties (all as private set)
+    #region Properties (all as readonly)
 
     /// <summary>
     /// Punkte von TeamA
@@ -62,15 +106,16 @@ public class Spielstand : ISpielstand
     /// </summary>
     public int Punkte_Live_TeamB { get => Kehren_Live?.Sum(k => k.PunkteTeamB) ?? 0; }
 
+    #endregion
+
     /// <summary>
     /// TRUE, wenn Werte in die Master-Punkte geschrieben werden (nicht, wenn  <see cref="CopyLiveToMasterValues"/> genutzt wird)
     /// </summary>
     public bool IsSetByHand { get; set; }
 
-    public IOrderedEnumerable<IKehre> Kehren_Live { get; private set; }
-    public IOrderedEnumerable<IKehre> Kehren_Master { get; private set; }
+    public IOrderedEnumerable<IKehre> Kehren_Live => _liveKehren.OrderBy(k => k.KehrenNummer);
+    public IOrderedEnumerable<IKehre> Kehren_Master => _masterKehren.OrderBy(k => k.KehrenNummer);
 
-    #endregion
 
     public event EventHandler SpielStandChanged;
     protected virtual void RaiseSpielstandChanged()
@@ -80,6 +125,9 @@ public class Spielstand : ISpielstand
     }
 
 
+    private readonly List<IKehre> _masterKehren;
+    private readonly List<IKehre> _liveKehren;
+
     #region Constructor
 
     /// <summary>
@@ -87,8 +135,10 @@ public class Spielstand : ISpielstand
     /// </summary>
     private Spielstand()
     {
-
+        _masterKehren = new List<IKehre>() { Kehre.Create(1, 0, 0) };
+        _liveKehren = new List<IKehre>();
     }
+
     public static ISpielstand Create() => new Spielstand();
 
     #endregion
@@ -98,102 +148,80 @@ public class Spielstand : ISpielstand
     /// <summary>
     /// Setzt <see cref="IsSetByHand"/> auf TRUE <br></br>
     /// und schreibt in <see cref="Punkte_Master_TeamA"/> und <see cref="Punkte_Live_TeamA"/> den übergebenen Wert
-    /// </summary>
+    /// !! Alle anderen Kehren werden gelöscht !!
+    /// /// </summary>
     /// <param name="punkteTeamA"></param>
     public void SetMasterTeamAValue(int punkteTeamA)
     {
         IsSetByHand = true;
 
-        if (Kehren_Live == null || !Kehren_Live.Any())
-        {
-            Kehren_Live = new List<IKehre>() { Kehre.Create(1, punkteTeamA, 0) }.OrderBy(k => k.KehrenNummer);
-        }
-        else
-        {
-            Kehren_Live.First().PunkteTeamA = punkteTeamA;
-        }
+        //Live-Kehren
+        if (_liveKehren.Count > 1)
+            _liveKehren.Clear();
 
-        if (Kehren_Master == null || !Kehren_Master.Any())
-        {
-            Kehren_Master = new List<IKehre>() { Kehre.Create(1, punkteTeamA, 0) }.OrderBy(k => k.KehrenNummer);
-        }
+        if (_liveKehren.Any())
+            _liveKehren[0].PunkteTeamA = punkteTeamA;
         else
-        {
-            Kehren_Master.First().PunkteTeamA = punkteTeamA;
-        }
+            _liveKehren.Add(Kehre.Create(1, punkteTeamA, 0));
 
+        //Master-Kehren
+        if (_masterKehren.Count > 1)
+            _masterKehren.Clear();
+
+        if (_masterKehren.Any())
+            _masterKehren[0].PunkteTeamA = punkteTeamA;
+        else
+            _masterKehren.Add(Kehre.Create(1, punkteTeamA, 0));
 
         RaiseSpielstandChanged();
     }
 
     /// <summary>
     /// Setzt <see cref="IsSetByHand"/> auf TRUE <br></br>
-    /// und schreibt in <see cref="Punkte_Master_TeamB"/> und <see cref="Punkte_Live_TeamB"/> den übergebenen Wert
+    /// und schreibt in die erste Kehre von <see cref="Kehren_Master"/> und <see cref="Kehren_Live"/> den übergebenen Wert.<br></br>
+    /// !! Alle anderen Kehren werden gelöscht !!
     /// </summary>
     /// <param name="punkteTeamB"></param>
     public void SetMasterTeamBValue(int punkteTeamB)
     {
         IsSetByHand = true;
 
-        if (Kehren_Live == null || !Kehren_Live.Any())
-        {
-            Kehren_Live = new List<IKehre>() { Kehre.Create(1, 0, punkteTeamB) }.OrderBy(k => k.KehrenNummer);
-        }
-        else
-        {
-            Kehren_Live.First().PunkteTeamB = punkteTeamB;
-        }
+        if (_liveKehren.Count > 1)
+            _liveKehren.Clear();
 
-        if (Kehren_Master == null || !Kehren_Master.Any())
-        {
-            Kehren_Master = new List<IKehre>() { Kehre.Create(1, 0, punkteTeamB) }.OrderBy(k => k.KehrenNummer);
-        }
+        if (_liveKehren.Any())
+            _liveKehren[0].PunkteTeamB = punkteTeamB;
         else
-        {
-            Kehren_Master.First().PunkteTeamB = punkteTeamB;
-        }
+            _liveKehren.Add(Kehre.Create(1, 0, punkteTeamB));
+
+
+        if (_masterKehren.Count > 1)
+            _masterKehren.Clear();
+
+        if (_masterKehren.Any())
+            _masterKehren[0].PunkteTeamB = punkteTeamB;
+        else
+            _masterKehren.Add(Kehre.Create(1, 0, punkteTeamB));
 
         RaiseSpielstandChanged();
     }
 
+    /// <summary>
+    /// Setzt <see cref="IsSetByHand"/> auf TRUE<br></br>
+    /// Es wird die Kehre in  <see cref="Kehren_Live"/> und <see cref="Kehren_Master"/> gelöscht und dann neu angefügt
+    /// </summary>
+    /// <param name="kehre"></param>
     public void SetMasterValue(IKehre kehre)
     {
         IsSetByHand = true;
 
-
         //Kehre LIVE
-        if (Kehren_Live == null || !Kehren_Live.Any())
-        {
-            Kehren_Live = new List<IKehre>() { kehre }.OrderBy(k => k.KehrenNummer);
-        }
-        else if (Kehren_Live.Any(k => k.KehrenNummer == kehre.KehrenNummer))
-        {
-            Kehren_Live.First(k => k.KehrenNummer == kehre.KehrenNummer).PunkteTeamA = kehre.PunkteTeamA;
-            Kehren_Live.First(k => k.KehrenNummer == kehre.KehrenNummer).PunkteTeamB = kehre.PunkteTeamB;
-        }
-        else
-        {
-            var kehrenLive = Kehren_Live.ToList();
-            kehrenLive.Add(kehre);
-            Kehren_Live = kehrenLive.OrderBy(k => k.KehrenNummer);
-        }
+        _liveKehren.RemoveAll(k => k.KehrenNummer == kehre.KehrenNummer);
+        _liveKehren.Add(kehre);
 
         //Kehre MASTER
-        if (Kehren_Master == null || !Kehren_Master.Any())
-        {
-            Kehren_Master = new List<IKehre>() { kehre }.OrderBy(k => k.KehrenNummer);
-        }
-        else if (Kehren_Master.Any(k => k.KehrenNummer == kehre.KehrenNummer))
-        {
-            Kehren_Master.First(k => k.KehrenNummer == kehre.KehrenNummer).PunkteTeamA = kehre.PunkteTeamA;
-            Kehren_Master.First(k => k.KehrenNummer == kehre.KehrenNummer).PunkteTeamB = kehre.PunkteTeamB;
-        }
-        else
-        {
-            var kehrenMaster = Kehren_Master.ToList();
-            kehrenMaster.Add(kehre);
-            Kehren_Master = kehrenMaster.OrderBy(k => k.KehrenNummer);
-        }
+        _masterKehren.RemoveAll(k => k.KehrenNummer == kehre.KehrenNummer);
+        _masterKehren.Add(kehre);
 
         RaiseSpielstandChanged();
     }
@@ -224,14 +252,19 @@ public class Spielstand : ISpielstand
     {
         if (!IsSetByHand)
         {
-            Kehren_Master = Kehren_Live.OrderBy(k => k.KehrenNummer);
+            _masterKehren.Clear();
+            foreach (var kehre in _liveKehren)
+            {
+                _masterKehren.Add(kehre);
+            }
 
             RaiseSpielstandChanged();
         }
     }
 
     /// <summary>
-    /// Wenn <see cref="IsSetByHand"/> FALSE ist, dann werden die Live-Punkte gesetzt
+    /// Wenn <see cref="IsSetByHand"/> FALSE ist, werden erst alle Kehren in <see cref="Kehren_Live"/> gelöscht, <br>
+    /// </br> und eine neue Kehre mit den Werten angefügt
     /// </summary>
     /// <param name="teamA"></param>
     /// <param name="teamB"></param>
@@ -243,12 +276,18 @@ public class Spielstand : ISpielstand
 
         if (!IsSetByHand)
         {
-            Kehren_Live = new List<IKehre>() { Kehre.Create(1, teamA, teamB) }.OrderBy(t => t.KehrenNummer);
+            _liveKehren.Clear();
+            _liveKehren.Add(Kehre.Create(1, teamA, teamB));
 
             RaiseSpielstandChanged();
         }
     }
 
+    /// <summary>
+    /// Wenn <see cref="IsSetByHand"/> TRUE ist, werden alle Kehren in <see cref="Kehren_Live"/> gelöscht, <br>
+    /// </br>und dann alle übergegebenen Kehren angefügt
+    /// </summary>
+    /// <param name="kehren"></param>
     public void SetLiveValues(IOrderedEnumerable<IKehre> kehren)
     {
 #if DEBUG
@@ -257,7 +296,11 @@ public class Spielstand : ISpielstand
 
         if (!IsSetByHand)
         {
-            this.Kehren_Live = kehren;
+            _liveKehren.Clear();
+            foreach (var kehre in kehren)
+            {
+                _liveKehren.Add(kehre);
+            }
             RaiseSpielstandChanged();
         }
     }
