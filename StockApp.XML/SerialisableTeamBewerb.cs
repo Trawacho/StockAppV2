@@ -135,6 +135,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
 #pragma warning disable 67
     public event EventHandler TeamsChanged;
     public event EventHandler GamesChanged;
+    public event EventHandler Is8TurnsGameChanged;
 #pragma warning restore 67
 
     #region Methods

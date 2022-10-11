@@ -32,12 +32,12 @@ public class SerialisableSpielstand : ISpielstand
 
     [XmlIgnore]
     public bool IsSetByHand => throw new NotImplementedException();
-
+    
     [XmlIgnore]
     public IOrderedEnumerable<IKehre> Kehren_Live => throw new NotImplementedException();
-
     [XmlIgnore]
     public IOrderedEnumerable<IKehre> Kehren_Master => throw new NotImplementedException();
+
 
 #pragma warning disable 67
     public event EventHandler SpielStandChanged;
@@ -54,6 +54,11 @@ public class SerialisableSpielstand : ISpielstand
     }
 
     public int GetCountOfWinningTurnsTeamB(bool live)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IKehre GetKehre(int kehrenNummer, bool isLive = false)
     {
         throw new NotImplementedException();
     }
@@ -83,6 +88,11 @@ public class SerialisableSpielstand : ISpielstand
         throw new NotImplementedException();
     }
 
+    public void SetMasterKehre(int kehrenNummer, int teamA = int.MinValue, int teamB = int.MinValue)
+    {
+        throw new NotImplementedException();
+    }
+
     public void SetLiveValues(int teamA, int teamB)
     {
         throw new NotImplementedException();
@@ -103,7 +113,7 @@ public class SerialisableSpielstand : ISpielstand
         throw new NotImplementedException();
     }
 
-    public void SetMasterValue(IKehre kehre)
+    public void SetMasterKehre(IKehre kehre)
     {
         throw new NotImplementedException();
     }

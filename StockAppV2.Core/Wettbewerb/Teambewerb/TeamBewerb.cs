@@ -35,6 +35,8 @@ public interface ITeamBewerb : IBewerb
     /// </summary>
     bool Is8TurnsGame { get; set; }
 
+    public event EventHandler Is8TurnsGameChanged;
+
     /// <summary>
     /// If true, the Game-Start is switched after every round of game
     /// </summary>
@@ -103,7 +105,7 @@ public class TeamBewerb : ITeamBewerb
     }
     #endregion
 
-    #region GmaesChanged Event
+    #region GamesChanged Event
     public event EventHandler GamesChanged;
 
     protected virtual void RaiseGamesChanged()
@@ -115,12 +117,20 @@ public class TeamBewerb : ITeamBewerb
 
     #endregion
 
+    #region Is8TurnsGameChanged
+
+    public event EventHandler Is8TurnsGameChanged;
+    protected virtual void RaiseIs8TurnsGameChanged() => Is8TurnsGameChanged?.Invoke(this, EventArgs.Empty);
+
+    #endregion
+
     #region Fields
 
     private readonly List<ITeam> _teams = new();
     private int _numberOfGameRounds = 1;
     private int _breakCount = 1;
     private int _spielGruppe;
+    private bool _is8TurnsGame;
     #endregion
 
     #region Properties
@@ -168,7 +178,7 @@ public class TeamBewerb : ITeamBewerb
     /// <summary>
     /// On True, the TurnCard has 8 instead of 7 Turns per Team
     /// </summary>
-    public bool Is8TurnsGame { get; set; } = false;
+    public bool Is8TurnsGame { get => _is8TurnsGame; set { _is8TurnsGame = value; RaiseIs8TurnsGameChanged(); } }
 
     /// <summary>
     /// True, wenn bei einer Mehrfachrunde das Anspiel bei jeder Runde gewechselt wird
@@ -203,7 +213,7 @@ public class TeamBewerb : ITeamBewerb
 
     private TeamBewerb()
     {
-
+        _is8TurnsGame = false;
     }
 
     public static TeamBewerb Create() => new();

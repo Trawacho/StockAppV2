@@ -85,14 +85,14 @@ namespace StockApp.Test
         {
             _spielstand = Spielstand.Create();
 
-            _spielstand.SetMasterValue(Kehre.Create(1, 3, 0));
+            _spielstand.SetMasterKehre(Kehre.Create(1, 3, 0));
             Assert.That(_spielstand.IsSetByHand, Is.True);
 
-            _spielstand.SetMasterValue(Kehre.Create(2, 3, 0));
-            _spielstand.SetMasterValue(Kehre.Create(3, 0, 3));
+            _spielstand.SetMasterKehre(Kehre.Create(2, 3, 0));
+            _spielstand.SetMasterKehre(Kehre.Create(3, 0, 3));
             Assert.That(_spielstand.Kehren_Master.Count(), Is.EqualTo(3));
 
-            _spielstand.SetMasterValue(Kehre.Create(1, 0, 5));
+            _spielstand.SetMasterKehre(Kehre.Create(1, 0, 5));
             Assert.That(_spielstand.Kehren_Master.Count(), Is.EqualTo(3));
             Assert.That(_spielstand.Kehren_Master.First(k => k.KehrenNummer == 1).PunkteTeamA, Is.EqualTo(0));
             Assert.That(_spielstand.Kehren_Master.First(k => k.KehrenNummer == 1).PunkteTeamB, Is.EqualTo(5));

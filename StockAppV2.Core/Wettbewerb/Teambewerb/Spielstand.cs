@@ -13,6 +13,7 @@ public interface ISpielstand
     int Punkte_Live_TeamB { get; }
     IOrderedEnumerable<IKehre> Kehren_Live { get; }
     IOrderedEnumerable<IKehre> Kehren_Master { get; }
+
     bool IsSetByHand { get; }
 
     /// <summary>
@@ -49,7 +50,7 @@ public interface ISpielstand
     /// </summary>
     /// <param name="punkteTeamA"></param>
     void SetMasterTeamAValue(int punkteTeamA);
-    
+
     /// <summary>
     /// Setzt <see cref="IsSetByHand"/> auf TRUE <br></br>
     /// und schreibt in die erste Kehre von <see cref="Kehren_Master"/> und <see cref="Kehren_Live"/> den übergebenen Wert.<br></br>
@@ -63,7 +64,15 @@ public interface ISpielstand
     /// Es wird die Kehre in  <see cref="Kehren_Live"/> und <see cref="Kehren_Master"/> gelöscht und dann neu angefügt
     /// </summary>
     /// <param name="kehre"></param>
-    void SetMasterValue(IKehre kehre);
+    void SetMasterKehre(IKehre kehre);
+
+    /// <summary>
+    /// Schreibt Werte in die <see cref="Kehren_Master"/>. 
+    /// </summary>
+    /// <param name="kehrenNummer"></param>
+    /// <param name="teamA"></param>
+    /// <param name="teamB"></param>
+    void SetMasterKehre(int kehrenNummer, int teamA = int.MinValue, int teamB = int.MinValue);
 
 
     int GetSpielPunkteTeamA(bool live);
@@ -135,7 +144,7 @@ public class Spielstand : ISpielstand
     /// </summary>
     private Spielstand()
     {
-        _masterKehren = new List<IKehre>() { Kehre.Create(1, 0, 0) };
+        _masterKehren = new List<IKehre>();
         _liveKehren = new List<IKehre>();
     }
 
@@ -153,27 +162,9 @@ public class Spielstand : ISpielstand
     /// <param name="punkteTeamA"></param>
     public void SetMasterTeamAValue(int punkteTeamA)
     {
-        IsSetByHand = true;
-
-        //Live-Kehren
-        if (_liveKehren.Count > 1)
-            _liveKehren.Clear();
-
-        if (_liveKehren.Any())
-            _liveKehren[0].PunkteTeamA = punkteTeamA;
-        else
-            _liveKehren.Add(Kehre.Create(1, punkteTeamA, 0));
-
-        //Master-Kehren
-        if (_masterKehren.Count > 1)
-            _masterKehren.Clear();
-
-        if (_masterKehren.Any())
-            _masterKehren[0].PunkteTeamA = punkteTeamA;
-        else
-            _masterKehren.Add(Kehre.Create(1, punkteTeamA, 0));
-
-        RaiseSpielstandChanged();
+        _liveKehren.RemoveAll(k => k.KehrenNummer != 1);
+        _masterKehren.RemoveAll(k => k.KehrenNummer != 1);
+        SetMasterKehre(1, teamA: punkteTeamA);
     }
 
     /// <summary>
@@ -184,26 +175,9 @@ public class Spielstand : ISpielstand
     /// <param name="punkteTeamB"></param>
     public void SetMasterTeamBValue(int punkteTeamB)
     {
-        IsSetByHand = true;
-
-        if (_liveKehren.Count > 1)
-            _liveKehren.Clear();
-
-        if (_liveKehren.Any())
-            _liveKehren[0].PunkteTeamB = punkteTeamB;
-        else
-            _liveKehren.Add(Kehre.Create(1, 0, punkteTeamB));
-
-
-        if (_masterKehren.Count > 1)
-            _masterKehren.Clear();
-
-        if (_masterKehren.Any())
-            _masterKehren[0].PunkteTeamB = punkteTeamB;
-        else
-            _masterKehren.Add(Kehre.Create(1, 0, punkteTeamB));
-
-        RaiseSpielstandChanged();
+        _liveKehren.RemoveAll(k => k.KehrenNummer != 1);
+        _masterKehren.RemoveAll(k => k.KehrenNummer != 1);
+        SetMasterKehre(1, teamB:punkteTeamB);
     }
 
     /// <summary>
@@ -211,21 +185,32 @@ public class Spielstand : ISpielstand
     /// Es wird die Kehre in  <see cref="Kehren_Live"/> und <see cref="Kehren_Master"/> gelöscht und dann neu angefügt
     /// </summary>
     /// <param name="kehre"></param>
-    public void SetMasterValue(IKehre kehre)
+    public void SetMasterKehre(IKehre kehre)=>SetMasterKehre(kehre.KehrenNummer, kehre.PunkteTeamA, kehre.PunkteTeamB);
+
+    /// <summary>
+    /// Fügt die Kehre an, falls sie nicht existiert und setzt dann die Werte
+    /// </summary>
+    /// <param name="kehrenNummer"></param>
+    /// <param name="teamA"></param>
+    /// <param name="teamB"></param>
+    public void SetMasterKehre(int kehrenNummer, int teamA = int.MinValue, int teamB = int.MinValue)
     {
         IsSetByHand = true;
 
-        //Kehre LIVE
-        _liveKehren.RemoveAll(k => k.KehrenNummer == kehre.KehrenNummer);
-        _liveKehren.Add(kehre);
+        //Live Kehren
+        if (!_liveKehren.Any(k => k.KehrenNummer == kehrenNummer))
+            _liveKehren.Add(Kehre.Create(kehrenNummer, 0, 0).SetKehre(teamA, teamB));
+        else
+            _liveKehren.First(k => k.KehrenNummer == kehrenNummer).SetKehre(teamA, teamB);
 
-        //Kehre MASTER
-        _masterKehren.RemoveAll(k => k.KehrenNummer == kehre.KehrenNummer);
-        _masterKehren.Add(kehre);
+        //Master Kehren
+        if (!_masterKehren.Any(k => k.KehrenNummer == kehrenNummer))
+            _masterKehren.Add(Kehre.Create(kehrenNummer, 0, 0).SetKehre(teamA, teamB));
+        else
+            _masterKehren.First(k => k.KehrenNummer == kehrenNummer).SetKehre(teamA, teamB);
 
         RaiseSpielstandChanged();
     }
-
 
     /// <summary>
     /// Wenn <see cref="IsSetByHand"/> FALSE ist, dann werden die Master-Punkte auf 0 gesetzt.<br></br>
@@ -369,8 +354,6 @@ public class Spielstand : ISpielstand
         }
     }
 
-
-
     public int GetStockPunkteTeamA(bool live = false) => live ? Punkte_Live_TeamA : Punkte_Master_TeamA;
 
     public int GetStockPunkteTeamB(bool live = false) => live ? Punkte_Live_TeamB : Punkte_Master_TeamB;
@@ -382,6 +365,8 @@ public class Spielstand : ISpielstand
     public int GetCountOfWinningTurnsTeamB(bool live) => live
             ? Kehren_Live?.Count(k => k.PunkteTeamB > k.PunkteTeamA) ?? 0
             : Kehren_Master?.Count(k => k.PunkteTeamB > k.PunkteTeamA) ?? 0;
+
+
 
     #endregion
 
