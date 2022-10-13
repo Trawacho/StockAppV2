@@ -120,6 +120,8 @@ public class KehrePerTeamAndGameViewModel : KehrenBaseViewModel
     {
         if (IsBreakGame) return;
 
+        if (value > 100) value = 0;
+
         if (team1)
         {
             if (_team.StartNumber == _game.TeamA.StartNumber)

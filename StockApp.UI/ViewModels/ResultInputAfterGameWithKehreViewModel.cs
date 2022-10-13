@@ -126,6 +126,8 @@ public class KehrenPerGameViewModel : KehrenBaseViewModel
 
     protected override void SetKehre(int kehrenNummer, int value, bool team1, string propName1, [CallerMemberName] string propName2 = null)
     {
+        if (value > 100) value = 0;
+
         if (team1)
         {
             if (_game.IsTeamA_Starting)
