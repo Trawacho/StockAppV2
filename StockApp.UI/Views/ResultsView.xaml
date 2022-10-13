@@ -54,15 +54,25 @@
                               HorizontalAlignment="Left"
                               Margin="10 5 0 10"
                               IsChecked="{Binding Path=AcceptNetworkResults}"/>
-                        
+
 
                     <RadioButton IsChecked="{Binding Path=InputPerTeam}" 
-                                 Content=".. pro Team" 
+                                 Content=".. pro Team (nur Summe)" 
+                                 GroupName="TeamOrName"
+                                 Margin="10,5" />
+
+                    <RadioButton IsChecked="{Binding Path=InputPerTeamAndKehre}" 
+                                 Content=".. pro Team (jede Kehre)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
 
                     <RadioButton IsChecked="{Binding Path=InputAfterGame}" 
-                                 Content=".. nach jedem Spiel" 
+                                 Content=".. nach jedem Spiel (nur Summe)" 
+                                 GroupName="TeamOrName"
+                                 Margin="10,5" />
+                    
+                    <RadioButton IsChecked="{Binding Path=InputAfterGameAndKehre}" 
+                                 Content=".. nach jedem Spiel (jede Kehre)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
                     

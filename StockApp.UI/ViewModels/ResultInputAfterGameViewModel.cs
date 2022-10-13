@@ -15,15 +15,14 @@ public class ResultInputAfterGameViewModel : ViewModelBase
     public IGame SelectedGame
     {
         get => _selectedGame;
-        set
-        {
-            if (_selectedGame == value) return;
-
-            _selectedGame = value;
-            RaisePropertyChanged();
-            RaisePropertyChanged(nameof(SelectedGameName));
-            SetPointsPerGame();
-        }
+        set => SetProperty(
+            ref _selectedGame,
+            value,
+            () =>
+            {
+                RaisePropertyChanged(nameof(SelectedGameName));
+                SetPointsPerGame();
+            });
     }
 
     private void SetPointsPerGame()
@@ -61,7 +60,7 @@ public class ResultInputAfterGameViewModel : ViewModelBase
         {
             Games.Add(game);
         }
-
+        SelectedGame = Games?.FirstOrDefault();
     }
 
     protected override void Dispose(bool disposing)
@@ -78,74 +77,72 @@ public class ResultInputAfterGameViewModel : ViewModelBase
             base.Dispose(disposing);
         }
     }
+}
 
-    public class PointsPerGameViewModel : ViewModelBase
+public class PointsPerGameViewModel : ViewModelBase
+{
+    private readonly IGame _game;
+    public int Bahn => _game.CourtNumber;
+
+    public string TeamName1 => _game.IsTeamA_Starting ? _game.TeamA.TeamName : _game.TeamB.TeamName;
+
+    public string TeamName2 => !_game.IsTeamA_Starting ? _game.TeamA.TeamName : _game.TeamB.TeamName;
+
+    public int StockPunkte1
     {
-        private readonly IGame _game;
-        public int Bahn => _game.CourtNumber;
-
-        public string TeamName1 => _game.IsTeamA_Starting ? _game.TeamA.TeamName : _game.TeamB.TeamName;
-
-        public string TeamName2 => !_game.IsTeamA_Starting ? _game.TeamA.TeamName : _game.TeamB.TeamName;
-
-        public int StockPunkte1
+        get => _game.IsTeamA_Starting ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
+        set
         {
-            get => _game.IsTeamA_Starting ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
-            set
+            if (_game.IsTeamA_Starting)
             {
-                if (_game.IsTeamA_Starting)
-                {
-                    _game.Spielstand.SetMasterTeamAValue(value);
-                }
-                else
-                {
-                    _game.Spielstand.SetMasterTeamBValue(value);
-                }
-                RaisePropertyChanged();
+                _game.Spielstand.SetMasterTeamAValue(value);
             }
-        }
-
-        public int StockPunkte2
-        {
-            get => !_game.IsTeamA_Starting ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
-            set
+            else
             {
-                if (!_game.IsTeamA_Starting)
-                {
-                    _game.Spielstand.SetMasterTeamAValue(value);
-                }
-                else
-                {
-                    _game.Spielstand.SetMasterTeamBValue(value);
-                }
-                RaisePropertyChanged();
+                _game.Spielstand.SetMasterTeamBValue(value);
             }
-        }
-
-        public PointsPerGameViewModel(IGame game)
-        {
-            _game = game;
-            _game.SpielstandChanged += SpielstandChanged;
-        }
-
-        private void SpielstandChanged(object sender, EventArgs e)
-        {
-            RaisePropertyChanged(nameof(StockPunkte1));
-            RaisePropertyChanged(nameof(StockPunkte2));
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _game.SpielstandChanged -= SpielstandChanged;
-                }
-                _disposed = true;
-            }
+            RaisePropertyChanged();
         }
     }
 
-}
+    public int StockPunkte2
+    {
+        get => !_game.IsTeamA_Starting ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
+        set
+        {
+            if (!_game.IsTeamA_Starting)
+            {
+                _game.Spielstand.SetMasterTeamAValue(value);
+            }
+            else
+            {
+                _game.Spielstand.SetMasterTeamBValue(value);
+            }
+            RaisePropertyChanged();
+        }
+    }
 
+    public PointsPerGameViewModel(IGame game)
+    {
+        _game = game;
+        _game.SpielstandChanged += SpielstandChanged;
+    }
+
+    private void SpielstandChanged(object sender, EventArgs e)
+    {
+        RaisePropertyChanged(nameof(StockPunkte1));
+        RaisePropertyChanged(nameof(StockPunkte2));
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _game.SpielstandChanged -= SpielstandChanged;
+            }
+            _disposed = true;
+        }
+    }
+}

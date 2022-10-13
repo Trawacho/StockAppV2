@@ -1,10 +1,11 @@
-﻿namespace StockApp.UI.ViewModels;
-using StockApp.Core.Wettbewerb.Teambewerb;
+﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
 using StockApp.UI.Stores;
 using System.Linq;
 using System.Windows.Input;
+
+namespace StockApp.UI.ViewModels;
 
 public class GamesPrintsViewModel : ViewModelBase
 {
@@ -19,18 +20,9 @@ public class GamesPrintsViewModel : ViewModelBase
     private bool _hasScoreCardsOptimizedForStockTV;
     private bool _hasOpponentOnScoreCard;
 
-    public bool Has8Turns
-    {
-        get => _teamBewerb.Is8TurnsGame;
-        set
-        {
-            if (_teamBewerb.Is8TurnsGame == value) return;
-            _teamBewerb.Is8TurnsGame = value;
-            RaisePropertyChanged();
-            if (value)
-                HasOpponentOnScoreCard = false;
-        }
-    }
+    public bool Has8Turns => _teamBewerb.Is8TurnsGame;
+
+    public bool Has6Turns => !Has8Turns;
 
     public bool HasSummarizedScoreCards
     {
@@ -47,27 +39,16 @@ public class GamesPrintsViewModel : ViewModelBase
     public bool HasScoreCardsOptimizedForStockTV
     {
         get => _hasScoreCardsOptimizedForStockTV;
-        set
-        {
-            SetProperty(ref _hasScoreCardsOptimizedForStockTV, value);
-            if (value)
-                HasOpponentOnScoreCard = false;
-        }
+        set => SetProperty(ref _hasScoreCardsOptimizedForStockTV, value);
     }
 
     public bool HasOpponentOnScoreCard
     {
         get => _hasOpponentOnScoreCard;
-        set
-        {
-            SetProperty(ref _hasOpponentOnScoreCard, value);
-            if (value)
-            {
-                Has8Turns = false;
-                HasScoreCardsOptimizedForStockTV = false;
-            }
-        }
+        set => SetProperty(ref _hasOpponentOnScoreCard, value);
     }
+
+    #region Commands
 
     public ICommand PrintScoreCardsCommand => _printScoreCardsCommand ??= new RelayCommand(
         (p) =>
@@ -97,10 +78,13 @@ public class GamesPrintsViewModel : ViewModelBase
         },
         (p) => _teamBewerb.GetCountOfGames() > 0);
 
+    #endregion
     public GamesPrintsViewModel(ITeamBewerb teamBewerb, ITurnierStore turnierStore)
     {
         _teamBewerb = teamBewerb;
         _turnierStore = turnierStore;
+
+        _teamBewerb.Is8TurnsGameChanged += TeamBewerb_Is8TurnsGameChanged;
     }
 
     protected override void Dispose(bool disposing)
@@ -109,12 +93,20 @@ public class GamesPrintsViewModel : ViewModelBase
         {
             if (disposing)
             {
-
+                _teamBewerb.Is8TurnsGameChanged -= TeamBewerb_Is8TurnsGameChanged;
             }
             _disposed = true;
         }
     }
 
-
+    private void TeamBewerb_Is8TurnsGameChanged(object sender, System.EventArgs e)
+    {
+        RaisePropertyChanged(nameof(Has8Turns));
+        RaisePropertyChanged(nameof(Has6Turns));
+        if (Has8Turns)
+        {
+            HasOpponentOnScoreCard = false;
+            HasScoreCardsOptimizedForStockTV = false;
+        }
+    }
 }
-

@@ -6,6 +6,7 @@ using StockApp.UI.Stores;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
+
 public class ResultsViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
@@ -37,14 +38,59 @@ public class ResultsViewModel : ViewModelBase
     public bool? InputAfterGame
     {
         get => _inputAfterGame;
-        set => SetProperty(ref _inputAfterGame, value, () => { if (value == true) ResultsEntryViewModel = new ResultInputAfterGameViewModel(_teamBewerb.GetAllGames()); });
+        set => SetProperty(
+            ref _inputAfterGame, 
+            value,
+            () =>
+            {
+                if (value == true)
+                    ResultsEntryViewModel = new ResultInputAfterGameViewModel(_teamBewerb.GetAllGames());
+            });
     }
 
     private bool? _inputPerTeam;
     public bool? InputPerTeam
     {
         get => _inputPerTeam;
-        set => SetProperty(ref _inputPerTeam, value, () => { if (value == true) ResultsEntryViewModel = new ResultInputPerTeamViewModel(_teamBewerb.Teams); });
+        set => SetProperty(
+            ref _inputPerTeam,
+            value,
+            () =>
+            {
+                if (value == true)
+                    ResultsEntryViewModel = new ResultInputPerTeamViewModel(_teamBewerb.Teams);
+            });
+    }
+
+    private bool? _inputPerTeamAndKehre;
+
+    public bool? InputPerTeamAndKehre
+    {
+        get => _inputPerTeamAndKehre;
+        set => SetProperty(
+            ref _inputPerTeamAndKehre,
+            value,
+            () =>
+            {
+                if (value == true)
+                    ResultsEntryViewModel = new ResultInputPerTeamAndKehreViewModel(_teamBewerb.Teams, _teamBewerb.Is8TurnsGame);
+            });
+    }
+
+
+    private bool? _inputAfterGameAndKehre;
+
+    public bool? InputAfterGameAndKehre
+    {
+        get => _inputAfterGameAndKehre;
+        set => SetProperty(
+            ref _inputAfterGameAndKehre,
+            value,
+            () =>
+            {
+                if (value == true)
+                    ResultsEntryViewModel = new ResultInputAfterGameWithKehreViewModel(_teamBewerb.GetAllGames(), _teamBewerb.Is8TurnsGame);
+            });
     }
 
     public bool RankingNewIERVersion
@@ -68,7 +114,6 @@ public class ResultsViewModel : ViewModelBase
         }
     }
 
-
     public ResultsViewModel(ITurnierStore turnierStore, ITurnierNetworkManager turnierNetworkManager)
     {
         _turnierStore = turnierStore;
@@ -77,10 +122,11 @@ public class ResultsViewModel : ViewModelBase
             _teamBewerb = teamBewerb;
 
         InputAfterGame = false;
+        InputAfterGameAndKehre = false;
+        InputPerTeamAndKehre = false;
         InputPerTeam = true;
 
+
+
     }
-
-
 }
-

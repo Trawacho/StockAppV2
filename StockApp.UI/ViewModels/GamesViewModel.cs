@@ -1,5 +1,4 @@
-﻿namespace StockApp.UI.ViewModels;
-using StockApp.Core.Factories;
+﻿using StockApp.Core.Factories;
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.UI.Commands;
 using StockApp.UI.Stores;
@@ -8,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 
+namespace StockApp.UI.ViewModels;
+
 public class GamesViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
@@ -15,7 +16,6 @@ public class GamesViewModel : ViewModelBase
     private ICommand _createGamesCommand;
 
     public ViewModelBase GamesPrintsViewModel { get; set; }
-
 
     public int CountOfCourts => _teamBewerb.NumberOfCourts;
     public int CountOfGames => _teamBewerb.GetCountOfGames();
@@ -57,6 +57,17 @@ public class GamesViewModel : ViewModelBase
         }
     }
 
+    public bool Has8Turns
+    {
+        get => _teamBewerb.Is8TurnsGame;
+        set
+        {
+            if (_teamBewerb.Is8TurnsGame == value) return;
+            _teamBewerb.Is8TurnsGame = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public int SpielRunden
     {
         get => _teamBewerb.NumberOfGameRounds;
@@ -77,7 +88,6 @@ public class GamesViewModel : ViewModelBase
     }
 
     private IEnumerable<IFactoryGame> _factoryGames;
-
 
     public ICommand CreateGamesCommand => _createGamesCommand ??= new RelayCommand
         ((p) =>

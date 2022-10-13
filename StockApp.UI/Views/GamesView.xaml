@@ -120,15 +120,20 @@
                       IsChecked="{Binding HasChangeStart, UpdateSourceTrigger=PropertyChanged}"
                       IsEnabled="{Binding HasMoreGameRounds, Mode=OneWay}"/>
 
-            <TextBlock Text="Anzahl Bahnen:" Grid.Row="4" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
-            <TextBlock Text="{Binding CountOfCourts}" Grid.Row="4" Grid.Column="1"  
+            <TextBlock Text="Kehren:" Grid.Row="4" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
+            <CheckBox Grid.Row="4" Grid.Column="1" Content="8 Kehren für manuelle Eingabe und Wertungskarte"
+                      Style="{StaticResource CheckBoxGrid}"
+                      IsChecked="{Binding Has8Turns, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Anzahl Bahnen:" Grid.Row="5" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
+            <TextBlock Text="{Binding CountOfCourts}" Grid.Row="5" Grid.Column="1"  
                        Margin="5" Width="10" TextAlignment="Center"
                        HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
 
             <Button Content="Spielplan generieren" 
-                    Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right"
+                    Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right"
                     Command="{Binding CreateGamesCommand}" Margin="5" Padding="10"/>
-            <StackPanel Grid.Row="5" Grid.Column="1" Margin="5" Orientation="Horizontal">
+            <StackPanel Grid.Row="6" Grid.Column="1" Margin="5" Orientation="Horizontal">
                 <loadingspinnercontrol:LoadingSpinner IsLoading="{Binding IsCreatingGames}" Grid.Row="2" Margin="10 0"
                                                   Diameter="40"
                                                   Thickness="5"

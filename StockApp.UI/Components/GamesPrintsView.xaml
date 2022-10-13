@@ -41,12 +41,6 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Kehren:"
-                       Grid.Row="0" Grid.Column="0"
-                       Style="{StaticResource TextBlockGrid}"/>
-            <CheckBox Content="8 Kehren pro Spiel"
-                      Grid.Row="0" Grid.Column="1" Style="{StaticResource CheckBoxGrid}"
-                      IsChecked="{Binding Has8Turns}"/>
 
             <TextBlock Text="Spielrunden:"
                        Grid.Row="1" Grid.Column="0"
@@ -61,11 +55,12 @@
                        VerticalAlignment="Top"/>
             <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1" >
                 <CheckBox Content="Name der Mannschaft auf Wertungskarte"
-                      Style="{StaticResource CheckBoxGrid}"
-                      IsChecked="{Binding HasNamesOnScoreCard}"/>
+                          Style="{StaticResource CheckBoxGrid}"
+                          IsChecked="{Binding HasNamesOnScoreCard}"/>
                 <CheckBox Content="Namen der Gegner auf Wertungskarte"
-                      Style="{StaticResource CheckBoxGrid}"
-                      IsChecked="{Binding HasOpponentOnScoreCard}"/>
+                          Style="{StaticResource CheckBoxGrid}"
+                          IsChecked="{Binding HasOpponentOnScoreCard}"
+                          IsEnabled="{Binding Has6Turns}"/>
             </StackPanel>
 
             <TextBlock Text="StockTV:"
@@ -73,7 +68,8 @@
                        Style="{StaticResource TextBlockGrid}"/>
             <CheckBox Content="Ausgabe der Wertungskarten für StockTV optimiert"
                       Grid.Row="3" Grid.Column="1" Style="{StaticResource CheckBoxGrid}"
-                      IsChecked="{Binding HasScoreCardsOptimizedForStockTV}"/>
+                      IsChecked="{Binding HasScoreCardsOptimizedForStockTV}"
+                      IsEnabled="{Binding Has6Turns}"/>
 
 
             <Button Content="Wertungskarte"

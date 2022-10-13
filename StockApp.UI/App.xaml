@@ -64,9 +64,17 @@
         <DataTemplate DataType="{x:Type vm:ResultInputAfterGameViewModel}">
             <components:ResultInputAfterGameView/>
         </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:ResultInputAfterGameWithKehreViewModel}">
+            <components:ResultInputAfterGameWithKehreView/>
+        </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:ResultInputPerTeamViewModel}">
             <components:ResultInputPerTeamView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ResultInputPerTeamAndKehreViewModel}">
+            <components:ResultInputPerTeamAndKehreView/>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:StockTVCollectionViewModel}">
