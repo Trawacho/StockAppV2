@@ -63,11 +63,15 @@
 
                 <DataGrid.Resources>
 
-                    <Style TargetType="DataGridCell">
+                    <Style TargetType="DataGridCell" x:Key="datagridcellEditStyle">
+                        <Setter Property="MaxWidth" Value="40"/>
                         <Style.Triggers>
                             <Trigger Property="IsFocused" Value="True">
                                 <Setter Property="Background" Value="Green"/>
                             </Trigger>
+                            <DataTrigger Binding="{Binding Path=IsBreakGame}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"/>
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
 
@@ -145,31 +149,37 @@
 
                     <DataGridTextColumn Header="1" 
                                         Binding="{Binding Path=Kehre1vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="2" 
                                         Binding="{Binding Path=Kehre2vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="3" 
                                         Binding="{Binding Path=Kehre3vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="4" 
                                         Binding="{Binding Path=Kehre4vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="5" 
                                         Binding="{Binding Path=Kehre5vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="6" 
                                         Binding="{Binding Path=Kehre6vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
@@ -177,6 +187,7 @@
                                         Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, 
                                                     Converter={StaticResource BooleanToVisibilityConvert}}"
                                         Binding="{Binding Path=Kehre7vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
@@ -184,6 +195,7 @@
                                        Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, 
                                                     Converter={StaticResource BooleanToVisibilityConvert}}"
                                         Binding="{Binding Path=Kehre8vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
@@ -202,31 +214,37 @@
 
                     <DataGridTextColumn Header="1" 
                                         Binding="{Binding Path=Kehre1vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="2" 
                                         Binding="{Binding Path=Kehre2vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="3" 
                                         Binding="{Binding Path=Kehre3vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="4" 
                                         Binding="{Binding Path=Kehre4vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="5" 
                                         Binding="{Binding Path=Kehre5vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
                     <DataGridTextColumn Header="6" 
                                         Binding="{Binding Path=Kehre6vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
@@ -234,6 +252,7 @@
                                         Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, 
                                                     Converter={StaticResource BooleanToVisibilityConvert}}"
                                         Binding="{Binding Path=Kehre7vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
@@ -241,6 +260,7 @@
                                         Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, 
                                                     Converter={StaticResource BooleanToVisibilityConvert}}"
                                         Binding="{Binding Path=Kehre8vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
