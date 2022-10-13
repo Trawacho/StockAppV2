@@ -118,6 +118,8 @@ public class KehrePerTeamAndGameViewModel : KehrenBaseViewModel
     
     protected override void SetKehre(int kehrenNummer, int value, bool team1, string propName1, [CallerMemberName] string propName2 = null)
     {
+        if (IsBreakGame) return;
+
         if (team1)
         {
             if (_team.StartNumber == _game.TeamA.StartNumber)
