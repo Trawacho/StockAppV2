@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using StockApp.Comm.MDns;
+﻿using StockApp.Comm.MDns;
+using System.ComponentModel;
 
 namespace StockApp.Comm.NetMqStockTV;
 
@@ -77,13 +77,13 @@ public class StockTVService : IStockTVService
     public StockTVService()
     {
         _stockTvList = new List<IStockTV>();
-        
+
         _mdnsService = new MDnsService();
-        
+
         _mdnsService.StockTVDiscovered += MdnsService_StockTVDiscovered;
     }
 
-   
+
 
     #region mDNS Implementation
 
@@ -95,13 +95,13 @@ public class StockTVService : IStockTVService
     }
 
     public void Discover() => _mdnsService.Discover();
-    
+
     private void MdnsService_StockTVDiscovered(object sender, IMDnsHost e)
     {
         AddNewStockTV(e);
     }
-       
-    private void AddNewStockTV(IMDnsHost mDns) 
+
+    private void AddNewStockTV(IMDnsHost mDns)
     {
         lock (_lock)
         {

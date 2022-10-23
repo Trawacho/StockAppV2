@@ -60,7 +60,7 @@ internal class MDnsService : IMdnsService
             {
                 // TODO: dispose managed state (managed objects)
                 _listenSubscription?.Dispose();
-                _listenSubscription=null;
+                _listenSubscription = null;
             }
 
             // TODO: free unmanaged resources (unmanaged objects) and override finalizer
