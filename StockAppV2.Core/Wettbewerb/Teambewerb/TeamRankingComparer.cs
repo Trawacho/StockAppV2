@@ -2,7 +2,7 @@
 
 public class DirectCompareException : Exception
 {
-    private string _message;
+    private readonly string _message;
     public DirectCompareException(string message)
     {
         _message = message;
@@ -12,8 +12,8 @@ public class DirectCompareException : Exception
 
 public partial class TeamRankingComparer : IComparer<ITeam>
 {
-    private bool _isLive;
-    private IERVersion _version;
+    private readonly bool _isLive;
+    private readonly IERVersion _version;
 
     public TeamRankingComparer(bool isLive, IERVersion version)
     {
@@ -61,7 +61,7 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                         : game.Spielstand.GetCountOfWinningTurnsTeamA(isLive) < game.Spielstand.GetCountOfWinningTurnsTeamB(isLive)
                             ? 1
                             : 0;
-                        
+
         }
         else
         {
@@ -133,7 +133,7 @@ public partial class TeamRankingComparer : IComparer<ITeam>
                 {
                     var direkterVergleich = CompareLastGame(x.Games, x.StartNumber, y.StartNumber, _isLive);
                     if (direkterVergleich != 0) return direkterVergleich;
-                    
+
                     //die Startnummer soll entscheiden
                     return x.StartNumber < y.StartNumber ? -1 : 1;
                 }

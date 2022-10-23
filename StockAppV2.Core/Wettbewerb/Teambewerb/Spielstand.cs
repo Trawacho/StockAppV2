@@ -177,7 +177,7 @@ public class Spielstand : ISpielstand
     {
         _liveKehren.RemoveAll(k => k.KehrenNummer != 1);
         _masterKehren.RemoveAll(k => k.KehrenNummer != 1);
-        SetMasterKehre(1, teamB:punkteTeamB);
+        SetMasterKehre(1, teamB: punkteTeamB);
     }
 
     /// <summary>
@@ -185,7 +185,7 @@ public class Spielstand : ISpielstand
     /// Es wird die Kehre in  <see cref="Kehren_Live"/> und <see cref="Kehren_Master"/> gelöscht und dann neu angefügt
     /// </summary>
     /// <param name="kehre"></param>
-    public void SetMasterKehre(IKehre kehre)=>SetMasterKehre(kehre.KehrenNummer, kehre.PunkteTeamA, kehre.PunkteTeamB);
+    public void SetMasterKehre(IKehre kehre) => SetMasterKehre(kehre.KehrenNummer, kehre.PunkteTeamA, kehre.PunkteTeamB);
 
     /// <summary>
     /// Fügt die Kehre an, falls sie nicht existiert und setzt dann die Werte

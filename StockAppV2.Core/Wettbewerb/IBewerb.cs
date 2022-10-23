@@ -11,5 +11,3 @@ public interface IBewerb
 
     void Reset();
 }
-
-

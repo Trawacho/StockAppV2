@@ -192,7 +192,7 @@ public class Game : IGame
     /// <summary>
     /// Dieses Spiel ist ein Aussetzer, wenn TeamA oder TeamB "virtuell" ist, oder die  Spielbahn 0
     /// </summary>
-    public bool IsPauseGame() => TeamA.IsVirtual  || TeamB.IsVirtual  || CourtNumber == 0;
+    public bool IsPauseGame() => TeamA.IsVirtual || TeamB.IsVirtual || CourtNumber == 0;
 
     /// <summary>
     /// normales Spiel, kein Aussetzer

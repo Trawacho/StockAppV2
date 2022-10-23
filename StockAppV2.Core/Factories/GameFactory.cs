@@ -273,7 +273,7 @@
 
                         var newGame = new FactoryGame(
                             round,                              //Runde
-                            ((round - 1) * teamsCount)+(y + 1),                    //Spielnummer gesamt
+                            ((round - 1) * teamsCount) + (y + 1),                    //Spielnummer gesamt
                             y + 1,                              //Spielnummer
                             x + 1,                              //Bahnnummer
                             teamA,                              //Startnummer Mannschaft A
