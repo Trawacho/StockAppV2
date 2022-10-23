@@ -1,6 +1,5 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Prints.BaseClasses;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -26,7 +25,7 @@ namespace StockApp.Prints.Spielplan
 
         internal FixedDocument CreateSpielPlan()
         {
-            var panel = new StackPanel() { HorizontalAlignment = HorizontalAlignment.Stretch};
+            var panel = new StackPanel() { HorizontalAlignment = HorizontalAlignment.Stretch };
 
             var header = new TextBlock()
             {
@@ -43,7 +42,7 @@ namespace StockApp.Prints.Spielplan
 
             var spielplan = new Spielplan(_teamBewerb.GetAllGames(false));
             var grid = new SpielPlanGrid(spielplan.Spiele);
-            var vb = new Viewbox() { Child = grid, HorizontalAlignment= HorizontalAlignment.Stretch };
+            var vb = new Viewbox() { Child = grid, HorizontalAlignment = HorizontalAlignment.Stretch };
             panel.Children.Add(vb);
 
             return CreateFixedDocument(new StackPanel[] { panel }, true);
