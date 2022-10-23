@@ -1,11 +1,6 @@
 using NUnit.Framework;
-using StockApp.Core.Wettbewerb;
 using StockApp.Core.Wettbewerb.Teambewerb;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
 namespace StockApp.Test;
 
