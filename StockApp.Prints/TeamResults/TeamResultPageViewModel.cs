@@ -1,6 +1,8 @@
 ﻿using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StockApp.Prints.TeamResults;
 
@@ -56,5 +58,11 @@ public class TeamResultPageViewModel
     public IList<RankedTeamViewModel> RankedTeams { get; } = new List<RankedTeamViewModel>();
 
     public bool IERVersion2022 => _teamBewerb?.IERVersion == IERVersion.v2022;
+
+    public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1;
+    public string HeaderString => 
+            !HasMoreGroups 
+                ? $"E R G E B N I S" 
+                : $"E R G E B N I S  -  {_teamBewerb.Gruppenname}";
 }
 
