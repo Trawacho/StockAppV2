@@ -41,7 +41,7 @@ public class SerialisableTurnier : ITurnier
         if (TeamBewerb != null)
         {
             normal.SetBewerb(Wettbewerbsart.Team);
-            //TeamBewerb.ToNormal(normal.Wettbewerb as ITeamBewerb);
+            normal.ContainerTeamBewerbe.RemoveAll();
             TeamBewerb.ToNormal(normal.ContainerTeamBewerbe.CurrentTeamBewerb as ITeamBewerb);
         }
         if (ZielBewerb != null)

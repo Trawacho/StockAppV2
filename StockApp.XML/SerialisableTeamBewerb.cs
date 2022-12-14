@@ -12,7 +12,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public SerialisableTeamBewerb() 
     {
         ID = 0;
-        Gruppenname = string.Empty;
+        Gruppenname = "default 1";
     }
 
     public SerialisableTeamBewerb(ITeamBewerb bewerb) : this()
@@ -36,6 +36,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         SpielGruppe = bewerb.SpielGruppe;
         IERVersion = bewerb.IERVersion;
         ID = bewerb.ID;
+        Gruppenname = bewerb.Gruppenname;
 
         GamePlan = new List<IFactoryGame>();
         foreach (var game in bewerb.Games)
