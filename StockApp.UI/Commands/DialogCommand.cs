@@ -15,7 +15,7 @@ public class DialogCommand<TDialogModel> : CommandBase
     }
     public override bool CanExecute(object parameter)
     {
-        return _dialogService.OpenDialogs < 2;
+        return _dialogService.OpenDialogs < 4;
     }
 
     public override void Execute(object parameter)
