@@ -9,7 +9,12 @@ namespace StockApp.XML;
 [XmlType(TypeName = "Teambewerb")]
 public class SerialisableTeamBewerb : ITeamBewerb
 {
-    public SerialisableTeamBewerb() { }
+    public SerialisableTeamBewerb() 
+    {
+        ID = 0;
+        Gruppenname = string.Empty;
+    }
+
     public SerialisableTeamBewerb(ITeamBewerb bewerb) : this()
     {
         SerialisableTeams = new List<SerialisableTeam>();
@@ -17,6 +22,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         {
             SerialisableTeams.Add(new SerialisableTeam(team));
         }
+
         SerialisableGames = new List<SerialisableGame>();
         foreach (var game in bewerb.GetAllGames())
         {
@@ -28,6 +34,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
         Is8TurnsGame = bewerb.Is8TurnsGame;
         StartingTeamChange = bewerb.StartingTeamChange;
         SpielGruppe = bewerb.SpielGruppe;
+        IERVersion = bewerb.IERVersion;
+        ID = bewerb.ID;
 
         GamePlan = new List<IFactoryGame>();
         foreach (var game in bewerb.Games)
@@ -56,6 +64,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.StartingTeamChange = StartingTeamChange;
         teamBewerb.SpielGruppe = SpielGruppe;
         teamBewerb.BreaksCount = BreaksCount;
+        teamBewerb.IERVersion = IERVersion;
+        teamBewerb.Gruppenname = Gruppenname;
+        
 
         //alle Teams löschen
         teamBewerb.RemoveAllTeams();
@@ -98,6 +109,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     }
 
+    [XmlElement(ElementName = "ID")]
+    public int ID { get; set; }
+
     [XmlElement(ElementName = "SpielRunden")]
     public int NumberOfGameRounds { get; set; }
 
@@ -116,14 +130,16 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "Gruppenname")]
     public string Gruppenname { get; set; }
 
+    [XmlElement(ElementName = "IERVersion")]
+    public IERVersion IERVersion { get; set; }
+
     [XmlArray(ElementName = "Mannschaften")]
     public List<SerialisableTeam> SerialisableTeams { get; set; }
 
     [XmlArray(ElementName = "Spiele")]
     public List<SerialisableGame> SerialisableGames { get; set; }
 
-    [XmlElement(ElementName = "ID")]
-    public int ID { get; set; }
+
 
     #region XMLIgnore
 
@@ -135,9 +151,6 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public int NumberOfCourts => throw new NotImplementedException();
     [XmlIgnore]
     public int NumberOfTeamsWithNamedPlayerOnResult { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    [XmlIgnore]
-    public IERVersion IERVersion { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
 
 
 #pragma warning disable 67

@@ -18,9 +18,15 @@ public interface IContainerTeamBewerbe : IBewerb
     /// <summary>
     /// Add a new TeamBewerb to <see cref="TeamBewerbe"/>
     /// </summary>
-    void AddNew();
+    TeamBewerb AddNew();
 
     void Remove(ITeamBewerb teamBewerb);
+    void Remove(int teamBewerbId);
+
+    /// <summary>
+    /// Reset and Remove all TeamBewerbe and set one new TeamBewerb/>
+    /// </summary>
+    void RemoveAll();
 
     void SetCurrentTeamBewerb(ITeamBewerb teamBewerb);
 
@@ -43,6 +49,7 @@ public interface IContainerTeamBewerbe : IBewerb
     /// Occours when from <see cref="CurrentTeamBewerb"/> the Event <see cref="ITeamBewerb.GamesChanged"/> was raised
     /// </summary>
     public event EventHandler CurrentTeambewerb_GamesChanged;
+
 }
 
 public class ContainerTeamBewerbe : IContainerTeamBewerbe
@@ -80,30 +87,54 @@ public class ContainerTeamBewerbe : IContainerTeamBewerbe
             _currentTeamBewerb.TeamsChanged -= (s, e) => RaiseCurrentTeam_TeamsChanged();
         }
 
-
-        _currentTeamBewerb = teamBewerb;
-        _currentTeamBewerb.GamesChanged += (s, e) => RaiseCurrentTeam_GamesChanged();
-        _currentTeamBewerb.TeamsChanged += (s, e) => RaiseCurrentTeam_TeamsChanged();
+        if (teamBewerb != null)
+        {
+            _currentTeamBewerb = teamBewerb;
+            _currentTeamBewerb.GamesChanged += (s, e) => RaiseCurrentTeam_GamesChanged();
+            _currentTeamBewerb.TeamsChanged += (s, e) => RaiseCurrentTeam_TeamsChanged();
+        }
 
         RaiseCurrentTeamBewerbChanged();
     }
 
 
-    public void AddNew()
+    public TeamBewerb AddNew()
     {
         if (TeamBewerbe.Count() == 1 && _teamBewerbe.First().SpielGruppe == 0)
             TeamBewerbe.First().SpielGruppe = 1;
+        
+        var teamBewerb = _teamBewerbe.Any()
+            ? TeamBewerb.Create(_teamBewerbe.OrderBy(t => t.ID).Last().ID + 1)
+            : TeamBewerb.Create(1);
 
-        var teamBewerb = TeamBewerb.Create(_teamBewerbe.OrderBy(t => t.ID).Last().ID + 1);
         teamBewerb.SpielGruppe = GetNextFreeSpielgruppe();
 
         _teamBewerbe.Add(teamBewerb);
         RaiseTeamBewerbeChanged();
+        return teamBewerb;
     }
 
     public void Remove(ITeamBewerb teamBewerb)
     {
-        _teamBewerbe.RemoveAll(t => t.ID == teamBewerb.ID);
+        Remove(teamBewerb.ID);
+    }
+
+    public void Remove(int teamBewerbId)
+    {
+        _teamBewerbe.RemoveAll(t => t.ID == teamBewerbId);
+        RaiseTeamBewerbeChanged();
+    }
+
+    public void RemoveAll()
+    {
+        Reset();
+
+        SetCurrentTeamBewerb(null);
+        
+        _teamBewerbe.Clear();
+
+        SetCurrentTeamBewerb(AddNew());
+
         RaiseTeamBewerbeChanged();
     }
 

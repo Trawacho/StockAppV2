@@ -20,6 +20,7 @@ public class SerialisableTurnier : ITurnier
     public SerialisableTurnier(ITurnier turnier)
     {
         this.Organisation = new SerialisableOrganisation(turnier.OrgaDaten);
+
         if (turnier.Wettbewerb is ITeamBewerb teamBewerb)
         {
             TeamBewerb = new SerialisableTeamBewerb(teamBewerb);
@@ -27,6 +28,10 @@ public class SerialisableTurnier : ITurnier
         else if (turnier.Wettbewerb is IZielBewerb zielBewerb)
         {
             ZielBewerb = new SerialisableZielBewerb(zielBewerb);
+        }
+        else if (turnier.Wettbewerb is IContainerTeamBewerbe containerTeamBewerbe)
+        {
+            TeamBewerbContainer = new SerialisableContainerTeamBewerbe(containerTeamBewerbe);
         }
     }
 
@@ -36,21 +41,27 @@ public class SerialisableTurnier : ITurnier
         if (TeamBewerb != null)
         {
             normal.SetBewerb(Wettbewerbsart.Team);
-            TeamBewerb.ToNormal(normal.Wettbewerb as ITeamBewerb);
+            //TeamBewerb.ToNormal(normal.Wettbewerb as ITeamBewerb);
+            TeamBewerb.ToNormal(normal.ContainerTeamBewerbe.CurrentTeamBewerb as ITeamBewerb);
         }
         if (ZielBewerb != null)
         {
             normal.SetBewerb(Wettbewerbsart.Ziel);
             ZielBewerb.ToNormal(normal.Wettbewerb as IZielBewerb);
         }
+        if(TeamBewerbContainer is not null)
+        {
+            normal.SetBewerb(Wettbewerbsart.Team);
+            TeamBewerbContainer.ToNormal(normal.ContainerTeamBewerbe as IContainerTeamBewerbe);
+        }
     }
 
 
 
     public SerialisableOrganisation Organisation { get; set; }
-
     public SerialisableTeamBewerb TeamBewerb { get; set; }
     public SerialisableZielBewerb ZielBewerb { get; set; }
+    public SerialisableContainerTeamBewerbe TeamBewerbContainer { get; set; }
 
     #region XMLIgnore
 
@@ -60,12 +71,14 @@ public class SerialisableTurnier : ITurnier
 
     [XmlIgnore]
     public IBewerb Wettbewerb => throw new NotImplementedException();
-
-    [XmlIgnore]
-    public IContainerTeamBewerbe ContainerTeamBewerbe => throw new NotImplementedException();
+    
 
     [XmlIgnore]
     public ITeamBewerb ActiveTeamBewerb => throw new NotImplementedException();
+
+    [XmlIgnore]
+    public IContainerTeamBewerbe ContainerTeamBewerbe { get; set; }
+
 
 
 #pragma warning disable 67
