@@ -11,15 +11,13 @@ namespace StockApp.UI.ViewModels;
 public class TeamsViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
-    private readonly ITeamBewerb _currentBewerb;
+    private ITeamBewerb _currentBewerb;
     private TeamViewModel _selectedTeam;
     private readonly ICommand _addNewTeamCommand;
     private readonly ICommand _removeTeamCommand;
     private ICommand _modalOkCommand;
     private readonly ICommand _modalCancelCommand;
     private bool _isModalOpen;
-
-
 
     public ObservableCollection<TeamViewModel> Teams { get; }
 
@@ -29,11 +27,25 @@ public class TeamsViewModel : ViewModelBase
         set => SetProperty(ref _selectedTeam, value);
     }
 
+    private ITeamBewerb CurrentBewerb
+    {
+        get => _currentBewerb;
+        set
+        {
+            if (_currentBewerb != null)
+                _currentBewerb.TeamsChanged -= TeamsChanged;
+
+            SetProperty(ref _currentBewerb, value);
+
+            if (value != null)
+                _currentBewerb.TeamsChanged += TeamsChanged;
+        }
+    }
+
     public ICommand AddTeamCommand => _addNewTeamCommand;
     public ICommand RemoveTeamCommand => _removeTeamCommand;
     public ICommand ModalOkCommand => _modalOkCommand;
     public ICommand ModalCancelCommand => _modalCancelCommand;
-
 
     public bool IsModalOpen
     {
@@ -96,23 +108,13 @@ public class TeamsViewModel : ViewModelBase
     public TeamsViewModel(ITurnierStore turnierStore)
     {
         _turnierStore = turnierStore;
-        _currentBewerb = _turnierStore.Turnier.Wettbewerb as ITeamBewerb;
+        CurrentBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
 
-        Teams = new ObservableCollection<TeamViewModel>(_currentBewerb.Teams.Where(t => !t.IsVirtual).Select(s => new TeamViewModel(s)));
-        _currentBewerb.TeamsChanged += TeamsChanged;
+        Teams = new ObservableCollection<TeamViewModel>(CurrentBewerb.Teams.Where(t => !t.IsVirtual).Select(s => new TeamViewModel(s)));
 
-        _addNewTeamCommand = new RelayCommand((p) => AddTeam(), (p) => _currentBewerb.Teams.Count() < 15);
+        _addNewTeamCommand = new RelayCommand((p) => AddTeam(), (p) => CurrentBewerb.Teams.Count() < 15);
         _removeTeamCommand = new RelayCommand((p) => RemoveTeam(), (p) => SelectedTeam != null);
         _modalCancelCommand = new RelayCommand(para => IsModalOpen = false);
-    }
-
-
-    private void TeamsChanged(object sender, EventArgs e)
-    {
-        Teams.DisposeAndClear();
-
-        foreach (ITeam team in _currentBewerb.Teams.Where(t => !t.IsVirtual))
-            Teams.Add(new TeamViewModel(team));
     }
 
     protected override void Dispose(bool disposing)
@@ -121,11 +123,20 @@ public class TeamsViewModel : ViewModelBase
         {
             if (disposing)
             {
-                _currentBewerb.TeamsChanged -= TeamsChanged;
+                CurrentBewerb = null;
+                SelectedTeam?.Dispose();
                 SelectedTeam = null;
                 Teams?.DisposeAndClear();
             }
             _disposed = true;
         }
+    }
+
+    private void TeamsChanged(object sender, EventArgs e)
+    {
+        Teams.DisposeAndClear();
+
+        foreach (ITeam team in _currentBewerb.Teams.Where(t => !t.IsVirtual))
+            Teams.Add(new TeamViewModel(team));
     }
 }

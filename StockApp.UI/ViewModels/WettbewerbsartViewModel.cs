@@ -15,7 +15,7 @@ public class WettbewerbsartViewModel : ViewModelBase
 
     public bool IsTeamChecked
     {
-        get => _turnierStore.Turnier.Wettbewerb is ITeamBewerb;
+        get => _turnierStore.Turnier.Wettbewerb is IContainerTeamBewerbe;
         set
         {
             _turnierStore.Turnier.SetBewerb(Wettbewerbsart.Team);

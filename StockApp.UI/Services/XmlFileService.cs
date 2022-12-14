@@ -41,7 +41,8 @@ namespace StockApp.UI.Services
         {
             get => _fullFilePath;
             set
-            {   if (_fullFilePath == value) return;
+            {
+                if (_fullFilePath == value) return;
                 _fullFilePath = value;
                 RaiseFullFilePathChanged();
             }

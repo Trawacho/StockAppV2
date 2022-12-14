@@ -33,7 +33,9 @@ public class ResultInputPerTeamViewModel : ViewModelBase
     }
 
     public ObservableCollection<ITeam> Teams { get; } = new();
+
     public ObservableCollection<PointsPerTeamAndGameViewModel> PointsPerTeam { get; } = new();
+
 
     public ResultInputPerTeamViewModel(IEnumerable<ITeam> teams)
     {
@@ -58,88 +60,90 @@ public class ResultInputPerTeamViewModel : ViewModelBase
             _disposed = true;
         }
     }
-}
 
-public class PointsPerTeamAndGameViewModel : ViewModelBase
-{
-    private readonly IGame _game;
-    private readonly ITeam _team;
 
-    public int GameNumber => _game.GameNumberOverAll;
-    public string Gegner
+    public class PointsPerTeamAndGameViewModel : ViewModelBase
     {
-        get
+        private void SpielstandChanged(object sender, EventArgs e)
         {
-            if (IsBreakGame)
-                return "Setzt aus";
-
-            return _team.StartNumber == _game.TeamA.StartNumber
-                ? _game.TeamB.TeamName
-                : _game.TeamA.TeamName;
+            RaisePropertyChanged(nameof(StockPunkte));
+            RaisePropertyChanged(nameof(StockPunkteGegner));
         }
-    }
 
-    public bool IsBreakGame => _game.IsPauseGame();
+        private readonly IGame _game;
+        private readonly ITeam _team;
 
-    public int StockPunkte
-    {
-        get => _team.StartNumber == _game.TeamA.StartNumber ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
-        set
+        public int GameNumber => _game.GameNumberOverAll;
+        public string Gegner
         {
-            if (_game.IsPauseGame()) return;
-            if (_team.StartNumber == _game.TeamA.StartNumber)
+            get
             {
-                _game.Spielstand.SetMasterTeamAValue(value);
-            }
-            else
-            {
-                _game.Spielstand.SetMasterTeamBValue(value);
-            }
-            RaisePropertyChanged();
-        }
-    }
+                if (IsBreakGame)
+                    return "Setzt aus";
 
-    public int StockPunkteGegner
-    {
-        get => _team.StartNumber != _game.TeamA.StartNumber ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
-        set
+                return _team.StartNumber == _game.TeamA.StartNumber
+                    ? _game.TeamB.TeamName
+                    : _game.TeamA.TeamName;
+            }
+        }
+
+        public bool IsBreakGame => _game.IsPauseGame();
+
+        public int StockPunkte
         {
-            if (_game.IsPauseGame()) return;
-            if (_team.StartNumber != _game.TeamA.StartNumber)
+            get => _team.StartNumber == _game.TeamA.StartNumber ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
+            set
             {
-                _game.Spielstand.SetMasterTeamAValue(value);
+                if (_game.IsPauseGame()) return;
+                if (_team.StartNumber == _game.TeamA.StartNumber)
+                {
+                    _game.Spielstand.SetMasterTeamAValue(value);
+                }
+                else
+                {
+                    _game.Spielstand.SetMasterTeamBValue(value);
+                }
+                RaisePropertyChanged();
             }
-            else
-            {
-                _game.Spielstand.SetMasterTeamBValue(value);
-            }
-            RaisePropertyChanged();
         }
-    }
 
-    public PointsPerTeamAndGameViewModel(IGame game, ITeam team)
-    {
-        _game = game;
-        _team = team;
-        _game.SpielstandChanged += SpielstandChanged;
-    }
-
-    private void SpielstandChanged(object sender, EventArgs e)
-    {
-        RaisePropertyChanged(nameof(StockPunkte));
-        RaisePropertyChanged(nameof(StockPunkteGegner));
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (!_disposed)
+        public int StockPunkteGegner
         {
-            if (disposing)
+            get => _team.StartNumber != _game.TeamA.StartNumber ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
+            set
             {
-                _game.SpielstandChanged -= SpielstandChanged;
+                if (_game.IsPauseGame()) return;
+                if (_team.StartNumber != _game.TeamA.StartNumber)
+                {
+                    _game.Spielstand.SetMasterTeamAValue(value);
+                }
+                else
+                {
+                    _game.Spielstand.SetMasterTeamBValue(value);
+                }
+                RaisePropertyChanged();
             }
-            _disposed = true;
         }
-        base.Dispose(disposing);
+
+        public PointsPerTeamAndGameViewModel(IGame game, ITeam team)
+        {
+            _game = game;
+            _team = team;
+            _game.SpielstandChanged += SpielstandChanged;
+        }
+
+
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _game.SpielstandChanged -= SpielstandChanged;
+                }
+                _disposed = true;
+            }
+        }
     }
 }

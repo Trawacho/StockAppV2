@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using StockApp.Core.Turnier;
-using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.XML;
 using System.Linq;
@@ -31,7 +30,7 @@ public class SaveITurnierTest
         t.OrgaDaten.DateOfTournament = System.DateTime.Now;
 
         t.SetBewerb(StockApp.Core.Wettbewerb.Wettbewerbsart.Team);
-        var bewerb = t.Wettbewerb as ITeamBewerb;
+        var bewerb = t.ContainerTeamBewerbe.CurrentTeamBewerb;
         for (int i = 0; i < 7; i++)
         {
             bewerb.AddNewTeam();

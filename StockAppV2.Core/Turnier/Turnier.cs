@@ -9,6 +9,7 @@ public interface ITurnier
 {
     IOrgaDaten OrgaDaten { get; set; }
     IBewerb Wettbewerb { get; }
+    IContainerTeamBewerbe ContainerTeamBewerbe { get; }
 
     void SetBewerb(Wettbewerbsart team);
 
@@ -44,7 +45,7 @@ public class Turnier : ITurnier
 
     #region Fields
 
-    private readonly ITeamBewerb _teambewerb;
+    private readonly IContainerTeamBewerbe _teamBewerbContainer;
     private readonly IZielBewerb _zielbewerb;
     private IBewerb _wettbewerb;
 
@@ -74,6 +75,8 @@ public class Turnier : ITurnier
         }
     }
 
+    public IContainerTeamBewerbe ContainerTeamBewerbe => _teamBewerbContainer;
+
     #endregion
 
     #region Contructor
@@ -85,7 +88,7 @@ public class Turnier : ITurnier
     {
         OrgaDaten = new OrgaDaten();
 
-        _teambewerb = TeamBewerb.Create();
+        _teamBewerbContainer = Core.Wettbewerb.Teambewerb.ContainerTeamBewerbe.Create();
         _zielbewerb = ZielBewerb.Create();
     }
 
@@ -98,14 +101,14 @@ public class Turnier : ITurnier
     public void SetBewerb(Wettbewerbsart art)
     {
         Wettbewerb = art == Wettbewerbsart.Team
-                            ? _teambewerb
+                            ? _teamBewerbContainer
                             : _zielbewerb;
     }
 
     public void Reset()
     {
         _zielbewerb.Reset();
-        _teambewerb.Reset();
+        _teamBewerbContainer.Reset();
         Wettbewerb = null;
         OrgaDaten = new OrgaDaten();
     }

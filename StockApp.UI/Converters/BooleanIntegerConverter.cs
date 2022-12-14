@@ -1,5 +1,7 @@
-﻿using System;
+﻿using StockApp.UI.ViewModels;
+using System;
 using System.Globalization;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace StockApp.UI.Converters;
@@ -32,5 +34,43 @@ internal class BooleanIntegerConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
+    }
+}
+
+internal class TestConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        //System.Diagnostics.Debug.WriteLine(value.GetType());
+        //System.Diagnostics.Debug.WriteLine(parameter?.GetType());
+        //GroupSelectorViewModel vm = (GroupSelectorViewModel)((UserControl)value).DataContext;
+        if (value is ListViewItem lvi)
+            return lvi.IsSelected;
+
+        return value;
+        // System.Diagnostics.Debug.WriteLine(value.GetType());
+        // System.Diagnostics.Debug.WriteLine(value.GetType());
+        // return true;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        //throw new NotImplementedException();
+        return value;
+    }
+}
+
+internal class TestMultiConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (values.Length >= 2 && values[0] is TeamBewerbViewModel a && values[1] is TeamBewerbViewModel b)
+            return a.ID == b.ID;
+        return false;
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+    {
+        return new object[] { Binding.DoNothing, Binding.DoNothing };
     }
 }

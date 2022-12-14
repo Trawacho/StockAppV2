@@ -28,7 +28,7 @@ namespace StockApp.Prints.Receipts
             {
                 var receipts = new List<StackPanel>();
 
-                foreach (var team in (_turnier.Wettbewerb as ITeamBewerb).Teams.Where(t => !t.IsVirtual))
+                foreach (var team in ((IContainerTeamBewerbe)_turnier.Wettbewerb).CurrentTeamBewerb.Teams.Where(t => !t.IsVirtual))
                 {
                     receipts.Add(GetNewReceipt(team));
                 }

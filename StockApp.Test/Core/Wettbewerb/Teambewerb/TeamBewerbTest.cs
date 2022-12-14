@@ -11,7 +11,7 @@ namespace StockApp.Test.Core.Wettbewerb.Teambewerb
         [SetUp]
         public void Setup()
         {
-            _teamBewerb = TeamBewerb.Create();
+            _teamBewerb = TeamBewerb.Create(1);
 
         }
 

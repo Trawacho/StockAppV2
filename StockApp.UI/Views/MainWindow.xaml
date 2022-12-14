@@ -30,6 +30,10 @@
         <KeyBinding Gesture="CTRL+Shift+S" Command="{Binding Path=SaveAsTournamentCommand}"/>
         <KeyBinding Gesture="Alt+F4"  Command="{Binding Path=ExitApplicationCommand}"/>
     </Window.InputBindings>
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
     
     <DockPanel>
 
@@ -58,14 +62,17 @@
         <StatusBar DockPanel.Dock="Bottom">
             <TextBlock Text="{Binding Path=VersionNumber}"/>
             <Separator />
+            <TextBlock Text="{Binding Path=ActiveTeamBewerbGroupName}" HorizontalAlignment="Left" TextAlignment="Left"/>
+            <Separator />
             <TextBlock Text="{Binding Path=FileName}" HorizontalAlignment="Right" TextAlignment="Right"/>
+            
             <!--<TextBlock Text="{Binding Path=StockTVCount}"/>-->
         </StatusBar>
 
         <ContentControl Content="{Binding Path=NavigationViewModel}" DockPanel.Dock="Left" Width="180" Margin="5 5 0 5"/>
-       
-       
+
         
+
         <ScrollViewer DockPanel.Dock="Left"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"

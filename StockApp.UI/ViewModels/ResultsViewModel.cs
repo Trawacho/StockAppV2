@@ -10,45 +10,51 @@ namespace StockApp.UI.ViewModels;
 public class ResultsViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
-    private readonly ITeamBewerb _teamBewerb;
+    private readonly IDialogStore _dialogStore;
+    private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
     private readonly ITurnierNetworkManager _turnierNetworkManager;
+    private bool? _inputAfterGame;
+    private bool? _inputPerTeam;
+    private bool? _inputPerTeamAndKehre;
+    private bool? _inputAfterGameAndKehre;
+    private ViewModelBase _resultsEntryViewModel;
 
     private ICommand _printTeamResultsCommand;
+
     public ICommand PrintTeamResultsCommand => _printTeamResultsCommand ??= new RelayCommand(
         (p) =>
         {
             _ = Prints.Teamresult.TeamResultsFactory.CreateTeamResult(Prints.PageSizes.A4Size, _turnierStore.Turnier).ShowAsDialog();
         },
         (p) => { return true; });
+    public ICommand ShowLiveResultCommand { get; init; }
 
     public int NumberOfTeamsWithNamedPlayerOnResult
     {
-        get => _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult;
+        get => TeamBewerb.NumberOfTeamsWithNamedPlayerOnResult;
         set
         {
-            if (_teamBewerb.NumberOfTeamsWithNamedPlayerOnResult != value)
+            if (TeamBewerb.NumberOfTeamsWithNamedPlayerOnResult != value)
             {
-                _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult = value;
+                TeamBewerb.NumberOfTeamsWithNamedPlayerOnResult = value;
                 RaisePropertyChanged();
             }
         }
     }
 
-    private bool? _inputAfterGame;
     public bool? InputAfterGame
     {
         get => _inputAfterGame;
         set => SetProperty(
-            ref _inputAfterGame, 
+            ref _inputAfterGame,
             value,
             () =>
             {
                 if (value == true)
-                    ResultsEntryViewModel = new ResultInputAfterGameViewModel(_teamBewerb.GetAllGames());
+                    ResultsEntryViewModel = new ResultInputAfterGameViewModel(TeamBewerb.GetAllGames());
             });
     }
 
-    private bool? _inputPerTeam;
     public bool? InputPerTeam
     {
         get => _inputPerTeam;
@@ -58,11 +64,9 @@ public class ResultsViewModel : ViewModelBase
             () =>
             {
                 if (value == true)
-                    ResultsEntryViewModel = new ResultInputPerTeamViewModel(_teamBewerb.Teams);
+                    ResultsEntryViewModel = new ResultInputPerTeamViewModel(TeamBewerb.Teams);
             });
     }
-
-    private bool? _inputPerTeamAndKehre;
 
     public bool? InputPerTeamAndKehre
     {
@@ -73,12 +77,9 @@ public class ResultsViewModel : ViewModelBase
             () =>
             {
                 if (value == true)
-                    ResultsEntryViewModel = new ResultInputPerTeamAndKehreViewModel(_teamBewerb.Teams, _teamBewerb.Is8TurnsGame);
+                    ResultsEntryViewModel = new ResultInputPerTeamAndKehreViewModel(TeamBewerb.Teams, TeamBewerb.Is8TurnsGame);
             });
     }
-
-
-    private bool? _inputAfterGameAndKehre;
 
     public bool? InputAfterGameAndKehre
     {
@@ -89,19 +90,18 @@ public class ResultsViewModel : ViewModelBase
             () =>
             {
                 if (value == true)
-                    ResultsEntryViewModel = new ResultInputAfterGameWithKehreViewModel(_teamBewerb.GetAllGames(), _teamBewerb.Is8TurnsGame);
+                    ResultsEntryViewModel = new ResultInputAfterGameWithKehreViewModel(TeamBewerb.GetAllGames(), TeamBewerb.Is8TurnsGame);
             });
     }
 
     public bool RankingNewIERVersion
     {
-        get => _teamBewerb.IERVersion == IERVersion.v2022;
-        set => _teamBewerb.IERVersion = value ? IERVersion.v2022 : IERVersion.v2018;
+        get => TeamBewerb.IERVersion == IERVersion.v2022;
+        set => TeamBewerb.IERVersion = value ? IERVersion.v2022 : IERVersion.v2018;
     }
 
     public bool AcceptNetworkResults { get => _turnierNetworkManager.AcceptNetworkResult; set => _turnierNetworkManager.AcceptNetworkResult = value; }
 
-    private ViewModelBase _resultsEntryViewModel;
     public ViewModelBase ResultsEntryViewModel
     {
         get => _resultsEntryViewModel;
@@ -114,12 +114,11 @@ public class ResultsViewModel : ViewModelBase
         }
     }
 
-    public ResultsViewModel(ITurnierStore turnierStore, ITurnierNetworkManager turnierNetworkManager)
+    public ResultsViewModel(ITurnierStore turnierStore, IDialogStore dialogStore, ITurnierNetworkManager turnierNetworkManager)
     {
         _turnierStore = turnierStore;
+        _dialogStore = dialogStore;
         _turnierNetworkManager = turnierNetworkManager;
-        if (_turnierStore.Turnier.Wettbewerb is ITeamBewerb teamBewerb)
-            _teamBewerb = teamBewerb;
 
         InputAfterGame = false;
         InputAfterGameAndKehre = false;
@@ -127,6 +126,22 @@ public class ResultsViewModel : ViewModelBase
         InputPerTeam = true;
 
 
+        ShowLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
+                new DialogService<LiveResultsTeamViewModel>(
+                    _dialogStore,
+                    () => new LiveResultsTeamViewModel(TeamBewerb), false));
 
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                ResultsEntryViewModel.Dispose();
+            }
+            _disposed = true;
+        }
     }
 }

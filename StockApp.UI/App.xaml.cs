@@ -44,16 +44,16 @@ namespace StockApp.UI
 
             _turnierNetworkManager = new TurnierNetworkManager(_turnierStore, _stockTVService, _broadCastService);
 
-            _navigationViewModel = new NavigationViewModel(_turnierStore,
-                                                            CreateContestNavigationService(),
-                                                            CreateTurnierNavigationService(),
-                                                            CreateTeamsNavigationService(),
-                                                            CreateGamesNavigationService(),
-                                                            CreateResultsNavigationService(),
-                                                            CreateStockTVsNavigationService(),
-                                                            CreateLiveResultsTeamDialogService(),
-                                                            CreateZielTeilnehmerNavigationService(),
-                                                            CreateLiveReusltsZielDialogService());
+            _navigationViewModel = new NavigationViewModel(turnierStore: _turnierStore,
+                                                           teamBewerbContainerNavigationService: CreateTeamBewerbContainerNavigationService(),
+                                                           contestNavigationService: CreateContestNavigationService(),
+                                                           turnierNavigationService: CreateTurnierNavigationService(),
+                                                           teamsNavigationService: CreateTeamsNavigationService(),
+                                                           gamesNavigationService: CreateGamesNavigationService(),
+                                                           resultsNavigationService: CreateResultsNavigationService(),
+                                                           stockTVsNavigationService: CreateStockTVsNavigationService(),
+                                                           zielTeilnehmerNavigationService: CreateZielTeilnehmerNavigationService(),
+                                                           liveResultZielDialogService: CreateLiveReusltsZielDialogService());
 
             _mainViewModel = new MainViewModel(_navigationViewModel, _navigationStore, _turnierStore);
             _mainWindow = new MainWindow() { DataContext = _mainViewModel };
@@ -92,7 +92,7 @@ namespace StockApp.UI
         #region CreateDialogServices
         private IDialogService<LiveResultsTeamViewModel> CreateLiveResultsTeamDialogService()
         {
-            return new DialogService<LiveResultsTeamViewModel>(_dialogStore, () => new LiveResultsTeamViewModel(_turnierStore), false);
+            return new DialogService<LiveResultsTeamViewModel>(_dialogStore, () => new LiveResultsTeamViewModel(), false);
         }
 
         private IDialogService<LiveResultsZielViewModel> CreateLiveReusltsZielDialogService()
@@ -113,6 +113,11 @@ namespace StockApp.UI
             return new NavigationService<WettbewerbsartViewModel>(_navigationStore, () => new WettbewerbsartViewModel(_turnierStore));
         }
 
+        private INavigationService<TeamBewerbContainerViewModel> CreateTeamBewerbContainerNavigationService()
+        {
+            return new NavigationService<TeamBewerbContainerViewModel>(_navigationStore, () => new TeamBewerbContainerViewModel(_turnierStore));
+        }
+
         private INavigationService<StockTVCollectionViewModel> CreateStockTVsNavigationService()
         {
             return new NavigationService<StockTVCollectionViewModel>(_navigationStore, () => new StockTVCollectionViewModel(_stockTVService, _stockTVCommandStore, _turnierStore));
@@ -120,7 +125,7 @@ namespace StockApp.UI
 
         private INavigationService<ResultsViewModel> CreateResultsNavigationService()
         {
-            return new NavigationService<ResultsViewModel>(_navigationStore, () => new ResultsViewModel(_turnierStore, _turnierNetworkManager));
+            return new NavigationService<ResultsViewModel>(_navigationStore, () => new ResultsViewModel(_turnierStore, _dialogStore, _turnierNetworkManager));
         }
 
         private INavigationService<GamesViewModel> CreateGamesNavigationService()

@@ -11,13 +11,6 @@ public class KehrenBaseViewModel : ViewModelBase
     public KehrenBaseViewModel(IGame game)
     {
         _game = game;
-        _game.SpielstandChanged += Game_SpielstandChanged;
-    }
-
-    private void Game_SpielstandChanged(object sender, EventArgs e)
-    {
-        RaisePropertyChanged(nameof(StockPunkte1));
-        RaisePropertyChanged(nameof(StockPunkte2));
     }
 
     protected override void Dispose(bool disposing)
@@ -26,14 +19,13 @@ public class KehrenBaseViewModel : ViewModelBase
         {
             if (disposing)
             {
-                _game.SpielstandChanged -= Game_SpielstandChanged;
             }
             _disposed = true;
         }
     }
 
-    public virtual int StockPunkte1 { get; }
-    public virtual int StockPunkte2 { get; }
+    public virtual int StockPunkte1 { get => throw new NotSupportedException("must be overriden in subclass"); }
+    public virtual int StockPunkte2 { get => throw new NotSupportedException("must be overriden in subclass"); }
 
     #region Kehren von Team1
     /// <summary>
@@ -129,7 +121,6 @@ public class KehrenBaseViewModel : ViewModelBase
         get => GetKehre(7, false);
         set => SetKehre(7, value, team1: false, nameof(Kehre7vonTeam1));
     }
-
     public int Kehre8vonTeam2
     {
         get => GetKehre(8, false);
@@ -139,12 +130,9 @@ public class KehrenBaseViewModel : ViewModelBase
     #endregion
 
     protected virtual void SetKehre(int kehrenNummer, int value, bool team1, string propName1, [CallerMemberName] string propName2 = default)
-    {
-        throw new NotSupportedException("must be overriden in subclass");
-    }
+        => throw new NotSupportedException("must be overriden in subclass");
 
     protected virtual int GetKehre(int kehrenNummer, bool team1)
-    {
-        throw new NotSupportedException("must be overriden in subclass");
-    }
+        => throw new NotSupportedException("must be overriden in subclass");
+
 }

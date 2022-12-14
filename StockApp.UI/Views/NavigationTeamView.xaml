@@ -61,15 +61,14 @@
     <StackPanel Orientation="Vertical" 
                     Background="#FF063852">
 
+        <Button Content="Gruppen" Command="{Binding NavigateGroupsCommand}"/>
+        
         <Button Content="Mannschaften" Command="{Binding NavigateTeamsCommand}"/>
 
         <Button Content="Spiele" Command="{Binding NavigateGamesCommand}"
                 IsEnabled="{Binding HasTeams}"/>
 
         <Button Content="Ergebnisse" Command="{Binding NavigateResultsCommand}"
-                IsEnabled="{Binding HasGames}"/>
-
-        <Button Content="Live Ergebnisse" Command="{Binding NavigateLiveResultsCommand}"
                 IsEnabled="{Binding HasGames}"/>
 
     </StackPanel>

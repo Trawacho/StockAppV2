@@ -113,11 +113,17 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "SpielGruppe")]
     public int SpielGruppe { get; set; }
 
+    [XmlElement(ElementName = "Gruppenname")]
+    public string Gruppenname { get; set; }
+
     [XmlArray(ElementName = "Mannschaften")]
     public List<SerialisableTeam> SerialisableTeams { get; set; }
 
     [XmlArray(ElementName = "Spiele")]
     public List<SerialisableGame> SerialisableGames { get; set; }
+
+    [XmlElement(ElementName = "ID")]
+    public int ID { get; set; }
 
     #region XMLIgnore
 
@@ -131,6 +137,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public int NumberOfTeamsWithNamedPlayerOnResult { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     [XmlIgnore]
     public IERVersion IERVersion { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+
 
 #pragma warning disable 67
     public event EventHandler TeamsChanged;

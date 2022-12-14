@@ -14,7 +14,7 @@ public class TeamRankingComparerTest
     {
 
         //_comparer = new TeamRankingComparer(false, IERVersion.v2022);
-        _teamBewerb = TeamBewerb.Create();
+        _teamBewerb = TeamBewerb.Create(1);
         _teamBewerb.AddNewTeam();
         _teamBewerb.AddNewTeam();
         _teamBewerb.AddNewTeam();
@@ -151,7 +151,7 @@ public class TeamRankingComparerTest
         #endregion
     }
 
-   
+
     [Test]
     public void TestCompareLastGame()
     {
@@ -160,9 +160,9 @@ public class TeamRankingComparerTest
         var teamListe = _teamBewerb.Teams.Where(t => !t.IsVirtual);
 
         Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
-                                                            .Games.Where(g=>g.RoundOfGame==1), 2, 4, false), Is.EqualTo(1));
+                                                            .Games.Where(g => g.RoundOfGame == 1), 2, 4, false), Is.EqualTo(1));
         Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
-                                                            .Games.Where(g=>g.RoundOfGame==2), 2, 4, false), Is.EqualTo(-1));
+                                                            .Games.Where(g => g.RoundOfGame == 2), 2, 4, false), Is.EqualTo(-1));
         Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
                                                             .Games, 2, 4, false), Is.EqualTo(-1));
 

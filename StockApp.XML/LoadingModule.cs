@@ -18,7 +18,7 @@ public static class LoadingModule
             }
             serialisableTurnier.ToNormal(turnier);
         }
-        catch 
+        catch
         {
         }
     }

@@ -61,6 +61,13 @@ public class SerialisableTurnier : ITurnier
     [XmlIgnore]
     public IBewerb Wettbewerb => throw new NotImplementedException();
 
+    [XmlIgnore]
+    public IContainerTeamBewerbe ContainerTeamBewerbe => throw new NotImplementedException();
+
+    [XmlIgnore]
+    public ITeamBewerb ActiveTeamBewerb => throw new NotImplementedException();
+
+
 #pragma warning disable 67
     public event CancelEventHandler WettbewerbChanging;
     public event Action WettbewerbChanged;

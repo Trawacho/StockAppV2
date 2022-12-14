@@ -47,7 +47,7 @@
     <Grid Background="WhiteSmoke">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/> <!--unused-->
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
@@ -74,20 +74,6 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
-            <TextBlock Text="Spielgruppe:" Grid.Row="0" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
-
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" >
-                <TextBlock Text="{Binding GameGroup, Mode=OneWay, Converter={StaticResource GameGroupStringConverter}}" 
-                           Margin="5" Width="10" TextAlignment="Center"
-                           Background="white"
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Slider Value="{Binding GameGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Minimum="0" Maximum="10" TickPlacement="BottomRight" 
-                        Margin="5"  Width="210"/>
-
-            </StackPanel>
-
 
             <TextBlock Text="Anzahl der Spielrunden:" Grid.Row="1" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" MinWidth="300">

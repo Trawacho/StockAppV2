@@ -32,7 +32,7 @@ public class SerialisableSpielstand : ISpielstand
 
     [XmlIgnore]
     public bool IsSetByHand => throw new NotImplementedException();
-    
+
     [XmlIgnore]
     public IOrderedEnumerable<IKehre> Kehren_Live => throw new NotImplementedException();
     [XmlIgnore]

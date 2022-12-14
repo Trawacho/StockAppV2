@@ -16,6 +16,8 @@ public interface ITurnierStore
     void SaveAs();
     string FileName { get; }
     bool IsDuty();
+
+
 }
 
 
@@ -52,6 +54,9 @@ public class TurnierStore : ITurnierStore
         }
     }
     public string FileName => _xmlFileService.FullFilePath;
+
+
+
     public void Load() => _xmlFileService.Load(ref _turnier);
     public void Load(string fullFileName) => _xmlFileService.Load(ref _turnier, fullFileName);
     public void Save() => _xmlFileService.Save(ref _turnier);

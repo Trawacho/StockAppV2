@@ -12,14 +12,14 @@ public class TeamResultPageViewModel
     public TeamResultPageViewModel(ITurnier turnier)
     {
         _turnier = turnier;
-        _teamBewerb = turnier.Wettbewerb as ITeamBewerb;
+        _teamBewerb = ((IContainerTeamBewerbe)turnier.Wettbewerb).CurrentTeamBewerb;
         int rank = 1;
         foreach (var t in _teamBewerb.GetTeamsRanked())
         {
             RankedTeams.Add(new RankedTeamViewModel(rank, t, rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult));
             rank++;
         }
-        
+
     }
 
     /// <summary>

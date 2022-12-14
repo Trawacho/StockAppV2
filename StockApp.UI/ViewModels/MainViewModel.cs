@@ -88,10 +88,25 @@ public class MainViewModel : ViewModelBase
 
         _turnierStore.FileNameChanged += TurnierStore_FileNameChanged;
         _navigationStore.CurrentViewModelChanged += CurrentViewModelChanged;
-
+        _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += ContainerTeamBewerbe_ActiveTeamBewerbChanged;
 
         NavigationViewModel = navigationViewModel;
     }
+    protected override void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _turnierStore.FileNameChanged -= TurnierStore_FileNameChanged;
+                _navigationStore.CurrentViewModelChanged -= CurrentViewModelChanged;
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= ContainerTeamBewerbe_ActiveTeamBewerbChanged;
+            }
+            _disposed = true;
+        }
+        base.Dispose(disposing);
+    }
+
     #endregion
 
     #region RaisePropertyChanged
@@ -104,6 +119,11 @@ public class MainViewModel : ViewModelBase
     private void CurrentViewModelChanged(object sender, EventArgs e)
     {
         RaisePropertyChanged(nameof(CurrentViewModel));
+    }
+
+    private void ContainerTeamBewerbe_ActiveTeamBewerbChanged(object sender, EventArgs e)
+    {
+        RaisePropertyChanged(nameof(ActiveTeamBewerbGroupName));
     }
 
     #endregion
@@ -122,6 +142,8 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+
+
     public ViewModelBase CurrentViewModel { get => _navigationStore.CurrentViewModel; }
 
     public INavigationViewModel NavigationViewModel { get; }
@@ -133,6 +155,8 @@ public class MainViewModel : ViewModelBase
     /// </summary>
     public string VersionNumber { get; } = $"Version: {Assembly.GetExecutingAssembly().GetName().Version}";
     public string FileName => _turnierStore.FileName == null ? string.Empty : $"Datei: {_turnierStore.FileName}";
+
+    public string ActiveTeamBewerbGroupName => _turnierStore.Turnier?.ContainerTeamBewerbe?.CurrentTeamBewerb?.Gruppenname ?? string.Empty;
 
     public ICommand NewTournamentCommand { get; init; }
     public ICommand ExitApplicationCommand { get; init; }

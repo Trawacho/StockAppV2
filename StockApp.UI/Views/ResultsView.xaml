@@ -121,9 +121,16 @@
                              VerticalContentAlignment="Center"/>
                 </Grid>
                 <Button Content="Ergebnisliste" 
-                        Margin="0,10" 
-                        Padding="30,10" 
+                        Margin="0 10" 
+                        Padding="30 10" 
+                        Width="150"
                         Command="{Binding Path=PrintTeamResultsCommand}"
+                        HorizontalAlignment="Left"/>
+                <Button Content="Live Ergebnis..."
+                        Margin="0 10"
+                        Padding="30 10"
+                        Width="150"
+                        Command="{Binding Path=ShowLiveResultCommand}"
                         HorizontalAlignment="Left"/>
             </StackPanel>
 

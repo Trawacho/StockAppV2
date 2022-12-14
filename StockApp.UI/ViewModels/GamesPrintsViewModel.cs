@@ -24,29 +24,13 @@ public class GamesPrintsViewModel : ViewModelBase
 
     public bool Has6Turns => !Has8Turns;
 
-    public bool HasSummarizedScoreCards
-    {
-        get => _hasSummarizedScoreCards;
-        set => SetProperty(ref _hasSummarizedScoreCards, value);
-    }
+    public bool HasSummarizedScoreCards { get => _hasSummarizedScoreCards; set => SetProperty(ref _hasSummarizedScoreCards, value); }
 
-    public bool HasNamesOnScoreCard
-    {
-        get => _hasNamesOnScoreCard;
-        set => SetProperty(ref _hasNamesOnScoreCard, value);
-    }
+    public bool HasNamesOnScoreCard { get => _hasNamesOnScoreCard; set => SetProperty(ref _hasNamesOnScoreCard, value); }
 
-    public bool HasScoreCardsOptimizedForStockTV
-    {
-        get => _hasScoreCardsOptimizedForStockTV;
-        set => SetProperty(ref _hasScoreCardsOptimizedForStockTV, value);
-    }
+    public bool HasScoreCardsOptimizedForStockTV { get => _hasScoreCardsOptimizedForStockTV; set => SetProperty(ref _hasScoreCardsOptimizedForStockTV, value); }
 
-    public bool HasOpponentOnScoreCard
-    {
-        get => _hasOpponentOnScoreCard;
-        set => SetProperty(ref _hasOpponentOnScoreCard, value);
-    }
+    public bool HasOpponentOnScoreCard { get => _hasOpponentOnScoreCard; set => SetProperty(ref _hasOpponentOnScoreCard, value); }
 
     #region Commands
 

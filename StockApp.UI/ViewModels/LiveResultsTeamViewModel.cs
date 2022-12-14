@@ -1,7 +1,6 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.UI.Commands;
 using StockApp.UI.Dialogs;
-using StockApp.UI.Stores;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,8 +10,7 @@ namespace StockApp.UI.ViewModels;
 
 public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
 {
-    private ITeamBewerb TeamBewerb => _turnierStore.Turnier.Wettbewerb as ITeamBewerb;
-    private readonly ITurnierStore _turnierStore;
+    private readonly ITeamBewerb _teamBewerb;
 
     public event EventHandler<DialogCloseRequestedEventArgs> DialogCloseRequested;
     public event EventHandler<WindowCloseRequestedEventArgs> WindowCloseRequested;
@@ -26,11 +24,12 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         wdwHandler?.Invoke(this, new WindowCloseRequestedEventArgs());
     }
 
-    public LiveResultsTeamViewModel(ITurnierStore turnierStore)
+    public LiveResultsTeamViewModel(ITeamBewerb teamBewerb)
     {
-        _turnierStore = turnierStore;
-        TeamBewerb.GamesChanged += TeamBewerb_GamesChanged;
-        foreach (var game in TeamBewerb.GetAllGames())
+        _teamBewerb = teamBewerb;
+
+        _teamBewerb.GamesChanged += TeamBewerb_GamesChanged;
+        foreach (var game in _teamBewerb.GetAllGames())
         {
             game.SpielstandChanged += TeamBewerb_ResultChanged;
         }
@@ -67,8 +66,8 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         {
             if (disposing)
             {
-                TeamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
-                foreach (var game in TeamBewerb.GetAllGames())
+                _teamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
+                foreach (var game in _teamBewerb.GetAllGames())
                 {
                     game.SpielstandChanged -= TeamBewerb_ResultChanged;
                 }
@@ -78,7 +77,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         }
     }
 
-    public string WindowTitle => TeamBewerb?.SpielGruppe > 0 ? $"Live-Ergebnis der Spielgruppe {Core.Converter.GameGroupStringConverter.Convert(TeamBewerb?.SpielGruppe ?? 0)}" : "Live-Ergebnis";
+    public string WindowTitle => _teamBewerb?.SpielGruppe > 0 ? $"Live-Ergebnis der Spielgruppe {Core.Converter.GameGroupStringConverter.Convert(_teamBewerb?.SpielGruppe ?? 0)}" : "Live-Ergebnis";
 
     private bool _showStockPunkte;
     public bool ShowStockPunkte
@@ -87,7 +86,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         set => SetProperty(ref _showStockPunkte, value);
     }
 
-    public bool IERVersion2022 { get => TeamBewerb.IERVersion == IERVersion.v2022; }
+    public bool IERVersion2022 { get => _teamBewerb.IERVersion == IERVersion.v2022; }
 
 
     private bool _isLive;
@@ -105,7 +104,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         {
             var list = new List<RankedTeamViewModel>();
             int rank = 1;
-            foreach (var team in TeamBewerb.GetTeamsRanked(IsLive))
+            foreach (var team in _teamBewerb.GetTeamsRanked(IsLive))
             {
                 list.Add(new RankedTeamViewModel(rank, team, IsLive));
                 rank++;
@@ -123,7 +122,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
 
         public int Rank => _rank;
         public string TeamName => _team.TeamName;
-        public string SpielPunkte => $"{_team.GetSpielPunkte(_live).positiv }:{_team.GetSpielPunkte(_live).negativ}";
+        public string SpielPunkte => $"{_team.GetSpielPunkte(_live).positiv}:{_team.GetSpielPunkte(_live).negativ}";
         public string StockPunkte => $"{_team.GetStockPunkte(_live).positiv}:{_team.GetStockPunkte(_live).negativ}";
         public string StockNote => _team.GetStockNote(_live).ToString("F3");
         public string StockPunkteDifferenz => $"{_team.GetStockPunkteDifferenz(_live)}";

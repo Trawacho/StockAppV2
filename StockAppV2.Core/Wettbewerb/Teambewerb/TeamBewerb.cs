@@ -5,6 +5,8 @@ namespace StockApp.Core.Wettbewerb.Teambewerb;
 
 public interface ITeamBewerb : IBewerb
 {
+    int ID { get; }
+
     /// <summary>
     /// Liste aller Teams
     /// </summary>
@@ -47,6 +49,7 @@ public interface ITeamBewerb : IBewerb
     /// </summary>
     int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
     int SpielGruppe { get; set; }
+    string Gruppenname { get; set; }
     IERVersion IERVersion { get; set; }
 
     void AddNewTeam();
@@ -135,6 +138,8 @@ public class TeamBewerb : ITeamBewerb
 
     #region Properties
 
+    public int ID { get; init; }
+
     /// <summary>
     /// Liste aller Teams
     /// </summary>
@@ -199,11 +204,10 @@ public class TeamBewerb : ITeamBewerb
     public int SpielGruppe
     {
         get => this._spielGruppe;
-        set
-        {
-            this._spielGruppe = value;
-        }
+        set => this._spielGruppe = value;
     }
+
+    public string Gruppenname { get; set; }
 
     public IERVersion IERVersion { get; set; } = IERVersion.v2022;
 
@@ -211,12 +215,14 @@ public class TeamBewerb : ITeamBewerb
 
     #region Constructor
 
-    private TeamBewerb()
+    private TeamBewerb(int id)
     {
+        ID = id;
         _is8TurnsGame = false;
+        Gruppenname = $"Gruppe {id}";
     }
 
-    public static TeamBewerb Create() => new();
+    public static TeamBewerb Create(int id) => new(id);
 
     #endregion
 

@@ -1,4 +1,5 @@
 ﻿namespace StockApp.UI.ViewModels;
+
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.UI.Commands;
@@ -24,10 +25,10 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
     private readonly ITurnierStore _turnierStore;
     private ViewModelBase _currentNavigationViewModel;
 
+    private readonly INavigationService<TeamBewerbContainerViewModel> _teamBewerbContainerNavigationService;
     private readonly INavigationService<TeamsViewModel> _teamsNavigationService;
     private readonly INavigationService<GamesViewModel> _gamesNavigationService;
     private readonly INavigationService<ResultsViewModel> _resultsNavigationService;
-    private readonly IDialogService<LiveResultsTeamViewModel> _liveResultTeamDialogService;
     private readonly INavigationService<ZielBewerbViewModel> _zielTeilnehmerNavigationService;
     private readonly IDialogService<LiveResultsZielViewModel> _liveResultZielDialogService;
 
@@ -38,22 +39,21 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
     public bool IsZielBewerb => _turnierStore.Turnier.Wettbewerb is IZielBewerb;
 
     public NavigationViewModel(ITurnierStore turnierStore,
+                               INavigationService<TeamBewerbContainerViewModel> teamBewerbContainerNavigationService,
                                INavigationService<WettbewerbsartViewModel> contestNavigationService,
                                INavigationService<TurnierViewModel> turnierNavigationService,
                                INavigationService<TeamsViewModel> teamsNavigationService,
                                INavigationService<GamesViewModel> gamesNavigationService,
                                INavigationService<ResultsViewModel> resultsNavigationService,
                                INavigationService<StockTVCollectionViewModel> stockTVsNavigationService,
-                               IDialogService<LiveResultsTeamViewModel> liveResultTeamDialogService,
                                INavigationService<ZielBewerbViewModel> zielTeilnehmerNavigationService,
                                IDialogService<LiveResultsZielViewModel> liveResultZielDialogService)
     {
         _turnierStore = turnierStore;
-
+        _teamBewerbContainerNavigationService = teamBewerbContainerNavigationService;
         _teamsNavigationService = teamsNavigationService;
         _gamesNavigationService = gamesNavigationService;
         _resultsNavigationService = resultsNavigationService;
-        _liveResultTeamDialogService = liveResultTeamDialogService;
         _zielTeilnehmerNavigationService = zielTeilnehmerNavigationService;
         _liveResultZielDialogService = liveResultZielDialogService;
         NavigateTurnierCommand = new NavigateCommand<TurnierViewModel>(turnierNavigationService);
@@ -88,12 +88,12 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
             CurrentNavigationViewModel = null;
         else
             CurrentNavigationViewModel =
-                _turnierStore.Turnier.Wettbewerb is ITeamBewerb
-                    ? new NavigationTeamViewModel(_turnierStore,
-                                                  _teamsNavigationService,
-                                                  _gamesNavigationService,
-                                                  _resultsNavigationService,
-                                                  _liveResultTeamDialogService)
+                _turnierStore.Turnier.Wettbewerb is IContainerTeamBewerbe
+                    ? new NavigationTeamViewModel(turnierStore: _turnierStore,
+                                                  teamBewerbContainerNaviagationService: _teamBewerbContainerNavigationService,
+                                                  teamsNavigationService: _teamsNavigationService,
+                                                  gamesNavigationService: _gamesNavigationService,
+                                                  resultsNavigationService: _resultsNavigationService)
                     : new NavigtaionZielViewModel(_zielTeilnehmerNavigationService,
                                                   _liveResultZielDialogService);
 
