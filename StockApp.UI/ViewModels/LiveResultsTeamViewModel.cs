@@ -77,7 +77,9 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         }
     }
 
-    public string WindowTitle => _teamBewerb?.SpielGruppe > 0 ? $"Live-Ergebnis der Spielgruppe {Core.Converter.GameGroupStringConverter.Convert(_teamBewerb?.SpielGruppe ?? 0)}" : "Live-Ergebnis";
+    public string WindowTitle => _teamBewerb?.SpielGruppe > 0 
+        ? $"Live-Ergebnis - {_teamBewerb.Gruppenname}"
+        : "Live-Ergebnis";
 
     private bool _showStockPunkte;
     public bool ShowStockPunkte
