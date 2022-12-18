@@ -6,12 +6,16 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
-	<ItemGroup>
+  	<ItemGroup>
 		<InternalsVisibleTo Include="StockApp.Test" /> 
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\StockApp.Comm\StockApp.Comm.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Factories\gpf.json" />
 	</ItemGroup>
 
 </Project>
