@@ -125,6 +125,20 @@ public class Game : IGame
         };
     }
 
+    public static IGame Create(ITeam teamA, ITeam teamB, int courtNumber, int gameNumber, int roundOfGame, int gameNumberOverAll, bool isTeamA_Starting)
+    {
+        return new Game(Teambewerb.Spielstand.Create())
+        {
+            TeamA = teamA,
+            TeamB = teamB,
+            CourtNumber = courtNumber,
+            GameNumber = gameNumber,
+            RoundOfGame = roundOfGame,
+            GameNumberOverAll = gameNumberOverAll,
+            IsTeamA_Starting = isTeamA_Starting,
+        };
+    }
+
     public static IGame Create(int gameNumber, int roundOfGame, int gameNumberOverAll)
     {
         return new Game(Teambewerb.Spielstand.Create())
