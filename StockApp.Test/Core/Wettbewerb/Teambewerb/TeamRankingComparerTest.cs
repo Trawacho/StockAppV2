@@ -7,25 +7,25 @@ namespace StockApp.Test;
 
 public class TeamRankingComparerTest
 {
-    //private TeamRankingComparer _comparer;
     ITeamBewerb _teamBewerb;
+
     [SetUp]
     public void Setup()
     {
 
-        //_comparer = new TeamRankingComparer(false, IERVersion.v2022);
         _teamBewerb = TeamBewerb.Create(1);
         _teamBewerb.AddNewTeam();
         _teamBewerb.AddNewTeam();
         _teamBewerb.AddNewTeam();
         _teamBewerb.AddNewTeam();
         _teamBewerb.AddNewTeam();
-        _teamBewerb.AddVirtualTeams(1);
 
+        var allGameplans = GamePlanFactory.LoadAllGameplans();
 
-
-        var factoryGames = GameFactory.CreateGames(teamsCount: 5, breakCount: 1, roundCount: 2, isStartingChange: false);
-        GameFactoryWrapper.MatchTeamAndGames(factoryGames, _teamBewerb.Teams);
+        GamePlanFactory.MatchTeamAndGames(
+            gameplan: allGameplans.First(p => p.Teams == _teamBewerb.Teams.Count()), 
+            teams: _teamBewerb.Teams, 
+            rounds: 2);
 
         var games = _teamBewerb.GetAllGames(false);
 
@@ -157,7 +157,7 @@ public class TeamRankingComparerTest
     {
         var comparer = new TeamRankingComparer(false, IERVersion.v2022);
 
-        var teamListe = _teamBewerb.Teams.Where(t => !t.IsVirtual);
+        var teamListe = _teamBewerb.Teams;
 
         Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
                                                             .Games.Where(g => g.RoundOfGame == 1), 2, 4, false), Is.EqualTo(1));
@@ -182,7 +182,6 @@ public class TeamRankingComparerTest
         */
         var comparer = new TeamRankingComparer(false, IERVersion.v2022);
         var teamListe = _teamBewerb.Teams
-                            .Where(t => !t.IsVirtual)
                             .OrderBy(t => t, comparer)
                             .ToList();
 

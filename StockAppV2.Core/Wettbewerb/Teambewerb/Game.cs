@@ -1,6 +1,4 @@
-﻿using StockApp.Core.Factories;
-
-namespace StockApp.Core.Wettbewerb.Teambewerb;
+﻿namespace StockApp.Core.Wettbewerb.Teambewerb;
 
 public interface IGame : IEquatable<IGame>
 {
@@ -15,7 +13,11 @@ public interface IGame : IEquatable<IGame>
 
     ISpielstand Spielstand { get; }
 
+    /// <summary>
+    /// Dieses Spiel ist ein Aussetzer, wenn TeamA == TeamB ist, oder die  Spielbahn 0
+    /// </summary>
     bool IsPauseGame();
+
     ITeam GetStartingTeam();
     ITeam GetNotStartingTeam();
 
@@ -149,14 +151,6 @@ public class Game : IGame
         };
     }
 
-    public static IGame Create(IFactoryGame factoryGame)
-    {
-        var game = Create(factoryGame.GameNumber, factoryGame.RoundOfGame, factoryGame.GameNumberOverAll);
-        game.CourtNumber = factoryGame.CourtNumber;
-        game.IsTeamA_Starting = factoryGame.IsTeamA_Starting;
-        return game;
-    }
-
     #endregion
 
     #region Public Functions
@@ -204,9 +198,9 @@ public class Game : IGame
     public ITeam GetNotStartingTeam() => IsTeamA_Starting ? TeamB : TeamA;
 
     /// <summary>
-    /// Dieses Spiel ist ein Aussetzer, wenn TeamA oder TeamB "virtuell" ist, oder die  Spielbahn 0
+    /// Dieses Spiel ist ein Aussetzer, wenn TeamA == TeamB ist, oder die  Spielbahn 0
     /// </summary>
-    public bool IsPauseGame() => TeamA.IsVirtual || TeamB.IsVirtual || CourtNumber == 0;
+    public bool IsPauseGame() => CourtNumber == 0 || TeamA == TeamB;
 
     /// <summary>
     /// normales Spiel, kein Aussetzer

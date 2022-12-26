@@ -10,7 +10,7 @@ public class TeamTests
     [SetUp]
     public void Setup()
     {
-        _team1 = Team.Create("erstes Team", false);
+        _team1 = Team.Create("erstes Team");
         _team1.AddGame(Game.Create(1, 1, 1));
     }
 

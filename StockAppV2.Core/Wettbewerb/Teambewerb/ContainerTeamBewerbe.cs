@@ -1,5 +1,6 @@
 ﻿using StockApp.Comm.Broadcasting;
 using StockApp.Comm.NetMqStockTV;
+using StockApp.Core.Factories;
 
 namespace StockApp.Core.Wettbewerb.Teambewerb;
 
@@ -50,6 +51,7 @@ public interface IContainerTeamBewerbe : IBewerb
     /// </summary>
     public event EventHandler CurrentTeambewerb_GamesChanged;
 
+    public IEnumerable<IGameplan> Gameplans { get; }
 }
 
 public class ContainerTeamBewerbe : IContainerTeamBewerbe
@@ -58,6 +60,7 @@ public class ContainerTeamBewerbe : IContainerTeamBewerbe
     {
         _teamBewerbe = new List<ITeamBewerb>() { TeamBewerb.Create(1) };
         SetCurrentTeamBewerb(_teamBewerbe.First());
+        Gameplans = GamePlanFactory.LoadAllGameplans();
     }
 
     public static IContainerTeamBewerbe Create() => new ContainerTeamBewerbe();
@@ -78,6 +81,8 @@ public class ContainerTeamBewerbe : IContainerTeamBewerbe
 
     public IOrderedEnumerable<ITeamBewerb> TeamBewerbe => _teamBewerbe.OrderBy(b => b.ID);
     public ITeamBewerb CurrentTeamBewerb => _currentTeamBewerb;
+
+    public IEnumerable<IGameplan> Gameplans { get; private set; }
 
     public void SetCurrentTeamBewerb(ITeamBewerb teamBewerb)
     {
@@ -102,7 +107,7 @@ public class ContainerTeamBewerbe : IContainerTeamBewerbe
     {
         if (TeamBewerbe.Count() == 1 && _teamBewerbe.First().SpielGruppe == 0)
             TeamBewerbe.First().SpielGruppe = 1;
-        
+
         var teamBewerb = _teamBewerbe.Any()
             ? TeamBewerb.Create(_teamBewerbe.OrderBy(t => t.ID).Last().ID + 1)
             : TeamBewerb.Create(1);
@@ -130,7 +135,7 @@ public class ContainerTeamBewerbe : IContainerTeamBewerbe
         Reset();
 
         SetCurrentTeamBewerb(null);
-        
+
         _teamBewerbe.Clear();
 
         SetCurrentTeamBewerb(AddNew());

@@ -29,7 +29,7 @@ public class StockTVCollectionViewModel : ViewModelBase
         OnLoadedCommand = _stockTVCommandStore.StockTvSerivceDiscoverCommand;
         DiscoverCommand = _stockTVCommandStore.StockTvSerivceDiscoverCommand;
         RecreateViewsCommand = new RelayCommand((p) => FillStockTvViewModelsCollection(), (p) => _stockTVService.StockTVCollection.Any());
-        SendTeamNamesCommand = new RelayCommand((p) => SendTeamNames(), (p) => _turnierStore.Turnier.Wettbewerb is ITeamBewerb);
+        SendTeamNamesCommand = new RelayCommand((p) => SendTeamNames(), (p) => _turnierStore.Turnier.Wettbewerb is IContainerTeamBewerbe);
     }
 
     protected override void Dispose(bool disposing)
@@ -78,23 +78,26 @@ public class StockTVCollectionViewModel : ViewModelBase
 
     private void SendTeamNames()
     {
-        if (_turnierStore.Turnier.Wettbewerb is ITeamBewerb teamBewerb)
+        if (_turnierStore.Turnier.Wettbewerb is IContainerTeamBewerbe containerTeamBewerbe)
         {
-            var allGames = teamBewerb.GetAllGames(false);
-            foreach (var game in allGames.GroupBy(g => g.CourtNumber))
+            if (containerTeamBewerbe.CurrentTeamBewerb is ITeamBewerb teamBewerb)
             {
-                var tv = _stockTVService.StockTVCollection.FirstOrDefault(c => c.TVSettings.Bahn == game.Key && c.TVSettings.Spielgruppe == teamBewerb.SpielGruppe);
-                var begegnungen = new List<StockTVBegegnung>();
-                foreach (var item in game)
+                var allGames = teamBewerb.GetAllGames(false);
+                foreach (var game in allGames.GroupBy(g => g.CourtNumber))
                 {
-                    begegnungen.Add(new StockTVBegegnung()
+                    var tv = _stockTVService.StockTVCollection.FirstOrDefault(c => c.TVSettings.Bahn == game.Key && c.TVSettings.Spielgruppe == teamBewerb.SpielGruppe);
+                    var begegnungen = new List<StockTVBegegnung>();
+                    foreach (var item in game)
                     {
-                        SpielNummer = item.GameNumberOverAll,
-                        TeamNameA = item.TeamA.TeamName,
-                        TeamNameB = item.TeamB.TeamName
-                    });
+                        begegnungen.Add(new StockTVBegegnung()
+                        {
+                            SpielNummer = item.GameNumberOverAll,
+                            TeamNameA = item.TeamA.TeamName,
+                            TeamNameB = item.TeamB.TeamName
+                        });
+                    }
+                    tv?.SendTeamNames(begegnungen);
                 }
-                tv?.SendTeamNames(begegnungen);
             }
         }
 

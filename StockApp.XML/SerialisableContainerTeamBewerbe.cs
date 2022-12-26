@@ -1,5 +1,6 @@
 ﻿using StockApp.Comm.Broadcasting;
 using StockApp.Comm.NetMqStockTV;
+using StockApp.Core.Factories;
 using StockApp.Core.Wettbewerb.Teambewerb;
 using System.Xml.Serialization;
 
@@ -7,8 +8,6 @@ namespace StockApp.XML;
 
 public class SerialisableContainerTeamBewerbe : IContainerTeamBewerbe
 {
-
-
     [XmlArray(ElementName = "TeamBewerbe")]
     public List<SerialisableTeamBewerb> SerialisableTeamBewerbe { get; set; }
 
@@ -93,6 +92,9 @@ public class SerialisableContainerTeamBewerbe : IContainerTeamBewerbe
 
     [XmlIgnore]
     public IOrderedEnumerable<ITeamBewerb> TeamBewerbe => throw new NotImplementedException();
+
+    [XmlIgnore]
+    public IEnumerable<IGameplan> Gameplans => throw new NotImplementedException();
 
 #pragma warning disable 67
     public event EventHandler TeamBewerbeChanged;

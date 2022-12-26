@@ -85,19 +85,7 @@
                         Minimum="1" Maximum="7" TickPlacement="BottomRight" 
                         Margin="5"  Width="210"/>
             </StackPanel>
-
-
-            <TextBlock Text="Anzahl der Aussetzer:" Grid.Row="2" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
-            <StackPanel  Grid.Row="2" Grid.Column="1" Orientation="Horizontal" MinWidth="300">
-                <TextBlock Text="{Binding BreaksCount, Mode=OneWay}" 
-                           Margin="5" Width="10" TextAlignment="Center"
-                           Background="White"
-                           HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <Slider Value="{Binding BreaksCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        IsEnabled="{Binding CountOfNonVirtualTeamsIsEqual, Mode=OneWay}"
-                        Minimum="0" Maximum="2" TickPlacement="BottomRight"
-                        Margin="5" Width="105"/>
-            </StackPanel>
+            <StackPanel  Grid.Row="2" Grid.Column="1" Orientation="Horizontal" MinWidth="300"/>
 
 
             <TextBlock Text="Anspiel-Wechsel:" Grid.Row="3" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
@@ -111,10 +99,11 @@
                       Style="{StaticResource CheckBoxGrid}"
                       IsChecked="{Binding Has8Turns, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <TextBlock Text="Anzahl Bahnen:" Grid.Row="5" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
-            <TextBlock Text="{Binding CountOfCourts}" Grid.Row="5" Grid.Column="1"  
-                       Margin="5" Width="10" TextAlignment="Center"
-                       HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
+            <TextBlock Text="Spielplan:" Grid.Row="5" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
+            <ComboBox Grid.Row="5" Grid.Column="1" 
+                      ItemsSource="{Binding Gameplans}" 
+                      SelectedValue="{Binding SelectedGameplanId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                      DisplayMemberPath="Name" SelectedValuePath="ID"/>
 
             <Button Content="Spielplan generieren" 
                     Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right"

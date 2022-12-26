@@ -10,7 +10,6 @@ public class SerialisableTeam : ITeam
 
     public SerialisableTeam(ITeam team)
     {
-        IsVirtual = team.IsVirtual;
         StartNumber = team.StartNumber;
         TeamName = team.TeamName;
         Nation = team.Nation;
@@ -24,7 +23,6 @@ public class SerialisableTeam : ITeam
     {
         normal.Nation = Nation;
         normal.TeamName = TeamName;
-        normal.IsVirtual = IsVirtual;
         foreach (var player in SerialisablePlayers)
         {
             normal.AddPlayer(player);
@@ -33,7 +31,6 @@ public class SerialisableTeam : ITeam
 
 
 
-    public bool IsVirtual { get; set; }
     public int StartNumber { get; set; }
     public string TeamName { get; set; }
 

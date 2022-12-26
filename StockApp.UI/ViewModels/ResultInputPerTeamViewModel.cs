@@ -39,7 +39,7 @@ public class ResultInputPerTeamViewModel : ViewModelBase
 
     public ResultInputPerTeamViewModel(IEnumerable<ITeam> teams)
     {
-        foreach (var team in teams.Where(t => !t.IsVirtual))
+        foreach (var team in teams)
         {
             Teams.Add(team);
         }

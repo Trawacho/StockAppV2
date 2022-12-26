@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using StockApp.Core.Factories;
 using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.XML;
@@ -35,7 +36,11 @@ public class SaveITurnierTest
         {
             bewerb.AddNewTeam();
         }
-        bewerb.CreateGames();
+
+        GamePlanFactory.MatchTeamAndGames(
+            GamePlanFactory.LoadAllGameplans()
+                            .First(p => p.Teams == 7), bewerb.Teams);
+
         bewerb.Games.First().Spielstand.SetMasterTeamAValue(3);
         bewerb.Games.First().Spielstand.SetMasterTeamBValue(11);
 

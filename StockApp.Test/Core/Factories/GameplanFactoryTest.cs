@@ -14,7 +14,7 @@ public class GameplanFactoryTest
     }
 
     [Test]
-    public void Test1()
+    public void TestLoadAllGameplans()
     {
         var jsonGameplans = GamePlanFactory.LoadAllGameplans();
         Assert.That(jsonGameplans.Last().Teams, Is.GreaterThan(0));
@@ -23,21 +23,25 @@ public class GameplanFactoryTest
 
 
     [Test]
-    public void Test3()
+    public void TestLoadAndMatchGameplan()
     {
-        var _teamBewerb = TeamBewerb.Create(1);
-        _teamBewerb = TeamBewerb.Create(1);
-        _teamBewerb.AddNewTeam();
-        _teamBewerb.AddNewTeam();
-        _teamBewerb.AddNewTeam();
-        _teamBewerb.AddNewTeam();
-        _teamBewerb.AddNewTeam();
-        _teamBewerb.AddVirtualTeams(1);
+        for (int maxTeams = 3; maxTeams <= 11; maxTeams++)
+        {
+            var _teamBewerb = TeamBewerb.Create(1);
+            _teamBewerb = TeamBewerb.Create(1);
+            for (int t = 0; t < maxTeams; t++)
+            {
+                _teamBewerb.AddNewTeam();
+            }
 
+            foreach (var t in _teamBewerb.Teams)
+                t.ClearGames();
 
-        var factoryGames = GamePlanFactory.LoadAllGameplans().Where(x => x.Teams == 5 && x.Courts == 2).First();
-        GamePlanFactory.MatchTeamAndGames(factoryGames, _teamBewerb.Teams);
+            foreach (var gamePlan in GamePlanFactory.LoadAllGameplans().Where(x=> x.Teams == _teamBewerb.Teams.Count()))
+            {
+                GamePlanFactory.MatchTeamAndGames(gamePlan, _teamBewerb.Teams, 1);
+            }
 
-       
+        }
     }
 }

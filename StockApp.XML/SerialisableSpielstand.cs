@@ -11,10 +11,24 @@ public class SerialisableSpielstand : ISpielstand
     {
         A = spielstand.Punkte_Master_TeamA;
         B = spielstand.Punkte_Master_TeamB;
+        Kehren = new List<SerialisableKehre>();
+        foreach (var kehre in spielstand.Kehren_Master)
+        {
+            Kehren.Add(new SerialisableKehre(kehre));
+        }
     }
 
     public int A { get; set; }
     public int B { get; set; }
+    public List<SerialisableKehre> Kehren { get; set; }
+
+    public void ToNormal(ISpielstand normal)
+    {
+        foreach (var k in Kehren)
+        {
+            normal.SetMasterKehre(k);
+        }
+    }
 
     #region XMLIgnore
 

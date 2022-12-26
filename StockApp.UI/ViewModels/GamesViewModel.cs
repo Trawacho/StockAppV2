@@ -12,7 +12,6 @@ public class GamesViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
     private ICommand _createGamesCommand;
-    private IEnumerable<IFactoryGame> _factoryGames;
     private bool _isCreatingGames;
 
     private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
@@ -20,24 +19,25 @@ public class GamesViewModel : ViewModelBase
     public ViewModelBase GamesPrintsViewModel { get; private set; }
     public bool IsCreatingGames { get => _isCreatingGames; set => SetProperty(ref _isCreatingGames, value); }
 
+    public IEnumerable<IGameplan> Gameplans => _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == TeamBewerb.Teams.Count());
 
     #region TeamBewerb - Depended Properties
 
-    public int CountOfCourts => TeamBewerb.NumberOfCourts;
     public int CountOfGames => TeamBewerb.GetCountOfGames();
     public int CountOfGamesPerCourt => TeamBewerb.GetCountOfGamesPerCourt();
-    public bool CountOfNonVirtualTeamsIsEqual => TeamBewerb?.Teams.Where(t => !t.IsVirtual).Count() % 2 == 0;
     public bool HasMoreGameRounds => SpielRunden > 1;
     public bool HasGames => CountOfGames > 0;
     public bool HasNoGames => !HasGames;
 
-    public int BreaksCount
+    public int SelectedGameplanId
     {
-        get => TeamBewerb.BreaksCount;
+        get => TeamBewerb.GameplanId;
         set
         {
-            if (TeamBewerb.BreaksCount == value) return;
-            TeamBewerb.BreaksCount = value;
+            if (TeamBewerb.GameplanId == value)
+                return;
+
+            TeamBewerb.GameplanId = value;
             RaisePropertyChanged();
         }
     }
@@ -85,55 +85,15 @@ public class GamesViewModel : ViewModelBase
         {
             IsCreatingGames = true;
 
-            TeamBewerb.RemoveAllVirtualTeams();
+            //Entferne alle Spiele von allen Teams
+            foreach (var t in TeamBewerb.Teams)
+                t.ClearGames();
 
-            if (TeamBewerb.Teams.Count(t => !t.IsVirtual) % 2 == 0 && BreaksCount == 1) //Gerade Anzahl an Mannschaften (ohne virtuelle) und 1 Aussetzer
-            {
-                _factoryGames = GameFactory.CreateGames2(TeamBewerb.Teams.Count(), SpielRunden);
-            }
-            else if (TeamBewerb.Teams.Count(t => !t.IsVirtual) % 2 == 0 && BreaksCount == 0)//Gerade Anzahl an Mannschaften (ohne virtuelle) und 0 Aussetzer
-            {
-                _factoryGames = GameFactory.CreateGames(
-                                           TeamBewerb.Teams.Count(),
-                                           BreaksCount,
-                                           SpielRunden,
-                                           HasChangeStart)
-                                     .OrderBy(g => g.GameNumberOverAll)
-                                     .ThenBy(g => g.CourtNumber);
-            }
-            else if (TeamBewerb.Teams.Count(t => !t.IsVirtual) % 2 == 0 && BreaksCount == 2)//Gerade Anzahl an Mannschaften (ohne virtuelle) und 2 Aussetzer
-            {
-                _factoryGames = GameFactory.CreateGames(
-                                           TeamBewerb.Teams.Count(),
-                                           BreaksCount,
-                                           SpielRunden,
-                                           HasChangeStart)
-                                     .OrderBy(g => g.GameNumberOverAll)
-                                     .ThenBy(g => g.CourtNumber);
-
-                TeamBewerb.AddVirtualTeams(2);
-            }
-            else if (TeamBewerb.Teams.Count(t => !t.IsVirtual) % 2 != 0 && BreaksCount == 1) //Ungerade Anzahl an Mannschaften (ohne Virtuelle) und 1 Aussetzer
-            {
-                _factoryGames = GameFactory.CreateGames(
-                                            TeamBewerb.Teams.Count(),
-                                            BreaksCount,
-                                            SpielRunden,
-                                            HasChangeStart)
-                                      .OrderBy(g => g.GameNumberOverAll)
-                                      .ThenBy(g => g.CourtNumber);
-
-                TeamBewerb.AddVirtualTeams(1);
-
-
-            }
-
-            GameFactoryWrapper.MatchTeamAndGames(_factoryGames, TeamBewerb.Teams);
-
+            GamePlanFactory.MatchTeamAndGames(Gameplans.First(g => g.ID == SelectedGameplanId), TeamBewerb.Teams, SpielRunden, HasChangeStart);
 
             IsCreatingGames = false;
         },
-        (p) => !IsCreatingGames || TeamBewerb.Teams.Count() >= 2
+        (p) => !IsCreatingGames && SelectedGameplanId != 0
         );
 
     #region Constructor
@@ -143,6 +103,15 @@ public class GamesViewModel : ViewModelBase
         _turnierStore = turnierStore;
 
         GamesPrintsViewModel = new GamesPrintsViewModel(TeamBewerb, _turnierStore);
+
+        TeamBewerb.GamesChanged += TeamBewerb_GamesChanged;
+    }
+
+    private void TeamBewerb_GamesChanged(object sender, System.EventArgs e)
+    {
+        RaisePropertyChanged(nameof(HasNoGames));
+        RaisePropertyChanged(nameof(CountOfGames));
+        RaisePropertyChanged(nameof(CountOfGamesPerCourt));
     }
 
     protected override void Dispose(bool disposing)
@@ -151,6 +120,7 @@ public class GamesViewModel : ViewModelBase
         {
             if (disposing)
             {
+                TeamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
                 GamesPrintsViewModel?.Dispose();
                 GamesPrintsViewModel = null;
             }

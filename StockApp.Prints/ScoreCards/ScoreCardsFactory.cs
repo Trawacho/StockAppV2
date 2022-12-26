@@ -7,120 +7,118 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace StockApp.Prints.ScoreCards
+namespace StockApp.Prints.ScoreCards;
+
+public static class ScoreCardsFactory
 {
-    public static class ScoreCardsFactory
+    public static FixedDocument CreateScoreCards(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized, bool opponentOnScoreCards)
     {
-        public static FixedDocument CreateScoreCards(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized, bool opponentOnScoreCards)
-        {
-            return new ScoreCardHelper(pageSize, bewerb, summarizedScoreCards, namesOnScoreCard, stockTvOptimized, opponentOnScoreCards).CreateScoreCards();
-        }
+        return new ScoreCardHelper(pageSize, bewerb, summarizedScoreCards, namesOnScoreCard, stockTvOptimized, opponentOnScoreCards).CreateScoreCards();
+    }
+}
+
+class ScoreCardHelper : PrintsBaseClass
+{
+    private readonly ITeamBewerb _teamBewerb;
+    private readonly bool _summarizedScoreCards;
+    private readonly bool _namesOnScoreCard;
+    private readonly bool _stockTvOptimized;
+    private readonly bool _opponentOnScoreCards;
+
+    internal ScoreCardHelper(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized, bool opponentOnScoreCards) : base(pageSize)
+    {
+        _teamBewerb = bewerb;
+        _summarizedScoreCards = summarizedScoreCards;
+        _namesOnScoreCard = namesOnScoreCard;
+        _stockTvOptimized = stockTvOptimized;
+        _opponentOnScoreCards = opponentOnScoreCards;
     }
 
-    class ScoreCardHelper : PrintsBaseClass
+
+    internal FixedDocument CreateScoreCards()
     {
-        private readonly ITeamBewerb _teamBewerb;
-        private readonly bool _summarizedScoreCards;
-        private readonly bool _namesOnScoreCard;
-        private readonly bool _stockTvOptimized;
-        private readonly bool _opponentOnScoreCards;
+        var teamPanels = new List<StackPanel>();
 
-        internal ScoreCardHelper(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized, bool opponentOnScoreCards) : base(pageSize)
+        foreach (var team in _teamBewerb.Teams.OrderBy(t => t.StartNumber)) //Für jedes Team eine Wertungs-Karte
         {
-            _teamBewerb = bewerb;
-            _summarizedScoreCards = summarizedScoreCards;
-            _namesOnScoreCard = namesOnScoreCard;
-            _stockTvOptimized = stockTvOptimized;
-            _opponentOnScoreCards = opponentOnScoreCards;
-        }
-
-
-        internal FixedDocument CreateScoreCards()
-        {
-            var teamPanels = new List<StackPanel>();
-
-            foreach (var team in _teamBewerb.Teams.Where(v => !v.IsVirtual)
-                                                 .OrderBy(t => t.StartNumber)) //Für jedes Team eine Wertungs-Karte
+            if (_summarizedScoreCards)
             {
-                if (_summarizedScoreCards)
-                {
 
+                teamPanels.Add(
+                    GetTeamPanel(
+                        team,
+                        team.Games
+                            .OrderBy(g => g.GameNumberOverAll),
+                        _teamBewerb.Is8TurnsGame,
+                        0,
+                        _opponentOnScoreCards
+                        ));
+
+            }
+            else
+            {
+                int maxRounds = team.Games.Max(r => r.RoundOfGame);
+                for (int gameRound = 1; gameRound <= maxRounds; gameRound++)
+                {
                     teamPanels.Add(
                         GetTeamPanel(
                             team,
                             team.Games
-                                .OrderBy(g => g.GameNumberOverAll),
+                                .Where(g => g.RoundOfGame == gameRound)
+                                .OrderBy(r => r.GameNumber),
                             _teamBewerb.Is8TurnsGame,
-                            0,
-                            _opponentOnScoreCards
+                            maxRounds == 1 ? 0 : gameRound, _opponentOnScoreCards
                             ));
 
                 }
-                else
-                {
-                    int maxRounds = team.Games.Max(r => r.RoundOfGame);
-                    for (int gameRound = 1; gameRound <= maxRounds; gameRound++)
-                    {
-                        teamPanels.Add(
-                            GetTeamPanel(
-                                team,
-                                team.Games
-                                    .Where(g => g.RoundOfGame == gameRound)
-                                    .OrderBy(r => r.GameNumber),
-                                _teamBewerb.Is8TurnsGame,
-                                maxRounds == 1 ? 0 : gameRound, _opponentOnScoreCards
-                                ));
-
-                    }
 
 
-                }
             }
-
-            return base.CreateFixedDocument(teamPanels, false);
         }
 
-
-
-        /// <summary>
-        /// Eine Wertungskarte
-        /// </summary>
-        /// <param name="team">Wertungskarte für dieses Team</param>
-        /// <param name="games">Diese Spiele in der Wertungskarte anzeigen</param>
-        /// <param name="is8TurnGame">Wenn TRUE, dann werden 8 anstatt 7 Kehren gedruckt</param>
-        /// <param name="numberOfGameRound">optional, wenn >0, dann wird eine Information der Runde angedruckt</param>
-        /// <returns></returns>
-        private StackPanel GetTeamPanel(ITeam team, IEnumerable<IGame> games, bool is8TurnsGame, int numberOfGameRound, bool opponentOnScoreCards)
-        {
-            // alles was eine Wertungskarte braucht, kommt in ein Stackpanel
-            var panel = new StackPanel();
-
-            // Schneide Linie oben
-            panel.Children.Add(Components.CutterLineTop());
-
-            // Kopfzeile mit Mannschaftsnamen und weitere Infos
-            panel.Children.Add(new ScoreCardHeader(team.StartNumber, team.TeamName, _namesOnScoreCard, is8TurnsGame, numberOfGameRound, _stockTvOptimized, opponentOnScoreCards));
-
-            // Spaltenüberschriften
-            panel.Children.Add(new ScoreCardHeaderGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
-
-
-            // pro Spiel eine weitere Zeile
-            foreach (var game in games)
-            {
-                panel.Children.Add(new GameGrid(game, team, is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
-            }
-
-            // Summenzeile am Ende
-            panel.Children.Add(new GameSummaryGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
-
-            // Schneidelinie unten
-            panel.Children.Add(Components.CutterLine());
-
-            return panel;
-        }
-
-
-
+        return base.CreateFixedDocument(teamPanels, false);
     }
+
+
+
+    /// <summary>
+    /// Eine Wertungskarte
+    /// </summary>
+    /// <param name="team">Wertungskarte für dieses Team</param>
+    /// <param name="games">Diese Spiele in der Wertungskarte anzeigen</param>
+    /// <param name="is8TurnGame">Wenn TRUE, dann werden 8 anstatt 7 Kehren gedruckt</param>
+    /// <param name="numberOfGameRound">optional, wenn >0, dann wird eine Information der Runde angedruckt</param>
+    /// <returns></returns>
+    private StackPanel GetTeamPanel(ITeam team, IEnumerable<IGame> games, bool is8TurnsGame, int numberOfGameRound, bool opponentOnScoreCards)
+    {
+        // alles was eine Wertungskarte braucht, kommt in ein Stackpanel
+        var panel = new StackPanel();
+
+        // Schneide Linie oben
+        panel.Children.Add(Components.CutterLineTop());
+
+        // Kopfzeile mit Mannschaftsnamen und weitere Infos
+        panel.Children.Add(new ScoreCardHeader(team.StartNumber, team.TeamName, _namesOnScoreCard, is8TurnsGame, numberOfGameRound, _stockTvOptimized, opponentOnScoreCards));
+
+        // Spaltenüberschriften
+        panel.Children.Add(new ScoreCardHeaderGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
+
+
+        // pro Spiel eine weitere Zeile
+        foreach (var game in games)
+        {
+            panel.Children.Add(new GameGrid(game, team, is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
+        }
+
+        // Summenzeile am Ende
+        panel.Children.Add(new GameSummaryGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
+
+        // Schneidelinie unten
+        panel.Children.Add(Components.CutterLine());
+
+        return panel;
+    }
+
+
+
 }

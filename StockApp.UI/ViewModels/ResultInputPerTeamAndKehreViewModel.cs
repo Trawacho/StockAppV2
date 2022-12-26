@@ -17,7 +17,7 @@ internal class ResultInputPerTeamAndKehreViewModel : ViewModelBase
     {
         _is8TurnsGame = is8TurnsGame;
 
-        foreach (var team in teams.Where(t => !t.IsVirtual))
+        foreach (var team in teams)
         {
             Teams.Add(team);
         }

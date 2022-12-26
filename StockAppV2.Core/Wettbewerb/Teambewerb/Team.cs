@@ -2,7 +2,6 @@
 
 public interface ITeam : IEquatable<ITeam>
 {
-    public bool IsVirtual { get; set; }
     public int StartNumber { get; set; }
     public string TeamName { get; set; }
 
@@ -16,8 +15,17 @@ public interface ITeam : IEquatable<ITeam>
     public IEnumerable<int> SpieleMitAnspiel();
     public IEnumerable<int> SpieleAufStartSeite();
 
+    /// <summary>
+    /// Add a game
+    /// </summary>
+    /// <param name="game"></param>
     void AddGame(IGame game);
+    
+    /// <summary>
+    /// Delete all Games 
+    /// </summary>
     void ClearGames();
+
     /// <summary>
     /// Occours, when a Game is added or removed
     /// </summary>
@@ -26,6 +34,7 @@ public interface ITeam : IEquatable<ITeam>
     void AddPlayer();
     void AddPlayer(IPlayer player);
     void RemovePlayer(IPlayer selectedPlayer);
+
     /// <summary>
     /// Occours, when a Player is added or removed
     /// </summary>
@@ -85,12 +94,7 @@ public class Team : ITeam
     #endregion
 
     #region Standard-Properties
-
-    /// <summary>
-    /// True, wenn es sich um virtuelles Team handelt, dass nur zur Berechnung des Spielplans verwendet wird
-    /// </summary>
-    public bool IsVirtual { get; set; }
-
+    
     /// <summary>
     /// Startnummer
     /// </summary>
@@ -101,6 +105,9 @@ public class Team : ITeam
     /// </summary>
     public string TeamName { get; set; }
 
+    /// <summary>
+    /// First 25 Characters from <see cref="TeamName"/>
+    /// </summary>
     public string TeamNameShort => new string(TeamName?.Take(25).ToArray() ?? new char[] { });
 
     /// <summary>
@@ -225,15 +232,12 @@ public class Team : ITeam
     /// <param name="TeamName"></param>
     private Team(string TeamName)
     {
-        IsVirtual = false;
         StartNumber = 0;
         this.TeamName = TeamName;
     }
 
-    public static ITeam Create(string teamName, bool isVirtual)
-    {
-        return new Team(teamName) { IsVirtual = isVirtual };
-    }
+    public static ITeam Create(string teamName) => new Team(teamName);
+
 
 
     #endregion
@@ -281,7 +285,6 @@ public class Team : ITeam
         _players.Remove(selectedPlayer);
         RaisePlayersChanged();
     }
-
 
 
     /// <summary>

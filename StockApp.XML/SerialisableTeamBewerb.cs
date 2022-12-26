@@ -1,6 +1,5 @@
 ﻿using StockApp.Comm.Broadcasting;
 using StockApp.Comm.NetMqStockTV;
-using StockApp.Core.Factories;
 using StockApp.Core.Wettbewerb.Teambewerb;
 using System.Xml.Serialization;
 
@@ -9,7 +8,7 @@ namespace StockApp.XML;
 [XmlType(TypeName = "Teambewerb")]
 public class SerialisableTeamBewerb : ITeamBewerb
 {
-    public SerialisableTeamBewerb() 
+    public SerialisableTeamBewerb()
     {
         ID = 0;
         Gruppenname = "default 1";
@@ -30,30 +29,15 @@ public class SerialisableTeamBewerb : ITeamBewerb
         }
 
         NumberOfGameRounds = bewerb.NumberOfGameRounds;
-        BreaksCount = bewerb.BreaksCount;
         Is8TurnsGame = bewerb.Is8TurnsGame;
         StartingTeamChange = bewerb.StartingTeamChange;
         SpielGruppe = bewerb.SpielGruppe;
         IERVersion = bewerb.IERVersion;
         ID = bewerb.ID;
         Gruppenname = bewerb.Gruppenname;
-
-        GamePlan = new List<IFactoryGame>();
-        foreach (var game in bewerb.Games)
-        {
-            GamePlan.Add(new FactoryGame(game.RoundOfGame,
-                                         game.GameNumberOverAll,
-                                         game.GameNumber,
-                                         game.CourtNumber,
-                                         game.TeamA.StartNumber,
-                                         game.TeamB.StartNumber,
-                                         game.IsTeamA_Starting,
-                                         game.IsPauseGame(),
-                                         bewerb.StartingTeamChange));
-        }
+        GameplanId = bewerb.GameplanId;
     }
 
-    private List<IFactoryGame> GamePlan { get; set; }
 
 
 
@@ -64,10 +48,10 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.Is8TurnsGame = Is8TurnsGame;
         teamBewerb.StartingTeamChange = StartingTeamChange;
         teamBewerb.SpielGruppe = SpielGruppe;
-        teamBewerb.BreaksCount = BreaksCount;
         teamBewerb.IERVersion = IERVersion;
         teamBewerb.Gruppenname = Gruppenname;
-        
+
+
 
         //alle Teams löschen
         teamBewerb.RemoveAllTeams();
@@ -77,6 +61,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         {
             teamBewerb.AddNewTeam();
         }
+
         // den erzeugten Teams die Eigenschaften zuweisen
         foreach (var team in SerialisableTeams)
         {
@@ -92,11 +77,16 @@ public class SerialisableTeamBewerb : ITeamBewerb
             var newGame = Game.Create(teamA, teamB, game.GameNumber, game.RoundOfGame, game.GameNumberOverAll);
             newGame.CourtNumber = game.CourtNumber;
             newGame.IsTeamA_Starting = game.IsTeamA_Starting;
-            newGame.Spielstand.SetMasterTeamAValue(game.SerialisableSpielstand.A);
-            newGame.Spielstand.SetMasterTeamBValue(game.SerialisableSpielstand.B);
+
+            game.SerialisableSpielstand.ToNormal(newGame.Spielstand);
+
             teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamA).AddGame(newGame);
-            teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamB).AddGame(newGame);
+
+            if (game.CourtNumber != 0) //bei einem Aussetzer, nicht doppelt zuweisen, da in TeamA und TeamB die gleiche Mannschaft steckt
+                teamBewerb.Teams.First(t => t.StartNumber == game.StartnumberTeamB).AddGame(newGame);
         }
+
+        teamBewerb.GameplanId = GameplanId;
 
         //Wenn alle Spielstände 0:0 sind, dann jeden Spielstand Resetten, damit IsSetByHand auf false steht
         if (!teamBewerb.Teams.Any(t => t.GetStockPunkteDifferenz() != 0))
@@ -134,6 +124,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "IERVersion")]
     public IERVersion IERVersion { get; set; }
 
+    [XmlElement(ElementName = "Spielplan")]
+    public int GameplanId { get; set; }
+
     [XmlArray(ElementName = "Mannschaften")]
     public List<SerialisableTeam> SerialisableTeams { get; set; }
 
@@ -152,6 +145,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public int NumberOfCourts => throw new NotImplementedException();
     [XmlIgnore]
     public int NumberOfTeamsWithNamedPlayerOnResult { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+
 
 
 #pragma warning disable 67
