@@ -159,11 +159,11 @@ public class TeamRankingComparerTest
 
         var teamListe = _teamBewerb.Teams;
 
-        Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
+        Assert.That(TeamRankingComparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
                                                             .Games.Where(g => g.RoundOfGame == 1), 2, 4, false), Is.EqualTo(1));
-        Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
+        Assert.That(TeamRankingComparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
                                                             .Games.Where(g => g.RoundOfGame == 2), 2, 4, false), Is.EqualTo(-1));
-        Assert.That(comparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
+        Assert.That(TeamRankingComparer.CompareLastGame(teamListe.First(t => t.StartNumber == 2)
                                                             .Games, 2, 4, false), Is.EqualTo(-1));
 
 

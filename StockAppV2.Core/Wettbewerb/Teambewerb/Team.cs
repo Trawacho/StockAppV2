@@ -108,7 +108,7 @@ public class Team : ITeam
     /// <summary>
     /// First 25 Characters from <see cref="TeamName"/>
     /// </summary>
-    public string TeamNameShort => new string(TeamName?.Take(25).ToArray() ?? Array.Empty<char>());
+    public string TeamNameShort => new(TeamName?.Take(25).ToArray() ?? Array.Empty<char>());
 
     /// <summary>
     /// Info über Kreis, Bezirk, Verband oder Nation

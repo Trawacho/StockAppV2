@@ -79,14 +79,11 @@ public class BroadcastService : IBroadcastService
             _udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, 4711));
         }
 
-        if (_state == null)
-        {
-            _state = new UdpState()
+        _state ??= new UdpState()
             {
                 udpClient = _udpClient,
                 ipEndPoint = new IPEndPoint(0, 0),
             };
-        }
 
         _state.result = _state.udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), _state);
         RaiseIsRunningChanged(true);

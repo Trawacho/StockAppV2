@@ -120,8 +120,7 @@ namespace StockApp.Comm.NetMqStockTV
 
         public void Start()
         {
-            if (_actor == null)
-                _actor = NetMQActor.Create(new ShimHandler(Address, (topic, value) => RaiseSubscriberMessageReceived(topic, value)));
+            _actor ??= NetMQActor.Create(new ShimHandler(Address, (topic, value) => RaiseSubscriberMessageReceived(topic, value)));
         }
 
         public void Stop()

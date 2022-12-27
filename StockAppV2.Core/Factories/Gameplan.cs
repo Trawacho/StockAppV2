@@ -24,7 +24,7 @@ public class Gameplan : IGameplan
 
     public int Teams { get; init; }
 
-    private List<IGameplanGameround> _gameplanGamenumbers;
+    private readonly List<IGameplanGameround> _gameplanGamenumbers;
     public IEnumerable<IGameplanGameround> GameplanGamenumbers => _gameplanGamenumbers;
 
     public IEnumerable<( int gamenumber,  IGameplanGame game)> GetAllGames()
@@ -57,7 +57,7 @@ public class GameplanGamenumber : IGameplanGameround
 
     public int Number { get; }
 
-    private List<IGameplanGame> _games;
+    private readonly List<IGameplanGame> _games;
     public IEnumerable<IGameplanGame> Games => _games;
 }
 

@@ -72,10 +72,10 @@ public class SerialisableSpielstand : ISpielstand
         throw new NotImplementedException();
     }
 
-    public IKehre GetKehre(int kehrenNummer, bool isLive = false)
-    {
-        throw new NotImplementedException();
-    }
+    //public IKehre GetKehre(int kehrenNummer, bool isLive = false)
+    //{
+    //    throw new NotImplementedException();
+    //}
 
     public int GetSpielPunkteTeamA(bool live)
     {

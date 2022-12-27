@@ -45,7 +45,7 @@ namespace StockApp.Test.Comm
         [Test]
         public void AddManualTest()
         {
-            if (_service == null) _service = new StockTVService();
+            _service ??= new StockTVService();
             _service.AddManual("hostname", "192.168.100.136");
             var manual = _service.StockTVCollection.First();
             Assert.IsNotNull(manual);

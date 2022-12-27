@@ -44,7 +44,7 @@ public partial class TeamRankingComparer : IComparer<ITeam>
     /// <param name="startNumberY">Startnummer von Mannschaft Y</param>
     /// <param name="isLive">Live oder Master-Werte bewerten</param>
     /// <returns>-1 wenn X vor Y, 1 wenn Y vor X. 0 bei Gleichstand</returns>
-    internal int CompareLastGame(IEnumerable<IGame> gamesTeamX, int startNumberX, int startNumberY, bool isLive)
+    internal static int CompareLastGame(IEnumerable<IGame> gamesTeamX, int startNumberX, int startNumberY, bool isLive)
     {
         var game = gamesTeamX
                         .OrderByDescending(g => g.RoundOfGame)

@@ -90,11 +90,6 @@ namespace StockApp.UI
         }
 
         #region CreateDialogServices
-        private IDialogService<LiveResultsTeamViewModel> CreateLiveResultsTeamDialogService()
-        {
-            return new DialogService<LiveResultsTeamViewModel>(_dialogStore, () => new LiveResultsTeamViewModel(), false);
-        }
-
         private IDialogService<LiveResultsZielViewModel> CreateLiveReusltsZielDialogService()
         {
             return new DialogService<LiveResultsZielViewModel>(_dialogStore, () => new LiveResultsZielViewModel(_turnierStore), false);
