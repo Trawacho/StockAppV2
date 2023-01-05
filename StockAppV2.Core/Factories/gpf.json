@@ -1,5 +1,15 @@
 [
   {
+    "id": 210,
+    "description": "2 Teams, 1 Bahn",
+    "teams": 2,
+    "courts": 1,
+    "plan": [
+      [ 1, 2 ]
+    ]
+  },
+
+  {
     "id": 310,
     "description": "3 Teams, 1 Bahn",
     "teams": 3,
