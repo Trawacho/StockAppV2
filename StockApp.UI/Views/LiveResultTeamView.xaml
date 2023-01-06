@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:StockApp.UI.Views"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
         xmlns:conv="clr-namespace:StockApp.UI.Converters"
         xmlns:vm="clr-namespace:StockApp.UI.ViewModels"
@@ -43,29 +42,31 @@
         </Grid.RowDefinitions>
 
         <Viewbox VerticalAlignment="Top" Margin="10" Grid.Row="0" HorizontalAlignment="Stretch">
-
-            <DataGrid ItemsSource="{Binding Path=RankedTeamList, Mode=OneWay}"
+            
+            <StackPanel Orientation="Vertical">
+                
+                <DataGrid ItemsSource="{Binding Path=RankedTeamList, Mode=OneWay}"
                       RowHeaderWidth="0"
                       IsReadOnly="True"
                       Margin="0"
                       CanUserSortColumns="False"
                       AutoGenerateColumns="False">
 
-                <DataGrid.Columns>
+                    <DataGrid.Columns>
 
-                    <DataGridTextColumn Header="Rang"
+                        <DataGridTextColumn Header="Rang" x:Name="dgcRank"
                                         Binding="{Binding Rank}"/>
 
-                    <DataGridTextColumn Header="Name" 
+                        <DataGridTextColumn Header="Name" x:Name="dgcName"
                                         ElementStyle="{StaticResource ColumnElementLeftAlignStyle}"
                                         Binding="{Binding TeamName}"/>
 
-                    <DataGridTextColumn Header="Punkte" 
+                        <DataGridTextColumn Header="Punkte" x:Name="dgcPunkte"
                                         ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
                                         Binding="{Binding SpielPunkte}"/>
 
 
-                    <DataGridTextColumn Header="Stocknote" 
+                        <DataGridTextColumn Header="Stocknote" x:Name="dgcStocknote"
                                         ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
                                         Binding="{Binding StockNote}"
                                         Visibility="{Binding Path=IsChecked, 
@@ -73,14 +74,14 @@
                                                              Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
 
 
-                    <DataGridTextColumn Header="Differenz" 
+                        <DataGridTextColumn Header="Differenz" x:Name="dgcDifferenz"
                                         ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
                                         Binding="{Binding StockPunkteDifferenz}"
                                         Visibility="{Binding Path=IsChecked, 
                                                              Source={x:Reference radioButtonIERVersion2022},
                                                              Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                    <DataGridTextColumn Header="Stockpunkte" 
+                        <DataGridTextColumn Header="Stockpunkte" x:Name="dgcStockpunkte"
                                         ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
                                         Binding="{Binding StockPunkte}"
                                         Visibility="{Binding Path=IsChecked, 
@@ -88,10 +89,64 @@
                                                              Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
 
-                </DataGrid.Columns>
+                    </DataGrid.Columns>
 
-            </DataGrid>
+                </DataGrid>
 
+
+                <StackPanel Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="Gesamtvergleich" Margin="0 20 0 0 " HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center"/>
+                    <DataGrid ItemsSource="{Binding Path=RankedClubList, Mode=OneWay}"
+                              RowHeaderWidth="0"
+                              IsReadOnly="True"
+                              Margin="0 0 0 0"
+                              HeadersVisibility="None"
+                              CanUserSortColumns="False"
+                              AutoGenerateColumns="False">  
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Rang" 
+                                                Width="{Binding Source={x:Reference dgcRank} , Path=ActualWidth}"
+                                                Binding="{Binding Rank}" />
+
+                            <DataGridTextColumn Header="Name" 
+                                                Width="{Binding Source={x:Reference dgcName}, Path=ActualWidth}"
+                                                ElementStyle="{StaticResource ColumnElementLeftAlignStyle}"
+                                                Binding="{Binding ClubName}"/>
+
+                            <DataGridTextColumn Header="Punkte"  
+                                                Width="{Binding Source={x:Reference dgcPunkte},Path=ActualWidth}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                                Binding="{Binding SpielPunkte}"/>
+
+                            <DataGridTextColumn Header="Stocknote" 
+                                                Width="{Binding Source={x:Reference dgcStocknote},Path=ActualWidth}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                                Binding="{Binding StockNote}"
+                                                Visibility="{Binding Path=IsChecked, 
+                                                                     Source={x:Reference radioButtonIERVersion2022},
+                                                                     Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
+
+                            <DataGridTextColumn Header="Differenz" 
+                                                Width="{Binding Source={x:Reference dgcDifferenz},Path=ActualWidth}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                                Binding="{Binding StockPunkteDifferenz}"
+                                                Visibility="{Binding Path=IsChecked, 
+                                                                     Source={x:Reference radioButtonIERVersion2022},
+                                                                     Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                            <DataGridTextColumn Header="Stockpunkte" 
+                                                Width="{Binding Source={x:Reference dgcStockpunkte},Path=ActualWidth}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                                Binding="{Binding StockPunkte}"
+                                                Visibility="{Binding Path=IsChecked, 
+                                                                    Source={x:Reference checkBoxShowStockPunkte},
+                                                                    Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+                
+            </StackPanel>
+            
         </Viewbox>
 
         <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -122,7 +177,13 @@
                       HorizontalContentAlignment="Left"
                       VerticalContentAlignment="Center"
                       Margin="10" Padding="10" IsThreeState="False"/>
-
+            <CheckBox IsChecked="{Binding Path=IsVergleich, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Content="Vergleich"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      VerticalContentAlignment="Center"
+                      Visibility="{Binding Path=IsVergleichPossible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Margin="10" Padding="10" IsThreeState="False"/>
             <Button Content="Close" 
                 Command="{Binding Path=CloseCommand}"
                 Margin="10" Padding="20,10" HorizontalAlignment="Right"/>

@@ -1,9 +1,11 @@
-﻿using StockApp.Core.Wettbewerb.Teambewerb;
+﻿using StockApp.Core.Models;
+using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.UI.Commands;
 using StockApp.UI.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -40,6 +42,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
 
         ShowStockPunkte = true;
         IsLive = true;
+
     }
 
     /// <summary>
@@ -58,6 +61,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
     private void TeamBewerb_ResultChanged(object sender, EventArgs e)
     {
         RaisePropertyChanged(nameof(RankedTeamList));
+        if (IsVergleich) RaisePropertyChanged(nameof(RankedClubList));
     }
 
     protected override void Dispose(bool disposing)
@@ -77,7 +81,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         }
     }
 
-    public string WindowTitle => _teamBewerb?.SpielGruppe > 0 
+    public string WindowTitle => _teamBewerb?.SpielGruppe > 0
         ? $"Live-Ergebnis - {_teamBewerb.Gruppenname}"
         : "Live-Ergebnis";
 
@@ -98,45 +102,59 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         set => SetProperty(ref _isLive, value);
     }
 
+    private bool _isVergleich;
+    public bool IsVergleich
+    {
+        get => _isVergleich;
+        set => SetProperty(ref _isVergleich, value);
+    }
+
+    private bool? _isVergleichPossible;
+    public bool IsVergleichPossible => _isVergleichPossible ??= Core.Factories.GamePlanFactory.LoadAllGameplans().First(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
+
     public ICommand CloseCommand { get; }
 
-    public ObservableCollection<RankedTeamViewModel> RankedTeamList
+    public ObservableCollection<RankedTeamModel> RankedTeamList
     {
         get
         {
-            var list = new List<RankedTeamViewModel>();
+            var list = new List<RankedTeamModel>();
             int rank = 1;
             foreach (var team in _teamBewerb.GetTeamsRanked(IsLive))
             {
-                list.Add(new RankedTeamViewModel(rank, team, IsLive));
+                list.Add(new RankedTeamModel(rank:rank, team:team, live: IsLive, printNameOfPlayer:false));
                 rank++;
             }
-            return new ObservableCollection<RankedTeamViewModel>(list.AsReadOnly());
+            return new ObservableCollection<RankedTeamModel>(list.AsReadOnly());
         }
     }
 
-
-    public class RankedTeamViewModel
+    public ObservableCollection<RankedClubModel> RankedClubList
     {
-        private readonly int _rank;
-        private readonly ITeam _team;
-        private readonly bool _live;
-
-        public int Rank => _rank;
-        public string TeamName => _team.TeamName;
-        public string SpielPunkte => $"{_team.GetSpielPunkte(_live).positiv}:{_team.GetSpielPunkte(_live).negativ}";
-        public string StockPunkte => $"{_team.GetStockPunkte(_live).positiv}:{_team.GetStockPunkte(_live).negativ}";
-        public string StockNote => _team.GetStockNote(_live).ToString("F3");
-        public string StockPunkteDifferenz => $"{_team.GetStockPunkteDifferenz(_live)}";
-
-        public RankedTeamViewModel(int rank, ITeam team, bool live)
+        get
         {
-            _rank = rank;
-            _team = team;
-            _live = live;
+            var clubA = new RankedClubModel(_teamBewerb.Teams.Take(_teamBewerb.Teams.Count() / 2), IsLive);
+            var clubB = new RankedClubModel(_teamBewerb.Teams.Skip(_teamBewerb.Teams.Count() / 2), IsLive);
+
+            var compared = clubA.CompareTo(clubB);
+            switch (compared)
+            {
+                case 0:
+                    clubA.Rank = 1;
+                    clubB.Rank = 1;
+                    break;
+                case 1:
+                    clubA.Rank = 1;
+                    clubB.Rank = 2;
+                    break;
+                case -1:
+                default:
+                    clubA.Rank = 2;
+                    clubB.Rank = 1;
+                    break;
+            }
+
+            return new ObservableCollection<RankedClubModel>(new[] { clubA, clubB }.OrderBy(o => o.Rank));
         }
     }
-
 }
-
-
