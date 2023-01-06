@@ -21,8 +21,6 @@ public partial class TeamRankingComparer : IComparer<ITeam>
         _version = version;
     }
 
-
-
     public int Compare(ITeam x, ITeam y)
     {
         switch (_version)
@@ -48,7 +46,9 @@ public partial class TeamRankingComparer : IComparer<ITeam>
     {
         var game = gamesTeamX
                         .OrderByDescending(g => g.RoundOfGame)
-                        .First(g => g.TeamA.StartNumber == startNumberY || g.TeamB.StartNumber == startNumberY);
+                        .FirstOrDefault(g => g.TeamA.StartNumber == startNumberY || g.TeamB.StartNumber == startNumberY);
+
+        if (game == null) return 0; //Bei Vergleichsturnieren, wird nicht jeder gegen jeden gespielt.
 
         if (game.TeamA.StartNumber == startNumberX)
         {
