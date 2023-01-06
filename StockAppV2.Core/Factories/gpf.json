@@ -65,6 +65,7 @@
   {
     "id": 639,
     "description": "6 Teams, 3 Bahnen, Vergleich 1...3 gegen 4...6",
+    "vergleich": true,
     "teams": 6,
     "courts": 3,
     "plan": [
@@ -122,6 +123,7 @@
   {
     "id": 849,
     "description": "8 Teams, 4 Bahnen, Vergleich 1...4 gegen 5...8",
+    "vergleich": true,
     "teams": 8,
     "courts": 4,
     "plan": [
@@ -244,6 +246,7 @@
   {
     "id": 1059,
     "description": "10 Teams, 5 Bahnen, Vergleich 1...5 gegen 6...10",
+    "vergleich": true,
     "teams": 10,
     "courts": 5,
     "plan": [
