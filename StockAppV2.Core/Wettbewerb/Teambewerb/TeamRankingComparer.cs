@@ -23,14 +23,11 @@ public partial class TeamRankingComparer : IComparer<ITeam>
 
     public int Compare(ITeam x, ITeam y)
     {
-        switch (_version)
+        return _version switch
         {
-            case IERVersion.v2018:
-                return CompareVersionUpFrom2018(x, y);
-            case IERVersion.v2022:
-            default:
-                return CompareVersionUpFrom2022(x, y);
-        }
+            IERVersion.v2018 => CompareVersionUpFrom2018(x, y),
+            _ => CompareVersionUpFrom2022(x, y),
+        };
     }
 
     /// <summary>
