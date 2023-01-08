@@ -27,6 +27,9 @@ public class KehrenBaseViewModel : ViewModelBase
     public virtual int StockPunkte1 { get => throw new NotSupportedException("must be overriden in subclass"); }
     public virtual int StockPunkte2 { get => throw new NotSupportedException("must be overriden in subclass"); }
 
+    public virtual int Spielpunkte1 { get => throw new NotSupportedException("must be overriden in subclass"); }
+    public virtual int Spielpunkte2 { get => throw new NotSupportedException("must be overriden in subclass"); }
+
     #region Kehren von Team1
     /// <summary>
     /// Kehre 1 von Team1
