@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="StockApp.Prints.TeamResults.ClubTableView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:StockApp.Prints.TeamResults"
+             xmlns:conv="clr-namespace:StockApp.Prints.Converters"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=local:TeamResultPageViewModel, IsDesignTimeCreatable=True}">
+
+    <d:DesignerProperties.DesignStyle x:Name="designBackground">
+        <Style TargetType="UserControl">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Width" Value="800"/>
+            <Setter Property="Height" Value="600"/>
+        </Style>
+
+    </d:DesignerProperties.DesignStyle>
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical">
+
+        <TextBlock Text="Gesamtergebnis:" HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       TextAlignment="Left"/>
+
+        <ItemsControl ItemsSource="{Binding RankedClubs}" HorizontalAlignment="Center">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <Label Content="{Binding Rank}" Width="1.5cm" HorizontalContentAlignment="Center" />
+                        <Label Content="{Binding ClubName}" Width="9cm" HorizontalContentAlignment="Left" />
+                        <Label Content="{Binding SpielPunkte}" Width="2cm" HorizontalContentAlignment="Center" />
+
+                        <Label Content="{Binding StockPunkteDifferenz}" 
+                                   Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                                        Path=DataContext.IERVersion2022}"
+                                   Width="1.5cm" 
+                                   HorizontalContentAlignment="Center"/>
+                        <Label Content="{Binding StockNote}" 
+                                   Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                                        Converter={StaticResource BooleanToVisibilityInvertedConverter},
+                                                        Path=DataContext.IERVersion2022}"
+                                   Width="1.5cm" 
+                                   HorizontalContentAlignment="Center"/>
+
+                        <Label Content="{Binding StockPunkte}"   Width="2.75cm" HorizontalContentAlignment="Center" />
+                    </StackPanel>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+    </StackPanel>
+</UserControl>

@@ -129,7 +129,8 @@
                 </Grid.RowDefinitions>
 
                 <!-- Mansnchafts Tabelle -->
-                <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center">
+                <local:RankedTeamsTableView Grid.Row="0" HorizontalAlignment="Center"/>
+                <!--<StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center">
 
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Rang" Width="1.5cm" HorizontalContentAlignment="Center" FontWeight="Bold"/>
@@ -187,48 +188,15 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                </StackPanel>
+                </StackPanel>-->
 
                 <!-- Club Tabelle bei Vergleich -->
-                <StackPanel Grid.Row="1" Orientation="Vertical" 
-                    Visibility="{Binding IsVergleich,Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Margin="0 15"
-                    HorizontalAlignment="Stretch">
+                <local:ClubTableView Grid.Row="1"  
+                                     Visibility="{Binding IsVergleich,Converter={StaticResource BooleanToVisibilityConverter}}"
+                                     Margin="0 15"
+                                     HorizontalAlignment="Stretch"/>     
+                
 
-                    <TextBlock Text="Gesamtergebnis:" HorizontalAlignment="Center"
-                       FontWeight="Bold"
-                       TextAlignment="Left"/>
-
-                    <ItemsControl ItemsSource="{Binding RankedClubs}" HorizontalAlignment="Center">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-
-                                <StackPanel Orientation="Horizontal" Grid.Row="0">
-                                    <Label Content="{Binding Rank}" Width="1.5cm" HorizontalContentAlignment="Center" />
-                                    <Label Content="{Binding ClubName}" Width="9cm" HorizontalContentAlignment="Left" />
-                                    <Label Content="{Binding SpielPunkte}" Width="2cm" HorizontalContentAlignment="Center" />
-
-                                    <Label Content="{Binding StockPunkteDifferenz}" 
-                                   Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, 
-                                                        Converter={StaticResource BooleanToVisibilityConverter},
-                                                        Path=DataContext.IERVersion2022}"
-                                   Width="1.5cm" 
-                                   HorizontalContentAlignment="Center"/>
-                                    <Label Content="{Binding StockNote}" 
-                                   Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, 
-                                                        Converter={StaticResource BooleanToVisibilityInvertedConverter},
-                                                        Path=DataContext.IERVersion2022}"
-                                   Width="1.5cm" 
-                                   HorizontalContentAlignment="Center"/>
-
-                                    <Label Content="{Binding StockPunkte}"   Width="2.75cm" HorizontalContentAlignment="Center" />
-                                </StackPanel>
-
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
-                </StackPanel>
             </Grid>
         </Viewbox>
 
