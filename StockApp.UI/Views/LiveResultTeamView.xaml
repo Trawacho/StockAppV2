@@ -6,6 +6,7 @@
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
         xmlns:conv="clr-namespace:StockApp.UI.Converters"
         xmlns:vm="clr-namespace:StockApp.UI.ViewModels"
+        xmlns:local="clr-namespace:StockApp.UI.Components"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:LiveResultsTeamViewModel, IsDesignTimeCreatable=True}"
         x:Name="LiveResultTeamViewWindow"
@@ -42,15 +43,16 @@
         </Grid.RowDefinitions>
 
         <Viewbox VerticalAlignment="Top" Margin="10" Grid.Row="0" HorizontalAlignment="Stretch">
-            
+
             <StackPanel Orientation="Vertical">
-                
+
                 <DataGrid ItemsSource="{Binding Path=RankedTeamList, Mode=OneWay}"
-                      RowHeaderWidth="0"
-                      IsReadOnly="True"
-                      Margin="0"
-                      CanUserSortColumns="False"
-                      AutoGenerateColumns="False">
+                          HorizontalAlignment="Center"
+                          RowHeaderWidth="0"
+                          IsReadOnly="True"
+                          Margin="0"
+                          CanUserSortColumns="False"
+                          AutoGenerateColumns="False">
 
                     <DataGrid.Columns>
 
@@ -93,6 +95,126 @@
 
                 </DataGrid>
 
+                <StackPanel Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="Einzelspiele" Margin="0 20 0 0 " HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center"/>
+                    <DataGrid ItemsSource="{Binding Path=KehrenPerGame, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                          RowHeaderWidth="0"
+                          IsReadOnly="True"
+                          Margin="0"
+                          CanUserSortColumns="False"
+                          AutoGenerateColumns="False">
+
+                        <DataGrid.Resources>
+
+                            <Style x:Key="colHeaderCenter" TargetType="DataGridColumnHeader">
+                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            </Style>
+
+                            <local:BindingProxy x:Key="proxy" Data="{Binding}"/>
+
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+
+                            <DataGridTextColumn Header="Team"  
+                                                Binding="{Binding Path=TeamName1}"
+                                                ElementStyle="{StaticResource ColumnElementLeftAlignStyle}"/>
+
+                            <DataGridTextColumn Header="1"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                                Binding="{Binding Path=Kehre1vonTeam1}"/>
+
+                            <DataGridTextColumn Header="2" 
+                                                Binding="{Binding Path=Kehre2vonTeam1}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="3" 
+                                                Binding="{Binding Path=Kehre3vonTeam1}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="4" 
+                                                Binding="{Binding Path=Kehre4vonTeam1}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="5" 
+                                                Binding="{Binding Path=Kehre5vonTeam1}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="6" 
+                                                Binding="{Binding Path=Kehre6vonTeam1}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="7" 
+                                                Binding="{Binding Path=Kehre7vonTeam1}"
+                                                Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="8" 
+                                                Binding="{Binding Path=Kehre8vonTeam1}"
+                                                Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="&#x3A3;" 
+                                                Binding="{Binding Path=StockPunkte1}"
+                                                FontWeight="Bold"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="SpPkt"
+                                                Binding="{Binding Path=Spielpunkte1}"
+                                                FontWeight="Bold"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="Team"  
+                                                Binding="{Binding Path=TeamName2}"
+                                                ElementStyle="{StaticResource ColumnElementLeftAlignStyle}"/>
+
+                            <DataGridTextColumn Header="1"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
+                                                Binding="{Binding Path=Kehre1vonTeam2}"/>
+
+                            <DataGridTextColumn Header="2" 
+                                                Binding="{Binding Path=Kehre2vonTeam2}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="3" 
+                                                Binding="{Binding Path=Kehre3vonTeam2}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="4" 
+                                                Binding="{Binding Path=Kehre4vonTeam2}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="5" 
+                                                Binding="{Binding Path=Kehre5vonTeam2}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="6" 
+                                                Binding="{Binding Path=Kehre6vonTeam2}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="7" 
+                                                Binding="{Binding Path=Kehre7vonTeam2}"
+                                                Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="8" 
+                                                Binding="{Binding Path=Kehre8vonTeam2}"
+                                                Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="&#x3A3;" 
+                                                Binding="{Binding Path=StockPunkte2}"
+                                                FontWeight="Bold"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+
+                            <DataGridTextColumn Header="SpPkt"
+                                                Binding="{Binding Path=Spielpunkte2}"
+                                                FontWeight="Bold"
+                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
+                        </DataGrid.Columns>
+
+                    </DataGrid>
+                </StackPanel>
 
                 <StackPanel Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="Gesamtvergleich" Margin="0 20 0 0 " HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center"/>
@@ -102,7 +224,7 @@
                               Margin="0 0 0 0"
                               HeadersVisibility="None"
                               CanUserSortColumns="False"
-                              AutoGenerateColumns="False">  
+                              AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Rang" 
                                                 Width="{Binding Source={x:Reference dgcRank} , Path=ActualWidth}"
@@ -144,9 +266,9 @@
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
-                
+
             </StackPanel>
-            
+
         </Viewbox>
 
         <WrapPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -183,6 +305,13 @@
                       VerticalAlignment="Stretch"
                       VerticalContentAlignment="Center"
                       Visibility="{Binding Path=IsVergleichPossible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Margin="10" Padding="10" IsThreeState="False"/>
+            <CheckBox IsChecked="{Binding Path=IsBestOf, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Content="BestOf"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      VerticalContentAlignment="Center"
+                      Visibility="{Binding Path=IsBestOfPossible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                       Margin="10" Padding="10" IsThreeState="False"/>
             <Button Content="Close" 
                 Command="{Binding Path=CloseCommand}"
