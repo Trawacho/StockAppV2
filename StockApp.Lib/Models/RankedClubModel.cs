@@ -1,6 +1,9 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace StockApp.Core.Models;
+namespace StockApp.Lib.Models;
 
 public class RankedClubModel : IComparable<RankedClubModel>
 {

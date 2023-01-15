@@ -1,7 +1,7 @@
 ﻿using StockApp.Core.Factories;
-using StockApp.Core.Models;
 using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.Models;
 using StockApp.Lib.ViewModels;
 using System.Collections.Generic;
 using System.Linq;

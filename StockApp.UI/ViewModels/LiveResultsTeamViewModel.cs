@@ -1,5 +1,4 @@
-﻿using StockApp.Core.Models;
-using StockApp.Core.Wettbewerb.Teambewerb;
+﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.Models;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
@@ -89,7 +88,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         ? $"Live-Ergebnis - {_teamBewerb.Gruppenname}"
         : "Live-Ergebnis";
 
-    public Lib.ViewModels.ViewModelBase BestOfDetailsViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive:true) : default;
+    public Lib.ViewModels.ViewModelBase BestOfDetailsViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive: true) : default;
 
 
     private bool _showStockPunkte;

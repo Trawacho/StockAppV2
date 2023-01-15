@@ -1,6 +1,6 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 
-namespace StockApp.Core.Models;
+namespace StockApp.Lib.Models;
 
 public class RankedTeamModel
 {
