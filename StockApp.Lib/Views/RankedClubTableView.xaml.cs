@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace StockApp.Prints.TeamResults
+namespace StockApp.Lib.Views
 {
     /// <summary>
-    /// Interaction logic for ClubTableView.xaml
+    /// Interaction logic for RankedClubTableView.xaml
     /// </summary>
-    public partial class ClubTableView : UserControl
+    public partial class RankedClubTableView : UserControl
     {
-        public ClubTableView()
+        public RankedClubTableView()
         {
             InitializeComponent();
         }

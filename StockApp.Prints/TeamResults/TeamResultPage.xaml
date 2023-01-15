@@ -15,6 +15,7 @@
              d:DataContext="{d:DesignInstance Type=local:TeamResultPageViewModel, IsDesignTimeCreatable=True}">
 
     <UserControl.Resources>
+        
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
 
@@ -22,6 +23,9 @@
             <libVw:BestOfDetailView />
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type libVm:RankedClubTableViewModel}">
+            <libVw:RankedClubTableView/>
+        </DataTemplate>
 
     </UserControl.Resources>
 
@@ -140,9 +144,10 @@
                 <local:RankedTeamsTableView Grid.Row="0" HorizontalAlignment="Center"/>
 
                 <!-- Club Tabelle bei Vergleich -->
-                <local:ClubTableView Grid.Row="1"  HorizontalAlignment="Stretch"
-                                     Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                     Margin="0 15"/>
+                <ContentControl Content="{Binding Path=RankedClubViewModel}" Grid.Row="1"
+                                HorizontalAlignment="Stretch"
+                                Margin="0 15"
+                                Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                 <!-- Detailtabelle bei BestOf-->
                 <ContentControl Content="{Binding Path=BestOfViewModel}" Grid.Row="1" 

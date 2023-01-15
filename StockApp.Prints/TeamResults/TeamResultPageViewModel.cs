@@ -41,8 +41,8 @@ public class TeamResultPageViewModel
         IsBestOf = _teamBewerb.Teams.Count() == 2;
     }
 
-    public ViewModelBase BestOfViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive:false) : default;
-
+    public ViewModelBase BestOfViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive: false) : default;
+    public ViewModelBase RankedClubViewModel => IsVergleich ? new RankedClubTableViewModel(_teamBewerb, isLive: false) { AsDataGrid = false } : default;
 
 
     public string Title => _turnier.OrgaDaten.TournamentName;
@@ -71,39 +71,10 @@ public class TeamResultPageViewModel
     public IList<RankedTeamModel> RankedTeams { get; } = new List<RankedTeamModel>();
 
     public bool IsVergleich { get; init; }
-    public IList<RankedClubModel> RankedClubs
-    {
-        get
-        {
-            var clubA = new RankedClubModel(_teamBewerb.Teams.Take(_teamBewerb.Teams.Count() / 2));
-            var clubB = new RankedClubModel(_teamBewerb.Teams.Skip(_teamBewerb.Teams.Count() / 2));
-            var compared = clubA.CompareTo(clubB);
-            switch (compared)
-            {
-                case 0:
-                    clubA.Rank = 1;
-                    clubB.Rank = 1;
-                    break;
-                case 1:
-                    clubA.Rank = 1;
-                    clubB.Rank = 2;
-                    break;
-                case -1:
-                default:
-                    clubA.Rank = 2;
-                    clubB.Rank = 1;
-                    break;
-            }
-
-            return new[] { clubA, clubB }.OrderBy(o => o.Rank).ToList();
-        }
-    }
 
     public bool IERVersion2022 => _teamBewerb?.IERVersion == IERVersion.v2022;
 
     public bool IsBestOf { get; init; }
-
-    public bool Is8TurnsGame => _teamBewerb.Is8TurnsGame;
 
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1;
     public string HeaderString =>

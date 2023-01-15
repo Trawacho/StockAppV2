@@ -32,6 +32,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         _teamBewerb = teamBewerb;
 
         _teamBewerb.GamesChanged += TeamBewerb_GamesChanged;
+
         foreach (var game in _teamBewerb.GetAllGames())
         {
             game.SpielstandChanged += TeamBewerb_ResultChanged;
@@ -43,8 +44,6 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
 
         ShowStockPunkte = true;
         IsLive = true;
-
-
     }
 
     /// <summary>
@@ -63,7 +62,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
     private void TeamBewerb_ResultChanged(object sender, EventArgs e)
     {
         RaisePropertyChanged(nameof(RankedTeamList));
-        if (IsVergleich) RaisePropertyChanged(nameof(RankedClubList));
+        if (IsVergleich) RaisePropertyChanged(nameof(RankedClubTableViewModel));
         if (IsBestOf) RaisePropertyChanged(nameof(BestOfDetailsViewModel));
     }
 
@@ -84,47 +83,36 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         }
     }
 
-    public string WindowTitle => _teamBewerb?.SpielGruppe > 0
-        ? $"Live-Ergebnis - {_teamBewerb.Gruppenname}"
-        : "Live-Ergebnis";
+    public string WindowTitle => _teamBewerb?.SpielGruppe > 0 ? $"Live-Ergebnis - {_teamBewerb.Gruppenname}" : "Live-Ergebnis";
+    public bool IERVersion2022 => _teamBewerb.IERVersion == IERVersion.v2022;
+    public bool IsBestOfPossible => _teamBewerb.Teams.Count() == 2;
+    public bool Has8Turns => _teamBewerb.Is8TurnsGame;
 
-    public Lib.ViewModels.ViewModelBase BestOfDetailsViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive: true) : default;
+    public ViewModelBase BestOfDetailsViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive: true) : default;
+    public ViewModelBase RankedClubTableViewModel => IsVergleich ? new RankedClubTableViewModel(_teamBewerb, isLive: true) { AsDataGrid = true } : default;
 
 
     private bool _showStockPunkte;
-    public bool ShowStockPunkte
-    {
-        get => _showStockPunkte;
-        set => SetProperty(ref _showStockPunkte, value);
-    }
-
-    public bool IERVersion2022 { get => _teamBewerb.IERVersion == IERVersion.v2022; }
+    public bool ShowStockPunkte { get => _showStockPunkte; set => SetProperty(ref _showStockPunkte, value); }
 
 
     private bool _isLive;
-    public bool IsLive
-    {
-        get => _isLive;
-        set => SetProperty(ref _isLive, value);
-    }
+    public bool IsLive { get => _isLive; set => SetProperty(ref _isLive, value); }
+
 
     private bool _isVergleich;
-    public bool IsVergleich
-    {
-        get => _isVergleich;
-        set => SetProperty(ref _isVergleich, value);
-    }
+    public bool IsVergleich { get => _isVergleich; set => SetProperty(ref _isVergleich, value, () => RaisePropertyChanged(nameof(RankedClubTableViewModel))); }
+
 
     private bool? _isVergleichPossible;
     public bool IsVergleichPossible => _isVergleichPossible ??= Core.Factories.GamePlanFactory.LoadAllGameplans().First(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
 
+
     private bool _isBestOf;
     public bool IsBestOf { get => _isBestOf; set => SetProperty(ref _isBestOf, value, () => RaisePropertyChanged(nameof(BestOfDetailsViewModel))); }
 
-    public bool IsBestOfPossible => _teamBewerb.Teams.Count() == 2;
-    public bool Has8Turns => _teamBewerb.Is8TurnsGame;
 
-    public ICommand CloseCommand { get; }
+    public ICommand CloseCommand { get; init; }
 
     public ObservableCollection<RankedTeamModel> RankedTeamList
     {
@@ -141,41 +129,4 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         }
     }
 
-    public ObservableCollection<RankedClubModel> RankedClubList
-    {
-        get
-        {
-            var clubA = new RankedClubModel(_teamBewerb.Teams.Take(_teamBewerb.Teams.Count() / 2), IsLive);
-            var clubB = new RankedClubModel(_teamBewerb.Teams.Skip(_teamBewerb.Teams.Count() / 2), IsLive);
-
-            var compared = clubA.CompareTo(clubB);
-            switch (compared)
-            {
-                case 0:
-                    clubA.Rank = 1;
-                    clubB.Rank = 1;
-                    break;
-                case 1:
-                    clubA.Rank = 1;
-                    clubB.Rank = 2;
-                    break;
-                case -1:
-                default:
-                    clubA.Rank = 2;
-                    clubB.Rank = 1;
-                    break;
-            }
-
-            return new ObservableCollection<RankedClubModel>(new[] { clubA, clubB }.OrderBy(o => o.Rank));
-        }
-    }
-
-    public IEnumerable<LiveKehrenPerGameModel> KehrenPerGame
-    {
-        get
-        {
-            foreach (var game in _teamBewerb.GetAllGames(false).OrderBy(g => g.GameNumberOverAll))
-                yield return new LiveKehrenPerGameModel(game);
-        }
-    }
 }
