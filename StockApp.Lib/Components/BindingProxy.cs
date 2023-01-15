@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace StockApp.UI.Components;
+namespace StockApp.Lib.Components;
 
 public class BindingProxy : Freezable
 {

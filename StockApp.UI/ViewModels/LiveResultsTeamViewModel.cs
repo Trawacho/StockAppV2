@@ -1,12 +1,13 @@
 ﻿using StockApp.Core.Models;
 using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.Models;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -44,6 +45,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         ShowStockPunkte = true;
         IsLive = true;
 
+
     }
 
     /// <summary>
@@ -63,7 +65,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
     {
         RaisePropertyChanged(nameof(RankedTeamList));
         if (IsVergleich) RaisePropertyChanged(nameof(RankedClubList));
-        if (IsBestOf) RaisePropertyChanged(nameof(KehrenPerGame));
+        if (IsBestOf) RaisePropertyChanged(nameof(BestOfDetailsViewModel));
     }
 
     protected override void Dispose(bool disposing)
@@ -86,6 +88,9 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
     public string WindowTitle => _teamBewerb?.SpielGruppe > 0
         ? $"Live-Ergebnis - {_teamBewerb.Gruppenname}"
         : "Live-Ergebnis";
+
+    public Lib.ViewModels.ViewModelBase BestOfDetailsViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive:true) : default;
+
 
     private bool _showStockPunkte;
     public bool ShowStockPunkte
@@ -115,7 +120,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
     public bool IsVergleichPossible => _isVergleichPossible ??= Core.Factories.GamePlanFactory.LoadAllGameplans().First(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
 
     private bool _isBestOf;
-    public bool IsBestOf { get => _isBestOf; set => SetProperty(ref _isBestOf, value); }
+    public bool IsBestOf { get => _isBestOf; set => SetProperty(ref _isBestOf, value, () => RaisePropertyChanged(nameof(BestOfDetailsViewModel))); }
 
     public bool IsBestOfPossible => _teamBewerb.Teams.Count() == 2;
     public bool Has8Turns => _teamBewerb.Is8TurnsGame;
@@ -166,38 +171,12 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         }
     }
 
-    public IEnumerable<KehrenLivePerGameViewModel> KehrenPerGame
+    public IEnumerable<LiveKehrenPerGameModel> KehrenPerGame
     {
         get
         {
             foreach (var game in _teamBewerb.GetAllGames(false).OrderBy(g => g.GameNumberOverAll))
-               yield return new KehrenLivePerGameViewModel(game);
+                yield return new LiveKehrenPerGameModel(game);
         }
-    }
-}
-
-public class KehrenLivePerGameViewModel : KehrenBaseViewModel
-{
-    public KehrenLivePerGameViewModel(IGame game) : base(game)
-    {
-
-    }
-
-    public string TeamName1 => _game.IsTeamA_Starting ? $"(A) {_game.TeamA.TeamNameShort}" : _game.TeamA.TeamNameShort;
-
-    public string TeamName2 => _game.IsTeamA_Starting ? _game.TeamB.TeamName : $"(A) {_game.TeamB.TeamNameShort}";
-
-    public override int StockPunkte1 => _game.Spielstand.Punkte_Live_TeamA;
-
-    public override int StockPunkte2 => _game.Spielstand.Punkte_Live_TeamB;
-
-    public override int Spielpunkte1 => _game.Spielstand.GetSpielPunkteTeamA(true);
-    public override int Spielpunkte2 => _game.Spielstand.GetSpielPunkteTeamB(true);
-
-    protected override int GetKehre(int kehrenNummer, bool team1)
-    {
-        return team1 
-            ? _game.Spielstand.Kehren_Live.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamA ?? 0
-            : _game.Spielstand.Kehren_Live.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamB ?? 0;
     }
 }

@@ -3,8 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:conv="clr-namespace:StockApp.Prints.Converters"
-             xmlns:local="clr-namespace:StockApp.Prints.TeamResults"
+             xmlns:local="clr-namespace:StockApp.Prints.TeamResults" 
+             xmlns:conv="clr-namespace:StockApp.Lib.Converters;assembly=StockApp.Lib"
+             xmlns:libVw="clr-namespace:StockApp.Lib.Views;assembly=StockApp.Lib"
+             xmlns:libVm="clr-namespace:StockApp.Lib.ViewModels;assembly=StockApp.Lib"
              mc:Ignorable="d" 
              Width="20cm"
              Height="29cm"
@@ -15,6 +17,12 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
+
+        <DataTemplate DataType="{x:Type libVm:BestOfDetailViewModel}">
+            <libVw:BestOfDetailView />
+        </DataTemplate>
+
+
     </UserControl.Resources>
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
@@ -27,17 +35,17 @@
 
 
     <Grid Margin="0.5cm, 0.7cm" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
         <Grid.RowDefinitions>
-            <!-- Kopfbereich -->
+            <!-- Kopfbereich 0 -->
             <RowDefinition Height="auto"/>
-            <!-- Trennlinie mit Überschrift -->
+            <!-- Trennlinie mit Überschrift 1 -->
             <RowDefinition Height="auto"/>
-            <!-- Mannschaftstabelle -->
+            <!-- Tabellen 2 -->
             <RowDefinition Height="auto" MaxHeight="585"/>
-
+            <!-- leerer Füllbereich 3 -->
             <RowDefinition Height="*"/>
-
-            <!-- Offizielle -->
+            <!-- Offizielle 4 -->
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
@@ -128,13 +136,20 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Mansnchafts Tabelle -->
+                <!-- Mannschafts Tabelle -->
                 <local:RankedTeamsTableView Grid.Row="0" HorizontalAlignment="Center"/>
 
                 <!-- Club Tabelle bei Vergleich -->
                 <local:ClubTableView Grid.Row="1"  HorizontalAlignment="Stretch"
-                                     Visibility="{Binding IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                     Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}"
                                      Margin="0 15"/>
+
+                <!-- Detailtabelle bei BestOf-->
+                <ContentControl Content="{Binding Path=BestOfViewModel}" Grid.Row="1" 
+                                HorizontalAlignment="Stretch" 
+                                Margin="0 25 0 0"
+                                Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
             </Grid>
         </Viewbox>
 

@@ -1,8 +1,10 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.Models;
 using StockApp.UI.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -72,7 +74,7 @@ internal class ResultInputPerTeamAndKehreViewModel : ViewModelBase
 
 
 
-    public class KehrePerTeamAndGameViewModel : KehrenBaseViewModel
+    public class KehrePerTeamAndGameViewModel : KehrenBaseModel, INotifyPropertyChanged
     {
         private void Game_SpielstandChanged(object sender, EventArgs e)
         {
@@ -81,6 +83,12 @@ internal class ResultInputPerTeamAndKehreViewModel : ViewModelBase
         }
 
         private readonly ITeam _team;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public KehrePerTeamAndGameViewModel(IGame game, ITeam team) : base(game)
         {

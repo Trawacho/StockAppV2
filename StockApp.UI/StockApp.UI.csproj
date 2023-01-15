@@ -3,8 +3,6 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
-		<PublishReadyToRun>true</PublishReadyToRun>
-		<PublishSingleFile>true</PublishSingleFile>
 		<Nullable>disable</Nullable>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
@@ -31,7 +29,7 @@
 	
 	<ItemGroup>
 		<PackageReference Include="LoadingSpinner.WPF" Version="1.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
 		<PackageReference Include="Prism.Core" Version="8.1.97" />
 		<PackageReference Include="SimpleModal.WPF" Version="1.0.0" />
@@ -39,6 +37,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\StockApp.Comm\StockApp.Comm.csproj" />
+		<ProjectReference Include="..\StockApp.Lib\StockApp.Lib.csproj" />
 		<ProjectReference Include="..\StockApp.Prints\StockApp.Prints.csproj" />
 		<ProjectReference Include="..\StockApp.XML\StockApp.XML.csproj" />
 		<ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />

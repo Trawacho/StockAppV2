@@ -2,6 +2,7 @@
 using StockApp.Core.Models;
 using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,6 +20,8 @@ public class TeamResultPageViewModel
     {
         HasOperator = true;
         HasOrganizer = true;
+        IsBestOf = false;
+        IsVergleich = false;
     }
 
     public TeamResultPageViewModel(ITurnier turnier)
@@ -35,7 +38,10 @@ public class TeamResultPageViewModel
         HasOperator = !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.Operator);
         HasOrganizer = !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.Organizer);
         IsVergleich = GamePlanFactory.LoadAllGameplans().First(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
+        IsBestOf = _teamBewerb.Teams.Count() == 2;
     }
+
+    public ViewModelBase BestOfViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive:false) : default;
 
 
 
@@ -94,6 +100,10 @@ public class TeamResultPageViewModel
     }
 
     public bool IERVersion2022 => _teamBewerb?.IERVersion == IERVersion.v2022;
+
+    public bool IsBestOf { get; init; }
+
+    public bool Is8TurnsGame => _teamBewerb.Is8TurnsGame;
 
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1;
     public string HeaderString =>

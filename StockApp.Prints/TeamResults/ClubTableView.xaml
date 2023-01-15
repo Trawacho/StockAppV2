@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StockApp.Prints.TeamResults"
-             xmlns:conv="clr-namespace:StockApp.Prints.Converters"
+             xmlns:conv="clr-namespace:StockApp.Lib.Converters;assembly=StockApp.Lib"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=local:TeamResultPageViewModel, IsDesignTimeCreatable=True}">
 
@@ -32,7 +32,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <StackPanel Orientation="Horizontal">
                         <Label Content="{Binding Rank}" Width="1.5cm" HorizontalContentAlignment="Center" />
                         <Label Content="{Binding ClubName}" Width="9cm" HorizontalContentAlignment="Left" />
                         <Label Content="{Binding SpielPunkte}" Width="2cm" HorizontalContentAlignment="Center" />

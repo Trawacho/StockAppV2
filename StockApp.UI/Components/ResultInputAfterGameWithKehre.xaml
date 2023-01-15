@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:StockApp.UI.Components"
+             xmlns:comp="clr-namespace:StockApp.Lib.Components;assembly=StockApp.Lib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -69,7 +69,7 @@
                         </Style.Triggers>
 
                     </Style>
-                    
+
                     <Style TargetType="DataGridCell" x:Key="DisableSelectionSumValue">
                         <Setter Property="Focusable" Value="False"/>
                         <Setter Property="Background" Value="#eaeaea"/>
@@ -84,7 +84,7 @@
                         <Setter Property="Margin" Value="5"/>
                         <Setter Property="TextAlignment" Value="Center"/>
                     </Style>
-                    
+
                     <Style x:Key="verticalCenterEdit" TargetType="{x:Type TextBlock}">
                         <Setter Property="Margin" Value="5"/>
                         <Setter Property="TextAlignment" Value="Center"/>
@@ -104,8 +104,8 @@
 
                     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConvert"/>
 
-                    <local:BindingProxy x:Key="proxy" Data="{Binding}"/>
-                    
+                    <comp:BindingProxy x:Key="proxy" Data="{Binding}"/>
+
                 </DataGrid.Resources>
 
                 <DataGrid.Columns>
@@ -146,21 +146,21 @@
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
-                    
+
                     <DataGridTextColumn Header="4" IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre4vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
-                    
+
                     <DataGridTextColumn Header="5" IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre5vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
-                    
+
                     <DataGridTextColumn Header="6"  IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre6vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
@@ -183,7 +183,7 @@
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
-                    
+
                     <DataGridTextColumn Header="&#x3A3;" 
                                         Binding="{Binding Path=StockPunkte1, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                         FontWeight="Bold"

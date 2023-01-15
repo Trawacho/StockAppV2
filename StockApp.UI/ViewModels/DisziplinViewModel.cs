@@ -2,7 +2,6 @@
 using System;
 
 namespace StockApp.UI.ViewModels;
-
 public class DisziplinViewModel : ViewModelBase
 {
     private readonly IDisziplin _disziplin;
@@ -45,4 +44,3 @@ public class DisziplinViewModel : ViewModelBase
     public int Versuch5 { get => _disziplin.Versuch5; set => _disziplin.Versuch5 = value; }
     public int Versuch6 { get => _disziplin.Versuch6; set => _disziplin.Versuch6 = value; }
 }
-

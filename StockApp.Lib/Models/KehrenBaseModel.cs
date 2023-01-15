@@ -1,19 +1,20 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace StockApp.UI.ViewModels;
+namespace StockApp.Lib.Models;
 
-public class KehrenBaseViewModel : ViewModelBase
+public class KehrenBaseModel : IDisposable
 {
     protected readonly IGame _game;
 
-    public KehrenBaseViewModel(IGame game)
+    public KehrenBaseModel(IGame game)
     {
         _game = game;
     }
-
-    protected override void Dispose(bool disposing)
+    public bool _disposed;
+    protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)
         {
@@ -22,6 +23,14 @@ public class KehrenBaseViewModel : ViewModelBase
             }
             _disposed = true;
         }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+#if DEBUG
+        GC.SuppressFinalize(this);
+#endif
     }
 
     public virtual int StockPunkte1 { get => throw new NotSupportedException("must be overriden in subclass"); }
@@ -137,5 +146,8 @@ public class KehrenBaseViewModel : ViewModelBase
 
     protected virtual int GetKehre(int kehrenNummer, bool team1)
         => throw new NotSupportedException("must be overriden in subclass");
+
+    public IKehre GetMasterKehre(int kehrenNummer) => _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer);
+    public IKehre GetLiveKehre(int kehrenNummer) => _game.Spielstand.Kehren_Live.FirstOrDefault(k => k.KehrenNummer == kehrenNummer);
 
 }

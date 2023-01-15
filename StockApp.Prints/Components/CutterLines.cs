@@ -5,7 +5,7 @@ using System.Windows.Shapes;
 
 namespace StockApp.Prints
 {
-    internal partial class Components
+    internal class Components
     {
         internal static Line CutterLine()
         {

@@ -3,9 +3,9 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace StockApp.UI.Converters;
+namespace StockApp.Lib.Converters;
 
-internal class BooleanToVisibilityInvertedConverter : IValueConverter
+public class BooleanToVisibilityInvertedConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

@@ -1,12 +1,14 @@
 ﻿<Window x:Class="StockApp.UI.Views.LiveResultTeamView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
-        xmlns:conv="clr-namespace:StockApp.UI.Converters"
-        xmlns:vm="clr-namespace:StockApp.UI.ViewModels"
-        xmlns:local="clr-namespace:StockApp.UI.Components"
+        xmlns:comp="clr-namespace:StockApp.Lib.Components;assembly=StockApp.Lib"
+        xmlns:conv="clr-namespace:StockApp.Lib.Converters;assembly=StockApp.Lib"
+        xmlns:vm="clr-namespace:StockApp.UI.ViewModels" 
+        xmlns:libVw="clr-namespace:StockApp.Lib.Views;assembly=StockApp.Lib"
+        xmlns:libVm="clr-namespace:StockApp.Lib.ViewModels;assembly=StockApp.Lib"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:LiveResultsTeamViewModel, IsDesignTimeCreatable=True}"
         x:Name="LiveResultTeamViewWindow"
@@ -22,6 +24,10 @@
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
+
+        <DataTemplate DataType="{x:Type libVm:BestOfDetailViewModel}">
+            <libVw:BestOfDetailView />
+        </DataTemplate>
 
         <Style x:Key="ColumnElementLeftAlignStyle" TargetType="TextBlock">
             <Setter Property="Margin" Value="5,0,5,0"/>
@@ -95,126 +101,13 @@
 
                 </DataGrid>
 
-                <StackPanel Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <TextBlock Text="Einzelspiele" Margin="0 20 0 0 " HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center"/>
-                    <DataGrid ItemsSource="{Binding Path=KehrenPerGame, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                          RowHeaderWidth="0"
-                          IsReadOnly="True"
-                          Margin="0"
-                          CanUserSortColumns="False"
-                          AutoGenerateColumns="False">
 
-                        <DataGrid.Resources>
+                <ContentControl Content="{Binding Path=BestOfDetailsViewModel}" 
+                                HorizontalAlignment="Stretch" 
+                                Margin="0 20 0 0"
+                                Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                            <Style x:Key="colHeaderCenter" TargetType="DataGridColumnHeader">
-                                <Setter Property="HorizontalContentAlignment" Value="Center" />
-                            </Style>
-
-                            <local:BindingProxy x:Key="proxy" Data="{Binding}"/>
-
-                        </DataGrid.Resources>
-
-                        <DataGrid.Columns>
-
-                            <DataGridTextColumn Header="Team"  
-                                                Binding="{Binding Path=TeamName1}"
-                                                ElementStyle="{StaticResource ColumnElementLeftAlignStyle}"/>
-
-                            <DataGridTextColumn Header="1"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
-                                                Binding="{Binding Path=Kehre1vonTeam1}"/>
-
-                            <DataGridTextColumn Header="2" 
-                                                Binding="{Binding Path=Kehre2vonTeam1}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="3" 
-                                                Binding="{Binding Path=Kehre3vonTeam1}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="4" 
-                                                Binding="{Binding Path=Kehre4vonTeam1}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="5" 
-                                                Binding="{Binding Path=Kehre5vonTeam1}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="6" 
-                                                Binding="{Binding Path=Kehre6vonTeam1}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="7" 
-                                                Binding="{Binding Path=Kehre7vonTeam1}"
-                                                Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="8" 
-                                                Binding="{Binding Path=Kehre8vonTeam1}"
-                                                Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="&#x3A3;" 
-                                                Binding="{Binding Path=StockPunkte1}"
-                                                FontWeight="Bold"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="SpPkt"
-                                                Binding="{Binding Path=Spielpunkte1}"
-                                                FontWeight="Bold"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="Team"  
-                                                Binding="{Binding Path=TeamName2}"
-                                                ElementStyle="{StaticResource ColumnElementLeftAlignStyle}"/>
-
-                            <DataGridTextColumn Header="1"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"
-                                                Binding="{Binding Path=Kehre1vonTeam2}"/>
-
-                            <DataGridTextColumn Header="2" 
-                                                Binding="{Binding Path=Kehre2vonTeam2}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="3" 
-                                                Binding="{Binding Path=Kehre3vonTeam2}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="4" 
-                                                Binding="{Binding Path=Kehre4vonTeam2}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="5" 
-                                                Binding="{Binding Path=Kehre5vonTeam2}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="6" 
-                                                Binding="{Binding Path=Kehre6vonTeam2}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="7" 
-                                                Binding="{Binding Path=Kehre7vonTeam2}"
-                                                Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="8" 
-                                                Binding="{Binding Path=Kehre8vonTeam2}"
-                                                Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="&#x3A3;" 
-                                                Binding="{Binding Path=StockPunkte2}"
-                                                FontWeight="Bold"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-
-                            <DataGridTextColumn Header="SpPkt"
-                                                Binding="{Binding Path=Spielpunkte2}"
-                                                FontWeight="Bold"
-                                                ElementStyle="{StaticResource ColumnElementCenterAlignStyle}"/>
-                        </DataGrid.Columns>
-
-                    </DataGrid>
-                </StackPanel>
+               
 
                 <StackPanel Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="Gesamtvergleich" Margin="0 20 0 0 " HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center"/>

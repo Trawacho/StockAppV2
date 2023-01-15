@@ -1,7 +1,9 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.Models;
 using StockApp.UI.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -77,11 +79,17 @@ internal class ResultInputAfterGameWithKehreViewModel : ViewModelBase
     }
 
 
-    public class KehrenPerGameViewModel : KehrenBaseViewModel
+    public class KehrenPerGameViewModel : KehrenBaseModel, INotifyPropertyChanged
     {
         public KehrenPerGameViewModel(IGame game) : base(game)
         {
 
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         protected override void Dispose(bool disposing)
