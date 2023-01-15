@@ -3,9 +3,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace StockApp.Prints
+namespace StockApp.Prints.Components
 {
-    internal class Components
+    internal class CutterLines
     {
         internal static Line CutterLine()
         {

@@ -1,5 +1,6 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Prints.BaseClasses;
+using StockApp.Prints.Components;
 using StockApp.Prints.ScoreCards.Base;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +96,7 @@ class ScoreCardHelper : PrintsBaseClass
         var panel = new StackPanel();
 
         // Schneide Linie oben
-        panel.Children.Add(Components.CutterLineTop());
+        panel.Children.Add(CutterLines.CutterLineTop());
 
         // Kopfzeile mit Mannschaftsnamen und weitere Infos
         panel.Children.Add(new ScoreCardHeader(team.StartNumber, team.TeamName, _namesOnScoreCard, is8TurnsGame, numberOfGameRound, _stockTvOptimized, opponentOnScoreCards));
@@ -114,7 +115,7 @@ class ScoreCardHelper : PrintsBaseClass
         panel.Children.Add(new GameSummaryGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
 
         // Schneidelinie unten
-        panel.Children.Add(Components.CutterLine());
+        panel.Children.Add(CutterLines.CutterLine());
 
         return panel;
     }

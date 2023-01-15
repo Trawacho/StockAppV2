@@ -1,5 +1,6 @@
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Prints.BaseClasses;
+using StockApp.Prints.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -43,7 +44,7 @@ namespace StockApp.Prints.CourtCards
         private StackPanel CreateNewCourtCard(IGame game)
         {
             var panel = new StackPanel();
-            panel.Children.Add(Components.CutterLineTop());
+            panel.Children.Add(CutterLines.CutterLineTop());
 
             if (_teamBewerb.Is8TurnsGame)
                 panel.Children.Add(new BahnBlock8(game));
@@ -59,7 +60,7 @@ namespace StockApp.Prints.CourtCards
                     HorizontalAlignment = HorizontalAlignment.Left
                 });
 
-            panel.Children.Add(Components.CutterLine());
+            panel.Children.Add(CutterLines.CutterLine());
 
             return panel;
         }

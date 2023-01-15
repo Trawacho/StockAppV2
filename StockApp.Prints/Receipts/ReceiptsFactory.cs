@@ -1,6 +1,7 @@
 ﻿using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Prints.BaseClasses;
+using StockApp.Prints.Components;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,7 +39,7 @@ public static class ReceiptsFactory
         private StackPanel GetNewReceipt(ITeam team)
         {
             var receiptStackPanel = new StackPanel();
-            receiptStackPanel.Children.Add(Components.CutterLineTop());
+            receiptStackPanel.Children.Add(CutterLines.CutterLineTop());
 
             var receipt = new Receipt();
             receipt.labelAn.Content = _turnier.OrgaDaten.Organizer;
@@ -49,7 +50,7 @@ public static class ReceiptsFactory
             receipt.labelOrtDatum.Content = _turnier.OrgaDaten.Venue + ", " + _turnier.OrgaDaten.DateOfTournament.ToString("dd.MM.yyyy");
             receiptStackPanel.Children.Add(receipt);
 
-            receiptStackPanel.Children.Add(Components.CutterLine());
+            receiptStackPanel.Children.Add(CutterLines.CutterLine());
 
             return receiptStackPanel;
         }
