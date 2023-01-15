@@ -1,4 +1,5 @@
 ﻿using StockApp.Core.Turnier;
+using StockApp.Lib.ViewModels;
 
 namespace StockApp.UI.ViewModels;
 

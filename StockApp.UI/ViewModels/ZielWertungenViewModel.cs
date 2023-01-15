@@ -1,4 +1,5 @@
 ﻿using StockApp.Core.Wettbewerb.Zielbewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
 using StockApp.UI.Services;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
+
 public class ZielWertungenViewModel : ViewModelBase
 {
     private readonly ITeilnehmer _teilnehmer;

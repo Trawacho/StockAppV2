@@ -1,6 +1,5 @@
-﻿namespace StockApp.UI.ViewModels;
-
-using StockApp.Core.Wettbewerb.Teambewerb;
+﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
 using System;
@@ -8,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 
+namespace StockApp.UI.ViewModels;
 
 public class TeamPlayersViewModel : ViewModelBase
 {

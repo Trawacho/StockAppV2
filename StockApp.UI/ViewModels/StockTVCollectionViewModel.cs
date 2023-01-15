@@ -1,5 +1,6 @@
 ﻿using StockApp.Comm.NetMqStockTV;
 using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Stores;
 using System.Collections.Generic;

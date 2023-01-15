@@ -1,6 +1,8 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.ViewModels;
 
 namespace StockApp.UI.ViewModels;
+
 public class TeamPlayerViewModel : ViewModelBase
 {
     private readonly IPlayer _player;

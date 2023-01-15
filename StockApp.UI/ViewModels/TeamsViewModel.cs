@@ -1,4 +1,5 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
 using StockApp.UI.Stores;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
+
 public class TeamsViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;

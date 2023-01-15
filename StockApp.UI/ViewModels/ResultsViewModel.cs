@@ -1,4 +1,5 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
 using StockApp.UI.Services;

@@ -1,12 +1,13 @@
-﻿namespace StockApp.UI.ViewModels;
-
-using StockApp.Core.Wettbewerb.Teambewerb;
+﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Services;
 using StockApp.UI.Stores;
 using System;
 using System.Linq;
 using System.Windows.Input;
+
+namespace StockApp.UI.ViewModels;
 
 public class NavigationTeamViewModel : ViewModelBase
 {

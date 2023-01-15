@@ -1,4 +1,4 @@
-﻿using StockApp.UI.ViewModels;
+﻿using StockApp.Lib.ViewModels;
 using System;
 
 namespace StockApp.UI.Stores;

@@ -1,11 +1,12 @@
-﻿namespace StockApp.UI.ViewModels;
-
+﻿using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Stores;
 using System;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Input;
+
+namespace StockApp.UI.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {

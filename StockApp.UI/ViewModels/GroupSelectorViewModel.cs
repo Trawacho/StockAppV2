@@ -1,4 +1,5 @@
-﻿using StockApp.UI.Commands;
+﻿using StockApp.Lib.ViewModels;
+using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
 using StockApp.UI.Stores;
 using System;

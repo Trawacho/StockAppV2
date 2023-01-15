@@ -1,4 +1,5 @@
 ﻿using StockApp.Core.Wettbewerb.Zielbewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Dialogs;
 using StockApp.UI.Stores;

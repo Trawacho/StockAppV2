@@ -1,4 +1,5 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.ViewModels;
 
 namespace StockApp.UI.ViewModels;
 

@@ -1,7 +1,9 @@
-﻿namespace StockApp.UI.ViewModels;
+﻿using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Services;
 using System.Windows.Input;
+
+namespace StockApp.UI.ViewModels;
 
 public class NavigtaionZielViewModel : ViewModelBase
 {

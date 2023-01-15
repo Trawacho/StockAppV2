@@ -1,13 +1,14 @@
-﻿namespace StockApp.UI.ViewModels;
-
-using StockApp.Core.Wettbewerb.Teambewerb;
+﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Core.Wettbewerb.Zielbewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Services;
 using StockApp.UI.Stores;
 using System;
 using System.ComponentModel;
 using System.Windows.Input;
+
+namespace StockApp.UI.ViewModels;
 
 public interface INavigationViewModel : IDisposable
 {

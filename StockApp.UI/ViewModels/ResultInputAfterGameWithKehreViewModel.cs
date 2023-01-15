@@ -1,5 +1,6 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.Models;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Extensions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

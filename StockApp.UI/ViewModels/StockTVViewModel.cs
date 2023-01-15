@@ -1,4 +1,5 @@
 ﻿using StockApp.Comm.NetMqStockTV;
+using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Stores;
 using System;

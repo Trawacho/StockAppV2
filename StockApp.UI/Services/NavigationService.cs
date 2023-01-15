@@ -1,5 +1,5 @@
-﻿using StockApp.UI.Stores;
-using StockApp.UI.ViewModels;
+﻿using StockApp.Lib.ViewModels;
+using StockApp.UI.Stores;
 using System;
 
 namespace StockApp.UI.Services;
