@@ -123,10 +123,10 @@ namespace StockApp.Prints.ScoreCards.Base
                 _fixedValuesWidth = PixelConverter.CmToPx(0.6);
 
                 _turnValuesWidth = PixelConverter.CmToPx(0.65);
-                _sumValueWidth = PixelConverter.CmToPx(1.0);
+                _sumValueWidth = PixelConverter.CmToPx(1.15);
                 _pointsValueWidth = PixelConverter.CmToPx(1.1);
                 _spaceValueWidth = PixelConverter.CmToPx(0.3);
-                _opponentValueWidth = PixelConverter.CmToPx(3.5);
+                _opponentValueWidth = PixelConverter.CmToPx(4.0);
                 _lineColumn = 11;
             }
             else
