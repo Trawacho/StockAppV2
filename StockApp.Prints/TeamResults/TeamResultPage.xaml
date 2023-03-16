@@ -15,9 +15,13 @@
              d:DataContext="{d:DesignInstance Type=local:TeamResultPageViewModel, IsDesignTimeCreatable=True}">
 
     <UserControl.Resources>
-        
+
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
+
+        <DataTemplate DataType="{x:Type libVm:RankedTeamsTableViewModel}">
+            <libVw:RankedTeamsTableView/>
+        </DataTemplate>
 
         <DataTemplate DataType="{x:Type libVm:BestOfDetailViewModel}">
             <libVw:BestOfDetailView />
@@ -38,7 +42,7 @@
     </d:DesignerProperties.DesignStyle>
 
 
-    <Grid Margin="0.5cm, 0.7cm" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Margin="0.5cm, 0.7cm" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
         <Grid.RowDefinitions>
             <!-- Kopfbereich 0 -->
@@ -46,7 +50,7 @@
             <!-- Trennlinie mit Überschrift 1 -->
             <RowDefinition Height="auto"/>
             <!-- Tabellen 2 -->
-            <RowDefinition Height="auto" MaxHeight="585"/>
+            <RowDefinition Height="auto" MaxHeight="16cm"/>
             <!-- leerer Füllbereich 3 -->
             <RowDefinition Height="*"/>
             <!-- Offizielle 4 -->
@@ -67,25 +71,44 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <Viewbox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="4cm 0cm" MaxHeight="4cm">
-                <TextBlock Text="{Binding Title}"
-                           FontWeight="Bold"
-                           TextAlignment="Center"
-                           TextWrapping="Wrap"/>
-            </Viewbox>
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4cm"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="4cm"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3.5cm"/>
+                </Grid.RowDefinitions>
+
+                <Viewbox Grid.Row="0" Grid.Column="0" >
+                    <Rectangle Width="100" Height="100" Fill="Transparent"/>
+                </Viewbox>
+
+                <Viewbox Grid.Row="0" Grid.Column="1">
+                    <TextBlock Text="{Binding Title}" 
+                               FontWeight="Bold"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
+                </Viewbox>
+
+                <Viewbox Grid.Row="0" Grid.Column="2" >
+                    <Rectangle Width="100" Height="100" Fill="Transparent"/>
+                </Viewbox>
+            </Grid>
 
             <Label Grid.Row="1" Grid.Column="0" 
-                   Margin="5 10 5 0"
+                   Margin="5 5 5 0"
                    FontWeight="Light"
                    Content="Austragungsort:" HorizontalContentAlignment="Right"/>
             <Label Content="{Binding Ort}"
                    FontWeight="Bold"
                    Grid.Row="1" Grid.Column="1"
-                   Margin="5 10 5 0" 
+                   Margin="5 5 5 0" 
                    HorizontalContentAlignment="Left"/>
 
             <Label Grid.Row="2" Grid.Column="0"
-                   Margin="5"
+                   Margin="5 2 5 0"
                    Content="Veranstalter:" 
                    FontWeight="Light"
                    Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -94,72 +117,81 @@
                    Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
                    FontWeight="Bold"
                    Grid.Row="2" Grid.Column ="1" 
-                   Margin="5" HorizontalContentAlignment="Left"/>
+                   Margin="5 2 5 0" HorizontalContentAlignment="Left"/>
 
             <Label Grid.Row="2" Grid.Column="2"
                    Content="Durchführer:" 
                    FontWeight="Light"
                    Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
                    HorizontalContentAlignment="Right"
-                   Margin="5"/>
+                   Margin="5 2 5 0"/>
             <Label Content="{Binding Durchführer}" 
                    Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
                    Grid.Row="2"  Grid.Column="3" 
-                   Margin="5"
+                   Margin="5 2 5 0"
                    HorizontalContentAlignment="Left" FontWeight="Bold"/>
 
             <Label Grid.Row="1" Grid.Column="2" 
                    Content="Datum:" HorizontalContentAlignment="Right"
                    FontWeight="Light"
-                   Margin="5 10 5 0"/>
+                   Margin="5 5 5 0"/>
             <Label Content="{Binding Datum}" 
                    Grid.Row="1" Grid.Column="3" 
-                   Margin="5 10 5 0" 
+                   Margin="5 5 5 0" 
                    HorizontalContentAlignment="Left" FontWeight="Bold"/>
 
         </Grid>
 
         <!--Trennlinie mit Überschrift-->
-        <StackPanel Grid.Row="1">
-            <TextBlock Text="created by StockApp" FontSize="7" HorizontalAlignment="Left" Margin="40,20,0,3"/>
+        <StackPanel Grid.Row="1" >
+            <TextBlock Text="created by StockApp" FontSize="7" HorizontalAlignment="Left" Margin="40,10,0,3"/>
             <Line X1="0" X2="1" Y1="0" Y2="0" StrokeThickness="1" Stretch="Fill" Stroke="Black"/>
 
             <Viewbox Height="1.8cm">
-                <Label Content="{Binding HeaderString}"
-               HorizontalContentAlignment="Center"
-               FontWeight="Bold"/>
+                <!--<Label Content="{Binding HeaderString}"-->
+                <Label Content="E R G E B N I S" 
+                       HorizontalContentAlignment="Center"
+                       FontWeight="Bold"/>
             </Viewbox>
 
         </StackPanel>
 
         <!-- Tabellen -->
-        <Viewbox Grid.Row="2" MaxHeight="585">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
+        <Grid Grid.Row="2" Height="16cm" Margin="0.5cm 0 0.5cm 0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
 
-                <!-- Mannschafts Tabelle -->
-                <local:RankedTeamsTableView Grid.Row="0" HorizontalAlignment="Center"/>
+            <!-- Mannschafts Tabelle -->
+            <ContentControl Content="{Binding Path=RankedTeamsTableViewModel}" Grid.Row="0" Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
+            <Viewbox  Grid.Row="0" Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityConverter}}"  MaxHeight="16cm">
+                <ItemsControl ItemsSource="{Binding Path=RankedTeamsTableViewModels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl Content="{Binding .}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Viewbox>
+            
 
-                <!-- Club Tabelle bei Vergleich -->
-                <ContentControl Content="{Binding Path=RankedClubViewModel}" Grid.Row="1"
+            <!-- Club Tabelle bei Vergleich -->
+            <ContentControl Content="{Binding Path=RankedClubViewModel}" Grid.Row="1"
                                 HorizontalAlignment="Stretch"
                                 Margin="0 15"
                                 Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                <!-- Detailtabelle bei BestOf-->
-                <ContentControl Content="{Binding Path=BestOfViewModel}" Grid.Row="1" 
+            <!-- Detailtabelle bei BestOf-->
+            <ContentControl Content="{Binding Path=BestOfViewModel}" Grid.Row="1" 
                                 HorizontalAlignment="Stretch" 
-                                Margin="0 25 0 0"
+                                Margin="0 15 0 0"
                                 Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            </Grid>
-        </Viewbox>
+        </Grid>
 
         <!-- Fußzeile für Offizielle-->
-        <Grid Margin="1cm" Grid.Row="4">
+        <Grid Margin="1cm 0" Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>

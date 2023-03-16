@@ -1,7 +1,6 @@
 ﻿using StockApp.Core.Factories;
 using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
-using StockApp.Lib.Models;
 using StockApp.Lib.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,19 +27,20 @@ public class TeamResultPageViewModel
     {
         _turnier = turnier;
         _teamBewerb = ((IContainerTeamBewerbe)turnier.Wettbewerb).CurrentTeamBewerb;
-        int rank = 1;
-        foreach (var t in _teamBewerb.GetTeamsRanked())
-        {
-            RankedTeams.Add(new RankedTeamModel(rank: rank, team: t, printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult, live: false));
-            rank++;
-        }
 
         HasOperator = !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.Operator);
         HasOrganizer = !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.Organizer);
-        IsVergleich = GamePlanFactory.LoadAllGameplans().First(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
+        IsVergleich = GamePlanFactory.LoadAllGameplans().FirstOrDefault(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
         IsBestOf = _teamBewerb.Teams.Count() == 2;
+        RankedTeamsTableViewModels = new List<RankedTeamsTableViewModel>();
+        foreach (var item in _turnier.ContainerTeamBewerbe.TeamBewerbe)
+        {
+            RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(item, isLive: false, showGroupName: true));
+        }
     }
 
+    public ViewModelBase RankedTeamsTableViewModel => new RankedTeamsTableViewModel(_teamBewerb, isLive: false, showGroupName: false);
+    public List<RankedTeamsTableViewModel> RankedTeamsTableViewModels { get; init; }
     public ViewModelBase BestOfViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive: false) : default;
     public ViewModelBase RankedClubViewModel => IsVergleich ? new RankedClubTableViewModel(_teamBewerb, isLive: false) { AsDataGrid = false } : default;
 
@@ -68,14 +68,8 @@ public class TeamResultPageViewModel
     public string CompetitionManagerClub => _turnier.OrgaDaten.CompetitionManager.ClubName;
     public bool HasCompetitionManager => !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.CompetitionManager.Name);
 
-    public IList<RankedTeamModel> RankedTeams { get; } = new List<RankedTeamModel>();
-
     public bool IsVergleich { get; init; }
-
-    public bool IERVersion2022 => _teamBewerb?.IERVersion == IERVersion.v2022;
-
     public bool IsBestOf { get; init; }
-
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1;
     public string HeaderString =>
             !HasMoreGroups

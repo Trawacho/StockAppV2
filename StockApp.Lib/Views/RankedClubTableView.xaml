@@ -8,9 +8,16 @@
              xmlns:vm="clr-namespace:StockApp.Lib.ViewModels"
              mc:Ignorable="d" 
              x:Name="usercontrolRankedClubTableView"
-             d:DesignHeight="450" d:DesignWidth="800" d:Background="white"
              d:DataContext="{d:DesignInstance Type=vm:RankedClubTableViewModel, IsDesignTimeCreatable=True}">
-
+    
+    <d:DesignerProperties.DesignStyle x:Name="designBackground">
+        <Style TargetType="UserControl">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Width" Value="21cm"/>
+            <Setter Property="Height" Value="800"/>
+        </Style>
+    </d:DesignerProperties.DesignStyle>
+    
     <UserControl.Resources>
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -22,41 +29,117 @@
 
     <StackPanel Orientation="Vertical">
 
-        <TextBlock Text="Gesamtergebnis:" 
+        <TextBlock Text="Gesamtergebnis" 
+                   FontSize="22"
                    HorizontalAlignment="Center"
                    FontWeight="Bold"
                    TextAlignment="Left"/>
 
-        <ItemsControl ItemsSource="{Binding Path=RankedClubs}" 
-                      Visibility="{Binding Path=AsDataGrid, Converter={StaticResource BooleanToVisibilityInvertedConverter}}"
-                      HorizontalAlignment="Center">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
+        <Grid Grid.IsSharedSizeScope="True"
+              HorizontalAlignment="Stretch" 
+              Visibility="{Binding Path=AsDataGrid, Converter={StaticResource BooleanToVisibilityInvertedConverter}}">
 
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="{Binding Rank}" Width="1.5cm" HorizontalContentAlignment="Center" />
-                        <Label Content="{Binding ClubName}" Width="9cm" HorizontalContentAlignment="Left" />
-                        <Label Content="{Binding SpielPunkte}" Width="2cm" HorizontalContentAlignment="Center" />
+            <!-- Two rows, Grid-Header and and Itemscontrol for Team-Rows -->
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
 
-                        <Label Content="{Binding StockPunkteDifferenz}" 
-                               Visibility="{Binding Source={StaticResource proxy}, 
-                                                    Converter={StaticResource BooleanToVisibilityConverter},
-                                                    Path=Data.IsIERVersion2022}"
-                               Width="1.5cm" 
-                               HorizontalContentAlignment="Center"/>
-                        <Label Content="{Binding StockNote}" 
-                               Visibility="{Binding Source={StaticResource proxy}, 
-                                                    Converter={StaticResource BooleanToVisibilityInvertedConverter},
-                                                    Path=Data.IsIERVersion2022}"
-                               Width="1.5cm" 
-                               HorizontalContentAlignment="Center"/>
+            <!-- Grid Header as new Grid-->
+            <Grid Grid.Row="0" HorizontalAlignment="Center">
 
-                        <Label Content="{Binding StockPunkte}" Width="2.75cm" HorizontalContentAlignment="Center" />
-                    </StackPanel>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="ssgRang" />
+                    <ColumnDefinition SharedSizeGroup="ssgTeamname"/>
+                    <ColumnDefinition SharedSizeGroup="ssgSpPunkte"/>
+                    <ColumnDefinition SharedSizeGroup="ssgDiff"/>
+                    <ColumnDefinition SharedSizeGroup="ssgStPunkte"/>
+                </Grid.ColumnDefinitions>
 
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="Margin" Value="10 0 0 0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </Grid.Resources>
+
+                <Label Content="Rang" 
+                   Grid.Column="0"
+                   Margin="0" />
+                <Label Content="Mannschaft" 
+                   Grid.Column="1" 
+                   HorizontalContentAlignment="Left" />
+                <Label Content="Punkte" 
+                   Grid.Column="2" />
+                <Label Content="Diff" 
+                   Grid.Column="3" 
+                   Visibility="{Binding IsIERVersion2022, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <Label Content="Note" 
+                   Grid.Column="3" 
+                   Visibility="{Binding IsIERVersion2022, Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
+                <Label Content="Stockpunkte" 
+                   Grid.Column="4" />
+
+
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding RankedClubs}" Grid.Row="1" >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+
+                        <!-- Zeile pro Mannschaft-->
+                        <Grid Grid.Row="0" Margin="0 0 0 5" HorizontalAlignment="Center">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" x:Name="columnRang"          SharedSizeGroup="ssgRang"/>
+                                <ColumnDefinition Width="*"    x:Name="columnTeamName"      SharedSizeGroup="ssgTeamname" MinWidth="8cm"/>
+                                <ColumnDefinition Width="auto" x:Name="columnPunkte"        SharedSizeGroup="ssgSpPunkte"/>
+                                <ColumnDefinition Width="auto" x:Name="columnDiff"          SharedSizeGroup="ssgDiff"/>
+                                <ColumnDefinition Width="auto" x:Name="columnStockpunkte"   SharedSizeGroup="ssgStPunkte"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid.Resources>
+                                <Style TargetType="Label">
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                    <Setter Property="FontSize" Value="16"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="VerticalAlignment" Value="Stretch"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="Margin" Value="10 0 0 0"/>
+                                    <Setter Property="Padding" Value="0 0 0 0"/>
+                                </Style>
+                            </Grid.Resources>
+
+                            <Label Content="{Binding Rank}" Grid.Column="0" Margin="0"/>
+                            <Label Content="{Binding ClubName}" Grid.Column="1" HorizontalContentAlignment="Left" />
+                            <Label Content="{Binding SpielPunkte}" Grid.Column="2" />
+
+                            <Label Content="{Binding StockPunkteDifferenz}" 
+                                   Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                                        Path=DataContext.IsIERVersion2022}"
+                                   Grid.Column="3"/>
+                            <Label Content="{Binding StockNote}" 
+                                   Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, 
+                                                        Converter={StaticResource BooleanToVisibilityInvertedConverter},
+                                                        Path=DataContext.IsIERVersion2022}"
+                                   Grid.Column="3" />
+
+                            <Label Content="{Binding StockPunkte}"   
+                                   Grid.Column="4" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </Grid>
 
 
         <DataGrid ItemsSource="{Binding Path=RankedClubs, Mode=OneWay}"

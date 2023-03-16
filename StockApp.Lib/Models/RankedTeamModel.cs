@@ -36,7 +36,7 @@ public class RankedTeamModel
     public string StockPunkte => $"{_team.GetStockPunkte(_live).positiv}:{_team.GetStockPunkte(_live).negativ}";
     public string StockNote => _team.GetStockNote(_live).ToString("F3");
     public string StockPunkteDifferenz => $"{_team.GetStockPunkteDifferenz(_live)}";
-    public bool HasPlayerNames => _printNameOfPlayer;
+    public bool HasPlayerNames => _printNameOfPlayer && !string.IsNullOrWhiteSpace(PlayerNames);
     public RankedTeamModel(int rank, ITeam team, bool printNameOfPlayer, bool live)
     {
         _rank = rank;

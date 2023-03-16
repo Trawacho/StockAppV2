@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace StockApp.Prints.TeamResults
+namespace StockApp.Lib.Views
 {
     /// <summary>
     /// Interaction logic for RankedTeamsTableView.xaml
