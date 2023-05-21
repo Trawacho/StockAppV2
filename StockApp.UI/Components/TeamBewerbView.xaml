@@ -28,6 +28,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -47,5 +48,14 @@
                         Margin="5"  Width="210"/>
 
         </StackPanel>
+
+        <TextBlock Text="Splitgruppe:" Grid.Row="2" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
+        <CheckBox Grid.Row="2" Grid.Column="1" Content="Ja / Nein"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Left"
+                  VerticalAlignment="Stretch"
+                  VerticalContentAlignment="Center"
+                  Margin="5"
+                  IsChecked="{Binding Path=IsSplitGruppe,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>

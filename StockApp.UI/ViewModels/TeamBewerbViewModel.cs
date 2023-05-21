@@ -17,6 +17,7 @@ public class TeamBewerbViewModel : ViewModelBase
     {
         _teamBewerb = teamBewerb;
     }
+
     protected override void Dispose(bool disposing)
     {
         if (!_disposed)
@@ -50,5 +51,17 @@ public class TeamBewerbViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
+
+    public bool IsSplitGruppe
+    {
+        get => _teamBewerb.IsSplitGruppe;
+        set
+        {
+            if (_teamBewerb.IsSplitGruppe == value) return;
+            _teamBewerb.IsSplitGruppe = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public int ID => _teamBewerb.ID;
 }
