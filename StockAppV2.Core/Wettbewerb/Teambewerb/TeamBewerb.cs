@@ -53,6 +53,11 @@ public interface ITeamBewerb : IBewerb
     int SpielGruppe { get; set; }
 
     /// <summary>
+    /// Kennzeichen einer Splitgruppe
+    /// </summary>
+    bool IsSplitGruppe { get; set; }
+
+    /// <summary>
     /// Name der Gruppe
     /// </summary>
     string Gruppenname { get; set; }
@@ -203,6 +208,11 @@ public class TeamBewerb : ITeamBewerb
     /// Default: 0
     /// </summary>
     public int SpielGruppe { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public bool IsSplitGruppe { get; set; }
 
     /// <summary>
     /// Name der Gruppe

@@ -121,6 +121,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "Gruppenname")]
     public string Gruppenname { get; set; }
 
+    [XmlElement(ElementName = "Splitgruppe")]
+    public bool IsSplitGruppe { get; set; }
+
     [XmlElement(ElementName = "IERVersion")]
     public IERVersion IERVersion { get; set; }
 
