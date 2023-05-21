@@ -52,16 +52,5 @@ public class TeamBewerbViewModel : ViewModelBase
         }
     }
 
-    public bool IsSplitGruppe
-    {
-        get => _teamBewerb.IsSplitGruppe;
-        set
-        {
-            if (_teamBewerb.IsSplitGruppe == value) return;
-            _teamBewerb.IsSplitGruppe = value;
-            RaisePropertyChanged();
-        }
-    }
-
     public int ID => _teamBewerb.ID;
 }

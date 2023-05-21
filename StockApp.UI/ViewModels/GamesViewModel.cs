@@ -90,6 +90,8 @@ public class GamesViewModel : ViewModelBase
             foreach (var t in TeamBewerb.Teams)
                 t.ClearGames();
 
+            TeamBewerb.IsSplitGruppe = Gameplans.FirstOrDefault(p => p.ID == SelectedGameplanId)?.IsSplit ?? false;
+
             GamePlanFactory.MatchTeamAndGames(Gameplans.First(g => g.ID == SelectedGameplanId), TeamBewerb.Teams, SpielRunden, HasChangeStart);
 
             IsCreatingGames = false;
