@@ -19,7 +19,7 @@ public static class GamePlanFactory
 
         foreach (var game in jsongameplans)
         {
-            yield return new Gameplan(game.Id, game.Description, game.IsVergleich, game.Teams, game.Courts, game.Plan);
+            yield return new Gameplan(game.Id, game.Description, game.IsVergleich, game.Teams, game.Courts, game.Plan, game.IsSplit);
         }
     }
 
@@ -103,6 +103,9 @@ public class JsonGameplan
 
     [JsonPropertyName("vergleich")]
     public bool IsVergleich { get; set; }
+
+    [JsonPropertyName("split")]
+    public bool IsSplit { get; set; }
 
     [JsonPropertyName("teams")]
     public int Teams { get; set; }
