@@ -20,7 +20,7 @@ public class GamesViewModel : ViewModelBase
     public ViewModelBase GamesPrintsViewModel { get; private set; }
     public bool IsCreatingGames { get => _isCreatingGames; set => SetProperty(ref _isCreatingGames, value); }
 
-    public IEnumerable<IGameplan> Gameplans => _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == TeamBewerb.Teams.Count() && t.IsSplit == TeamBewerb.IsSplitGruppe);
+    public IEnumerable<IGameplan> Gameplans => _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == TeamBewerb.Teams.Count());
 
     #region TeamBewerb - Depended Properties
 
