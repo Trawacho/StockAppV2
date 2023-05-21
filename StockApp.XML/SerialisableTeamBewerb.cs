@@ -186,6 +186,11 @@ public class SerialisableTeamBewerb : ITeamBewerb
         throw new NotImplementedException();
     }
 
+    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live)
+    {
+        throw new NotImplementedException();
+    }
+
     public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false)
     {
         throw new NotImplementedException();

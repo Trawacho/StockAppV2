@@ -109,6 +109,8 @@ public interface ITeamBewerb : IBewerb
 
     public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false);
 
+    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false);
+
 }
 
 
@@ -309,6 +311,16 @@ public class TeamBewerb : ITeamBewerb
         var comparer = new TeamRankingComparer(live, IERVersion);
 
         return Teams.OrderBy(t => t, comparer);
+    }
+
+    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false)
+    {
+        var comparer = new TeamRankingComparer(live, IERVersion);
+        return Teams.Where(t => 
+            groupOne 
+                ? t.StartNumber <= Teams.Count() / 2
+                : t.StartNumber > Teams.Count() / 2
+                ).OrderBy(t => t, comparer);
     }
 
     #endregion

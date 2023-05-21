@@ -72,6 +72,7 @@
                    Grid.Column="3" 
                    Visibility="{Binding IERVersion2022, Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
             <Label Content="Stockpunkte" 
+                   Visibility="{Binding ShowStockPunkte, Converter={StaticResource BooleanToVisibilityConverter}}"
                    Grid.Column="4" />
 
 
@@ -124,8 +125,11 @@
                                                         Path=DataContext.IERVersion2022}"
                                    Grid.Column="3" />
 
-                        <Label Content="{Binding StockPunkte}"   
-                                   Grid.Column="4" />
+                        <Label Content="{Binding StockPunkte}"  
+                               Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl},
+                                                    Converter={StaticResource BooleanToVisibilityConverter},
+                                                    Path=DataContext.ShowStockPunkte}"
+                               Grid.Column="4" />
 
 
                         <!-- Zeile mit Spielernamen-->

@@ -64,6 +64,11 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         RaisePropertyChanged(nameof(RankedTeamList));
         if (IsVergleich) RaisePropertyChanged(nameof(RankedClubTableViewModel));
         if (IsBestOf) RaisePropertyChanged(nameof(BestOfDetailsViewModel));
+        if (IsSplitGruppe)
+        {
+            RaisePropertyChanged(nameof(RankedTeamsTableSplitGroupOneViewModel));
+            RaisePropertyChanged(nameof(RankedTeamsTableSplitGroupTwoViewModel));
+        }
     }
 
     protected override void Dispose(bool disposing)
@@ -87,13 +92,32 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
     public bool IERVersion2022 => _teamBewerb.IERVersion == IERVersion.v2022;
     public bool IsBestOfPossible => _teamBewerb.Teams.Count() == 2;
     public bool Has8Turns => _teamBewerb.Is8TurnsGame;
+    public bool IsSplitGruppe => _teamBewerb.IsSplitGruppe;
 
     public ViewModelBase BestOfDetailsViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive: true) : default;
     public ViewModelBase RankedClubTableViewModel => IsVergleich ? new RankedClubTableViewModel(_teamBewerb, isLive: true) { AsDataGrid = true } : default;
 
+    public ViewModelBase RankedTeamsTableSplitGroupOneViewModel => IsSplitGruppe
+        ? new RankedTeamsTableViewModel(_teamBewerb, isLive: IsLive, isSplitGroupOne: true, showStockPunkte: ShowStockPunkte)
+        : default;
+    public ViewModelBase RankedTeamsTableSplitGroupTwoViewModel => IsSplitGruppe
+        ? new RankedTeamsTableViewModel(_teamBewerb, isLive: IsLive, isSplitGroupOne: false, showStockPunkte: ShowStockPunkte)
+        : default;
+
 
     private bool _showStockPunkte;
-    public bool ShowStockPunkte { get => _showStockPunkte; set => SetProperty(ref _showStockPunkte, value); }
+    public bool ShowStockPunkte
+    {
+        get => _showStockPunkte;
+        set => SetProperty(
+            ref _showStockPunkte,
+            value,
+            () =>
+            {
+                RaisePropertyChanged(nameof(RankedTeamsTableSplitGroupOneViewModel));
+                RaisePropertyChanged(nameof(RankedTeamsTableSplitGroupTwoViewModel));
+            });
+    }
 
 
     private bool _isLive;

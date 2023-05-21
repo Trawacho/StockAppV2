@@ -8,7 +8,7 @@ public class RankedTeamsTableViewModel : ViewModelBase
 {
     private readonly ITeamBewerb _teamBewerb;
     private readonly bool _isLive;
-    private readonly bool _showGroupName;
+    private readonly string _groupName;
 
     public RankedTeamsTableViewModel()
     {
@@ -18,8 +18,9 @@ public class RankedTeamsTableViewModel : ViewModelBase
     public RankedTeamsTableViewModel(ITeamBewerb teamBewerb, bool isLive, bool showGroupName = false)
     {
         _teamBewerb = teamBewerb;
+        ShowStockPunkte = true;
         _isLive = isLive;
-        _showGroupName = showGroupName;
+        _groupName = showGroupName  ? $"{_teamBewerb.Gruppenname}" : null;
         int rank = 1;
         foreach (var t in _teamBewerb.GetTeamsRanked())
         {
@@ -29,8 +30,26 @@ public class RankedTeamsTableViewModel : ViewModelBase
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;
 
     }
+
+    public RankedTeamsTableViewModel(ITeamBewerb teamBewerb, bool isLive, bool isSplitGroupOne, bool showStockPunkte)
+    {
+        _teamBewerb = teamBewerb;
+        _isLive = isLive;
+        ShowStockPunkte = showStockPunkte;
+        _groupName = isSplitGroupOne ? "Gruppe A" : "Gruppe B";
+        
+        int rank = 1;
+        foreach (var t in _teamBewerb.GetSplitTeamsRanked(isSplitGroupOne, isLive)) 
+        {
+            RankedTeams.Add(new RankedTeamModel(rank: rank, team: t, printNameOfPlayer: false, live: _isLive));
+            rank++;
+        }
+        IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;
+
+    }
     public bool IERVersion2022 { get; init; }
     public IList<RankedTeamModel> RankedTeams { get; } = new List<RankedTeamModel>();
-    public string GroupName => _showGroupName ? $"{_teamBewerb.Gruppenname}" : null;
+    public string GroupName => _groupName;
 
+    public bool ShowStockPunkte { get; init; }
 }
