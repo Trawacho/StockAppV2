@@ -31,6 +31,7 @@ public static class GamePlanFactory
     /// <param name="teams">no virtual teams. without games</param>
     public static void MatchTeamAndGames(IGameplan gameplan, IEnumerable<ITeam> teams, int rounds = 1, bool isStartingChanged = true)
     {
+        if (gameplan is null) return;
         //Ein liste für normale "Spiele" erzeugen
         var normalGames = new List<IGame>();
         var gameNrOverAll = 1;
