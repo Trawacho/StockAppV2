@@ -114,7 +114,7 @@ public class TeamsViewModel : ViewModelBase
 
         Teams = new ObservableCollection<TeamViewModel>(CurrentBewerb.Teams.Select(s => new TeamViewModel(s)));
 
-        _addNewTeamCommand = new RelayCommand((p) => AddTeam(), (p) => CurrentBewerb.Teams.Count() < 15);
+        _addNewTeamCommand = new RelayCommand((p) => AddTeam(), (p) => CurrentBewerb.Teams.Count() < turnierStore.MaxCountOfTeams);
         _removeTeamCommand = new RelayCommand((p) => RemoveTeam(), (p) => SelectedTeam != null);
         _modalCancelCommand = new RelayCommand(para => IsModalOpen = false);
     }
