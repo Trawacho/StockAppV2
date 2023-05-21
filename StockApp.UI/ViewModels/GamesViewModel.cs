@@ -20,7 +20,7 @@ public class GamesViewModel : ViewModelBase
     public ViewModelBase GamesPrintsViewModel { get; private set; }
     public bool IsCreatingGames { get => _isCreatingGames; set => SetProperty(ref _isCreatingGames, value); }
 
-    public IEnumerable<IGameplan> Gameplans => _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == TeamBewerb.Teams.Count());
+    public IEnumerable<IGameplan> Gameplans { get; init; }
 
     #region TeamBewerb - Depended Properties
 
@@ -32,7 +32,13 @@ public class GamesViewModel : ViewModelBase
 
     public int SelectedGameplanId
     {
-        get => TeamBewerb.GameplanId;
+        get
+        {
+            if (Gameplans.Any(g => g.ID == TeamBewerb.GameplanId))
+                return TeamBewerb.GameplanId;
+            else
+                return 0;
+        }
         set
         {
             if (TeamBewerb.GameplanId == value)
@@ -90,7 +96,9 @@ public class GamesViewModel : ViewModelBase
             foreach (var t in TeamBewerb.Teams)
                 t.ClearGames();
 
-            GamePlanFactory.MatchTeamAndGames(Gameplans.First(g => g.ID == SelectedGameplanId), TeamBewerb.Teams, SpielRunden, HasChangeStart);
+            TeamBewerb.IsSplitGruppe = Gameplans.FirstOrDefault(p => p.ID == SelectedGameplanId)?.IsSplit ?? false;
+
+            GamePlanFactory.MatchTeamAndGames(Gameplans.FirstOrDefault(g => g.ID == SelectedGameplanId), TeamBewerb.Teams, SpielRunden, HasChangeStart);
 
             IsCreatingGames = false;
         },
@@ -102,6 +110,11 @@ public class GamesViewModel : ViewModelBase
     public GamesViewModel(ITurnierStore turnierStore)
     {
         _turnierStore = turnierStore;
+
+        Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Count() == 1
+                          ? Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == TeamBewerb.Teams.Count())
+                          : Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == TeamBewerb.Teams.Count() && !t.IsSplit);
+
 
         GamesPrintsViewModel = new GamesPrintsViewModel(TeamBewerb, _turnierStore);
 

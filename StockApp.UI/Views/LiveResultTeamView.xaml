@@ -28,6 +28,10 @@
             <libVw:BestOfDetailView />
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type libVm:RankedTeamsTableViewModel}">
+            <libVw:RankedTeamsTableView />
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type libVm:RankedClubTableViewModel}">
             <libVw:RankedClubTableView/>
         </DataTemplate>
@@ -56,6 +60,7 @@
             <StackPanel Orientation="Vertical">
 
                 <DataGrid ItemsSource="{Binding Path=RankedTeamList, Mode=OneWay}"
+                          Visibility="{Binding Path=IsSplitGruppe,Converter={StaticResource BooleanToVisibilityInvertedConverter}}"
                           HorizontalAlignment="Center"
                           RowHeaderWidth="0"
                           IsReadOnly="True"
@@ -104,6 +109,16 @@
 
                 </DataGrid>
 
+                <!--<StackPanel Orientation="Horizontal" Visibility="{Binding Path=IsSplitGruppe, Converter={StaticResource BooleanToVisibilityConverter}}">-->
+                <ContentControl Content="{Binding Path=RankedTeamsTableSplitGroupOneViewModel}"
+                                Visibility="{Binding Path=IsSplitGruppe,Converter={StaticResource BooleanToVisibilityConverter}}"
+                                HorizontalAlignment="Stretch"
+                                Margin="5"/>
+                <ContentControl Content="{Binding Path=RankedTeamsTableSplitGroupTwoViewModel}"
+                                Visibility="{Binding Path=IsSplitGruppe,Converter={StaticResource BooleanToVisibilityConverter}}"
+                                HorizontalAlignment="Stretch"
+                                Margin="5"/>
+                <!--</StackPanel>-->
 
                 <ContentControl Content="{Binding Path=BestOfDetailsViewModel}" 
                                 HorizontalAlignment="Stretch" 

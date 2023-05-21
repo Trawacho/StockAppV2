@@ -148,8 +148,7 @@
             <Line X1="0" X2="1" Y1="0" Y2="0" StrokeThickness="1" Stretch="Fill" Stroke="Black"/>
 
             <Viewbox Height="1.8cm">
-                <!--<Label Content="{Binding HeaderString}"-->
-                <Label Content="E R G E B N I S" 
+                <Label Content="{Binding HeaderString}"
                        HorizontalContentAlignment="Center"
                        FontWeight="Bold"/>
             </Viewbox>
@@ -164,7 +163,9 @@
             </Grid.RowDefinitions>
 
             <!-- Mannschafts Tabelle -->
-            <ContentControl Content="{Binding Path=RankedTeamsTableViewModel}" Grid.Row="0" Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
+            <Viewbox Grid.Row="0" Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityInvertedConverter}}">
+                <ContentControl Content="{Binding Path=RankedTeamsTableViewModel}" />
+            </Viewbox>
             <Viewbox  Grid.Row="0" Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityConverter}}"  MaxHeight="16cm">
                 <ItemsControl ItemsSource="{Binding Path=RankedTeamsTableViewModels}">
                     <ItemsControl.ItemTemplate>

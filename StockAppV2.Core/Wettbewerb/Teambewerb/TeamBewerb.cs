@@ -53,6 +53,11 @@ public interface ITeamBewerb : IBewerb
     int SpielGruppe { get; set; }
 
     /// <summary>
+    /// Kennzeichen einer Splitgruppe
+    /// </summary>
+    bool IsSplitGruppe { get; set; }
+
+    /// <summary>
     /// Name der Gruppe
     /// </summary>
     string Gruppenname { get; set; }
@@ -103,6 +108,8 @@ public interface ITeamBewerb : IBewerb
     public IEnumerable<IGame> GetAllGames(bool withBreaks = true);
 
     public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false);
+
+    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false);
 
 }
 
@@ -205,6 +212,11 @@ public class TeamBewerb : ITeamBewerb
     public int SpielGruppe { get; set; }
 
     /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public bool IsSplitGruppe { get; set; }
+
+    /// <summary>
     /// Name der Gruppe
     /// </summary>
     public string Gruppenname { get; set; }
@@ -299,6 +311,16 @@ public class TeamBewerb : ITeamBewerb
         var comparer = new TeamRankingComparer(live, IERVersion);
 
         return Teams.OrderBy(t => t, comparer);
+    }
+
+    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false)
+    {
+        var comparer = new TeamRankingComparer(live, IERVersion);
+        return Teams.Where(t => 
+            groupOne 
+                ? t.StartNumber <= Teams.Count() / 2
+                : t.StartNumber > Teams.Count() / 2
+                ).OrderBy(t => t, comparer);
     }
 
     #endregion

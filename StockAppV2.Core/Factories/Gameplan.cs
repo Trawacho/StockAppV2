@@ -2,7 +2,7 @@
 
 public class Gameplan : IGameplan
 {
-    public Gameplan(int id, string name, bool isVergleich, int teams, int courts, int[][] plan)
+    public Gameplan(int id, string name, bool isVergleich, int teams, int courts, int[][] plan, bool isSplit)
     {
         _gameplanGamenumbers = new List<IGameplanGameround>();
 
@@ -16,11 +16,13 @@ public class Gameplan : IGameplan
         {
             _gameplanGamenumbers.Add(new GameplanGamenumber(row + 1, plan[row]));
         }
+        IsSplit = isSplit;
     }
 
     public int ID { get; init; }
     public string Name { get; init; }
     public bool IsVergleich { get; init; }
+    public bool IsSplit { get; init; }
     public int Courts { get; init; }
 
     public int Teams { get; init; }
@@ -87,6 +89,7 @@ public interface IGameplan
     string Name { get; }
     int Courts { get; }
     bool IsVergleich { get; }
+    bool IsSplit { get; }
     int Teams { get; }
     IEnumerable<IGameplanGameround> GameplanGamenumbers { get; }
     IEnumerable<(int gamenumber, IGameplanGame game)> GetAllGames();

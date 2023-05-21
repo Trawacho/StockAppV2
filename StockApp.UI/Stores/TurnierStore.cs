@@ -1,6 +1,8 @@
-﻿using StockApp.Core.Turnier;
+﻿using StockApp.Core.Factories;
+using StockApp.Core.Turnier;
 using StockApp.UI.Services;
 using System;
+using System.Linq;
 
 namespace StockApp.UI.Stores;
 
@@ -16,6 +18,11 @@ public interface ITurnierStore
     void SaveAs();
     string FileName { get; }
     bool IsDuty();
+    /// <summary>
+    /// Maximale Anzahl an Teams, die in einer Gruppe erstellt werden kann. <br></br>
+    /// Wert wird aus den verfügbaren Spielplänen ermittelt
+    /// </summary>
+    int MaxCountOfTeams { get; }
 
 
 }
@@ -41,6 +48,7 @@ public class TurnierStore : ITurnierStore
         Turnier = Core.Turnier.Turnier.Create();
         _xmlFileService = new XmlFileService(Turnier);
         _xmlFileService.FullFilePathChanged += XmlFullFileNameChanged;
+        MaxCountOfTeams = GamePlanFactory.LoadAllGameplans().Select(t => t.Teams).Max();
     }
 
 
@@ -55,7 +63,7 @@ public class TurnierStore : ITurnierStore
     }
     public string FileName => _xmlFileService.FullFilePath;
 
-
+    public int MaxCountOfTeams { get; init; }
 
     public void Load() => _xmlFileService.Load(ref _turnier);
     public void Load(string fullFileName) => _xmlFileService.Load(ref _turnier, fullFileName);

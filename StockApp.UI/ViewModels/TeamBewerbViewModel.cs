@@ -17,6 +17,7 @@ public class TeamBewerbViewModel : ViewModelBase
     {
         _teamBewerb = teamBewerb;
     }
+
     protected override void Dispose(bool disposing)
     {
         if (!_disposed)
@@ -50,5 +51,6 @@ public class TeamBewerbViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
+
     public int ID => _teamBewerb.ID;
 }

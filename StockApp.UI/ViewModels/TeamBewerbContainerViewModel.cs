@@ -91,7 +91,7 @@ public class TeamBewerbContainerViewModel : ViewModelBase
     public ICommand AddNewTeamBewerbCommand =>
         new RelayCommand(
             p => AddNewTeamBewerb(),
-            p => TeamBewerbe.Count <= 3);
+            p => TeamBewerbe.Count <= 3 && !_turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Any(t=>t.IsSplitGruppe));
 
 
     public ICommand RemoveSelectedTeamBewerbCommand =>

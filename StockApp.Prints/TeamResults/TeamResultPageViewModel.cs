@@ -35,7 +35,15 @@ public class TeamResultPageViewModel
         RankedTeamsTableViewModels = new List<RankedTeamsTableViewModel>();
         foreach (var item in _turnier.ContainerTeamBewerbe.TeamBewerbe)
         {
-            RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(item, isLive: false, showGroupName: true));
+            if (item.IsSplitGruppe)
+            {
+                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(item, isLive: false, isSplitGroupOne: true, showStockPunkte: true));
+                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(item, isLive: false, isSplitGroupOne: false, showStockPunkte: true));
+            }
+            else
+            {
+                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(item, isLive: false, showGroupName: true));
+            }
         }
     }
 
@@ -70,9 +78,6 @@ public class TeamResultPageViewModel
 
     public bool IsVergleich { get; init; }
     public bool IsBestOf { get; init; }
-    public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1;
-    public string HeaderString =>
-            !HasMoreGroups
-                ? $"E R G E B N I S"
-                : $"E R G E B N I S  -  {_teamBewerb.Gruppenname}";
+    public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1 || _turnier.ContainerTeamBewerbe.TeamBewerbe.Where(b => b.IsSplitGruppe).Any();
+    public string HeaderString => $"E R G E B N I S";
 }

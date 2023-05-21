@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:StockApp.UI.Components" xmlns:conv="clr-namespace:StockApp.UI.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
         <Style TargetType="UserControl">
             <Setter Property="Background" Value="White"/>
@@ -14,7 +14,7 @@
 
 
     </d:DesignerProperties.DesignStyle>
-    
+
     <UserControl.Resources>
         <conv:GameGroupStringConverter x:Key="GameGroupStringConverter"/>
     </UserControl.Resources>
@@ -34,7 +34,7 @@
 
         <TextBlock Text="Gruppenname:" Grid.Row="0" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
         <TextBox Text="{Binding Gruppenname, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.Column="1" Margin="5" Padding="5"/>
-        
+
         <TextBlock Text="Spielgruppe:" Grid.Row="1" Grid.Column="0" Style="{StaticResource TextBlockGrid}"/>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" >
@@ -47,5 +47,6 @@
                         Margin="5"  Width="210"/>
 
         </StackPanel>
+
     </Grid>
 </UserControl>

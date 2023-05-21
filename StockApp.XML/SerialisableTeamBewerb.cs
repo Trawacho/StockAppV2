@@ -121,6 +121,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "Gruppenname")]
     public string Gruppenname { get; set; }
 
+    [XmlElement(ElementName = "Splitgruppe")]
+    public bool IsSplitGruppe { get; set; }
+
     [XmlElement(ElementName = "IERVersion")]
     public IERVersion IERVersion { get; set; }
 
@@ -179,6 +182,11 @@ public class SerialisableTeamBewerb : ITeamBewerb
     }
 
     public int GetCountOfGamesPerCourt()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live)
     {
         throw new NotImplementedException();
     }
