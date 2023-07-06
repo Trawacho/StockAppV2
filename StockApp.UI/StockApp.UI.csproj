@@ -7,7 +7,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
-		<Version>1.0.9.0</Version>
+		<Version>1.1.0.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
