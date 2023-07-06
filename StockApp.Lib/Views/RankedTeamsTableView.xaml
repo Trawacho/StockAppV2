@@ -78,7 +78,7 @@
 
         </Grid>
 
-        <ItemsControl ItemsSource="{Binding RankedTeams}" Grid.Row="2" >
+        <ItemsControl ItemsSource="{Binding RankedTeams}" Grid.Row="2"  AlternationCount="2" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
 
@@ -97,7 +97,7 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-
+                        
                         <Grid.Resources>
                             <Style TargetType="Label">
                                 <Setter Property="FontWeight" Value="Normal"/>
@@ -108,6 +108,19 @@
                                 <Setter Property="Margin" Value="10 0 0 0"/>
                                 <Setter Property="Padding" Value="0 0 0 0"/>
                             </Style>
+
+                            <Style TargetType="Grid">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}, Path=(ItemsControl.AlternationIndex)}" Value="0">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContentPresenter}}, Path=(ItemsControl.AlternationIndex)}" Value="1">
+                                        <Setter Property="Background" Value="WhiteSmoke"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                            
+                            
                         </Grid.Resources>
 
                         <Label Content="{Binding Rank}" Grid.Column="0" Margin="0"/>
