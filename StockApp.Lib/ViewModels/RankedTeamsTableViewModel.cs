@@ -41,12 +41,13 @@ public class RankedTeamsTableViewModel : ViewModelBase
         int rank = 1;
         foreach (var t in _teamBewerb.GetSplitTeamsRanked(isSplitGroupOne, isLive)) 
         {
-            RankedTeams.Add(new RankedTeamModel(rank: rank, team: t, printNameOfPlayer: false, live: _isLive));
+            RankedTeams.Add(new RankedTeamModel(rank: rank, team: t, printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult, live: _isLive));
             rank++;
         }
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;
 
     }
+
     public bool IERVersion2022 { get; init; }
     public IList<RankedTeamModel> RankedTeams { get; } = new List<RankedTeamModel>();
     public string GroupName => _groupName;
