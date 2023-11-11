@@ -36,6 +36,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         ID = bewerb.ID;
         Gruppenname = bewerb.Gruppenname;
         GameplanId = bewerb.GameplanId;
+        IsSplitGruppe = bewerb.IsSplitGruppe;
     }
 
 
@@ -50,6 +51,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.SpielGruppe = SpielGruppe;
         teamBewerb.IERVersion = IERVersion;
         teamBewerb.Gruppenname = Gruppenname;
+        teamBewerb.IsSplitGruppe = IsSplitGruppe;
 
 
 
