@@ -78,6 +78,14 @@ public partial class TeamRankingComparer : IComparer<ITeam>
         //ausgeschiedene Mannschaften
         if (x.TeamStatus != TeamStatus.Normal && y.TeamStatus == TeamStatus.Normal)
             return 1;
+        else if (y.TeamStatus != TeamStatus.Normal && x.TeamStatus == TeamStatus.Normal)
+            return -1;
+        else if (x.TeamStatus != TeamStatus.Normal && y.TeamStatus != TeamStatus.Normal)
+        {
+            return x.StartNumber < y.StartNumber 
+                ? -1 
+                : 1;
+        }
 
 
         //Spielpunkte

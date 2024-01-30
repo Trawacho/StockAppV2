@@ -43,4 +43,10 @@
 		<ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="com\Vereine.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>
