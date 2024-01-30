@@ -75,6 +75,11 @@ public partial class TeamRankingComparer : IComparer<ITeam>
     }
     private int CompareVersionUpFrom2022(ITeam x, ITeam y)
     {
+        //ausgeschiedene Mannschaften
+        if (x.TeamStatus != TeamStatus.Normal && y.TeamStatus == TeamStatus.Normal)
+            return 1;
+
+
         //Spielpunkte
         if (x.GetSpielPunkte(_isLive).positiv > y.GetSpielPunkte(_isLive).positiv)
             return -1;

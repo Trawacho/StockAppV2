@@ -29,12 +29,18 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Name:" Grid.Row="0" Grid.Column="0" TextAlignment="Right" Margin="5" />
+            <TextBlock Text="Name:" Grid.Row="0" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
             <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TeamName, UpdateSourceTrigger=PropertyChanged}" Margin="5" Padding="5"/>
-            <TextBlock Text="Kreis / Nation:" Grid.Row="1" Grid.Column="0" TextAlignment="Right" Margin="5"/>
+            <TextBlock Text="Kreis / Nation:" Grid.Row="1" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nation}" Margin="5" Padding="5"/>
+            <TextBlock Text="Status:" Grid.Row="2" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding TeamStatis}" Margin="5" Padding="5" SelectedValue="{Binding TeamStatus}"/>
+            <TextBlock Text="Spielpunktstrafen:" Grid.Row="3" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding StrafSpielpunkte}" Margin="5" Padding="5"/>
         </Grid>
 
 

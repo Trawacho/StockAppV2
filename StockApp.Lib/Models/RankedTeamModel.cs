@@ -31,7 +31,7 @@ public class RankedTeamModel
             }
         }
     }
-    public string TeamName => _team.TeamName.Trim();
+    public string TeamName => _team.TeamNamePublic.Trim();
     public string SpielPunkte => $"{_team.GetSpielPunkte(_live).positiv}:{_team.GetSpielPunkte(_live).negativ}";
     public string StockPunkte => $"{_team.GetStockPunkte(_live).positiv}:{_team.GetStockPunkte(_live).negativ}";
     public string StockNote => _team.GetStockNote(_live).ToString("F3");

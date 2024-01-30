@@ -1,5 +1,8 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace StockApp.UI.ViewModels;
 
@@ -8,6 +11,7 @@ public class TeamViewModel : ViewModelBase
 
     private readonly ITeam _team;
     private TeamPlayersViewModel _teamPlayersViewModel;
+    private readonly List<string> _teamStatis;
 
     public ITeam Team { get => _team; }
     public string TeamName
@@ -40,6 +44,28 @@ public class TeamViewModel : ViewModelBase
         }
     }
 
+    public IEnumerable<string> TeamStatis => _teamStatis;
+
+    public string TeamStatus
+    {
+        get => _team.TeamStatus.Name();
+        set
+        {
+            _team.TeamStatus = TeamStatusExtension.FromName(value);
+            RaisePropertyChanged();
+        }
+    }
+
+    public int StrafSpielpunkte
+    {
+        get => _team.StrafSpielpunkte;
+        set
+        {
+            _team.StrafSpielpunkte = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public TeamPlayersViewModel TeamPlayersViewModel
     {
         get => _teamPlayersViewModel;
@@ -50,6 +76,11 @@ public class TeamViewModel : ViewModelBase
     {
         _team = team;
         TeamPlayersViewModel = new TeamPlayersViewModel(_team);
+        _teamStatis = new List<string>();
+        foreach (var item in Enum.GetValues(typeof(TeamStatus)).Cast<TeamStatus>()) 
+        {
+            _teamStatis.Add(item.Name());
+        }
     }
 
     protected override void Dispose(bool disposing)

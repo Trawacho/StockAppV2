@@ -13,12 +13,15 @@ public class SerialisableTeam : ITeam
         StartNumber = team.StartNumber;
         TeamName = team.TeamName;
         Nation = team.Nation;
+        StrafSpielpunkte = team.StrafSpielpunkte;
+        TeamStatus = team.TeamStatus;
         SerialisablePlayers = new List<SerialisablePlayer>();
         foreach (var player in team.Players)
         {
             SerialisablePlayers.Add(new SerialisablePlayer(player));
         }
     }
+
     internal void ToNormal(ITeam normal)
     {
         normal.Nation = Nation;
@@ -27,23 +30,28 @@ public class SerialisableTeam : ITeam
         {
             normal.AddPlayer(player);
         }
+        normal.StrafSpielpunkte = StrafSpielpunkte;
+        normal.TeamStatus = TeamStatus;
     }
 
-
-
     public int StartNumber { get; set; }
+
     public string TeamName { get; set; }
+
+    public int StrafSpielpunkte { get; set; }
+
+    public TeamStatus TeamStatus { get; set; }
 
     [XmlIgnore]
     public string TeamNameShort { get; }
+    
     public string Nation { get; set; }
-
 
     [XmlArray(ElementName = "Spieler")]
     public List<SerialisablePlayer> SerialisablePlayers { get; set; }
 
-
-
+    [XmlIgnore]
+    public string TeamNamePublic { get; }
 
     #region XMLIgnore
 
