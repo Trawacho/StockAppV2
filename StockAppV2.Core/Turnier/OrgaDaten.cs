@@ -22,6 +22,12 @@ public interface IOrgaDaten
     /// Turnierbezeichnung
     /// </summary>
     public string TournamentName { get; set; }
+
+    /// <summary>
+    /// Text, der unterhalb der Tabelle bei einer Ergebnisliste angezeigt wird
+    /// </summary>
+    public string Endtext { get; set; }
+
     public IStartgebuehr EntryFee { get; set; }
     public IExecutive Referee { get; set; }
     public IExecutive CompetitionManager { get; set; }
@@ -35,6 +41,7 @@ public class OrgaDaten : IOrgaDaten
     private DateTime _dateOfTournament;
     private string _operator;
     private string _tournamentName;
+    private string _endText;
 
     /// <summary>
     /// Veranstaltungsort
@@ -60,6 +67,9 @@ public class OrgaDaten : IOrgaDaten
     /// Turniername
     /// </summary>
     public string TournamentName { get => _tournamentName; set => _tournamentName = value?.Trim(); }
+
+
+    public string Endtext { get => _endText; set => _endText = value?.Trim(); }
 
     /// <summary>
     /// Startgebühr pro Mannschaft

@@ -27,7 +27,7 @@ public class SerialisableOrganisation : IOrgaDaten
     public DateTime DateOfTournament { get; set; }
     public string Operator { get; set; }
     public string TournamentName { get; set; }
-
+    public string Endtext { get; set; }
     public SerialisableStartGebuehr Starttgebuehr { get; set; }
 
     public SerialisableExecutive Schiedsrichter { get; set; }
@@ -62,6 +62,8 @@ public static class SerialisableOrganisationExtension
         normal.DateOfTournament = value.DateOfTournament;
         normal.Operator = value.Operator;
         normal.TournamentName = value.TournamentName;
+        normal.Endtext = value.Endtext;
+
         value.Starttgebuehr.ToNormal(normal.EntryFee);
         value.Rechenbuero.ToNormal(normal.ComputingOfficer);
         value.Schiedsrichter.ToNormal(normal.Referee);

@@ -2,6 +2,7 @@
 using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -80,4 +81,26 @@ public class TeamResultPageViewModel
     public bool IsBestOf { get; init; }
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1 || _turnier.ContainerTeamBewerbe.TeamBewerbe.Where(b => b.IsSplitGruppe).Any();
     public string HeaderString => $"E R G E B N I S";
+
+    public string Endtext => _turnier.OrgaDaten.Endtext;
+    public string Footer
+    {
+        get
+        {
+            var footerText = string.Empty;
+
+            if (_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Teams.Any(t => t.TeamStatus != TeamStatus.Normal))
+                footerText = TeamStatusExtension.FooterText();
+
+            if (_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Teams.Any(t => t.StrafSpielpunkte > 0))
+            {
+                if (!string.IsNullOrEmpty(footerText))
+                    footerText += "; ";
+
+                footerText += "$ = Spielpunktstrafe";
+            }
+
+            return footerText;
+        }
+    }
 }

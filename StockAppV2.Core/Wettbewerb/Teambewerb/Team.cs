@@ -1,43 +1,5 @@
 ﻿namespace StockApp.Core.Wettbewerb.Teambewerb;
 
-public enum TeamStatus
-{
-    /// <summary>
-    /// Normal
-    /// </summary>
-    Normal = 0,
-
-    /// <summary>
-    /// Entschuldigt, nicht angetreten
-    /// </summary>
-    Entschuldigt = 1,
-
-    /// <summary>
-    /// Unentschuldigt nicht angetreten
-    /// </summary>
-    Unentschuldigt = 2,
-
-    /// <summary>
-    /// Mannschaft scheidet vorzeitig aus dem Wettbewerb aus
-    /// </summary>
-    Vorzeitig = 3
-}
-
-public static class TeamStatusExtension
-{
-    private static readonly Dictionary<TeamStatus, (string name, string description, string abbreviation)> _names = new Dictionary<TeamStatus, (string name, string description, string abbreviation)>();
-    static TeamStatusExtension()
-    {
-        _names.Add(TeamStatus.Normal, ("Normal", "", ""));
-        _names.Add(TeamStatus.Entschuldigt, ("Entschuldigt", "Entschuldigt nicht angetreten", "e.n.a."));
-        _names.Add(TeamStatus.Unentschuldigt, ("Unentschuldigt", "Unentschuldigt nicht angetreten", "u.n.a."));
-        _names.Add(TeamStatus.Vorzeitig, ("Vorzeitig ausgeschieden", "Vorzeitig ausgeschieden", "v.a."));
-    }
-    public static string Name(this TeamStatus status) => _names[status].name;
-    public static string Description(this TeamStatus status) => _names[status].description;
-    public static string Abbreviation(this TeamStatus status) => _names[status].abbreviation;
-    public static TeamStatus FromName(string name) => _names.Where(w => w.Value.name == name).FirstOrDefault().Key;
-}
 
 public interface ITeam : IEquatable<ITeam>
 {
@@ -55,7 +17,6 @@ public interface ITeam : IEquatable<ITeam>
     /// </summary>
     public string TeamNameShort { get; }
     public string Nation { get; set; }
-    
     public IEnumerable<IPlayer> Players { get; }
     public IReadOnlyCollection<IGame> Games { get; }
     public IEnumerable<int> SpieleMitAnspiel();
@@ -247,11 +208,11 @@ public class Team : ITeam
     public (int positiv, int negativ) GetSpielPunkte(bool live = false)
     {
         int pos = Games.Where(g => g.TeamA == this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamA(live)) +
-                  Games.Where(g => g.TeamB == this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamB(live));
+                Games.Where(g => g.TeamB == this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamB(live));
 
         int neg = Games.Where(g => g.TeamA != this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamA(live)) +
-                  Games.Where(g => g.TeamB != this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamB(live));
-        
+                Games.Where(g => g.TeamB != this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamB(live));
+
         return TeamStatus == TeamStatus.Normal
             ? (pos - StrafSpielpunkte, neg)
             : (0, 0);
@@ -259,15 +220,11 @@ public class Team : ITeam
 
     public (int positiv, int negativ) GetStockPunkte(bool live = false)
     {
-        int pos = Games.Where(g => g.TeamA == this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamA(live)) +
-                  Games.Where(g => g.TeamB == this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamB(live));
-
-        int neg = Games.Where(g => g.TeamA != this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamA(live)) +
-                  Games.Where(g => g.TeamB != this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamB(live));
-
-        return TeamStatus == TeamStatus.Normal 
-            ? (pos, neg) 
-            : (0, 0);
+        int pos = Games.Where(g => g.TeamA == this).Sum(s => s.Spielstand.GetStockPunkteTeamA(live)) +
+                Games.Where(g => g.TeamB == this).Sum(s => s.Spielstand.GetStockPunkteTeamB(live));
+        int neg = Games.Where(g => g.TeamA != this).Sum(s => s.Spielstand.GetStockPunkteTeamA(live)) +
+                Games.Where(g => g.TeamB != this).Sum(s => s.Spielstand.GetStockPunkteTeamB(live));
+        return TeamStatus == TeamStatus.Normal ? (pos, neg) : (0, 0);
     }
 
     public double GetStockNote(bool live = false)

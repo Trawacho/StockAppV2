@@ -43,6 +43,16 @@ public class ResultsViewModel : ViewModelBase
         }
     }
 
+    public string Endtext
+    {
+        get => _turnierStore.Turnier.OrgaDaten.Endtext;
+        set
+        {
+            _turnierStore.Turnier.OrgaDaten.Endtext = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public bool? InputAfterGame
     {
         get => _inputAfterGame;
