@@ -39,8 +39,11 @@
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nation}" Margin="5" Padding="5"/>
             <TextBlock Text="Status:" Grid.Row="2" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
             <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding TeamStatis}" Margin="5" Padding="5" SelectedValue="{Binding TeamStatus}"/>
-            <TextBlock Text="Spielpunktstrafen:" Grid.Row="3" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding StrafSpielpunkte}" Margin="5" Padding="5"/>
+            <TextBlock Text="Strafen:" Grid.Row="3" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
+            <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+                <TextBox  Text="{Binding StrafSpielpunkte}" Margin="5" Padding="5" Width="30" HorizontalContentAlignment="Center" />
+                <TextBlock Text="Spielpunkte Abzug (Endwertung)" VerticalAlignment="Center" Margin="1"/>
+            </StackPanel>
         </Grid>
 
 
