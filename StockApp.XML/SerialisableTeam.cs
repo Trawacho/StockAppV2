@@ -91,7 +91,7 @@ public class SerialisableTeam : ITeam
 
     public void RemovePlayer(IPlayer selectedPlayer) => throw new NotImplementedException();
 
-
+    public bool IsEachGameDone(bool live) => throw new NotImplementedException();
 
     #endregion
 }

@@ -193,42 +193,22 @@ public class SerialisableTeamBewerb : ITeamBewerb
         throw new NotImplementedException();
     }
 
-    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false)
-    {
-        throw new NotImplementedException();
-    }
+    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false) => throw new NotImplementedException();
 
-    public void RemoveTeam(ITeam team)
-    {
-        throw new NotImplementedException();
-    }
+    public void RemoveTeam(ITeam team) => throw new NotImplementedException();
 
-    public void RemoveAllTeams()
-    {
-        throw new NotImplementedException();
-    }
+    public void RemoveAllTeams() => throw new NotImplementedException();
 
-    public void SetBroadcastData(IBroadCastTelegram telegram)
-    {
-        throw new NotImplementedException();
-    }
+    public void SetBroadcastData(IBroadCastTelegram telegram) => throw new NotImplementedException();
 
-    public void SetStockTVResult(IStockTVResult tVResult)
-    {
-        throw new NotImplementedException();
-    }
+    public void SetStockTVResult(IStockTVResult tVResult) => throw new NotImplementedException();
 
     public void Reset() { }
 
-    public void AddVirtualTeams(int count)
-    {
-        throw new NotImplementedException();
-    }
+    public void AddVirtualTeams(int count) => throw new NotImplementedException();
 
-    public void RemoveAllVirtualTeams()
-    {
-        throw new NotImplementedException();
-    }
+    public void RemoveAllVirtualTeams() => throw new NotImplementedException();
+    public bool IsEachGameDone(bool live) => throw new NotImplementedException();
     #endregion
 
     #endregion

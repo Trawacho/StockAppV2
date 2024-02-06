@@ -80,7 +80,8 @@ public class TeamResultPageViewModel
     public bool IsVergleich { get; init; }
     public bool IsBestOf { get; init; }
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1 || _turnier.ContainerTeamBewerbe.TeamBewerbe.Where(b => b.IsSplitGruppe).Any();
-    public string HeaderString => $"E R G E B N I S";
+    public string _HeaderString => $"E R G E B N I S";
+    public string HeaderString => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.IsEachGameDone(false) ? _HeaderString : "Zwischenergebnis";
 
     public string Endtext => _turnier.OrgaDaten.Endtext;
     public string Footer

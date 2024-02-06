@@ -103,14 +103,15 @@ public interface ITeamBewerb : IBewerb
     /// <summary>
     /// Occours when a game is added or removed to a team
     /// </summary>
-    public event EventHandler GamesChanged;
+    event EventHandler GamesChanged;
 
-    public IEnumerable<IGame> GetAllGames(bool withBreaks = true);
+    IEnumerable<IGame> GetAllGames(bool withBreaks = true);
 
-    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false);
+    IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false);
 
-    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false);
+    IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false);
 
+    bool IsEachGameDone(bool live);
 }
 
 
@@ -316,12 +317,16 @@ public class TeamBewerb : ITeamBewerb
     public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false)
     {
         var comparer = new TeamRankingComparer(live, IERVersion);
-        return Teams.Where(t => 
-            groupOne 
+        return Teams.Where(t =>
+            groupOne
                 ? t.StartNumber <= Teams.Count() / 2
                 : t.StartNumber > Teams.Count() / 2
                 ).OrderBy(t => t, comparer);
     }
+
+
+    public bool IsEachGameDone(bool live = false) => Teams.Where(t => t.TeamStatus == TeamStatus.Normal).All(t => t.IsEachGameDone(live));
+    
 
     #endregion
 

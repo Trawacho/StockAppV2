@@ -131,5 +131,10 @@ public class SerialisableSpielstand : ISpielstand
     {
         throw new NotImplementedException();
     }
+
+    public bool IsMasterSpielstandVorhanden(bool live)
+    {
+        throw new NotImplementedException();
+    }
     #endregion
 }

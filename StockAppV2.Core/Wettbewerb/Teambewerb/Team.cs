@@ -21,6 +21,11 @@ public interface ITeam : IEquatable<ITeam>
     public IReadOnlyCollection<IGame> Games { get; }
     public IEnumerable<int> SpieleMitAnspiel();
     public IEnumerable<int> SpieleAufStartSeite();
+    /// <summary>
+    /// TRUE, if each game as a Result
+    /// </summary>
+    /// <returns></returns>
+    public bool IsEachGameDone(bool live);
 
     /// <summary>
     /// Add a game
@@ -199,6 +204,11 @@ public class Team : ITeam
 
         return result;
     }
+
+    public bool IsEachGameDone(bool live = false) => 
+        Games.Where(g => !g.IsPauseGame() && g.GetOpponent(this).TeamStatus== TeamStatus.Normal)
+             .All(g => g.IsGameDone(live));
+
 
 
     #endregion
