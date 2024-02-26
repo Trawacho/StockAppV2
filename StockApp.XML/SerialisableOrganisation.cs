@@ -19,6 +19,7 @@ public class SerialisableOrganisation : IOrgaDaten
         Schiedsrichter = new SerialisableExecutive(orgaDaten.Referee);
         Wettbewerbsleiter = new SerialisableExecutive(orgaDaten.CompetitionManager);
         Rechenbuero = new SerialisableExecutive(orgaDaten.ComputingOfficer);
+        Endtext = orgaDaten.Endtext;
     }
 
 
