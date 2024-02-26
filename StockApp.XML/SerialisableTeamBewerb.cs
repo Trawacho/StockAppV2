@@ -37,6 +37,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
         Gruppenname = bewerb.Gruppenname;
         GameplanId = bewerb.GameplanId;
         IsSplitGruppe = bewerb.IsSplitGruppe;
+        AnzahlAufsteiger = bewerb.AnzahlAufsteiger;
+        AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
+        
     }
 
 
@@ -52,6 +55,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.IERVersion = IERVersion;
         teamBewerb.Gruppenname = Gruppenname;
         teamBewerb.IsSplitGruppe = IsSplitGruppe;
+        teamBewerb.AnzahlAufsteiger = AnzahlAufsteiger;
+        teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
 
 
 

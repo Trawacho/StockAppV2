@@ -48,14 +48,30 @@ public class OutputViewModel : ViewModelBase
 
     public string AnzahlAufsteiger
     {
-        get => _anzahlAufsteiger.ToString();
-        set => SetProperty(ref _anzahlAufsteiger, StringToIntConverter(value));
+        get => TeamBewerb.AnzahlAufsteiger.ToString();
+        set
+        {
+            var val = StringToIntConverter(value);
+            if(TeamBewerb.AnzahlAufsteiger != val)
+            {
+                TeamBewerb.AnzahlAufsteiger = val;
+                RaisePropertyChanged();
+            }
+        }
     }
 
     public string AnzahlAbsteiger
     {
-        get => _anzahlAbsteiger.ToString();
-        set => SetProperty(ref _anzahlAbsteiger, StringToIntConverter(value));
+        get => TeamBewerb.AnzahlAbsteiger.ToString();
+        set
+        {
+            var val = StringToIntConverter(value);
+            if (TeamBewerb.AnzahlAbsteiger != val)
+            {
+                TeamBewerb.AnzahlAbsteiger = val;
+                RaisePropertyChanged();
+            }
+        }
     }
 
     private int StringToIntConverter(string value) => int.TryParse(value, out int result) ? result : 0;
