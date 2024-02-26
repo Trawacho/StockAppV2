@@ -53,6 +53,10 @@
             <vs:GamesView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:OutputViewModel}">
+            <vs:OutputView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type vm:GamesPrintsViewModel}">
             <components:GamesPrintsView/>
         </DataTemplate>
