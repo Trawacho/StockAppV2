@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:StockApp.UI.Views" xmlns:components="clr-namespace:StockApp.UI.Components"
+             xmlns:local="clr-namespace:StockApp.UI.Views" 
+             xmlns:components="clr-namespace:StockApp.UI.Components"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" >
 
@@ -85,32 +86,7 @@
             <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0"  >
 
                 <TextBlock Text="Ausgabe" Style="{StaticResource VmHeader}" FontSize="18"/>
-                
-                <StackPanel Orientation="Horizontal">
-                    <Label HorizontalContentAlignment="Right"
-                           Margin="0 0 5 0"
-                           Content="Mannschaften mit Spielernamen:"/>
-                    <TextBox Text="{Binding Path=NumberOfTeamsWithNamedPlayerOnResult,
-                                            Mode=TwoWay,
-                                            UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="2"
-                             Width="35"
-                             HorizontalAlignment="Left"
-                             HorizontalContentAlignment="Center"
-                             VerticalContentAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical">
-                <TextBlock Text="Endtext" HorizontalAlignment="Left"/>
-                <TextBox Text="{Binding Path=Endtext, Mode=TwoWay, FallbackValue=' '}" 
-                         VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto"
-                         MaxLines="4" 
-                         MinLines="4"
-                         AcceptsReturn="True" 
-                         Width="600" 
-                         Padding="5"/>
-                </StackPanel>
-                
+                               
                 <Button Content="Ergebnisliste" 
                         Margin="0 10" 
                         Padding="30 10" 
@@ -123,6 +99,7 @@
                         Width="150"
                         Command="{Binding Path=ShowLiveResultCommand}"
                         HorizontalAlignment="Left"/>
+                
             </StackPanel>
 
         </Grid>

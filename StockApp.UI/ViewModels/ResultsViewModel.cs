@@ -30,28 +30,7 @@ public class ResultsViewModel : ViewModelBase
         (p) => { return true; });
     public ICommand ShowLiveResultCommand { get; init; }
 
-    public int NumberOfTeamsWithNamedPlayerOnResult
-    {
-        get => TeamBewerb.NumberOfTeamsWithNamedPlayerOnResult;
-        set
-        {
-            if (TeamBewerb.NumberOfTeamsWithNamedPlayerOnResult != value)
-            {
-                TeamBewerb.NumberOfTeamsWithNamedPlayerOnResult = value;
-                RaisePropertyChanged();
-            }
-        }
-    }
-
-    public string Endtext
-    {
-        get => _turnierStore.Turnier.OrgaDaten.Endtext;
-        set
-        {
-            _turnierStore.Turnier.OrgaDaten.Endtext = value;
-            RaisePropertyChanged();
-        }
-    }
+    
 
     public bool? InputAfterGame
     {

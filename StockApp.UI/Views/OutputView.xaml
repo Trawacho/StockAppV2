@@ -14,12 +14,145 @@
         </Style>
     </d:DesignerProperties.DesignStyle>
 
-    <Grid Background="WhiteSmoke">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0 0 5 10"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0 0 0 10"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="WhiteSmoke" Grid.IsSharedSizeScope="true">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <components:TopHeader TopHeaderText ="Ausgaben"/>
+
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+ 
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0">
+                          Teams mit Spielernamen:
+                </TextBlock>
+                <TextBox Grid.Column="1" 
+                         MaxLength="2"
+                         VerticalAlignment="Top"
+                         Text="{Binding Path=NumberOfTeamsWithNamedPlayerOnResult}"
+                         HorizontalContentAlignment="Center"
+                         Width="35"/>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Anzahl Aufsteiger:"/>
+                <TextBox Grid.Column="1" 
+                         MaxLength="1"
+                         Text="{Binding Path=AnzahlAufsteiger}"
+                         HorizontalContentAlignment="Center"
+                         Width="20"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" 
+                           Text="Anzahl Absteiger:"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding Path=AnzahlAbsteiger}"
+                         HorizontalContentAlignment="Center"
+                         Width="20"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Margin="0 0 5 0"
+                           VerticalAlignment="Top">
+                    Endtext auf<LineBreak/>Ergebnisliste:
+                </TextBlock>
+                <TextBox  Grid.Column="1" 
+                          Text="{Binding Path=EndText}"
+                          AcceptsReturn="True"
+                          Padding="3 1 3 1"
+                          MinLines="4"
+                          MaxLines="4"
+                          HorizontalScrollBarVisibility="Auto"
+                          MinWidth="400"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Image links oben:"/>
+
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Image rechts oben:"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Text="Image oben:"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+            </Grid>
+        </StackPanel>
+
     </Grid>
 </UserControl>
