@@ -137,8 +137,12 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlArray(ElementName = "Spiele")]
     public List<SerialisableGame> SerialisableGames { get; set; }
+    
+    [XmlElement(ElementName ="Aufsteiger")]
+    public int AnzahlAufsteiger { get; set; } = 0;
 
-
+    [XmlElement(ElementName = "Absteiger")]
+    public int AnzahlAbsteiger { get; set; } = 0;
 
     #region XMLIgnore
 
@@ -163,35 +167,23 @@ public class SerialisableTeamBewerb : ITeamBewerb
     #region Methods
 
     public void AddTeam(ITeam team) => throw new NotImplementedException();
-    public void AddNewTeam()
-    {
-        throw new NotImplementedException();
-    }
+    public void AddNewTeam() => throw new NotImplementedException();
 
-    public void CreateGames()
-    {
-        throw new NotImplementedException();
-    }
 
-    public IEnumerable<IGame> GetAllGames(bool withBreaks = true)
-    {
-        throw new NotImplementedException();
-    }
+    public void CreateGames() => throw new NotImplementedException();
 
-    public int GetCountOfGames()
-    {
-        throw new NotImplementedException();
-    }
 
-    public int GetCountOfGamesPerCourt()
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<IGame> GetAllGames(bool withBreaks = true) => throw new NotImplementedException();
 
-    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live)
-    {
-        throw new NotImplementedException();
-    }
+
+    public int GetCountOfGames() => throw new NotImplementedException();
+
+
+    public int GetCountOfGamesPerCourt() => throw new NotImplementedException();
+
+
+    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live) => throw new NotImplementedException();
+
 
     public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false) => throw new NotImplementedException();
 
