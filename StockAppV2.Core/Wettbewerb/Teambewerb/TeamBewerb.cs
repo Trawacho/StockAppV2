@@ -48,6 +48,15 @@ public interface ITeamBewerb : IBewerb
     int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
 
     /// <summary>
+    /// Anzahl der Mannschaften die als Aufsteiger in der Ergebnisliste gekennzeichnet werden
+    /// </summary>
+    int AnzahlAufsteiger { get; set; }
+
+    /// <summary>
+    /// Anzahl der Mannschaften die als Absteiger in der Ergebnisliste gekennzeichnet werden
+    /// </summary>
+    int AnzahlAbsteiger { get; set; }
+    /// <summary>
     /// Nummer der Spielgruppe
     /// </summary>
     int SpielGruppe { get; set; }
@@ -204,6 +213,16 @@ public class TeamBewerb : ITeamBewerb
     /// Bei wieviel Mannschaften werden die Spielernamen auf der Ergebnisliste mit angedruckt
     /// </summary>
     public int NumberOfTeamsWithNamedPlayerOnResult { get; set; } = 3;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int AnzahlAufsteiger { get; set; } = 0;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int AnzahlAbsteiger { get; set; } = 0;   
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind
