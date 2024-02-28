@@ -7,6 +7,7 @@ public class RankedTeamModel
     private readonly ITeam _team;
     private readonly bool _printNameOfPlayer;
     private readonly bool _live;
+    private readonly string _aufAbSteiger;
     private readonly int _rank;
 
     public int Rank => _rank;
@@ -37,12 +38,15 @@ public class RankedTeamModel
     public string StockNote => _team.GetStockNote(_live).ToString("F3");
     public string StockPunkteDifferenz => $"{_team.GetStockPunkteDifferenz(_live)}";
     public bool HasPlayerNames => _printNameOfPlayer && !string.IsNullOrWhiteSpace(PlayerNames);
-    public RankedTeamModel(int rank, ITeam team, bool printNameOfPlayer, bool live)
+    public string AufAbSteiger => _aufAbSteiger;
+
+    public RankedTeamModel(int rank, ITeam team, bool printNameOfPlayer, bool live, string aufAbSteiger = "")
     {
         _rank = rank;
         _team = team;
         _printNameOfPlayer = printNameOfPlayer;
         _live = live;
+        _aufAbSteiger = aufAbSteiger;
     }
 
 }

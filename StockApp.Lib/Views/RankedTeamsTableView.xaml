@@ -40,6 +40,7 @@
         <Grid Grid.Row="1" HorizontalAlignment="Center">
 
             <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="ssgAufAb" />
                 <ColumnDefinition SharedSizeGroup="ssgRang" />
                 <ColumnDefinition SharedSizeGroup="ssgTeamname"/>
                 <ColumnDefinition SharedSizeGroup="ssgSpPunkte"/>
@@ -57,23 +58,24 @@
                 </Style>
             </Grid.Resources>
 
+            
             <Label Content="Rang" 
-                   Grid.Column="0"
+                   Grid.Column="1"
                    Margin="0" />
             <Label Content="Mannschaft" 
-                   Grid.Column="1" 
+                   Grid.Column="2" 
                    HorizontalContentAlignment="Left" />
             <Label Content="Punkte" 
-                   Grid.Column="2" />
+                   Grid.Column="3" />
             <Label Content="Diff" 
-                   Grid.Column="3" 
+                   Grid.Column="4" 
                    Visibility="{Binding IERVersion2022, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Label Content="Note" 
-                   Grid.Column="3" 
+                   Grid.Column="4" 
                    Visibility="{Binding IERVersion2022, Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
             <Label Content="Stockpunkte" 
                    Visibility="{Binding ShowStockPunkte, Converter={StaticResource BooleanToVisibilityConverter}}"
-                   Grid.Column="4" />
+                   Grid.Column="5" />
 
 
         </Grid>
@@ -86,6 +88,7 @@
                     <Grid Grid.Row="0" Margin="0 0 0 5" HorizontalAlignment="Center">
 
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" x:Name="columnAufAb"         SharedSizeGroup="ssgAufAb"/>
                             <ColumnDefinition Width="auto" x:Name="columnRang"          SharedSizeGroup="ssgRang"/>
                             <ColumnDefinition Width="*"    x:Name="columnTeamName"      SharedSizeGroup="ssgTeamname" MinWidth="8cm"/>
                             <ColumnDefinition Width="auto" x:Name="columnPunkte"        SharedSizeGroup="ssgSpPunkte"/>
@@ -110,33 +113,34 @@
                             </Style>
                         </Grid.Resources>
 
-                        <Label Content="{Binding Rank}" Grid.Column="0" Margin="0"/>
-                        <Label Content="{Binding TeamName}" Grid.Column="1" HorizontalContentAlignment="Left" />
-                        <Label Content="{Binding SpielPunkte}" Grid.Column="2" />
+                        <Label Content="{Binding AufAbSteiger}" Grid.Column="0" Margin="0" FontSize="9"/>
+                        <Label Content="{Binding Rank}" Grid.Column="1" Margin="0"/>
+                        <Label Content="{Binding TeamName}" Grid.Column="2" HorizontalContentAlignment="Left" />
+                        <Label Content="{Binding SpielPunkte}" Grid.Column="3" />
 
                         <Label Content="{Binding StockPunkteDifferenz}" 
                                    Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, 
                                                         Converter={StaticResource BooleanToVisibilityConverter},
                                                         Path=DataContext.IERVersion2022}"
-                                   Grid.Column="3"/>
+                                   Grid.Column="4"/>
                         <Label Content="{Binding StockNote}" 
                                    Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, 
                                                         Converter={StaticResource BooleanToVisibilityInvertedConverter},
                                                         Path=DataContext.IERVersion2022}"
-                                   Grid.Column="3" />
+                                   Grid.Column="4" />
 
                         <Label Content="{Binding StockPunkte}"  
                                Visibility="{Binding RelativeSource={RelativeSource AncestorType=UserControl},
                                                     Converter={StaticResource BooleanToVisibilityConverter},
                                                     Path=DataContext.ShowStockPunkte}"
-                               Grid.Column="4" />
+                               Grid.Column="5" />
 
 
                         <!-- Zeile mit Spielernamen-->
                         <TextBlock Text="{Binding PlayerNames}" 
                                    Grid.Row="1"
                                    Grid.Column="0"
-                                   Grid.ColumnSpan="5"
+                                   Grid.ColumnSpan="6"
                                    Visibility="{Binding HasPlayerNames, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    Margin="10 0 10 0"
                                    FontSize="12"
@@ -145,6 +149,7 @@
                                    HorizontalAlignment="Stretch"
                                    TextWrapping="WrapWithOverflow"
                                    TextAlignment="Left"/>
+                        
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

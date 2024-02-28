@@ -1,6 +1,7 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StockApp.Lib.ViewModels;
 
@@ -20,11 +21,15 @@ public class RankedTeamsTableViewModel : ViewModelBase
         _teamBewerb = teamBewerb;
         ShowStockPunkte = true;
         _isLive = isLive;
-        _groupName = showGroupName  ? $"{_teamBewerb.Gruppenname}" : null;
+        _groupName = showGroupName ? $"{_teamBewerb.Gruppenname}" : null;
         int rank = 1;
         foreach (var t in _teamBewerb.GetTeamsRanked())
         {
-            RankedTeams.Add(new RankedTeamModel(rank: rank, team: t, printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult, live: false));
+            RankedTeams.Add(new RankedTeamModel(rank: rank,
+                                                team: t,
+                                                printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult,
+                                                live: false,
+                                                aufAbSteiger: AufAbSteigerZeichen(rank)));
             rank++;
         }
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;
@@ -37,11 +42,15 @@ public class RankedTeamsTableViewModel : ViewModelBase
         _isLive = isLive;
         ShowStockPunkte = showStockPunkte;
         _groupName = isSplitGroupOne ? "Gruppe A" : "Gruppe B";
-        
+
         int rank = 1;
-        foreach (var t in _teamBewerb.GetSplitTeamsRanked(isSplitGroupOne, isLive)) 
+        foreach (var t in _teamBewerb.GetSplitTeamsRanked(isSplitGroupOne, isLive))
         {
-            RankedTeams.Add(new RankedTeamModel(rank: rank, team: t, printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult, live: _isLive));
+            RankedTeams.Add(new RankedTeamModel(rank: rank,
+                                                team: t,
+                                                printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult,
+                                                live: _isLive,
+                                                aufAbSteiger: AufAbSteigerZeichen(rank)));
             rank++;
         }
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;
@@ -53,4 +62,11 @@ public class RankedTeamsTableViewModel : ViewModelBase
     public string GroupName => _groupName;
 
     public bool ShowStockPunkte { get; init; }
+
+    private string AufAbSteigerZeichen(int rank)
+    {
+        return rank <= _teamBewerb.AnzahlAufsteiger ? "↑"
+                        : (_teamBewerb.Teams.Count() - rank) < _teamBewerb.AnzahlAbsteiger ? "↓"
+                        : string.Empty;
+    }
 }
