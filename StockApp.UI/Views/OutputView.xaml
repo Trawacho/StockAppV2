@@ -25,6 +25,11 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
         </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Margin" Value="0 0 0 10"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+        </Style>
     </UserControl.Resources>
 
     <Grid Background="WhiteSmoke" Grid.IsSharedSizeScope="true">
@@ -106,6 +111,9 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Image links oben:"/>
+                <Button Content="Datei auswählen..."
+                        Grid.Column="1"
+                        Command="{Binding ImageLinksObenSelectCommand}"/>
 
             </Grid>
             <Grid>
@@ -129,7 +137,11 @@
                     <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-
+                <TextBlock Grid.Column="0"
+                           Text="Teams mit Startnummern:"/>
+                <CheckBox Grid.Column="1"
+                          IsThreeState="False"
+                          IsChecked="{Binding Path=TeamNameWithStartnumber}"/>
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>

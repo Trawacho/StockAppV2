@@ -1,6 +1,8 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
+using StockApp.UI.Commands;
 using StockApp.UI.Stores;
+using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
 
@@ -46,7 +48,7 @@ public class OutputViewModel : ViewModelBase
         set
         {
             var val = StringToIntConverter(value);
-            if(TeamBewerb.AnzahlAufsteiger != val)
+            if (TeamBewerb.AnzahlAufsteiger != val)
             {
                 TeamBewerb.AnzahlAufsteiger = val;
                 RaisePropertyChanged();
@@ -79,4 +81,18 @@ public class OutputViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
+
+    public bool TeamNameWithStartnumber
+    {
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.TeamNameWithStartnumber;
+        set
+        {
+            _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.TeamNameWithStartnumber = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public ICommand ImageLinksObenSelectCommand => new RelayCommand(
+        (p) => { },
+        (p) => true);
 }

@@ -29,7 +29,8 @@ public class RankedTeamsTableViewModel : ViewModelBase
                                                 team: t,
                                                 printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult,
                                                 live: false,
-                                                aufAbSteiger: AufAbSteigerZeichen(rank)));
+                                                aufAbSteiger: AufAbSteigerZeichen(rank),
+                                                teamNameWithStartnumber: _teamBewerb.TeamNameWithStartnumber));
             rank++;
         }
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;
@@ -50,7 +51,8 @@ public class RankedTeamsTableViewModel : ViewModelBase
                                                 team: t,
                                                 printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult,
                                                 live: _isLive,
-                                                aufAbSteiger: AufAbSteigerZeichen(rank)));
+                                                aufAbSteiger: AufAbSteigerZeichen(rank),
+                                                teamNameWithStartnumber: _teamBewerb.TeamNameWithStartnumber));
             rank++;
         }
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;

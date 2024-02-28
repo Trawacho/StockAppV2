@@ -61,6 +61,12 @@ public interface ITeamBewerb : IBewerb
     /// Anzahl der Mannschaften die als Absteiger in der Ergebnisliste gekennzeichnet werden
     /// </summary>
     int AnzahlAbsteiger { get; set; }
+
+    /// <summary>
+    /// Beim Mannschaftsnamen wird die Startnummer mit angegeben
+    /// </summary>
+    bool TeamNameWithStartnumber { get; set; }
+    
     /// <summary>
     /// Nummer der Spielgruppe
     /// </summary>
@@ -230,8 +236,15 @@ public class TeamBewerb : ITeamBewerb
     /// </summary>
     public int AnzahlAbsteiger { get; set; } = 0;
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public string Endtext { get => _endText; set => _endText = value?.Trim(); }
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public bool TeamNameWithStartnumber {  get; set; } = false;
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind

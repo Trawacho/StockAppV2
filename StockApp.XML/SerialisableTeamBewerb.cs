@@ -40,10 +40,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
         AnzahlAufsteiger = bewerb.AnzahlAufsteiger;
         AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
         Endtext = bewerb.Endtext;
-        
+        TeamNameWithStartnumber = bewerb.TeamNameWithStartnumber;
     }
-
-
 
 
     internal void ToNormal(ITeamBewerb teamBewerb)
@@ -59,6 +57,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.AnzahlAufsteiger = AnzahlAufsteiger;
         teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
         teamBewerb.Endtext = Endtext;
+        teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
 
 
 
@@ -153,6 +152,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlElement(ElementName ="Endtext")]
     public string Endtext { get; set; }
+
+    [XmlElement(ElementName ="TeamNameWithStarnumber")]
+    public bool TeamNameWithStartnumber { get; set; }  
 
     #region XMLIgnore
 
