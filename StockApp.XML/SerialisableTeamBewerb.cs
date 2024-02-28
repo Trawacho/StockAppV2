@@ -39,6 +39,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         IsSplitGruppe = bewerb.IsSplitGruppe;
         AnzahlAufsteiger = bewerb.AnzahlAufsteiger;
         AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
+        Endtext = bewerb.Endtext;
         
     }
 
@@ -57,6 +58,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.IsSplitGruppe = IsSplitGruppe;
         teamBewerb.AnzahlAufsteiger = AnzahlAufsteiger;
         teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
+        teamBewerb.Endtext = Endtext;
 
 
 
@@ -148,6 +150,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlElement(ElementName = "Absteiger")]
     public int AnzahlAbsteiger { get; set; } = 0;
+
+    [XmlElement(ElementName ="Endtext")]
+    public string Endtext { get; set; }
 
     #region XMLIgnore
 

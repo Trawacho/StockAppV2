@@ -48,6 +48,11 @@ public interface ITeamBewerb : IBewerb
     int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
 
     /// <summary>
+    /// Text, der unterhalb der Tabelle bei einer Ergebnisliste angezeigt wird
+    /// </summary>
+    public string Endtext { get; set; }
+
+    /// <summary>
     /// Anzahl der Mannschaften die als Aufsteiger in der Ergebnisliste gekennzeichnet werden
     /// </summary>
     int AnzahlAufsteiger { get; set; }
@@ -159,6 +164,7 @@ public class TeamBewerb : ITeamBewerb
     private readonly List<ITeam> _teams = new();
     private int _numberOfGameRounds = 1;
     private bool _is8TurnsGame;
+    private string _endText;
 
     #endregion
 
@@ -222,7 +228,10 @@ public class TeamBewerb : ITeamBewerb
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public int AnzahlAbsteiger { get; set; } = 0;   
+    public int AnzahlAbsteiger { get; set; } = 0;
+
+    public string Endtext { get => _endText; set => _endText = value?.Trim(); }
+
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind

@@ -9,12 +9,6 @@ public class OutputViewModel : ViewModelBase
     private readonly ITurnierStore _turnierStore;
     private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
 
-    int _anzahlAufsteiger;
-    int _anzahlAbsteiger;
-    object _logoLinks;
-    object _logoRechts;
-    object _briefKopf;
-
     public OutputViewModel(ITurnierStore turnierStore)
     {
         _turnierStore = turnierStore;
@@ -78,10 +72,10 @@ public class OutputViewModel : ViewModelBase
 
     public string EndText
     {
-        get => _turnierStore.Turnier.OrgaDaten.Endtext;
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext;
         set
         {
-            _turnierStore.Turnier.OrgaDaten.Endtext = value;
+            _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext = value;
             RaisePropertyChanged();
         }
     }

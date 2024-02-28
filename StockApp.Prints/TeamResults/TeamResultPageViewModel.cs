@@ -2,7 +2,6 @@
 using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -83,7 +82,7 @@ public class TeamResultPageViewModel
     public string _HeaderString => $"E R G E B N I S";
     public string HeaderString => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.IsEachGameDone(false) ? _HeaderString : "Zwischenergebnis";
 
-    public string Endtext => _turnier.OrgaDaten.Endtext;
+    public string Endtext => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext;
     public string Footer
     {
         get
