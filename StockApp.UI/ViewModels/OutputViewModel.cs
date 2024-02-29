@@ -93,23 +93,82 @@ public class OutputViewModel : ViewModelBase
         }
     }
 
-    public string ImageLinksObenPath => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename;
-    public ICommand ImageLinksObenResetCommand => new RelayCommand(
-        (p) =>
+    public string ImageLinksObenPath
+    {
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename ;
+        set
         {
-            _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename = null;
-            RaisePropertyChanged(nameof(ImageLinksObenPath));
-        },
+            if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename != value)
+            {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename = value;
+                RaisePropertyChanged();
+            }
+        }
+    }
+
+    public string ImageRechtsObenPath
+    {
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename ;
+        set
+        {
+            if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename != value)
+            {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename = value;
+                RaisePropertyChanged();
+            }
+        }
+    }
+
+    public string ImageHeaderPath
+    {
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename;
+        set
+        {
+            if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename != value)
+            {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename = value;
+                RaisePropertyChanged();
+            }
+        }
+    }
+
+    public ICommand ImageLinksObenResetCommand => new RelayCommand(
+        (p) => ImageLinksObenPath = null,
         (p) => true);
 
     public ICommand ImageLinksObenSelectCommand => new RelayCommand(
         (p) =>
         {
             var ofd = new OpenFileDialog();
-            
-            ofd.ShowDialog();
-            _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename = ofd.FileName;
-            RaisePropertyChanged(nameof(ImageLinksObenPath));
+            if (ofd.ShowDialog() == true)
+                ImageLinksObenPath = ofd.FileName;
+        },
+        (p) => true);
+
+
+    public ICommand ImageRechtsObenResetCommand => new RelayCommand(
+        (p) => ImageRechtsObenPath = null,
+        (p) => true);
+
+    public ICommand ImageRechtsObenSelectCommand => new RelayCommand(
+        (p) =>
+        {
+            var ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == true)
+                ImageRechtsObenPath = ofd.FileName;
+        },
+        (p) => true);
+
+    public ICommand ImageHeaderResetCommand => new RelayCommand(
+        (p) => ImageHeaderPath = null,
+        (p) => true);
+
+    public ICommand ImageHeaderSelectCommand => new RelayCommand(
+        (p) =>
+        {
+            var ofd = new OpenFileDialog();
+            if (ofd.ShowDialog() == true)
+                ImageHeaderPath = ofd.FileName;
         },
         (p) => true);
 }

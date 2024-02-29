@@ -78,31 +78,47 @@
 
                 <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="4cm"/>
+                        <ColumnDefinition Width="3cm"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="4cm"/>
+                        <ColumnDefinition Width="3cm"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="3.5cm"/>
+                        <RowDefinition Height="3.0cm"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
+                    <Viewbox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Height="3cm">
+                        <Image Source="{Binding ImageHeaderPath, TargetNullValue={x:Null}}"
+                               Stretch="Fill"
+                               HorizontalAlignment="Center"/>
+                    </Viewbox>
+                    
                     <Viewbox Grid.Row="0" Grid.Column="0" >
-                        <!--<Rectangle Width="100" Height="100" Fill="Transparent"/>-->
                         <Image Source="{Binding ImageTopLeftPath, TargetNullValue={x:Null}}"
-                               Width="100"
-                               Height="100"
                                Stretch="Fill"/>
                     </Viewbox>
 
-                    <Viewbox Grid.Row="0" Grid.Column="1">
+                    <Viewbox Grid.Row="0" Grid.Column="1"
+                             Visibility="{Binding Path=IsTitle1stLine, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock Text="{Binding Title}" 
                                FontWeight="Bold"
                                TextAlignment="Center"
                                TextWrapping="Wrap"/>
                     </Viewbox>
+                    
+                    <Viewbox Grid.Row="1" Grid.Column="0" 
+                             Grid.ColumnSpan="3" 
+                             MaxHeight="2cm" 
+                             Visibility="{Binding Path=IsTitle2ndLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="{Binding Title}" 
+                                   FontWeight="Bold"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                    </Viewbox>
 
                     <Viewbox Grid.Row="0" Grid.Column="2" >
-                        <Rectangle Width="100" Height="100" Fill="Transparent"/>
+                        <Image Source="{Binding ImageTopRightPath, TargetNullValue={x:Null}}"
+                               Stretch="Fill"/>
                     </Viewbox>
                 </Grid>
 
@@ -156,7 +172,7 @@
                 <TextBlock Text="created by StockApp" FontSize="7" HorizontalAlignment="Left" Margin="40,10,0,3"/>
                 <Line X1="0" X2="1" Y1="0" Y2="0" StrokeThickness="1" Stretch="Fill" Stroke="Black"/>
 
-                <Viewbox Height="1.8cm">
+                <Viewbox Height="1.6cm">
                     <Label Content="{Binding HeaderString}"
                        HorizontalContentAlignment="Center"
                        FontWeight="Bold"/>

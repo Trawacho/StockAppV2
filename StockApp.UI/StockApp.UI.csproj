@@ -23,9 +23,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Resource Include="Ressources\icon_delete.png">
+		<Content Include="Ressources\icon_delete.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Resource>
+		</Content>
 		<Resource Include="Ressources\StockAPP_512.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>

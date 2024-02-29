@@ -58,7 +58,7 @@
         </Style>
 
         <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
-        
+
     </UserControl.Resources>
 
     <Grid Background="WhiteSmoke" Grid.IsSharedSizeScope="true">
@@ -168,6 +168,25 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Image rechts oben:"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Datei ..."
+                            Command="{Binding ImageRechtsObenSelectCommand}"
+                            Padding="5"/>
+                    <TextBlock Text="{Binding ImageRechtsObenPath}" 
+                               Margin="10 0" 
+                               TextAlignment="Justify" 
+                               VerticalAlignment="Center" 
+                               FontSize="12"/>
+                    <Button Command="{Binding ImageRechtsObenResetCommand}"
+                            Style="{StaticResource DeleteIconButtonStyle}"
+                            Visibility="{Binding Path=ImageRechtsObenPath, 
+                                                 Converter={StaticResource NullToVisibilityConverter}}">
+                        <Image Source="../Ressources/icon_delete.png" 
+                               Height="15" 
+                               Stretch="Fill" 
+                               VerticalAlignment="Top"/>
+                    </Button>
+                </StackPanel>
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -176,6 +195,26 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Image oben:"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Datei ..."
+                            Command="{Binding ImageHeaderSelectCommand}"
+                            Padding="5"/>
+                    <TextBlock Text="{Binding ImageHeaderPath}" 
+                               Margin="10 0" 
+                               TextAlignment="Justify" 
+                               VerticalAlignment="Center" 
+                               FontSize="12"/>
+                    <Button Command="{Binding ImageHeaderResetCommand}"
+                            Style="{StaticResource DeleteIconButtonStyle}"
+                            Visibility="{Binding Path=ImageHeaderPath, 
+                                                 Converter={StaticResource NullToVisibilityConverter}}">
+                        <Image Source="../Ressources/icon_delete.png" 
+                               Height="15" 
+                               Stretch="Fill" 
+                               VerticalAlignment="Top"/>
+                    </Button>
+                </StackPanel>
+
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>

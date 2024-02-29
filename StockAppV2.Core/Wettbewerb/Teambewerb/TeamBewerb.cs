@@ -71,6 +71,16 @@ public interface ITeamBewerb : IBewerb
     /// Image Links Oben - Dateiname
     /// </summary>
     string ImageTopLeftFilename { get; set; }
+
+    /// <summary>
+    /// Image Rechts Oben - Dateiname
+    /// </summary>
+    string ImageTopRightFilename { get; set; }
+    
+    /// <summary>
+    /// Image oben in der Mitte - Dateiname
+    /// </summary>
+    string ImageHeaderFilename { get; set; }
     
     /// <summary>
     /// Nummer der Spielgruppe
@@ -255,6 +265,16 @@ public class TeamBewerb : ITeamBewerb
     /// <inheritdoc/>
     /// </summary>
     public string ImageTopLeftFilename { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public string ImageTopRightFilename { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public string ImageHeaderFilename { get; set; }
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind

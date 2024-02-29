@@ -42,6 +42,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
         Endtext = bewerb.Endtext;
         TeamNameWithStartnumber = bewerb.TeamNameWithStartnumber;
         ImageTopLeftFilename = bewerb.ImageTopLeftFilename;
+        ImageTopRightFilename = bewerb.ImageTopRightFilename;
+        ImageHeaderFilename = bewerb.ImageHeaderFilename;
     }
 
 
@@ -60,6 +62,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.Endtext = Endtext;
         teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
         teamBewerb.ImageTopLeftFilename = ImageTopLeftFilename;
+        teamBewerb.ImageTopRightFilename = ImageTopRightFilename;
+        teamBewerb.ImageHeaderFilename = ImageHeaderFilename;
 
 
 
@@ -145,21 +149,27 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlArray(ElementName = "Spiele")]
     public List<SerialisableGame> SerialisableGames { get; set; }
-    
-    [XmlElement(ElementName ="Aufsteiger")]
+
+    [XmlElement(ElementName = "Aufsteiger")]
     public int AnzahlAufsteiger { get; set; } = 0;
 
     [XmlElement(ElementName = "Absteiger")]
     public int AnzahlAbsteiger { get; set; } = 0;
 
-    [XmlElement(ElementName ="Endtext")]
+    [XmlElement(ElementName = "Endtext")]
     public string Endtext { get; set; }
 
-    [XmlElement(ElementName ="TeamNameWithStarnumber")]
+    [XmlElement(ElementName = "TeamNameWithStarnumber")]
     public bool TeamNameWithStartnumber { get; set; }
 
-    [XmlElement(ElementName ="ImageTopLeft")]
+    [XmlElement(ElementName = "ImageTopLeft")]
     public string ImageTopLeftFilename { get; set; }
+
+    [XmlElement(ElementName = "ImageTopRight")]
+    public string ImageTopRightFilename { get; set; }
+
+    [XmlElement(ElementName = "ImageHeader")]
+    public string ImageHeaderFilename { get; set; }
 
     #region XMLIgnore
 

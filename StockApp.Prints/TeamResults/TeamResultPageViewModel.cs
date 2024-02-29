@@ -54,6 +54,9 @@ public class TeamResultPageViewModel
 
 
     public string Title => _turnier.OrgaDaten.TournamentName;
+    public bool IsTitle2ndLine => ImageHeaderPath != null;
+    public bool IsTitle1stLine => ImageHeaderPath == null;
+
     public string Durchführer => _turnier.OrgaDaten.Operator;
     public bool HasOperator { get; init; }
 
@@ -105,5 +108,7 @@ public class TeamResultPageViewModel
     }
 
 
-    public string ImageTopLeftPath => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename;
+    public string ImageTopLeftPath => ImageHeaderPath == null ?  _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename : null;
+    public string ImageTopRightPath => ImageHeaderPath == null ?  _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename : null;
+    public string ImageHeaderPath => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename;
 }
