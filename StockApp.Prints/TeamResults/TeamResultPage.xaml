@@ -36,8 +36,8 @@
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
         <Style TargetType="UserControl">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="Width" Value="600"/>
-            <Setter Property="Height" Value="800"/>
+            <Setter Property="Width" Value="20cm"/>
+            <Setter Property="Height" Value="29cm"/>
         </Style>
     </d:DesignerProperties.DesignStyle>
 
