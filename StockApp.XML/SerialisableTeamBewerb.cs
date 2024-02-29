@@ -41,6 +41,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
         Endtext = bewerb.Endtext;
         TeamNameWithStartnumber = bewerb.TeamNameWithStartnumber;
+        ImageTopLeftFilename = bewerb.ImageTopLeftFilename;
     }
 
 
@@ -58,6 +59,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
         teamBewerb.Endtext = Endtext;
         teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
+        teamBewerb.ImageTopLeftFilename = ImageTopLeftFilename;
 
 
 
@@ -154,7 +156,10 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public string Endtext { get; set; }
 
     [XmlElement(ElementName ="TeamNameWithStarnumber")]
-    public bool TeamNameWithStartnumber { get; set; }  
+    public bool TeamNameWithStartnumber { get; set; }
+
+    [XmlElement(ElementName ="ImageTopLeft")]
+    public string ImageTopLeftFilename { get; set; }
 
     #region XMLIgnore
 

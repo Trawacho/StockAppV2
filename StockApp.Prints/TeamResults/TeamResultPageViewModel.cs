@@ -103,4 +103,7 @@ public class TeamResultPageViewModel
             return footerText;
         }
     }
+
+
+    public string ImageTopLeftPath => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename;
 }

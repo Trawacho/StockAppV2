@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StockApp.UI.Views" 
              xmlns:components="clr-namespace:StockApp.UI.Components"
+             xmlns:conv="clr-namespace:StockApp.Lib.Converters;assembly=StockApp.Lib"
              mc:Ignorable="d">
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
@@ -30,6 +31,34 @@
             <Setter Property="Margin" Value="0 0 0 10"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
         </Style>
+
+        <!-- This style is used for buttons, to remove the WPF default 'animated' mouse over effect -->
+        <Style x:Key="DeleteIconButtonStyle" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+                                BorderThickness="0"
+                                Padding="4 2" 
+                                BorderBrush="Transparent" 
+                                CornerRadius="3" 
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Black" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        
     </UserControl.Resources>
 
     <Grid Background="WhiteSmoke" Grid.IsSharedSizeScope="true">
@@ -42,13 +71,13 @@
         <components:TopHeader TopHeaderText ="Ausgaben"/>
 
         <StackPanel Grid.Row="1" Orientation="Vertical">
- 
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <TextBlock Grid.Column="0">
                           Teams mit Spielernamen:
                 </TextBlock>
@@ -111,9 +140,25 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0"
                            Text="Image links oben:"/>
-                <Button Content="Datei auswählen..."
-                        Grid.Column="1"
-                        Command="{Binding ImageLinksObenSelectCommand}"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Datei ..."
+                            Command="{Binding ImageLinksObenSelectCommand}"
+                            Padding="5"/>
+                    <TextBlock Text="{Binding ImageLinksObenPath}" 
+                               Margin="10 0" 
+                               TextAlignment="Justify" 
+                               VerticalAlignment="Center" 
+                               FontSize="12"/>
+                    <Button Command="{Binding ImageLinksObenResetCommand}"
+                            Style="{StaticResource DeleteIconButtonStyle}"
+                            Visibility="{Binding Path=ImageLinksObenPath, 
+                                                 Converter={StaticResource NullToVisibilityConverter}}">
+                        <Image Source="../Ressources/icon_delete.png" 
+                               Height="15" 
+                               Stretch="Fill" 
+                               VerticalAlignment="Top"/>
+                    </Button>
+                </StackPanel>
 
             </Grid>
             <Grid>

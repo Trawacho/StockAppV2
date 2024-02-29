@@ -1,4 +1,5 @@
-﻿using StockApp.Core.Wettbewerb.Teambewerb;
+﻿using Microsoft.Win32;
+using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Stores;
@@ -92,7 +93,23 @@ public class OutputViewModel : ViewModelBase
         }
     }
 
+    public string ImageLinksObenPath => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename;
+    public ICommand ImageLinksObenResetCommand => new RelayCommand(
+        (p) =>
+        {
+            _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename = null;
+            RaisePropertyChanged(nameof(ImageLinksObenPath));
+        },
+        (p) => true);
+
     public ICommand ImageLinksObenSelectCommand => new RelayCommand(
-        (p) => { },
+        (p) =>
+        {
+            var ofd = new OpenFileDialog();
+            
+            ofd.ShowDialog();
+            _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename = ofd.FileName;
+            RaisePropertyChanged(nameof(ImageLinksObenPath));
+        },
         (p) => true);
 }

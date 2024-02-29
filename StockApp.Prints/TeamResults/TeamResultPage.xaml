@@ -87,7 +87,11 @@
                     </Grid.RowDefinitions>
 
                     <Viewbox Grid.Row="0" Grid.Column="0" >
-                        <Rectangle Width="100" Height="100" Fill="Transparent"/>
+                        <!--<Rectangle Width="100" Height="100" Fill="Transparent"/>-->
+                        <Image Source="{Binding ImageTopLeftPath, TargetNullValue={x:Null}}"
+                               Width="100"
+                               Height="100"
+                               Stretch="Fill"/>
                     </Viewbox>
 
                     <Viewbox Grid.Row="0" Grid.Column="1">

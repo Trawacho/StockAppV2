@@ -66,6 +66,11 @@ public interface ITeamBewerb : IBewerb
     /// Beim Mannschaftsnamen wird die Startnummer mit angegeben
     /// </summary>
     bool TeamNameWithStartnumber { get; set; }
+
+    /// <summary>
+    /// Image Links Oben - Dateiname
+    /// </summary>
+    string ImageTopLeftFilename { get; set; }
     
     /// <summary>
     /// Nummer der Spielgruppe
@@ -245,6 +250,11 @@ public class TeamBewerb : ITeamBewerb
     /// <inheritdoc/>
     /// </summary>
     public bool TeamNameWithStartnumber {  get; set; } = false;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public string ImageTopLeftFilename { get; set; }
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind

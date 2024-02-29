@@ -11,6 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="Ressources\icon_delete.png" />
 		<None Remove="Ressources\StockApp.ico" />
 		<None Remove="Ressources\StockAPP_512.png" />
 	</ItemGroup>
@@ -22,6 +23,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Ressources\icon_delete.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Ressources\StockAPP_512.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
