@@ -166,7 +166,7 @@ public class OutputViewModel : ViewModelBase
     public ICommand ImageHeaderSelectCommand => new RelayCommand(
         (p) =>
         {
-            var ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog() { Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp", Title = "Bild auswählen..." };
             if (ofd.ShowDialog() == true)
                 ImageHeaderPath = ofd.FileName;
         },
