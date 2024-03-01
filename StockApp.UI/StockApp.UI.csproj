@@ -11,12 +11,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="com\Vereine.json" />
 		<None Remove="Ressources\icon_delete.png" />
 		<None Remove="Ressources\StockApp.ico" />
 		<None Remove="Ressources\StockAPP_512.png" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Include="com\Vereine.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Ressources\StockApp.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -45,12 +49,6 @@
 		<ProjectReference Include="..\StockApp.Prints\StockApp.Prints.csproj" />
 		<ProjectReference Include="..\StockApp.XML\StockApp.XML.csproj" />
 		<ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="com\Vereine.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 </Project>

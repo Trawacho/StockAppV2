@@ -1,5 +1,6 @@
 ﻿using StockApp.Comm.Broadcasting;
 using StockApp.Comm.NetMqStockTV;
+using StockApp.UI.com;
 using StockApp.UI.Services;
 using StockApp.UI.Stores;
 using StockApp.UI.ViewModels;
@@ -34,8 +35,9 @@ namespace StockApp.UI
 
             _navigationStore = new NavigationStore();
 
-            _turnierStore = new TurnierStore();
 
+            var _templateVereine = VereineFactory.Load();
+            _turnierStore = new TurnierStore(_templateVereine);
 
             _stockTVService = new StockTVService();
             _broadCastService = new BroadcastService();
@@ -76,7 +78,6 @@ namespace StockApp.UI
 
             _mainViewModel.RequestClose += RequestCloseHandler;
             MainWindow = _mainWindow;
-
 
             _dialogStore.SetOwner(MainWindow);
             _mainWindow.Show();
