@@ -71,7 +71,7 @@
         <Button Content="Ergebnisse" Command="{Binding NavigateResultsCommand}"
                 IsEnabled="{Binding HasGames}"/>
 
-        <Button Content="Ausgaben" Command="{Binding NavigateOutputCommand}"
+        <Button Content="Optionen" Command="{Binding NavigateOptionsCommand}"
                 IsEnabled="{Binding HasGames}"/>
 
     </StackPanel>

@@ -7,12 +7,12 @@ using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
 
-public class OutputViewModel : ViewModelBase
+public class OptionsViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
     private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
 
-    public OutputViewModel(ITurnierStore turnierStore)
+    public OptionsViewModel(ITurnierStore turnierStore)
     {
         _turnierStore = turnierStore;
     }

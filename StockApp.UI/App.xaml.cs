@@ -139,9 +139,9 @@ namespace StockApp.UI
             return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager));
         }
 
-        private INavigationService<OutputViewModel> CreateOutputNavigationService()
+        private INavigationService<OptionsViewModel> CreateOutputNavigationService()
         {
-            return new NavigationService<OutputViewModel>(_navigationStore, ()=> new OutputViewModel(_turnierStore));
+            return new NavigationService<OptionsViewModel>(_navigationStore, ()=> new OptionsViewModel(_turnierStore));
         }
 
         #endregion

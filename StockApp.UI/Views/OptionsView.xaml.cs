@@ -18,9 +18,9 @@ namespace StockApp.UI.Views
     /// <summary>
     /// Interaction logic for OutputView.xaml
     /// </summary>
-    public partial class OutputView : UserControl
+    public partial class OptionsView : UserControl
     {
-        public OutputView()
+        public OptionsView()
         {
             InitializeComponent();
         }
