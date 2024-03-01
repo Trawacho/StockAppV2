@@ -11,6 +11,7 @@ public class OptionsViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
     private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+    private readonly string _imageFileFilter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp";
 
     public OptionsViewModel(ITurnierStore turnierStore)
     {
@@ -139,7 +140,7 @@ public class OptionsViewModel : ViewModelBase
     public ICommand ImageLinksObenSelectCommand => new RelayCommand(
         (p) =>
         {
-            var ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog() { Filter = _imageFileFilter, Title = "Bild auswählen..." };
             if (ofd.ShowDialog() == true)
                 ImageLinksObenPath = ofd.FileName;
         },
@@ -153,7 +154,7 @@ public class OptionsViewModel : ViewModelBase
     public ICommand ImageRechtsObenSelectCommand => new RelayCommand(
         (p) =>
         {
-            var ofd = new OpenFileDialog();
+            var ofd = new OpenFileDialog() { Filter = _imageFileFilter, Title = "Bild auswählen..." };
             if (ofd.ShowDialog() == true)
                 ImageRechtsObenPath = ofd.FileName;
         },
@@ -166,9 +167,10 @@ public class OptionsViewModel : ViewModelBase
     public ICommand ImageHeaderSelectCommand => new RelayCommand(
         (p) =>
         {
-            var ofd = new OpenFileDialog() { Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp", Title = "Bild auswählen..." };
+            var ofd = new OpenFileDialog() { Filter = _imageFileFilter, Title = "Bild auswählen..." };
             if (ofd.ShowDialog() == true)
                 ImageHeaderPath = ofd.FileName;
         },
         (p) => true);
+
 }
