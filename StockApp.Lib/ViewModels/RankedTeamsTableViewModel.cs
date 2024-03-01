@@ -67,8 +67,14 @@ public class RankedTeamsTableViewModel : ViewModelBase
 
     private string AufAbSteigerZeichen(int rank)
     {
-        return rank <= _teamBewerb.AnzahlAufsteiger ? "↑"
-                        : (_teamBewerb.Teams.Count() - rank) < _teamBewerb.AnzahlAbsteiger ? "↓"
-                        : string.Empty;
+        return rank <= _teamBewerb.AnzahlAufsteiger 
+                        ? "↑"
+                        : _teamBewerb.IsSplitGruppe 
+                            ? (_teamBewerb.Teams.Count() / 2 ) - rank  < _teamBewerb.AnzahlAbsteiger 
+                                ? "↓"
+                                :string.Empty
+                            : (_teamBewerb.Teams.Count() - rank) < _teamBewerb.AnzahlAbsteiger 
+                                    ? "↓"
+                                    : string.Empty;
     }
 }
