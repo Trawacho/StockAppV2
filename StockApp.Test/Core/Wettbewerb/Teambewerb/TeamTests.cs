@@ -17,15 +17,15 @@ public class TeamTests
     [Test]
     public void TestPublicFunctions()
     {
-        Assert.IsTrue(_team1.Games.Count == 1);
+        Assert.That(_team1.Games.Count == 1, Is.True);
         _team1.ClearGames();
-        Assert.IsTrue(_team1.Games.Count == 0);
+        Assert.That(_team1.Games.Count == 0, Is.True);
 
         _team1.AddPlayer();
-        Assert.IsTrue(_team1.Players.Any());
+        Assert.That(_team1.Players.Any(), Is.True);
         var player = _team1.Players.First();
         _team1.RemovePlayer(player);
-        Assert.IsFalse(_team1.Players.Any());
+        Assert.That(_team1.Players.Any(), Is.False);
 
     }
 

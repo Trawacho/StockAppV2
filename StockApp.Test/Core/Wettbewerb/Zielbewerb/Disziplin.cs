@@ -15,7 +15,7 @@ namespace StockApp.Test
         [Test]
         public void TestPublicFunctions()
         {
-            Assert.IsTrue(_disziplin.Summe == 0);
+            Assert.That(_disziplin.Summe == 0, Is.True);
             _disziplin.Reset();
             _disziplin.Versuch1 = 2;
             _disziplin.Versuch2 = 5;
@@ -23,9 +23,9 @@ namespace StockApp.Test
             //disziplin.AddVersuch(2);
             //disziplin.AddVersuch(5);
             //disziplin.AddVersuch(0);
-            Assert.IsTrue(_disziplin.VersucheCount() == 3);
+            Assert.That(_disziplin.VersucheCount() == 3, Is.True);
 
-            Assert.IsTrue(_disziplin.Summe == 7);
+            Assert.That(_disziplin.Summe == 7, Is.True);
         }
     }
 }

@@ -37,8 +37,8 @@
 	
 	<ItemGroup>
 		<PackageReference Include="LoadingSpinner.WPF" Version="1.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
 		<PackageReference Include="Prism.Core" Version="8.1.97" />
 		<PackageReference Include="SimpleModal.WPF" Version="1.0.0" />
 	</ItemGroup>
