@@ -26,7 +26,7 @@ public interface ITurnierStore
     /// </summary>
     int MaxCountOfTeams { get; }
 
-    IEnumerable<Verein> TemplateVereine { get; }
+    IEnumerable<IVerein> TemplateVereine { get; }
 
 }
 
@@ -46,7 +46,7 @@ public class TurnierStore : ITurnierStore
     }
 
 
-    public TurnierStore(IEnumerable<Verein> templateVereine)
+    public TurnierStore(IEnumerable<IVerein> templateVereine)
     {
         Turnier = Core.Turnier.Turnier.Create();
         _xmlFileService = new XmlFileService(Turnier);
@@ -69,7 +69,7 @@ public class TurnierStore : ITurnierStore
 
     public int MaxCountOfTeams { get; init; }
 
-    public IEnumerable<Verein> TemplateVereine { get; init; }
+    public IEnumerable<IVerein> TemplateVereine { get; init; }
 
     public void Load() => _xmlFileService.Load(ref _turnier);
     public void Load(string fullFileName) => _xmlFileService.Load(ref _turnier, fullFileName);

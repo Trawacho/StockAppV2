@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:StockApp.UI.Components"
+             xmlns:local="clr-namespace:StockApp.UI.Components" 
+             xmlns:cx="clr-namespace:System.Windows.Controls;assembly=DotNetProjects.Input.Toolkit" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" >
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
@@ -33,10 +34,24 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            
             <TextBlock Text="Name:" Grid.Row="0" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TeamName, UpdateSourceTrigger=PropertyChanged}" Margin="5" Padding="5"/>
-            <TextBlock Text="Kreis / Nation:" Grid.Row="1" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nation}" Margin="5" Padding="5"/>
+
+            <cx:AutoCompleteBox Grid.Row="0" Grid.Column="1" Margin="5" Padding="5"
+                                ItemsSource="{Binding Path=TemplateVereine}"
+                                MaxDropDownHeight="200"
+                                FilterMode="Contains"
+                                MinimumPrefixLength="4"
+                                Text="{Binding Path=TeamName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:KeyTrigger Key="Enter">
+                        <i:InvokeCommandAction Command="{Binding TeamSelectedEnterCommand}" />
+                    </i:KeyTrigger>
+                </i:Interaction.Triggers>
+            </cx:AutoCompleteBox>
+
+            <TextBlock Text="L/R/BL/K:" Grid.Row="1" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center" ToolTip="Land/Region/Bundesland/Kreis"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nation}" Margin="5" Padding="5" ToolTip="Land/Region/Bundesland/Kreis"/>
             <TextBlock Text="Status:" Grid.Row="2" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
             <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding TeamStatis}" Margin="5" Padding="5" SelectedValue="{Binding TeamStatus}"/>
             <TextBlock Text="Strafen:" Grid.Row="3" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
