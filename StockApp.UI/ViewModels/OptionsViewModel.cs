@@ -72,7 +72,7 @@ public class OptionsViewModel : ViewModelBase
         }
     }
 
-    private int StringToIntConverter(string value) => int.TryParse(value, out int result) ? result : 0;
+    private static int StringToIntConverter(string value) => int.TryParse(value, out int result) ? result : 0;
 
     public string EndText
     {
