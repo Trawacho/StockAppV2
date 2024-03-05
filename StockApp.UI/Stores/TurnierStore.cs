@@ -65,6 +65,7 @@ public class TurnierStore : ITurnierStore
             CurrentTurnierChanged?.Invoke(this, EventArgs.Empty);
         }
     }
+
     public string FileName => _xmlFileService.FullFilePath;
 
     public int MaxCountOfTeams { get; init; }

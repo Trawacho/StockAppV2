@@ -108,7 +108,7 @@ public class TeamViewModel : ViewModelBase
     public ICommand TeamSelectedEnterCommand => new RelayCommand(
         (p) =>
         {
-            var x = _vereine.FirstOrDefault(v => v.Name == TeamName);
+            var x = _vereine?.FirstOrDefault(v => v.Name == TeamName);
             if (x != null)
                 Nation = x.Land + "/" + x.Region + "/" + x.Bundesland + "/" + x.Kreis;
         },
