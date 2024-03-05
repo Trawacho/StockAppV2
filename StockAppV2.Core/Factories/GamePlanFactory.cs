@@ -25,7 +25,7 @@ public static class GamePlanFactory
 
 
     /// <summary>
-    /// Convert the given gameplan to the given temas.
+    /// Convert the given gameplan to the given teams.
     /// </summary>
     /// <param name="gameplan"></param>
     /// <param name="teams">no virtual teams. without games</param>
