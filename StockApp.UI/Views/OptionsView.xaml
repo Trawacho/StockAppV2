@@ -93,7 +93,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <components:TopHeader TopHeaderText ="Ausgaben"/>
+        <components:TopHeader TopHeaderText ="Optionen"/>
 
         <StackPanel Grid.Row="1" Orientation="Vertical">
 
