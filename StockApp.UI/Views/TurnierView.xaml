@@ -69,7 +69,7 @@
           
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Turniername:" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OrgaDaten.TournamentName}" TextWrapping="Wrap" AcceptsReturn="True"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding OrgaDaten.TournamentName}" TextWrapping="Wrap" AcceptsReturn="True" ToolTip="mehrere Eingabezeilen möglich"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Veranstaltungsort:" />
             <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding OrgaDaten.Venue}"/>
@@ -92,7 +92,7 @@
             <TextBlock Grid.Row="8" Grid.Column="0" Text="Wettbewerbsleiter:" />
             <ContentControl Grid.Row="8" Grid.Column="1" Content="{Binding WettbewerbsleiterViewModel}" HorizontalContentAlignment="Left" IsTabStop="False" />
 
-            <TextBlock Grid.Row="9" Grid.Column="0" Text="Rechenbüro:" />
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="Wertungsführer:" />
             <ContentControl Grid.Row="9" Grid.Column="1" Content="{Binding RechenbueroViewModel}" HorizontalContentAlignment="Left" IsTabStop="False"/>
 
         </Grid>

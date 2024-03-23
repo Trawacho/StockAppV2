@@ -262,7 +262,7 @@
                     <TextBlock Text="{Binding ComputingOfficerClub}"
                            TextAlignment="Center"
                            HorizontalAlignment="Stretch"/>
-                    <TextBlock Text="(Rechenbüro)"
+                    <TextBlock Text="(Wertungsführer)"
                            Visibility="{Binding HasComputingOfficer, Converter={StaticResource BooleanToVisibilityConverter}}"
                            HorizontalAlignment="Stretch"
                            TextAlignment="Center"/>
