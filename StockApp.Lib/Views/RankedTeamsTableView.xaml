@@ -23,13 +23,14 @@
 
     <Grid Grid.IsSharedSizeScope="True" HorizontalAlignment="Stretch">
 
-        <!-- Two rows, Grid-Header and and Itemscontrol for Team-Rows -->
+        <!-- three rows, Group-Name, Grid-Header and Itemscontrol for Team-Rows -->
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
+        <!-- Group Name-->
         <Label Content="{Binding Path=GroupName}"
                FontSize="18"
                HorizontalAlignment="Center"
@@ -58,7 +59,6 @@
                 </Style>
             </Grid.Resources>
 
-            
             <Label Content="Rang" 
                    Grid.Column="1"
                    Margin="0" />
@@ -149,8 +149,9 @@
                                    HorizontalAlignment="Stretch"
                                    TextWrapping="WrapWithOverflow"
                                    TextAlignment="Left"/>
-                        
+
                     </Grid>
+               
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
