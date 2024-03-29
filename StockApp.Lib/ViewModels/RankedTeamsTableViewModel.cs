@@ -14,6 +14,7 @@ public class RankedTeamsTableViewModel : ViewModelBase
     public RankedTeamsTableViewModel()
     {
         IERVersion2022 = true;
+        ShowStockPunkte = true;
     }
 
     public RankedTeamsTableViewModel(ITeamBewerb teamBewerb, bool isLive, bool showGroupName = false)
