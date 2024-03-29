@@ -1,7 +1,8 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
+using StockApp.Prints.Teamresult;
 using StockApp.UI.Commands;
-using StockApp.UI.Extensions;
+using StockApp.UI.Components;
 using StockApp.UI.Services;
 using StockApp.UI.Stores;
 using System.Windows.Input;
@@ -22,15 +23,16 @@ public class ResultsViewModel : ViewModelBase
 
     private ICommand _printTeamResultsCommand;
 
-    public ICommand PrintTeamResultsCommand => _printTeamResultsCommand ??= new RelayCommand(
-        (p) =>
+    public ICommand PrintTeamResultsCommand => _printTeamResultsCommand ??= new AsyncRelayCommand(
+        async (p) =>
         {
-            _ = Prints.Teamresult.TeamResultsFactory.CreateTeamResult(Prints.PageSizes.A4Size, _turnierStore.Turnier).ShowAsDialog();
+            //_ = Prints.Teamresult.TeamResultsFactory.CreateTeamResult(Prints.PageSizes.A4Size, _turnierStore.Turnier).ShowAsDialog();
+            _ = new PrintPreview(await TeamTemplateFactory.Create(_turnierStore.Turnier)).ShowDialog();
         },
         (p) => { return true; });
     public ICommand ShowLiveResultCommand { get; init; }
 
-    
+
 
     public bool? InputAfterGame
     {

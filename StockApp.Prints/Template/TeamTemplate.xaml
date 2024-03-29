@@ -1,0 +1,288 @@
+﻿<UserControl x:Class="StockApp.Prints.Template.TeamTemplate"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:conv="clr-namespace:StockApp.Lib.Converters;assembly=StockApp.Lib"
+             xmlns:lib="clr-namespace:StockApp.Lib;assembly=StockApp.Lib" 
+             xmlns:libVw="clr-namespace:StockApp.Lib.Views;assembly=StockApp.Lib"
+             xmlns:libVm="clr-namespace:StockApp.Lib.ViewModels;assembly=StockApp.Lib"
+             mc:Ignorable="d" 
+             d:DesignHeight="1096" d:DesignWidth="756" d:Background="White"
+             FontFamily="Calibri"
+             FontSize="14">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
+
+        <DataTemplate DataType="{x:Type libVm:RankedTeamsTableViewModel}">
+            <libVw:RankedTeamsTableView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type libVm:BestOfDetailViewModel}">
+            <libVw:BestOfDetailView />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type libVm:RankedClubTableViewModel}">
+            <libVw:RankedClubTableView/>
+        </DataTemplate>
+
+
+    </UserControl.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- 0 Kopfbereich -->
+            <RowDefinition Height="auto"/>
+            <!-- 1 Trennlinie mit Überschrift -->
+            <RowDefinition Height="auto"/>
+            <!-- 2 Tabellen -->
+            <RowDefinition Height="*"/>
+            <!-- 3 leerer Füllbereich -->
+            <RowDefinition Height="auto"/>
+            <!-- 4 Endtext -->
+            <RowDefinition Height="auto"/>
+            <!-- 5 Offizielle -->
+            <RowDefinition Height="auto"/>
+            <!-- 6 Bemerkungen -->
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        
+        <!-- Kopfbereich mit Turnierinformationen -->
+        <Grid Grid.Row="0"  Width="19cm" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3cm"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3.0cm"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <Viewbox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Height="3cm">
+                    <Image Source="{Binding ImageHeaderPath, TargetNullValue={x:Null}}"
+                   Stretch="Fill"
+                   HorizontalAlignment="Center"/>
+                </Viewbox>
+
+                <Viewbox Grid.Row="0" Grid.Column="0" >
+                    <Image Source="{Binding ImageTopLeftPath, TargetNullValue={x:Null}}"
+                   Stretch="Fill"/>
+                </Viewbox>
+
+                <Viewbox Grid.Row="0" Grid.Column="1"
+                 Visibility="{Binding Path=IsTitle1stLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="{Binding Title}" 
+                   FontWeight="Bold"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"/>
+                </Viewbox>
+
+                <Viewbox Grid.Row="1" Grid.Column="0" 
+                 Grid.ColumnSpan="3" 
+                 MaxHeight="2cm" 
+                 Visibility="{Binding Path=IsTitle2ndLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="{Binding Title}" 
+                       FontWeight="Bold"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"/>
+                </Viewbox>
+
+                <Viewbox Grid.Row="0" Grid.Column="2" >
+                    <Image Source="{Binding ImageTopRightPath, TargetNullValue={x:Null}}"
+                   Stretch="Fill"/>
+                </Viewbox>
+            </Grid>
+
+            <Label Grid.Row="1" Grid.Column="0" 
+       Margin="5 5 5 0"
+       FontWeight="Light"
+       Content="Austragungsort:" HorizontalContentAlignment="Right"/>
+            <Label Content="{Binding Ort}"
+       FontWeight="Bold"
+       Grid.Row="1" Grid.Column="1"
+       Margin="5 5 5 0" 
+       HorizontalContentAlignment="Left"/>
+
+            <Label Grid.Row="2" Grid.Column="0"
+       Margin="5 2 5 0"
+       Content="Veranstalter:" 
+       FontWeight="Light"
+       Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
+       HorizontalContentAlignment="Right"/>
+            <Label Content="{Binding Veranstalter}" 
+       Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
+       FontWeight="Bold"
+       Grid.Row="2" Grid.Column ="1" 
+       Margin="5 2 5 0" HorizontalContentAlignment="Left"/>
+
+            <Label Grid.Row="2" Grid.Column="2"
+       Content="Durchführer:" 
+       FontWeight="Light"
+       Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
+       HorizontalContentAlignment="Right"
+       Margin="5 2 5 0"/>
+            <Label Content="{Binding Durchführer}" 
+       Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
+       Grid.Row="2"  Grid.Column="3" 
+       Margin="5 2 5 0"
+       HorizontalContentAlignment="Left" FontWeight="Bold"/>
+
+            <Label Grid.Row="1" Grid.Column="2" 
+       Content="Datum:" HorizontalContentAlignment="Right"
+       FontWeight="Light"
+       Margin="5 5 5 0"/>
+            <Label Content="{Binding Datum}" 
+       Grid.Row="1" Grid.Column="3" 
+       Margin="5 5 5 0" 
+       HorizontalContentAlignment="Left" FontWeight="Bold"/>
+
+        </Grid>
+
+        
+        <!--Trennlinie mit Überschrift-->
+        <StackPanel Grid.Row="1" >
+            <TextBlock Text="created by StockApp" FontSize="7" HorizontalAlignment="Left" Margin="40,10,0,3"/>
+            <Line X1="0" X2="1" Y1="0" Y2="0" StrokeThickness="1" Stretch="Fill" Stroke="Black"/>
+
+            <Viewbox Height="1.6cm">
+                <Label Content="{Binding HeaderString}"
+                       HorizontalContentAlignment="Center"
+                       FontWeight="Bold"/>
+            </Viewbox>
+
+        </StackPanel>
+
+
+        <!-- Mannschafts Tabelle -->
+        <!--<ContentControl Grid.Row="2" 
+                        Margin="0,0,0,2"
+                        Content="{Binding Path=RankedTeamsTableViewModel}" 
+                        Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>-->
+
+        <ItemsControl Grid.Row="2"
+                      ItemsSource="{Binding Path=RankedTeamsTableViewModels}"
+                      lib:Document.Paginate="True"
+                      x:Name="ItemsControlHasMoreGroups"
+                      Margin="0,0,0,2"
+                      >
+            <!--Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityConverter}}"-->
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding .}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        
+        <!-- Club Tabelle bei Vergleich -->
+        <ContentControl Content="{Binding Path=RankedClubViewModel}" Grid.Row="3"
+                        HorizontalAlignment="Stretch"
+                        Margin="0 15"
+                        Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        
+        <!-- Detailtabelle bei BestOf-->
+        <ContentControl Content="{Binding Path=BestOfViewModel}" Grid.Row="3" 
+                        HorizontalAlignment="Stretch" 
+                        Margin="0 15 0 0"
+                        Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        
+        <!-- Endtext -->
+        <TextBlock Grid.Row="4"
+            FontSize="12"
+            HorizontalAlignment="Stretch"
+            TextAlignment="Center"
+            VerticalAlignment="Bottom"
+            TextWrapping="Wrap"
+            Margin="0 10 0 10"
+            Text="{Binding Endtext}"/>
+
+
+        <!-- Fußzeile für Offizielle-->
+        <Grid Margin="1cm 0" Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+
+
+            <StackPanel Orientation="Vertical"
+                        Grid.Column="0">
+                <TextBlock Text="{Binding RefereeName}"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
+                <TextBlock Text="{Binding RefereeClub}"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
+                <TextBlock Text="(Schiedsrichter)"
+                           Visibility="{Binding HasReferee, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical"
+                        Grid.Column="1">
+                <TextBlock Text="{Binding ComputingOfficerName}"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
+                <TextBlock Text="{Binding ComputingOfficerClub}"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
+                <TextBlock Text="(Rechenbüro)"
+                           Visibility="{Binding HasComputingOfficer, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical"
+                        Grid.Column="2">
+                <TextBlock Text="{Binding CompetitionManagerName}"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
+                <TextBlock Text="{Binding CompetitionManagerClub}"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
+                <TextBlock Text="(Wettbewerbsleiter)"
+                           Visibility="{Binding HasCompetitionManager, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"/>
+            </StackPanel>
+
+        </Grid>
+
+        <!-- Footer Bemerkung -->
+        <TextBlock Grid.Row="6" 
+            Margin="1cm 0.5cm 1cm 0cm" 
+            Text="{Binding Footer}" 
+            HorizontalAlignment="Center"
+            FontSize="10"/>
+
+    </Grid>
+</UserControl>
