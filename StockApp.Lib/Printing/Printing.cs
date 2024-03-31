@@ -29,7 +29,7 @@ public class Printing : IPrinting
         var printers = new List<PrinterModel>();
 
         PrintQueueCollection localQueues;
-        using (var printServer = new PrintServer())
+        using (var printServer = new LocalPrintServer())
         {
             var flags = new[] { EnumeratedPrintQueueTypes.Local };
             localQueues = printServer.GetPrintQueues(flags);
@@ -74,7 +74,7 @@ public class Printing : IPrinting
         if (printerTypes.HasFlag(PrinterType.Network))
         {
             PrintQueueCollection networkQueues;
-            using (var printServer = new PrintServer())
+            using (var printServer = new LocalPrintServer())
             {
                 var flags = new[] { EnumeratedPrintQueueTypes.Connections };
                 networkQueues = printServer.GetPrintQueues(flags);
@@ -153,7 +153,7 @@ public class Printing : IPrinting
 
     private PrintQueue GetPrintQueue(string printerName)
     {
-        using (var printServer = new PrintServer())
+        using (var printServer = new LocalPrintServer())
         {
             // GetPrintQueue(queueName) might not work with some types of network printers,
             // but giving the queue description strangely works, but this is not a safe solution.
