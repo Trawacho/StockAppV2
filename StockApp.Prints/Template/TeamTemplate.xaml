@@ -16,10 +16,6 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
 
-        <DataTemplate DataType="{x:Type libVm:RankedTeamsTableViewModel}">
-            <libVw:RankedTeamsTableView/>
-        </DataTemplate>
-
         <DataTemplate DataType="{x:Type libVm:BestOfDetailViewModel}">
             <libVw:BestOfDetailView />
         </DataTemplate>
@@ -53,7 +49,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        
+
         <!-- Kopfbereich mit Turnierinformationen -->
         <Grid Grid.Row="0"  Width="19cm" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
@@ -115,51 +111,55 @@
             </Grid>
 
             <Label Grid.Row="1" Grid.Column="0" 
-       Margin="5 5 5 0"
-       FontWeight="Light"
-       Content="Austragungsort:" HorizontalContentAlignment="Right"/>
+                    Margin="5 5 5 0"
+                    FontWeight="Light"
+                    Content="Austragungsort:" HorizontalContentAlignment="Right"/>
+
             <Label Content="{Binding Ort}"
-       FontWeight="Bold"
-       Grid.Row="1" Grid.Column="1"
-       Margin="5 5 5 0" 
-       HorizontalContentAlignment="Left"/>
+                    FontWeight="Bold"
+                    Grid.Row="1" Grid.Column="1"
+                    Margin="5 5 5 0" 
+                    HorizontalContentAlignment="Left"/>
 
             <Label Grid.Row="2" Grid.Column="0"
-       Margin="5 2 5 0"
-       Content="Veranstalter:" 
-       FontWeight="Light"
-       Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
-       HorizontalContentAlignment="Right"/>
+                    Margin="5 2 5 0"
+                    Content="Veranstalter:" 
+                    FontWeight="Light"
+                    Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    HorizontalContentAlignment="Right"/>
+
             <Label Content="{Binding Veranstalter}" 
-       Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
-       FontWeight="Bold"
-       Grid.Row="2" Grid.Column ="1" 
-       Margin="5 2 5 0" HorizontalContentAlignment="Left"/>
+                    Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    FontWeight="Bold"
+                    Grid.Row="2" Grid.Column ="1" 
+                    Margin="5 2 5 0" HorizontalContentAlignment="Left"/>
 
             <Label Grid.Row="2" Grid.Column="2"
-       Content="Durchführer:" 
-       FontWeight="Light"
-       Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
-       HorizontalContentAlignment="Right"
-       Margin="5 2 5 0"/>
+                    Content="Durchführer:" 
+                    FontWeight="Light"
+                    Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    HorizontalContentAlignment="Right"
+                    Margin="5 2 5 0"/>
+
             <Label Content="{Binding Durchführer}" 
-       Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
-       Grid.Row="2"  Grid.Column="3" 
-       Margin="5 2 5 0"
-       HorizontalContentAlignment="Left" FontWeight="Bold"/>
+                    Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Grid.Row="2"  Grid.Column="3" 
+                    Margin="5 2 5 0"
+                    HorizontalContentAlignment="Left" FontWeight="Bold"/>
 
             <Label Grid.Row="1" Grid.Column="2" 
-       Content="Datum:" HorizontalContentAlignment="Right"
-       FontWeight="Light"
-       Margin="5 5 5 0"/>
+                    Content="Datum:" HorizontalContentAlignment="Right"
+                    FontWeight="Light"
+                    Margin="5 5 5 0"/>
+
             <Label Content="{Binding Datum}" 
-       Grid.Row="1" Grid.Column="3" 
-       Margin="5 5 5 0" 
-       HorizontalContentAlignment="Left" FontWeight="Bold"/>
+                    Grid.Row="1" Grid.Column="3" 
+                    Margin="5 5 5 0" 
+                    HorizontalContentAlignment="Left" FontWeight="Bold"/>
 
         </Grid>
 
-        
+
         <!--Trennlinie mit Überschrift-->
         <StackPanel Grid.Row="1" >
             <TextBlock Text="created by StockApp" FontSize="7" HorizontalAlignment="Left" Margin="40,10,0,3"/>
@@ -175,40 +175,28 @@
 
 
         <!-- Mannschafts Tabelle -->
-        <!--<ContentControl Grid.Row="2" 
-                        Margin="0,0,0,2"
-                        Content="{Binding Path=RankedTeamsTableViewModel}" 
-                        Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>-->
 
-        <ItemsControl Grid.Row="2"
-                      ItemsSource="{Binding Path=RankedTeamsTableViewModels}"
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Path=BodyElements}"
                       lib:Document.Paginate="True"
-                      x:Name="ItemsControlHasMoreGroups"
-                      Margin="0,0,0,2"
-                      >
-            <!--Visibility="{Binding Path=HasMoreGroups,Converter={StaticResource BooleanToVisibilityConverter}}"-->
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <ContentControl Content="{Binding .}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                      x:Name="itemsTest"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Center"
+                      Margin="0,0,0,2"/>
 
-        
         <!-- Club Tabelle bei Vergleich -->
         <ContentControl Content="{Binding Path=RankedClubViewModel}" Grid.Row="3"
                         HorizontalAlignment="Stretch"
                         Margin="0 15"
                         Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-        
+
         <!-- Detailtabelle bei BestOf-->
         <ContentControl Content="{Binding Path=BestOfViewModel}" Grid.Row="3" 
                         HorizontalAlignment="Stretch" 
                         Margin="0 15 0 0"
                         Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-        
+
         <!-- Endtext -->
         <TextBlock Grid.Row="4"
             FontSize="12"
