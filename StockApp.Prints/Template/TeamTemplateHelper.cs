@@ -1,6 +1,4 @@
-﻿using StockApp.Core.Turnier;
-using StockApp.Lib;
-using StockApp.Prints.Template;
+﻿using StockApp.Lib;
 using System;
 using System.IO;
 using System.Printing;
@@ -12,25 +10,6 @@ using System.Windows.Xps.Packaging;
 
 
 namespace StockApp.Prints.Teamresult;
-
-/* 
- * 
- * https://github.com/sherman89/WpfReporting
- * 
- */
-
-public static class TeamTemplateFactory
-{
-    public static async Task<IDocumentPaginatorSource> Create(ITurnier turnier)
-    {
-        var token = new CancellationTokenSource();
-        UIElement reportFactory() => new TeamTemplate(new TeamTemplateViewModel(turnier));
-
-        var helper = new TeamTemplateHelper();
-        await helper.LoadReport(reportFactory, token.Token);
-        return helper.GeneratedDocument;
-    }
-}
 
 
 internal class TeamTemplateHelper
@@ -90,10 +69,17 @@ internal class TeamTemplateHelper
 
             // Delete old XPS file first
             CleanXpsDocumentResources();
+
+
+
+            // Cause of an error with images in the xps file I was disable to save and load procedure
+            // instead of that, I set the GeneratedDocument with the fixedDocument
+            //
+            //_xpsDocument = _printing.GetXpsDocumentFromFixedDocument(fixedDocument);
+            //GeneratedDocument = _xpsDocument.GetFixedDocumentSequence();
+
+            //v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^v^
             GeneratedDocument = fixedDocument;
-            return;
-            _xpsDocument = _printing.GetXpsDocumentFromFixedDocument(fixedDocument);
-            GeneratedDocument = _xpsDocument.GetFixedDocumentSequence();
         }
     }
 
