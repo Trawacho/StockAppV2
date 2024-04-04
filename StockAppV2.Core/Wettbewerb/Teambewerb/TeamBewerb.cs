@@ -76,12 +76,17 @@ public interface ITeamBewerb : IBewerb
     /// Image Rechts Oben - Dateiname
     /// </summary>
     string ImageTopRightFilename { get; set; }
-    
+
     /// <summary>
     /// Image oben in der Mitte - Dateiname
     /// </summary>
     string ImageHeaderFilename { get; set; }
-    
+
+    /// <summary>
+    /// Zeilenabstand in der Ergebnisliste
+    /// </summary>
+    int RowSpace { get; set; }
+
     /// <summary>
     /// Nummer der Spielgruppe
     /// </summary>
@@ -259,7 +264,7 @@ public class TeamBewerb : ITeamBewerb
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public bool TeamNameWithStartnumber {  get; set; } = false;
+    public bool TeamNameWithStartnumber { get; set; } = false;
 
     /// <summary>
     /// <inheritdoc/>
@@ -275,6 +280,11 @@ public class TeamBewerb : ITeamBewerb
     /// <inheritdoc/>
     /// </summary>
     public string ImageHeaderFilename { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int RowSpace { get; set; }
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind
@@ -397,7 +407,7 @@ public class TeamBewerb : ITeamBewerb
 
 
     public bool IsEachGameDone(bool live = false) => Teams.Where(t => t.TeamStatus == TeamStatus.Normal).All(t => t.IsEachGameDone(live));
-    
+
 
     #endregion
 

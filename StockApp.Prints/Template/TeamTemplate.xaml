@@ -179,6 +179,7 @@
         <ItemsControl Grid.Row="2" ItemsSource="{Binding Path=BodyElements}"
                       lib:Document.Paginate="True"
                       x:Name="itemsTest"
+                      Grid.IsSharedSizeScope="True"
                       HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Center"
                       Margin="0,0,0,2"/>

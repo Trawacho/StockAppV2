@@ -2,6 +2,7 @@
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
+using StockApp.UI.Extensions;
 using StockApp.UI.Stores;
 using System.Windows.Input;
 
@@ -96,7 +97,7 @@ public class OptionsViewModel : ViewModelBase
 
     public string ImageLinksObenPath
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename ;
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename;
         set
         {
             if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename != value)
@@ -109,7 +110,7 @@ public class OptionsViewModel : ViewModelBase
 
     public string ImageRechtsObenPath
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename ;
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename;
         set
         {
             if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename != value)
@@ -132,6 +133,21 @@ public class OptionsViewModel : ViewModelBase
             }
         }
     }
+
+    public int RowSpace
+    {
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace;
+        set
+        {
+            if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace != value)
+            {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace = value.InRange(0, 99);
+                RaisePropertyChanged();
+            }
+        }
+    }
+
+   
 
     public ICommand ImageLinksObenResetCommand => new RelayCommand(
         (p) => ImageLinksObenPath = null,

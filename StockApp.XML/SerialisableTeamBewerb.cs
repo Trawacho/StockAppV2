@@ -44,6 +44,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         ImageTopLeftFilename = bewerb.ImageTopLeftFilename;
         ImageTopRightFilename = bewerb.ImageTopRightFilename;
         ImageHeaderFilename = bewerb.ImageHeaderFilename;
+        RowSpace = bewerb.RowSpace;
     }
 
 
@@ -64,6 +65,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.ImageTopLeftFilename = ImageTopLeftFilename;
         teamBewerb.ImageTopRightFilename = ImageTopRightFilename;
         teamBewerb.ImageHeaderFilename = ImageHeaderFilename;
+        teamBewerb.RowSpace = RowSpace;
 
 
 
@@ -170,6 +172,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlElement(ElementName = "ImageHeader")]
     public string ImageHeaderFilename { get; set; }
+
+    [XmlElement(ElementName = "RowSpace")]
+    public int RowSpace { get; set; }
 
     #region XMLIgnore
 

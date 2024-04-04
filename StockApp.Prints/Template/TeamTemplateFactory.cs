@@ -18,11 +18,10 @@ public static class TeamTemplateFactory
 {
     public static async Task<IDocumentPaginatorSource> Create(ITurnier turnier)
     {
-        var token = new CancellationTokenSource();
         UIElement reportFactory() => new TeamTemplate(new TeamTemplateViewModel(turnier));
 
         var helper = new TeamTemplateHelper();
-        await helper.LoadReport(reportFactory, token.Token);
+        await helper.LoadReport(reportFactory, CancellationToken.None);
         return helper.GeneratedDocument;
     }
 }
