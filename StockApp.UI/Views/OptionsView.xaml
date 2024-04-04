@@ -261,7 +261,14 @@
                     <ColumnDefinition  SharedSizeGroup="col1"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-
+                <TextBlock Grid.Column="0"
+                           Style="{StaticResource LabelsLeft}"
+                           Text="Schriftgröße Ergebnisliste:"/>
+                <TextBox Grid.Column="1"
+                         Text="{Binding Path=FontSize}"
+                         HorizontalContentAlignment="Center"
+                         ToolTip="Schriftgröße der Tabelle. Wert zw. 12 und 24. Standard = 14"
+                         Width="25"/>
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>

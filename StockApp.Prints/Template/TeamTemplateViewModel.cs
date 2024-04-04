@@ -15,7 +15,6 @@ internal class TeamTemplateViewModel : ViewModelBase
 {
     private readonly ITurnier _turnier;
     private readonly ITeamBewerb _teamBewerb;
-    private double _fontSize;
 
     public TeamTemplateViewModel()
     {
@@ -23,7 +22,7 @@ internal class TeamTemplateViewModel : ViewModelBase
         HasOrganizer = true;
         IsBestOf = false;
         IsVergleich = false;
-        _fontSize = 14;
+
     }
 
     public TeamTemplateViewModel(ITurnier turnier) : this()
@@ -35,6 +34,8 @@ internal class TeamTemplateViewModel : ViewModelBase
         HasOrganizer = !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.Organizer);
         IsVergleich = GamePlanFactory.LoadAllGameplans().FirstOrDefault(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
         IsBestOf = _teamBewerb.Teams.Count() == 2;
+
+
         RankedTeamsTableViewModels = new List<RankedTeamsTableViewModel>();
         foreach (var item in _turnier.ContainerTeamBewerbe.TeamBewerbe)
         {
@@ -269,15 +270,18 @@ internal class TeamTemplateViewModel : ViewModelBase
     {
         BodyElements = new List<Grid>();
 
-        foreach (var rttvm in RankedTeamsTableViewModels)
+        foreach (var rankedTeamsTableViewModel in RankedTeamsTableViewModels)
         {
-            BodyElements.Add(GetGroupNameGrid(rttvm.GroupName));
+            BodyElements.Add(GetGroupNameGrid(rankedTeamsTableViewModel.GroupName));
 
-            BodyElements.Add(GetTableHeader(fontSize: _fontSize, fontWeight: FontWeights.Bold));
+            BodyElements.Add(GetTableHeader(fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize, fontWeight: FontWeights.Bold));
 
-            foreach (var rt in rttvm.RankedTeams)
+            foreach (var rankedTeamModel in rankedTeamsTableViewModel.RankedTeams)
             {
-                BodyElements.Add(GetTeamGridRow(rankedTeamModel: rt, fontSize: _fontSize, _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace));
+                BodyElements.Add(GetTeamGridRow(
+                    rankedTeamModel: rankedTeamModel,
+                    fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize,
+                    rowSpace: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace));
             }
 
         }

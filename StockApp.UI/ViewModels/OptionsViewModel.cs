@@ -1,8 +1,8 @@
 ﻿using Microsoft.Win32;
 using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib.Extensions;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
-using StockApp.UI.Extensions;
 using StockApp.UI.Stores;
 using System.Windows.Input;
 
@@ -147,7 +147,20 @@ public class OptionsViewModel : ViewModelBase
         }
     }
 
-   
+    public int FontSize
+    {
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize;
+        set
+        {
+            if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize != value)
+            {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize = value.InRange(12, 24);
+                RaisePropertyChanged();
+            }
+        }
+    }
+
+
 
     public ICommand ImageLinksObenResetCommand => new RelayCommand(
         (p) => ImageLinksObenPath = null,

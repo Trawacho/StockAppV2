@@ -37,6 +37,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         Gruppenname = bewerb.Gruppenname;
         GameplanId = bewerb.GameplanId;
         IsSplitGruppe = bewerb.IsSplitGruppe;
+        NumberOfTeamsWithNamedPlayerOnResult = bewerb.NumberOfTeamsWithNamedPlayerOnResult;
         AnzahlAufsteiger = bewerb.AnzahlAufsteiger;
         AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
         Endtext = bewerb.Endtext;
@@ -45,6 +46,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         ImageTopRightFilename = bewerb.ImageTopRightFilename;
         ImageHeaderFilename = bewerb.ImageHeaderFilename;
         RowSpace = bewerb.RowSpace;
+        FontSize = bewerb.FontSize;
     }
 
 
@@ -58,6 +60,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.IERVersion = IERVersion;
         teamBewerb.Gruppenname = Gruppenname;
         teamBewerb.IsSplitGruppe = IsSplitGruppe;
+        teamBewerb.NumberOfTeamsWithNamedPlayerOnResult = NumberOfTeamsWithNamedPlayerOnResult;
         teamBewerb.AnzahlAufsteiger = AnzahlAufsteiger;
         teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
         teamBewerb.Endtext = Endtext;
@@ -65,7 +68,10 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.ImageTopLeftFilename = ImageTopLeftFilename;
         teamBewerb.ImageTopRightFilename = ImageTopRightFilename;
         teamBewerb.ImageHeaderFilename = ImageHeaderFilename;
-        teamBewerb.RowSpace = RowSpace;
+        if (RowSpace >= 0 && RowSpace <= 99)
+            teamBewerb.RowSpace = RowSpace;
+        if (FontSize >= 12 && FontSize <= 24)
+            teamBewerb.FontSize = FontSize;
 
 
 
@@ -176,6 +182,12 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "RowSpace")]
     public int RowSpace { get; set; }
 
+    [XmlElement(ElementName = "FontSize")]
+    public int FontSize { get; set; }
+
+    [XmlElement(ElementName = "PlayerNames")]
+    public int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
+
     #region XMLIgnore
 
     [XmlIgnore]
@@ -184,8 +196,6 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public IEnumerable<IGame> Games => throw new NotImplementedException();
     [XmlIgnore]
     public int NumberOfCourts => throw new NotImplementedException();
-    [XmlIgnore]
-    public int NumberOfTeamsWithNamedPlayerOnResult { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 
 

@@ -88,6 +88,11 @@ public interface ITeamBewerb : IBewerb
     int RowSpace { get; set; }
 
     /// <summary>
+    /// FontSize für die Ergebnistabelle
+    /// </summary>
+    int FontSize { get; set; }
+
+    /// <summary>
     /// Nummer der Spielgruppe
     /// </summary>
     int SpielGruppe { get; set; }
@@ -287,6 +292,11 @@ public class TeamBewerb : ITeamBewerb
     public int RowSpace { get; set; }
 
     /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int FontSize { get; set; }
+
+    /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind
     /// 
     /// Default: 0
@@ -317,6 +327,7 @@ public class TeamBewerb : ITeamBewerb
         ID = id;
         _is8TurnsGame = false;
         Gruppenname = $"Gruppe {id}";
+        FontSize = 14;
     }
 
     public static TeamBewerb Create(int id) => new(id);
