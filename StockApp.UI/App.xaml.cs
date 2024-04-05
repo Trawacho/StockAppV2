@@ -2,10 +2,12 @@
 using StockApp.Comm.NetMqStockTV;
 using StockApp.UI.com;
 using StockApp.UI.Services;
+using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using StockApp.UI.ViewModels;
 using StockApp.UI.Views;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 
 namespace StockApp.UI
@@ -26,12 +28,21 @@ namespace StockApp.UI
         private readonly IBroadcastService _broadCastService;
         private readonly MainViewModel _mainViewModel;
         private readonly MainWindow _mainWindow;
+        private readonly string _assemblyVersion;
 
         public App()
         {
             _dialogStore = new DialogStore(null);
             _dialogStore.Register<LiveResultsTeamViewModel, LiveResultTeamView>();
             _dialogStore.Register<LiveResultsZielViewModel, LiveResultZielView>();
+
+            var _systemVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            _assemblyVersion = _systemVersion.ToString();
+            Software.Initialize(_systemVersion);
+            Software.SanityCheckDirectories();
+            PreferencesManager.Initialize();
+            Software.ConfigureInstance();
+
 
             _navigationStore = new NavigationStore();
 
@@ -58,8 +69,12 @@ namespace StockApp.UI
                                                            outputNavigationService: CreateOutputNavigationService(),
                                                            liveResultZielDialogService: CreateLiveReusltsZielDialogService());
 
+
+
             _mainViewModel = new MainViewModel(_navigationViewModel, _navigationStore, _turnierStore);
             _mainWindow = new MainWindow() { DataContext = _mainViewModel };
+
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_mainWindow, "MainWindow");
         }
 
 
@@ -158,6 +173,7 @@ namespace StockApp.UI
                 _turnierNetworkManager?.Dispose();
                 _stockTVService?.Dispose();
                 _broadCastService?.Dispose();
+                PreferencesManager.Save();
             }
             finally
             {
