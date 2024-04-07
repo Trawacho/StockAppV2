@@ -3,7 +3,11 @@ using Microsoft.Win32.SafeHandles;
 using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.Lib.Extensions;
 using StockApp.Lib.ViewModels;
+using StockApp.Prints.Teamresult;
+using StockApp.Prints.ZielResult;
 using StockApp.UI.Commands;
+using StockApp.UI.Components;
+using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using System.ServiceModel;
 using System.Windows.Input;
@@ -32,7 +36,17 @@ public class ZielBewerbDruckViewModel : ViewModelBase
         }
     }
 
-    public ICommand DruckResultCommand { get; }
+
+    private ICommand _druckResultCommand;
+    public ICommand DruckResultCommand => _druckResultCommand ??= new AsyncRelayCommand(
+        async (p) =>
+        {
+            var _printPreview = new PrintPreview(await ZielResultFactory.Create(_turnierStore.Turnier));
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "TeamResult");
+            _printPreview.ShowDialog();
+        },
+        (p) => { return true; });
+
     public ICommand ImageHeaderSelectCommand => new RelayCommand(
         (p) =>
         {
