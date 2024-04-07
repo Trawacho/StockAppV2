@@ -16,6 +16,15 @@ public interface IZielBewerb : IBewerb
     IEnumerable<ITeilnehmer> GetTeilnehmerRanked();
     void MoveTeilnehmer(int oldIndex, int newIndex);
 
+    string EndText { get; set; }
+    int FontSize { get; set; }
+    int RowSpace { get; set; }
+    string ImageHeaderFileName { get; set; }
+    string ImageTopRightFileName { get; set; }
+    string ImageTopLeftFileName { get; set; }
+    bool HasTeamname { get; set; }
+    bool HasNation { get; set; }
+
     /// <summary>
     /// Ocours after Collection of Teilnehmer has changed (add, remove oor move)
     /// </summary>
@@ -84,6 +93,16 @@ internal class ZielBewerb : IZielBewerb
             return Bahnen.Where(b => !belegteBahnen.Contains(b)).OrderBy(x => x);
         }
     }
+
+    public string EndText { get; set; }
+    public int FontSize { get; set; } = 14;
+    public int RowSpace { get; set; } = 0;
+    public string ImageHeaderFileName { get; set; }
+    public string ImageTopRightFileName { get; set; }
+    public string ImageTopLeftFileName { get; set; }
+    public bool HasTeamname { get; set; } = true;
+    public bool HasNation { get; set; }
+
 
 
     /// <summary>

@@ -66,6 +66,7 @@ namespace StockApp.UI
                                                            resultsNavigationService: CreateResultsNavigationService(),
                                                            stockTVsNavigationService: CreateStockTVsNavigationService(),
                                                            zielTeilnehmerNavigationService: CreateZielTeilnehmerNavigationService(),
+                                                           zielDruckNavigationService: CreateZielDruckNavigationService(),
                                                            outputNavigationService: CreateOutputNavigationService(),
                                                            liveResultZielDialogService: CreateLiveReusltsZielDialogService());
 
@@ -153,6 +154,11 @@ namespace StockApp.UI
         private INavigationService<ZielBewerbViewModel> CreateZielTeilnehmerNavigationService()
         {
             return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager));
+        }
+
+        private INavigationService<ZielBewerbDruckViewModel> CreateZielDruckNavigationService()
+        {
+            return new NavigationService<ZielBewerbDruckViewModel>(_navigationStore, () => new ZielBewerbDruckViewModel(_turnierStore));
         }
 
         private INavigationService<OptionsViewModel> CreateOutputNavigationService()

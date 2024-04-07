@@ -15,6 +15,14 @@ public class SerialisableZielBewerb : IZielBewerb
         {
             SerialisableTeilnehmerListe.Add(new SerialisableTeilnehmer(teilnehmer));
         }
+        HasNation = zielBewerb.HasNation;
+        HasTeamname = zielBewerb.HasTeamname;
+        EndText = zielBewerb.EndText;
+        ImageHeaderFileName = zielBewerb.ImageHeaderFileName;
+        ImageTopLeftFileName = zielBewerb.ImageTopLeftFileName;
+        ImageTopRightFileName = zielBewerb.ImageTopRightFileName;
+        FontSize = zielBewerb.FontSize;
+        RowSpace = zielBewerb.RowSpace;
     }
     public void ToNormal(IZielBewerb normal)
     {
@@ -28,10 +36,43 @@ public class SerialisableZielBewerb : IZielBewerb
             var tln = normal.Teilnehmerliste.First(t => t.Startnummer == teilnehmer.Startnummer);
             teilnehmer.ToNormal(tln);
         }
+        normal.HasNation = HasNation;
+        normal.HasTeamname = HasTeamname;
+        normal.EndText = EndText;
+        normal.ImageHeaderFileName = ImageHeaderFileName;
+        normal.ImageTopLeftFileName = ImageTopLeftFileName;
+        normal.ImageTopRightFileName = ImageTopRightFileName;
+        normal.FontSize = FontSize;
+        normal.RowSpace = RowSpace;
     }
 
     [XmlArray(ElementName = "Teilnehmerliste")]
     public List<SerialisableTeilnehmer> SerialisableTeilnehmerListe { get; set; }
+
+
+    [XmlElement(ElementName = "ImageTopLeft")]
+    public string ImageTopLeftFileName { get; set; }
+
+    [XmlElement(ElementName = "ImageTopRight")]
+    public string ImageTopRightFileName { get; set; }
+
+    [XmlElement(ElementName = "ImageHeader")]
+    public string ImageHeaderFileName { get; set; }
+
+    [XmlElement(ElementName = "RowSpace")]
+    public int RowSpace { get; set; }
+
+    [XmlElement(ElementName = "FontSize")]
+    public int FontSize { get; set; }
+
+    [XmlElement(ElementName = "Endtext")]
+    public string EndText { get; set; }
+
+    [XmlElement(ElementName = "HasNation")]
+    public bool HasNation { get; set; }
+
+    [XmlElement(ElementName = "HasTeamname")]
+    public bool HasTeamname { get; set; }
 
     #region XMLIgnore
 

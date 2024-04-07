@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
-
 public class ZielBewerbViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;

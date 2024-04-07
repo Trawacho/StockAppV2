@@ -93,6 +93,10 @@
             <vs:ZielBewerbView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:ZielBewerbDruckViewModel}">
+            <vs:ZielBewerbDruckView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type vm:TeilnehmerViewModel}">
             <components:ZielSpielerDatenView/>
         </DataTemplate>
