@@ -11,27 +11,17 @@ using System.Windows.Controls;
 
 namespace StockApp.Prints.Template;
 
-internal class TeamTemplateViewModel : ViewModelBase
+internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 {
     private readonly ITurnier _turnier;
     private readonly ITeamBewerb _teamBewerb;
 
-    public TeamTemplateViewModel()
-    {
-        HasOperator = true;
-        HasOrganizer = true;
-        IsBestOf = false;
-        IsVergleich = false;
-
-    }
-
-    public TeamTemplateViewModel(ITurnier turnier) : this()
+    public TeamTemplateViewModel(ITurnier turnier) : base(turnier)
     {
         _turnier = turnier;
         _teamBewerb = ((IContainerTeamBewerbe)turnier.Wettbewerb).CurrentTeamBewerb;
 
-        HasOperator = !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.Operator);
-        HasOrganizer = !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.Organizer);
+       
         IsVergleich = GamePlanFactory.LoadAllGameplans().FirstOrDefault(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
         IsBestOf = _teamBewerb.Teams.Count() == 2;
 
@@ -292,20 +282,6 @@ internal class TeamTemplateViewModel : ViewModelBase
     public ViewModelBase RankedClubViewModel => IsVergleich ? new RankedClubTableViewModel(_teamBewerb, isLive: false) { AsDataGrid = false } : default;
 
 
-    public string Title => _turnier.OrgaDaten.TournamentName;
-    public bool IsTitle2ndLine => ImageHeaderPath != null;
-    public bool IsTitle1stLine => ImageHeaderPath == null;
-
-    public string Durchführer => _turnier.OrgaDaten.Operator;
-    public bool HasOperator { get; init; }
-
-    public string Veranstalter => _turnier.OrgaDaten.Organizer;
-    public bool HasOrganizer { get; init; }
-
-    public string Ort => _turnier.OrgaDaten.Venue;
-    public string Datum => _turnier.OrgaDaten.DateOfTournament.ToString("dddd, dd.MM.yyyy");
-
-
     public string RefereeName => _turnier.OrgaDaten.Referee.Name;
     public string RefereeClub => _turnier.OrgaDaten.Referee.ClubName;
     public bool HasReferee => !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.Referee.Name);
@@ -347,9 +323,5 @@ internal class TeamTemplateViewModel : ViewModelBase
             return footerText;
         }
     }
-
-
-    public string ImageTopLeftPath => ImageHeaderPath == null ? _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename : null;
-    public string ImageTopRightPath => ImageHeaderPath == null ? _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename : null;
-    public string ImageHeaderPath => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename;
+   
 }

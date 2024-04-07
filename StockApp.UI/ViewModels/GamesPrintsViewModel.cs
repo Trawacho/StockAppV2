@@ -1,7 +1,11 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
+using StockApp.Prints.Spielplan;
+using StockApp.Prints.Teamresult;
 using StockApp.UI.Commands;
+using StockApp.UI.Components;
 using StockApp.UI.Extensions;
+using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using System.Linq;
 using System.Windows.Input;
@@ -56,10 +60,12 @@ public class GamesPrintsViewModel : ViewModelBase
         },
         (p) => (_teamBewerb.Teams?.Count() ?? 0) > 0);
 
-    public ICommand PrintSpielPlanCommand => _printSpielPlanCommand ??= new RelayCommand(
-        (p) =>
+    public ICommand PrintSpielPlanCommand => _printSpielPlanCommand ??= new AsyncRelayCommand(
+        async (p) =>
         {
-            _ = Prints.Spielplan.SpielPlanFactory.CreateSpielPlan(Prints.PageSizes.A4Size, _teamBewerb).ShowAsDialog();
+            var _printPreview = new PrintPreview(await SpielPlanFactory.Create(_turnierStore.Turnier));
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "SpielPlan");
+            _printPreview.ShowDialog();
         },
         (p) => _teamBewerb.GetCountOfGames() > 0);
 

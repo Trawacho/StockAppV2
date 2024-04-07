@@ -1,5 +1,4 @@
-﻿using StockApp.Lib;
-using System;
+﻿using System;
 using System.IO;
 using System.Printing;
 using System.Threading;
@@ -8,16 +7,20 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
 
+namespace StockApp.Lib;
 
-namespace StockApp.Prints.Teamresult;
+/*
+ * 
+ * https://github.com/sherman89/WpfReporting
+ * 
+ */
 
-
-internal class TeamTemplateHelper
+public class PrintHelper
 {
     private readonly IPaginator _paginator;
     private readonly IPrinting _printing;
 
-    public TeamTemplateHelper()
+    public PrintHelper()
     {
         _paginator = new Paginator();
         _printing = new Printing();
@@ -37,7 +40,7 @@ internal class TeamTemplateHelper
     }
 
 
-    internal async Task LoadReport(Func<UIElement> reportFactory, CancellationToken cancellationToken)
+    public async Task LoadReport(Func<UIElement> reportFactory, CancellationToken cancellationToken)
     {
         var printTicket = new PrintTicket()
         {
@@ -124,7 +127,4 @@ internal class TeamTemplateHelper
             pageMargins.Bottom = minimumMargins.Bottom;
         }
     }
-
-
-
 }

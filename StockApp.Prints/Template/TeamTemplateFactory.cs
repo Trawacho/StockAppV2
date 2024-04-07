@@ -1,18 +1,12 @@
 ﻿using StockApp.Core.Turnier;
+using StockApp.Lib;
 using StockApp.Prints.Template;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 
-
 namespace StockApp.Prints.Teamresult;
-
-/* 
- * 
- * https://github.com/sherman89/WpfReporting
- * 
- */
 
 public static class TeamTemplateFactory
 {
@@ -20,7 +14,7 @@ public static class TeamTemplateFactory
     {
         UIElement reportFactory() => new TeamTemplate(new TeamTemplateViewModel(turnier));
 
-        var helper = new TeamTemplateHelper();
+        var helper = new PrintHelper();
         await helper.LoadReport(reportFactory, CancellationToken.None);
         return helper.GeneratedDocument;
     }
