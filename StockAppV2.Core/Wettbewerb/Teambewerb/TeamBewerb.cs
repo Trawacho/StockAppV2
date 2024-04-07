@@ -289,12 +289,12 @@ public class TeamBewerb : ITeamBewerb
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public int RowSpace { get; set; }
+    public int RowSpace { get; set; } = 0;
 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public int FontSize { get; set; }
+    public int FontSize { get; set; } = 14;
 
     /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind
@@ -327,7 +327,6 @@ public class TeamBewerb : ITeamBewerb
         ID = id;
         _is8TurnsGame = false;
         Gruppenname = $"Gruppe {id}";
-        FontSize = 14;
     }
 
     public static TeamBewerb Create(int id) => new(id);
