@@ -33,6 +33,7 @@ public static class GamePlanFactory
     {
         if (gameplan is null) return;
         //Ein liste für normale "Spiele" erzeugen
+
         var normalGames = new List<IGame>();
         var gameNrOverAll = 1;
 
@@ -40,7 +41,7 @@ public static class GamePlanFactory
         {
             foreach (var gamenumber in gameplan.GameplanGamenumbers)
             {
-                foreach (var game in gamenumber.Games)
+                foreach (var game in gamenumber.Games.Where(g => g.A != 0 && g.B != 0)) //Keine Paarungen, bei denen A oder B als Startnummer 0 eingetragen ist.
                 {
                     var normalGame = Game.Create(
                         teams.FirstOrDefault(t => t.StartNumber == game.A),
@@ -51,6 +52,14 @@ public static class GamePlanFactory
                         gameNumberOverAll: gameNrOverAll,
                         isTeamA_Starting: game.Court % 2 != 0
                         );
+                    
+                    //Bei Splitgruppen mit 6,8,12,.. Bahnen, muss das Anspiel für die zweite Gruppe gedreht werden
+                    if (gameplan.IsSplit &&
+                        gameplan.Courts % 4 == 2 &&
+                        normalGame.CourtNumber > gameplan.Courts / 2)
+                    {
+                        normalGame.IsTeamA_Starting = game.Court % 2 == 0;
+                    }
 
                     //Anspiel
                     if (round % 2 == 0 && isStartingChanged) normalGame.IsTeamA_Starting = !normalGame.IsTeamA_Starting;
