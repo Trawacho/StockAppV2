@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              FontFamily="Calibri"
              FontSize="14"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" d:Background="white">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
@@ -63,85 +63,85 @@
 
                 <Viewbox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Height="3cm">
                     <Image Source="{Binding ImageHeaderPath, TargetNullValue={x:Null}}"
-               Stretch="Fill"
-               HorizontalAlignment="Center"/>
+                           Stretch="Fill"
+                           HorizontalAlignment="Center"/>
                 </Viewbox>
 
                 <Viewbox Grid.Row="0" Grid.Column="0" >
                     <Image Source="{Binding ImageTopLeftPath, TargetNullValue={x:Null}}"
-               Stretch="Fill"/>
+                           Stretch="Fill"/>
                 </Viewbox>
 
                 <Viewbox Grid.Row="0" Grid.Column="1"
-             Visibility="{Binding Path=IsTitle1stLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                         Visibility="{Binding Path=IsTitle1stLine, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="{Binding Title}" 
-               FontWeight="Bold"
-               TextAlignment="Center"
-               TextWrapping="Wrap"/>
+                               FontWeight="Bold"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Viewbox>
 
                 <Viewbox Grid.Row="1" Grid.Column="0" 
-             Grid.ColumnSpan="3" 
-             MaxHeight="2cm" 
-             Visibility="{Binding Path=IsTitle2ndLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                         Grid.ColumnSpan="3" 
+                         MaxHeight="2cm" 
+                         Visibility="{Binding Path=IsTitle2ndLine, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="{Binding Title}" 
-                   FontWeight="Bold"
-                   TextAlignment="Center"
-                   TextWrapping="Wrap"/>
+                               FontWeight="Bold"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Viewbox>
 
                 <Viewbox Grid.Row="0" Grid.Column="2" >
                     <Image Source="{Binding ImageTopRightPath, TargetNullValue={x:Null}}"
-               Stretch="Fill"/>
+                           Stretch="Fill"/>
                 </Viewbox>
             </Grid>
 
             <Label Grid.Row="1" Grid.Column="0" 
-                Margin="5 5 5 0"
-                FontWeight="Light"
-                Content="Austragungsort:" HorizontalContentAlignment="Right"/>
+                   Margin="5 5 5 0"
+                   FontWeight="Light"
+                   Content="Austragungsort:" HorizontalContentAlignment="Right"/>
 
             <Label Content="{Binding Ort}"
-                FontWeight="Bold"
-                Grid.Row="1" Grid.Column="1"
-                Margin="5 5 5 0" 
-                HorizontalContentAlignment="Left"/>
+                   FontWeight="Bold"
+                   Grid.Row="1" Grid.Column="1"
+                   Margin="5 5 5 0" 
+                   HorizontalContentAlignment="Left"/>
 
             <Label Grid.Row="2" Grid.Column="0"
-                Margin="5 2 5 0"
-                Content="Veranstalter:" 
-                FontWeight="Light"
-                Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
-                HorizontalContentAlignment="Right"/>
+                   Margin="5 2 5 0"
+                   Content="Veranstalter:" 
+                   FontWeight="Light"
+                   Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   HorizontalContentAlignment="Right"/>
 
             <Label Content="{Binding Veranstalter}" 
-                Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
-                FontWeight="Bold"
-                Grid.Row="2" Grid.Column ="1" 
-                Margin="5 2 5 0" HorizontalContentAlignment="Left"/>
+                   Visibility="{Binding HasOrganizer, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   FontWeight="Bold"
+                   Grid.Row="2" Grid.Column ="1" 
+                   Margin="5 2 5 0" HorizontalContentAlignment="Left"/>
 
             <Label Grid.Row="2" Grid.Column="2"
-                Content="Durchführer:" 
-                FontWeight="Light"
-                Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
-                HorizontalContentAlignment="Right"
-                Margin="5 2 5 0"/>
+                   Content="Durchführer:" 
+                   FontWeight="Light"
+                   Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   HorizontalContentAlignment="Right"
+                   Margin="5 2 5 0"/>
 
             <Label Content="{Binding Durchführer}" 
-                Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
-                Grid.Row="2"  Grid.Column="3" 
-                Margin="5 2 5 0"
-                HorizontalContentAlignment="Left" FontWeight="Bold"/>
+                   Visibility="{Binding HasOperator, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   Grid.Row="2"  Grid.Column="3" 
+                   Margin="5 2 5 0"
+                   HorizontalContentAlignment="Left" FontWeight="Bold"/>
 
             <Label Grid.Row="1" Grid.Column="2" 
-                Content="Datum:" HorizontalContentAlignment="Right"
-                FontWeight="Light"
-                Margin="5 5 5 0"/>
+                   Content="Datum:" HorizontalContentAlignment="Right"
+                   FontWeight="Light"
+                   Margin="5 5 5 0"/>
 
             <Label Content="{Binding Datum}" 
-                Grid.Row="1" Grid.Column="3" 
-                Margin="5 5 5 0" 
-                HorizontalContentAlignment="Left" FontWeight="Bold"/>
+                   Grid.Row="1" Grid.Column="3" 
+                   Margin="5 5 5 0" 
+                   HorizontalContentAlignment="Left" FontWeight="Bold"/>
 
         </Grid>
 
@@ -160,28 +160,25 @@
         </StackPanel>
 
 
-        <!-- Mannschafts Tabelle -->
+        <!-- Rangliste -->
 
         <ItemsControl Grid.Row="2" ItemsSource="{Binding Path=BodyElements}"
-                  lib:Document.Paginate="True"
-                  x:Name="itemsTest"
-                  Grid.IsSharedSizeScope="True"
-                  HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center"
-                  Margin="0,0,0,2"/>
-
-       
-
+                      lib:Document.Paginate="True"
+                      x:Name="itemsTest"
+                      Grid.IsSharedSizeScope="True"
+                      HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Center"
+                      Margin="0,0,0,2"/>
 
         <!-- Endtext -->
         <TextBlock Grid.Row="4"
-        FontSize="12"
-        HorizontalAlignment="Stretch"
-        TextAlignment="Center"
-        VerticalAlignment="Bottom"
-        TextWrapping="Wrap"
-        Margin="0 10 0 10"
-        Text="{Binding Endtext}"/>
+                   FontSize="12"
+                   HorizontalAlignment="Stretch"
+                   TextAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   TextWrapping="Wrap"
+                   Margin="0 10 0 10"
+                   Text="{Binding Endtext}"/>
 
 
         <!-- Fußzeile für Offizielle-->
@@ -195,58 +192,53 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-
-
-            <StackPanel Orientation="Vertical"
-                    Grid.Column="0">
+            <StackPanel Orientation="Vertical" Grid.Column="0">
                 <TextBlock Text="{Binding RefereeName}"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Stretch"/>
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
                 <TextBlock Text="{Binding RefereeClub}"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Stretch"/>
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
                 <TextBlock Text="(Schiedsrichter)"
-                       Visibility="{Binding HasReferee, Converter={StaticResource BooleanToVisibilityConverter}}"
-                       HorizontalAlignment="Stretch"
-                       TextAlignment="Center"/>
+                           Visibility="{Binding HasReferee, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"/>
             </StackPanel>
 
-            <StackPanel Orientation="Vertical"
-                    Grid.Column="1">
+            <StackPanel Orientation="Vertical" Grid.Column="1">
                 <TextBlock Text="{Binding ComputingOfficerName}"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Stretch"/>
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
                 <TextBlock Text="{Binding ComputingOfficerClub}"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Stretch"/>
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
                 <TextBlock Text="(Wertungsführer)"
-                       Visibility="{Binding HasComputingOfficer, Converter={StaticResource BooleanToVisibilityConverter}}"
-                       HorizontalAlignment="Stretch"
-                       TextAlignment="Center"/>
+                           Visibility="{Binding HasComputingOfficer, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"/>
             </StackPanel>
 
-            <StackPanel Orientation="Vertical"
-                    Grid.Column="2">
+            <StackPanel Orientation="Vertical" Grid.Column="2">
                 <TextBlock Text="{Binding CompetitionManagerName}"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Stretch"/>
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
                 <TextBlock Text="{Binding CompetitionManagerClub}"
-                       TextAlignment="Center"
-                       HorizontalAlignment="Stretch"/>
+                           TextAlignment="Center"
+                           HorizontalAlignment="Stretch"/>
                 <TextBlock Text="(Wettbewerbsleiter)"
-                       Visibility="{Binding HasCompetitionManager, Converter={StaticResource BooleanToVisibilityConverter}}"
-                       HorizontalAlignment="Stretch"
-                       TextAlignment="Center"/>
+                           Visibility="{Binding HasCompetitionManager, Converter={StaticResource BooleanToVisibilityConverter}}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"/>
             </StackPanel>
 
         </Grid>
 
         <!-- Footer Bemerkung -->
         <TextBlock Grid.Row="6" 
-        Margin="1cm 0.5cm 1cm 0cm" 
-        Text="{Binding Footer}" 
-        HorizontalAlignment="Center"
-        FontSize="10"/>
+                   Margin="1cm 0.5cm 1cm 0cm" 
+                   Text="{Binding Footer}" 
+                   HorizontalAlignment="Center"
+                   FontSize="10"/>
 
     </Grid>
 </UserControl>

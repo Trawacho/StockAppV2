@@ -42,7 +42,7 @@ public class ZielBewerbDruckViewModel : ViewModelBase
         async (p) =>
         {
             var _printPreview = new PrintPreview(await ZielResultFactory.Create(_turnierStore.Turnier));
-            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "TeamResult");
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "ZielResult");
             _printPreview.ShowDialog();
         },
         (p) => { return true; });

@@ -146,7 +146,7 @@ internal class ZielBewerb : IZielBewerb
         }
         RaiseTeilnehmerCollectionChanged();
     }
-
+    //TODO: GetTeilnehmerRanked() erweitern, dass bei Punktgleichheit laut Regelbuch verfahren wird
     public IEnumerable<ITeilnehmer> GetTeilnehmerRanked() => _teilnehmerliste.OrderByDescending(t => t.Wertungen.Sum(w => w.GesamtPunkte));
 
 

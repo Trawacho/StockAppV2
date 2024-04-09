@@ -42,9 +42,27 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         InitTeamRankingGrid();
     }
 
-    public List<Grid> BodyElements { get; set; }
 
-    private Grid GetGroupNameGrid(string groupName)
+    private void InitTeamRankingGrid()
+    {
+        foreach (var rankedTeamsTableViewModel in RankedTeamsTableViewModels)
+        {
+            BodyElements.Add(GetGroupNameGrid(rankedTeamsTableViewModel.GroupName));
+
+            BodyElements.Add(GetTableHeader(fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize, fontWeight: FontWeights.Bold));
+
+            foreach (var rankedTeamModel in rankedTeamsTableViewModel.RankedTeams)
+            {
+                BodyElements.Add(GetTeamGridRow(
+                    rankedTeamModel: rankedTeamModel,
+                    fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize,
+                    rowSpace: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace));
+            }
+
+        }
+    }
+
+    private static Grid GetGroupNameGrid(string groupName)
     {
         var grid = new Grid()
         {
@@ -61,7 +79,7 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         return grid;
     }
 
-    private Grid GetGridTemplate()
+    private static Grid GetGridTemplate()
     {
         var grid = new Grid() { HorizontalAlignment = HorizontalAlignment.Stretch };
 
@@ -108,7 +126,8 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 
         return grid;
     }
-    private Grid GetTableHeader(double fontSize, FontWeight fontWeight)
+   
+    private static Grid GetTableHeader(double fontSize, FontWeight fontWeight)
     {
         var grid = GetGridTemplate();
 
@@ -171,7 +190,7 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         return grid;
     }
 
-    private Grid GetTeamGridRow(RankedTeamModel rankedTeamModel, double fontSize, int rowSpace)
+    private static Grid GetTeamGridRow(RankedTeamModel rankedTeamModel, double fontSize, int rowSpace)
     {
         var teamGrid = GetGridTemplate();
 
@@ -256,27 +275,8 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         return teamGrid;
     }
 
-    private void InitTeamRankingGrid()
-    {
-        BodyElements = new List<Grid>();
 
-        foreach (var rankedTeamsTableViewModel in RankedTeamsTableViewModels)
-        {
-            BodyElements.Add(GetGroupNameGrid(rankedTeamsTableViewModel.GroupName));
-
-            BodyElements.Add(GetTableHeader(fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize, fontWeight: FontWeights.Bold));
-
-            foreach (var rankedTeamModel in rankedTeamsTableViewModel.RankedTeams)
-            {
-                BodyElements.Add(GetTeamGridRow(
-                    rankedTeamModel: rankedTeamModel,
-                    fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize,
-                    rowSpace: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace));
-            }
-
-        }
-    }
-
+    public List<Grid> BodyElements { get; set; } = new();
     public List<RankedTeamsTableViewModel> RankedTeamsTableViewModels { get; init; }
     public ViewModelBase BestOfViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive: false) : default;
     public ViewModelBase RankedClubViewModel => IsVergleich ? new RankedClubTableViewModel(_teamBewerb, isLive: false) { AsDataGrid = false } : default;
@@ -295,8 +295,6 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
     public bool HasCompetitionManager => !string.IsNullOrWhiteSpace(_turnier.OrgaDaten.CompetitionManager.Name);
 
     public bool IsVergleich { get; init; }
-
-
 
     public bool IsBestOf { get; init; }
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1 || _turnier.ContainerTeamBewerbe.TeamBewerbe.Where(b => b.IsSplitGruppe).Any();
@@ -323,5 +321,11 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
             return footerText;
         }
     }
-   
+
+    public bool IsTitle2ndLine => ImageHeaderPath != null;
+    public bool IsTitle1stLine => ImageHeaderPath == null;
+    public string ImageTopLeftPath => ImageHeaderPath == null ? _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename : null;
+    public string ImageTopRightPath => ImageHeaderPath == null ? _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename : null;
+    public string ImageHeaderPath => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename;
+
 }

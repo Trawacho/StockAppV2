@@ -14,23 +14,22 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace StockApp.Prints.ZielResult
+namespace StockApp.Prints.ZielResult;
+
+/// <summary>
+/// Interaction logic for ZielResult.xaml
+/// </summary>
+public partial class ZielResult : UserControl
 {
-    /// <summary>
-    /// Interaction logic for ZielResult.xaml
-    /// </summary>
-    public partial class ZielResult : UserControl
+    public ZielResult()
     {
-        public ZielResult()
-        {
-            InitializeComponent();
-        }
-
-        public ZielResult(ViewModelBase teamTemplateViewModel) : this()
-        {
-            DataContext = teamTemplateViewModel;
-        }
-
-
+        InitializeComponent();
     }
+
+    public ZielResult(ViewModelBase zielResultViewModel) : this()
+    {
+        DataContext = zielResultViewModel;
+    }
+
+
 }

@@ -1,10 +1,9 @@
 ﻿using StockApp.Core.Turnier;
 using StockApp.Lib;
-using StockApp.Prints.Template;
-using System.Threading.Tasks;
 using System.Threading;
-using System.Windows.Documents;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace StockApp.Prints.ZielResult;
 
@@ -12,7 +11,7 @@ public static class ZielResultFactory
 {
     public static async Task<IDocumentPaginatorSource> Create(ITurnier turnier)
     {
-        UIElement reportFactory() => new TeamTemplate(new ZielResultViewModel(turnier));
+        UIElement reportFactory() => new ZielResult(new ZielResultViewModel(turnier));
 
         var helper = new PrintHelper();
         await helper.LoadReport(reportFactory, CancellationToken.None);
