@@ -146,9 +146,24 @@ internal class ZielBewerb : IZielBewerb
         }
         RaiseTeilnehmerCollectionChanged();
     }
-    //TODO: GetTeilnehmerRanked() erweitern, dass bei Punktgleichheit laut Regelbuch verfahren wird
-    public IEnumerable<ITeilnehmer> GetTeilnehmerRanked() => _teilnehmerliste.OrderByDescending(t => t.Wertungen.Sum(w => w.GesamtPunkte));
+    public IEnumerable<ITeilnehmer> GetTeilnehmerRanked() 
+    {
+        /*
+         *  Rangfestsetzung
+                531 Sieger im Zielwettbewerb ist derjenige Teilnehmer, der die höchste Punktezahl erreicht hat.
+                Erreichen mehrere Teilnehmer eines Wettbewerbes die gleiche Punktezahl, so gilt für die Rangfestsetzung das
+                höchste Ergebnis aus dem 4. Durchgang (bei mehreren gewerteten Durchgängen werden die Ergebnisse aller
+                4. Durchgänge zusammengezählt). 
+                Bei weiterer Punktegleichheit gilt das höhere Ergebnis aus dem 3. Durchgang und dann aus dem 2. Durchgang.
+                Bei Punktegleichheit in allen 4 Durchgängen werden die Spieler auf den gleichen Rang gesetzt. 
+        */
 
+        return _teilnehmerliste.OrderByDescending(a => a.GesamtPunkte)
+                                .ThenByDescending(b => b.Wertungen.Sum(x => x.PunkteKombinieren))
+                                .ThenByDescending(c => c.Wertungen.Max(x => x.PunkteMassenSeitlich))
+                                .ThenByDescending(d => d.Wertungen.Max(x => x.PunkteSchuesse))
+                                .ThenByDescending(e => e.Wertungen.Max(x => x.PunkteMassenMitte));
+    }
 
     public void MoveTeilnehmer(int oldIndex, int newIndex)
     {
