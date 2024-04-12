@@ -90,6 +90,6 @@ public class SpielPlanTemplateViewModel : PrintTemplateViewModelBase
 
     public List<Grid> BodyElements { get; set; }
 
-    public string HeaderString => "Spielplan";
+    public static string HeaderString => "Spielplan";
 
 }
