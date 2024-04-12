@@ -129,7 +129,7 @@ public class LiveResultsZielViewModel : ViewModelBase, IDialogRequestClose
             Platzierung = rank;
         }
 
-        public string Name => _teilnehmer.Name;
+        public string Name => string.IsNullOrWhiteSpace(_teilnehmer.Spielklasse) ? _teilnehmer.Name : $"{_teilnehmer.Name} ({_teilnehmer.Spielklasse})";
         public string Verein => _teilnehmer.Vereinsname;
         public string GesamtPunkte => _teilnehmer.GesamtPunkte.ToString();
         public string DetailPunkte => string.Join(Environment.NewLine, _teilnehmer.Wertungen.Where(x => x.GesamtPunkte > 0).Select(x => x.DetailString()));

@@ -17,6 +17,7 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.Resources>
             <Style TargetType="TextBlock">
@@ -35,10 +36,12 @@
         <TextBlock Text="Verein" Grid.Row="2"/>
         <TextBlock Text="Nation" Grid.Row="3"/>
         <TextBlock Text="Passnummer" Grid.Row="4"/>
+        <TextBlock Text="Spielklasse" Grid.Row="5"/>
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Nachname}"/>
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding FirstName}"/>
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Verein}"/>
         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Nation}"/>
         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Passnummer}"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Spielklasse}"/>
     </Grid>
 </UserControl>

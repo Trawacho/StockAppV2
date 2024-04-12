@@ -15,6 +15,7 @@ public class SerialisableTeilnehmer : ITeilnehmer
         Startnummer = teilnehmer.Startnummer;
         Vereinsname = teilnehmer.Vereinsname;
         Nation = teilnehmer.Nation;
+        Spielklasse = teilnehmer.Spielklasse;
         SerialisableWertungen = new List<SerialisableWertung>();
         foreach (var wertung in teilnehmer.Wertungen)
         {
@@ -29,6 +30,7 @@ public class SerialisableTeilnehmer : ITeilnehmer
         normal.Startnummer = Startnummer;
         normal.Vereinsname = Vereinsname;
         normal.Nation = Nation;
+        normal.Spielklasse = Spielklasse;
         for (int i = 1; i < SerialisableWertungen.Count; i++)
         {
             normal.AddNewWertung();
@@ -47,6 +49,7 @@ public class SerialisableTeilnehmer : ITeilnehmer
     public int Startnummer { get; set; }
     public string Vereinsname { get; set; }
     public string Nation { get; set; }
+    public string Spielklasse { get; set; }
 
     [XmlArray(ElementName = "Wertungen")]
     public List<SerialisableWertung> SerialisableWertungen { get; set; }

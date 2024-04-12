@@ -1,6 +1,7 @@
 ﻿using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Zielbewerb;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -19,13 +20,38 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
 
     private void InitBodyElements()
     {
-        BodyElements.Add(GetGridTableHeader(ZielBewerb.FontSize, FontWeights.Bold, ZielBewerb.HasTeamname, ZielBewerb.HasNation));
-        foreach (var row in GetGridPerPlayer(ZielBewerb, ZielBewerb.FontSize, ZielBewerb.RowSpace, ZielBewerb.HasTeamname, ZielBewerb.HasNation))
+        var spielKlassen = ZielBewerb.Teilnehmerliste.Select(t => t.Spielklasse).Distinct();
+
+        foreach (var klasse in spielKlassen)
         {
-            BodyElements.Add(row);
+            if (spielKlassen.Count() > 1)
+                BodyElements.Add(GetKlassenHeader(klasse, ZielBewerb.FontSize + 1));
+
+            BodyElements.Add(GetGridTableHeader(ZielBewerb.FontSize, FontWeights.Bold, ZielBewerb.HasTeamname, ZielBewerb.HasNation));
+            foreach (var row in GetGridPerPlayer(ZielBewerb, ZielBewerb.FontSize, ZielBewerb.RowSpace, ZielBewerb.HasTeamname, ZielBewerb.HasNation, klasse))
+            {
+                BodyElements.Add(row);
+            }
         }
     }
 
+    private static Grid GetKlassenHeader(string klasse, double fontSize)
+    {
+        var grid = new Grid();
+        var label = new Label()
+        {
+            Content = klasse ??= $"nicht zugeordnet",
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            HorizontalContentAlignment = HorizontalAlignment.Center,
+            FontSize = fontSize,
+            FontWeight = FontWeights.Bold,
+            Padding = new Thickness(0),
+            Margin = new Thickness(0, 10, 0, 0)
+
+        };
+        grid.Children.Add(label);
+        return grid;
+    }
     public static Grid GetGridTemplate(bool showTeamName, bool showNation)
     {
         var grid = new Grid() { HorizontalAlignment = HorizontalAlignment.Stretch };
@@ -161,10 +187,10 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
         return grid;
 
     }
-    public static IEnumerable<Grid> GetGridPerPlayer(IZielBewerb bewerb, double fontSize, int rowSpace, bool showTeamName, bool showNation)
+    public static IEnumerable<Grid> GetGridPerPlayer(IZielBewerb bewerb, double fontSize, int rowSpace, bool showTeamName, bool showNation, string spielKlasse)
     {
         int i = 1;
-        foreach (var player in bewerb.GetTeilnehmerRanked())
+        foreach (var player in bewerb.GetTeilnehmerRanked(spielKlasse))
         {
             Grid grid = GetGridTemplate(showTeamName, showNation);
 
