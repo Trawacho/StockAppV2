@@ -7,6 +7,7 @@ namespace StockApp.Lib.Converters;
 
 public class IKehreToStringConverter : IValueConverter
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0057:Use range operator", Justification = "<Pending>")]
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is MasterKehrenPerGameModel vmMaster)

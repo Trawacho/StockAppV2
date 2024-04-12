@@ -98,10 +98,11 @@ public class Printing : IPrinting
         return printers;
     }
 
-    private ReadOnlyCollection<PageOrientation> GetPageOrientationCapability(PrintCapabilities printCapabilities)
+    private static ReadOnlyCollection<PageOrientation> GetPageOrientationCapability(PrintCapabilities printCapabilities)
     {
         // I have only tested Portrain and Landscape printing, not sure if others will work.
-        return new ReadOnlyCollection<PageOrientation>(printCapabilities.PageOrientationCapability.Where(poc => poc == PageOrientation.Portrait || poc == PageOrientation.Landscape).ToList());
+        return new ReadOnlyCollection<PageOrientation>(printCapabilities.PageOrientationCapability
+            .Where(poc => poc == PageOrientation.Portrait || poc == PageOrientation.Landscape).ToList());
     }
 
     public PrintTicket GetPrintTicket(string printerName, PageMediaSize paperSize, PageOrientation pageOrientation)
@@ -135,7 +136,7 @@ public class Printing : IPrinting
         throw new Exception($"Printer name \"{printerName}\" not found in local or network queues.");
     }
 
-    private bool ValidateMergedPrintTicket(PrintTicket desiredTicket, PrintTicket actualTicket)
+    private static bool ValidateMergedPrintTicket(PrintTicket desiredTicket, PrintTicket actualTicket)
     {
         return desiredTicket.PageMediaSize.PageMediaSizeName == actualTicket.PageMediaSize.PageMediaSizeName &&
             desiredTicket.PageOrientation == actualTicket.PageOrientation &&
@@ -145,58 +146,57 @@ public class Printing : IPrinting
 
     public PrintCapabilities GetPrinterCapabilitiesForPrintTicket(PrintTicket printTicket, string printerName)
     {
-        using (var queue = GetPrintQueue(printerName))
-        {
-            return queue?.GetPrintCapabilities(printTicket);
-        }
+        using var queue = GetPrintQueue(printerName);
+        return queue?.GetPrintCapabilities(printTicket);
     }
 
-    private PrintQueue GetPrintQueue(string printerName)
+    private static PrintQueue GetPrintQueue(string printerName)
     {
-        using (var printServer = new LocalPrintServer())
-        {
-            // GetPrintQueue(queueName) might not work with some types of network printers,
-            // but giving the queue description strangely works, but this is not a safe solution.
-            // Instead we just get all queues and filter them, that always works.
-            var queues = printServer.GetPrintQueues(new[] { EnumeratedPrintQueueTypes.Local, EnumeratedPrintQueueTypes.Connections });
-            return queues.SingleOrDefault(pq => pq.FullName == printerName);
-        }
+        using var printServer = new LocalPrintServer();
+        // GetPrintQueue(queueName) might not work with some types of network printers,
+        // but giving the queue description strangely works, but this is not a safe solution.
+        // Instead we just get all queues and filter them, that always works.
+        var queues = printServer.GetPrintQueues(new[] { EnumeratedPrintQueueTypes.Local, EnumeratedPrintQueueTypes.Connections });
+        return queues.SingleOrDefault(pq => pq.FullName == printerName);
     }
 
     /// <summary>
     /// Returns the minimum page margins supported by the printer for a specific page size. Make sure the <see cref="PrintCapabilities"/> parameter
     /// contains the correct printer and page size, otherwise you will get the wrong margins.
     /// </summary>
-    /// <param name="printerCapabilities"><see cref="PrintCapabilities"/> for a specific printer and page size.</param>
+    /// <param name="printCapabilities"><see cref="PrintCapabilities"/> for a specific printer and page size.</param>
     /// <returns>Minimum margins that this printer supports for a given page size.</returns>
     /// <exception cref="ArgumentNullException">
-    /// <paramref name="printerCapabilities" /> is <see langword="null" />.</exception>
-    public Thickness GetMinimumPageMargins(PrintCapabilities printerCapabilities)
+    /// <paramref name="printCapabilities" /> is <see langword="null" />.</exception>
+    public Thickness GetMinimumPageMargins(PrintCapabilities printCapabilities)
     {
-        if (printerCapabilities is null)
+
+#pragma warning disable CA2208
+        if (printCapabilities is null)
         {
-            throw new ArgumentNullException(nameof(PrintCapabilities), $"{nameof(PrintCapabilities)} cannot be null.");
+            throw new ArgumentNullException(nameof(PrintCapabilities), $"{nameof(printCapabilities)} cannot be null.");
         }
 
-        if (!printerCapabilities.OrientedPageMediaWidth.HasValue)
+        if (!printCapabilities.OrientedPageMediaWidth.HasValue)
         {
-            throw new ArgumentNullException(nameof(printerCapabilities.OrientedPageMediaWidth), $"{nameof(printerCapabilities.OrientedPageMediaWidth)} cannot be null.");
+            throw new ArgumentNullException(nameof(printCapabilities.OrientedPageMediaWidth), $"{nameof(printCapabilities.OrientedPageMediaWidth)} cannot be null.");
         }
 
-        if (!printerCapabilities.OrientedPageMediaHeight.HasValue)
+        if (!printCapabilities.OrientedPageMediaHeight.HasValue)
         {
-            throw new ArgumentNullException(nameof(printerCapabilities.OrientedPageMediaHeight), $"{nameof(printerCapabilities.OrientedPageMediaHeight)} cannot be null.");
+            throw new ArgumentNullException(nameof(printCapabilities.OrientedPageMediaHeight), $"{nameof(printCapabilities.OrientedPageMediaHeight)} cannot be null.");
         }
 
-        if (printerCapabilities.PageImageableArea == null)
+        if (printCapabilities.PageImageableArea == null)
         {
-            throw new ArgumentNullException(nameof(printerCapabilities.PageImageableArea), $"{nameof(printerCapabilities.PageImageableArea)} cannot be null.");
+            throw new ArgumentNullException(nameof(printCapabilities.PageImageableArea), $"{nameof(printCapabilities.PageImageableArea)} cannot be null.");
         }
+#pragma warning restore CA2208
 
-        var minLeftMargin = printerCapabilities.PageImageableArea.OriginWidth;
-        var minTopMargin = printerCapabilities.PageImageableArea.OriginHeight;
-        var minRightMargin = printerCapabilities.OrientedPageMediaWidth.Value - printerCapabilities.PageImageableArea.ExtentWidth - minLeftMargin;
-        var minBottomMargin = printerCapabilities.OrientedPageMediaHeight.Value - printerCapabilities.PageImageableArea.ExtentHeight - minTopMargin;
+        var minLeftMargin = printCapabilities.PageImageableArea.OriginWidth;
+        var minTopMargin = printCapabilities.PageImageableArea.OriginHeight;
+        var minRightMargin = printCapabilities.OrientedPageMediaWidth.Value - printCapabilities.PageImageableArea.ExtentWidth - minLeftMargin;
+        var minBottomMargin = printCapabilities.OrientedPageMediaHeight.Value - printCapabilities.PageImageableArea.ExtentHeight - minTopMargin;
 
         return new Thickness(minLeftMargin, minTopMargin, minRightMargin, minBottomMargin);
     }
@@ -210,7 +210,9 @@ public class Printing : IPrinting
     {
         if (fixedDocument == null)
         {
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
             throw new ArgumentNullException(nameof(FixedDocument), "FixedDocument cannot be null.");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
         }
 
         var appDataLocalPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PrintPreviewGui");
@@ -235,7 +237,9 @@ public class Printing : IPrinting
     {
         if (fixedDocument == null)
         {
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
             throw new ArgumentNullException(nameof(FixedDocument), "FixedDocument cannot be null.");
+#pragma warning restore CA2208 // Instantiate argument exceptions correctly
         }
 
         // Convert FixedDocument to XPS file in memory
@@ -261,16 +265,14 @@ public class Printing : IPrinting
             throw new Exception("PrintTicket missing page size information.");
         }
 
-        using (var printQueue = GetPrintQueue(printerName))
+        using var printQueue = GetPrintQueue(printerName);
+        var dlg = new PrintDialog
         {
-            var dlg = new PrintDialog
-            {
-                PrintTicket = printTicket,
-                PrintQueue = printQueue,
-            };
+            PrintTicket = printTicket,
+            PrintQueue = printQueue,
+        };
 
-            document.DocumentPaginator.PageSize = new Size(printTicket.PageMediaSize.Width.Value, printTicket.PageMediaSize.Height.Value);
-            dlg.PrintDocument(document.DocumentPaginator, documentTitle);
-        }
+        document.DocumentPaginator.PageSize = new Size(printTicket.PageMediaSize.Width.Value, printTicket.PageMediaSize.Height.Value);
+        dlg.PrintDocument(document.DocumentPaginator, documentTitle);
     }
 }

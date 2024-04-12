@@ -7,7 +7,7 @@ namespace StockApp.UI.Settings;
 public class Software
 {
     private static bool _instanceConfigured;
-    private static readonly ILogger _log;
+    private static readonly ILogger _log = null;
 
     public static string PreferencesFile
     {
@@ -70,11 +70,11 @@ public class Software
 
     public static void LogInfo()
     {
-        _log.Info("--------------------------------------------------");
-        _log.InfoFormat("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
-        _log.InfoFormat("{0} {1}, {2}.", ApplicationName, Version.ToString(), (IntPtr.Size == 8) ? "x64" : "x86");
-        _log.InfoFormat("{0}", Environment.OSVersion.ToString());
-        _log.InfoFormat(".NET Framework {0}", Environment.Version.ToString());
-        _log.Info("--------------------------------------------------");
+        _log?.Info("--------------------------------------------------");
+        _log?.InfoFormat("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
+        _log?.InfoFormat("{0} {1}, {2}.", ApplicationName, Version.ToString(), (IntPtr.Size == 8) ? "x64" : "x86");
+        _log?.InfoFormat("{0}", Environment.OSVersion.ToString());
+        _log?.InfoFormat(".NET Framework {0}", Environment.Version.ToString());
+        _log?.Info("--------------------------------------------------");
     }
 }

@@ -229,7 +229,7 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
             grid.Children.Add(lblGesamt);
 
             // Einzelwertungen
-            Grid einzelGrid = new Grid();
+            var einzelGrid = new Grid();
             foreach (var wertung in player.Wertungen)
             {
                 einzelGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
@@ -251,8 +251,10 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
 
             if (rowSpace > 0)
             {
-                var mainGrid = new Grid();
-                mainGrid.Background = grid.Background;
+                var mainGrid = new Grid
+                {
+                    Background = grid.Background
+                };
                 mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
                 mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
                 mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
@@ -287,9 +289,9 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
     public List<Grid> BodyElements { get; set; } = new List<Grid>();
 
 
-    public string HeaderString => $"E R G E B N I S";
+    public static string HeaderString => $"E R G E B N I S";
 
-    public string Footer => null;
+    public static string Footer => null;
 
     public string Endtext => ZielBewerb.EndText;
 
