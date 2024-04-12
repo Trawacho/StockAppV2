@@ -7,7 +7,7 @@ namespace StockApp.UI.Settings;
 public class Software
 {
     private static bool _instanceConfigured;
-    private static readonly ILogger _log = null;
+    private static readonly ILogger _log = null; //TODO: Logger fehlt
 
     public static string PreferencesFile
     {
@@ -19,6 +19,7 @@ public class Software
                 return SettingsDirectory + string.Format("Preferences.{0}.xml", InstanceName);
         }
     }
+
     public static string SettingsDirectory { get; private set; }
     public static string InstanceName { get; private set; }
     public static string ApplicationName { get { return "StockApp"; } }
@@ -47,7 +48,8 @@ public class Software
     /// </summary>
     public static void ConfigureInstance()
     {
-        Process[] instances = Process.GetProcessesByName("StockApp");
+        //TODO: Funktion überprüfen
+        Process[] instances = Process.GetProcessesByName("StockApp.UI");
         int instanceNumber = instances.Length;
         if (instanceNumber == 1)
             InstanceName = null;
