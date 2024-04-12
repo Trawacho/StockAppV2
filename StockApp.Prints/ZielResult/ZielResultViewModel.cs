@@ -52,6 +52,7 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
         grid.Children.Add(label);
         return grid;
     }
+
     public static Grid GetGridTemplate(bool showTeamName, bool showNation)
     {
         var grid = new Grid() { HorizontalAlignment = HorizontalAlignment.Stretch };
