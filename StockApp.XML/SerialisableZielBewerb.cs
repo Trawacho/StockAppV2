@@ -109,6 +109,10 @@ public class SerialisableZielBewerb : IZielBewerb
         throw new NotImplementedException();
     }
 
+    public IEnumerable<ITeilnehmer> GetTeilnehmerRanked(string spielKlasse)
+    {
+        throw new NotImplementedException();
+    }
     public IEnumerable<ITeilnehmer> GetTeilnehmerRanked()
     {
         throw new NotImplementedException();

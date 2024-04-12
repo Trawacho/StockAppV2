@@ -25,7 +25,7 @@ public enum TeamStatus
 
 public static class TeamStatusExtension
 {
-    private static readonly Dictionary<TeamStatus, (string name, string description, string abbreviation)> _names = new Dictionary<TeamStatus, (string name, string description, string abbreviation)>();
+    private static readonly Dictionary<TeamStatus, (string name, string description, string abbreviation)> _names = new();
     static TeamStatusExtension()
     {
         _names.Add(TeamStatus.Normal, ("Normal", "", ""));

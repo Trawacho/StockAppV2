@@ -6,7 +6,7 @@ namespace StockApp.Comm.NetMqStockTV;
 
 
 
-public interface IStockTVResult 
+public interface IStockTVResult
 {
     byte[] Data { get; }
     IStockTVSettings TVSettings { get; }
@@ -56,7 +56,7 @@ public class StockTVResult : IStockTVResult
             TVSettings?.SetSettings(array.Take(10).ToArray()); //_tvSettings = new StockTVSettings(array.Take(10).ToArray());
         }
 
-        if (TVSettings.MessageVersion == 0)
+        if (TVSettings.MessageVersion == 0 || TVSettings.GameModus == GameMode.Ziel)
         {
             byte gamenumber = 1;
 

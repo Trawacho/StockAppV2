@@ -9,6 +9,7 @@ public interface ITeilnehmer
     public int Startnummer { get; set; }
     public string Vereinsname { get; set; }
     public string Nation { get; set; }
+    string Spielklasse { get; set; }
     public int AktuelleBahn { get; }
     public bool HasOnlineWertung { get; }
     public IWertung OnlineWertung { get; }
@@ -83,6 +84,8 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     public string Vereinsname { get; set; }
 
     public string Nation { get; set; }
+
+    public string Spielklasse { get; set; } 
 
     /// <summary>
     /// Wert > 0 wenn Teilnehmer aktuell auf einer Bahn spielt.

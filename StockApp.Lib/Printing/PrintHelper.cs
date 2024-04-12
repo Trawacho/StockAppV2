@@ -31,11 +31,11 @@ public class PrintHelper
     /// </summary>
     private XpsDocument _xpsDocument;
 
-    private IDocumentPaginatorSource generatedDocument;
+    private IDocumentPaginatorSource _generatedDocument;
     public IDocumentPaginatorSource GeneratedDocument
     {
-        get => generatedDocument;
-        set => generatedDocument = value;
+        get => _generatedDocument;
+        set => _generatedDocument = value;
 
     }
 

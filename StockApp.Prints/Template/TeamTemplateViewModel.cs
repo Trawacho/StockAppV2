@@ -249,8 +249,10 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 
         if (rowSpace > 0)
         {
-            var mainGrid = new Grid();
-            mainGrid.Background = teamGrid.Background;
+            var mainGrid = new Grid
+            {
+                Background = teamGrid.Background
+            };
             mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
             mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });

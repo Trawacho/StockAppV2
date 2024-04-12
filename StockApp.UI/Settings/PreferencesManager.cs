@@ -8,19 +8,18 @@ namespace StockApp.UI.Settings;
 public class PreferencesManager
 {
     public const string FORMAT_VERSION = "1.0";
-    private GeneralAppSettings _generalAppSettings = new GeneralAppSettings();
-    private static PreferencesManager instance = null;
-    private static object locker = new object();
-    private readonly ILogger _log;
+    private readonly GeneralAppSettings _generalAppSettings = new();
+    private static PreferencesManager _instance = null;
+    private static readonly object _locker = new();
+    private readonly ILogger _log = null;
 
     public static GeneralAppSettings GeneralAppSettings
     {
         get
         {
-            if (instance == null)
-                instance = new PreferencesManager();
+            _instance ??= new PreferencesManager();
 
-            return instance._generalAppSettings;
+            return _instance._generalAppSettings;
         }
     }
 
@@ -28,16 +27,16 @@ public class PreferencesManager
 
     public static void Initialize()
     {
-        instance = new PreferencesManager();
+        _instance = new PreferencesManager();
     }
 
     public static void Save()
     {
-        if (instance == null)
+        if (_instance == null)
             return;
 
-        lock (locker)
-            instance.Export();
+        lock (_locker)
+            _instance.Export();
     }
 
     private PreferencesManager()
@@ -51,14 +50,14 @@ public class PreferencesManager
 
         try
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.CloseOutput = true;
-
-            using (XmlWriter w = XmlWriter.Create(Software.PreferencesFile, settings))
+            var settings = new XmlWriterSettings
             {
-                WriteXML(w);
-            }
+                Indent = true,
+                CloseOutput = true
+            };
+
+            using XmlWriter w = XmlWriter.Create(Software.PreferencesFile, settings);
+            WriteXML(w);
         }
         catch (Exception e)
         {
@@ -74,16 +73,17 @@ public class PreferencesManager
 
         _log?.DebugFormat("Importing {0}", Path.GetFileName(Software.PreferencesFile));
 
-        string preferencesFile = ConvertIfNeeded(Software.PreferencesFile);
+        var preferencesFile = ConvertIfNeeded(Software.PreferencesFile);
 
-        XmlReaderSettings settings = new XmlReaderSettings();
-        settings.IgnoreComments = true;
-        settings.IgnoreProcessingInstructions = true;
-        settings.IgnoreWhitespace = true;
-        settings.CloseInput = true;
+        var settings = new XmlReaderSettings
+        {
+            IgnoreComments = true,
+            IgnoreProcessingInstructions = true,
+            IgnoreWhitespace = true,
+            CloseInput = true
+        };
 
-        XmlReader reader = null;
-        reader = XmlReader.Create(preferencesFile, settings);
+        var reader = XmlReader.Create(preferencesFile, settings);
 
         try
         {
@@ -91,8 +91,8 @@ public class PreferencesManager
         }
         catch (Exception e)
         {
-            _log.Error("An error happened during the parsing of the preferences file");
-            _log.Error(e);
+            _log?.Error("An error happened during the parsing of the preferences file");
+            _log?.Error(e);
         }
         finally
         {
@@ -132,7 +132,7 @@ public class PreferencesManager
         reader.ReadEndElement();
     }
 
-    private void WritePreference(XmlWriter writer, ISettingsSerializer serializer)
+    private static void WritePreference(XmlWriter writer, ISettingsSerializer serializer)
     {
         writer.WriteStartElement(serializer.Name);
         serializer.WriteXML(writer);

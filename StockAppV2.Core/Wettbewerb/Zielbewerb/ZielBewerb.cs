@@ -13,6 +13,7 @@ public interface IZielBewerb : IBewerb
     bool CanAddTeilnehmer();
     bool CanRemoveTeilnehmer();
     void RemoveTeilnehmer(ITeilnehmer teilnehmer);
+    IEnumerable<ITeilnehmer> GetTeilnehmerRanked(string spielKlass);
     IEnumerable<ITeilnehmer> GetTeilnehmerRanked();
     void MoveTeilnehmer(int oldIndex, int newIndex);
 
@@ -146,7 +147,28 @@ internal class ZielBewerb : IZielBewerb
         }
         RaiseTeilnehmerCollectionChanged();
     }
-    public IEnumerable<ITeilnehmer> GetTeilnehmerRanked() 
+    public IEnumerable<ITeilnehmer> GetTeilnehmerRanked(string spielKlasse)
+    {
+        /*
+         *  Rangfestsetzung
+                531 Sieger im Zielwettbewerb ist derjenige Teilnehmer, der die höchste Punktezahl erreicht hat.
+                Erreichen mehrere Teilnehmer eines Wettbewerbes die gleiche Punktezahl, so gilt für die Rangfestsetzung das
+                höchste Ergebnis aus dem 4. Durchgang (bei mehreren gewerteten Durchgängen werden die Ergebnisse aller
+                4. Durchgänge zusammengezählt). 
+                Bei weiterer Punktegleichheit gilt das höhere Ergebnis aus dem 3. Durchgang und dann aus dem 2. Durchgang.
+                Bei Punktegleichheit in allen 4 Durchgängen werden die Spieler auf den gleichen Rang gesetzt. 
+        */
+
+        return _teilnehmerliste.Where(t => t.Spielklasse == spielKlasse)
+                                .OrderByDescending(a => a.GesamtPunkte)
+                                .ThenByDescending(b => b.Wertungen.Sum(x => x.PunkteKombinieren))
+                                .ThenByDescending(c => c.Wertungen.Max(x => x.PunkteMassenSeitlich))
+                                .ThenByDescending(d => d.Wertungen.Max(x => x.PunkteSchuesse))
+                                .ThenByDescending(e => e.Wertungen.Max(x => x.PunkteMassenMitte));
+
+    }
+
+    public IEnumerable<ITeilnehmer> GetTeilnehmerRanked()
     {
         /*
          *  Rangfestsetzung
@@ -163,6 +185,7 @@ internal class ZielBewerb : IZielBewerb
                                 .ThenByDescending(c => c.Wertungen.Max(x => x.PunkteMassenSeitlich))
                                 .ThenByDescending(d => d.Wertungen.Max(x => x.PunkteSchuesse))
                                 .ThenByDescending(e => e.Wertungen.Max(x => x.PunkteMassenMitte));
+
     }
 
     public void MoveTeilnehmer(int oldIndex, int newIndex)

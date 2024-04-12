@@ -7,7 +7,7 @@ namespace StockApp.UI.Settings;
 public class Software
 {
     private static bool _instanceConfigured;
-    private static readonly ILogger _log;
+    private static readonly ILogger _log = null; //TODO: Logger fehlt
 
     public static string PreferencesFile
     {
@@ -19,6 +19,7 @@ public class Software
                 return SettingsDirectory + string.Format("Preferences.{0}.xml", InstanceName);
         }
     }
+
     public static string SettingsDirectory { get; private set; }
     public static string InstanceName { get; private set; }
     public static string ApplicationName { get { return "StockApp"; } }
@@ -47,7 +48,8 @@ public class Software
     /// </summary>
     public static void ConfigureInstance()
     {
-        Process[] instances = Process.GetProcessesByName("StockApp");
+        //TODO: Funktion überprüfen
+        Process[] instances = Process.GetProcessesByName("StockApp.UI");
         int instanceNumber = instances.Length;
         if (instanceNumber == 1)
             InstanceName = null;
@@ -70,11 +72,11 @@ public class Software
 
     public static void LogInfo()
     {
-        _log.Info("--------------------------------------------------");
-        _log.InfoFormat("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
-        _log.InfoFormat("{0} {1}, {2}.", ApplicationName, Version.ToString(), (IntPtr.Size == 8) ? "x64" : "x86");
-        _log.InfoFormat("{0}", Environment.OSVersion.ToString());
-        _log.InfoFormat(".NET Framework {0}", Environment.Version.ToString());
-        _log.Info("--------------------------------------------------");
+        _log?.Info("--------------------------------------------------");
+        _log?.InfoFormat("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
+        _log?.InfoFormat("{0} {1}, {2}.", ApplicationName, Version.ToString(), (IntPtr.Size == 8) ? "x64" : "x86");
+        _log?.InfoFormat("{0}", Environment.OSVersion.ToString());
+        _log?.InfoFormat(".NET Framework {0}", Environment.Version.ToString());
+        _log?.Info("--------------------------------------------------");
     }
 }

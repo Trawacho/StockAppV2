@@ -1,6 +1,7 @@
 ﻿using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Zielbewerb;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -19,11 +20,37 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
 
     private void InitBodyElements()
     {
-        BodyElements.Add(GetGridTableHeader(ZielBewerb.FontSize, FontWeights.Bold, ZielBewerb.HasTeamname, ZielBewerb.HasNation));
-        foreach (var row in GetGridPerPlayer(ZielBewerb, ZielBewerb.FontSize, ZielBewerb.RowSpace, ZielBewerb.HasTeamname, ZielBewerb.HasNation))
+        var spielKlassen = ZielBewerb.Teilnehmerliste.Select(t => t.Spielklasse).Distinct();
+
+        foreach (var klasse in spielKlassen)
         {
-            BodyElements.Add(row);
+            if (spielKlassen.Count() > 1)
+                BodyElements.Add(GetKlassenHeader(klasse, ZielBewerb.FontSize + 1));
+
+            BodyElements.Add(GetGridTableHeader(ZielBewerb.FontSize, FontWeights.Bold, ZielBewerb.HasTeamname, ZielBewerb.HasNation));
+            foreach (var row in GetGridPerPlayer(ZielBewerb, ZielBewerb.FontSize, ZielBewerb.RowSpace, ZielBewerb.HasTeamname, ZielBewerb.HasNation, klasse))
+            {
+                BodyElements.Add(row);
+            }
         }
+    }
+
+    private static Grid GetKlassenHeader(string klasse, double fontSize)
+    {
+        var grid = new Grid();
+        var label = new Label()
+        {
+            Content = klasse ??= $"nicht zugeordnet",
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            HorizontalContentAlignment = HorizontalAlignment.Center,
+            FontSize = fontSize,
+            FontWeight = FontWeights.Bold,
+            Padding = new Thickness(0),
+            Margin = new Thickness(0, 10, 0, 0)
+
+        };
+        grid.Children.Add(label);
+        return grid;
     }
 
     public static Grid GetGridTemplate(bool showTeamName, bool showNation)
@@ -161,10 +188,10 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
         return grid;
 
     }
-    public static IEnumerable<Grid> GetGridPerPlayer(IZielBewerb bewerb, double fontSize, int rowSpace, bool showTeamName, bool showNation)
+    public static IEnumerable<Grid> GetGridPerPlayer(IZielBewerb bewerb, double fontSize, int rowSpace, bool showTeamName, bool showNation, string spielKlasse)
     {
         int i = 1;
-        foreach (var player in bewerb.GetTeilnehmerRanked())
+        foreach (var player in bewerb.GetTeilnehmerRanked(spielKlasse))
         {
             Grid grid = GetGridTemplate(showTeamName, showNation);
 
@@ -229,7 +256,7 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
             grid.Children.Add(lblGesamt);
 
             // Einzelwertungen
-            Grid einzelGrid = new Grid();
+            var einzelGrid = new Grid();
             foreach (var wertung in player.Wertungen)
             {
                 einzelGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
@@ -251,8 +278,10 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
 
             if (rowSpace > 0)
             {
-                var mainGrid = new Grid();
-                mainGrid.Background = grid.Background;
+                var mainGrid = new Grid
+                {
+                    Background = grid.Background
+                };
                 mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
                 mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
                 mainGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
@@ -287,9 +316,9 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
     public List<Grid> BodyElements { get; set; } = new List<Grid>();
 
 
-    public string HeaderString => $"E R G E B N I S";
+    public static string HeaderString => $"E R G E B N I S";
 
-    public string Footer => null;
+    public static string Footer => null;
 
     public string Endtext => ZielBewerb.EndText;
 

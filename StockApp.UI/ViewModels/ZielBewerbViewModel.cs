@@ -192,4 +192,23 @@ public class TeilnehmerViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
+
+    public string Spielklasse
+    {
+        get => _teilnehmer.Spielklasse;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value.TrimEnd()))
+            {
+                _teilnehmer.Spielklasse = null;
+            }
+            else
+            {
+                _teilnehmer.Spielklasse = value.TrimEnd();
+            }
+
+
+            RaisePropertyChanged();
+        }
+    }
 }

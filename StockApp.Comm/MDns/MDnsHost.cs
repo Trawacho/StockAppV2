@@ -83,7 +83,17 @@ public class MDnsHost : IMDnsHost, IZeroconfHost
 
     public IService StockTVServices => _host.Services.First(kvp => kvp.Key.Contains("_stockTV._tcp")).Value;
 
-    public IReadOnlyDictionary<string, string> FirstPropertySet => StockTVServices?.Properties.FirstOrDefault();
+    public IReadOnlyDictionary<string, string> FirstPropertySet
+    {
+        get
+        {
+            if (StockTVServices is not null && StockTVServices.Properties.Any())
+            {
+                return StockTVServices?.Properties[0];
+            }
+            return null;
+        }
+    }
 
     public int ControlServicePort => int.Parse(FirstPropertySet?.Where(a => a.Key == "ctrSvc").First().Value);
     public int PublisherServicePort => int.Parse(FirstPropertySet?.Where(a => a.Key == "pubSvc").First().Value);
