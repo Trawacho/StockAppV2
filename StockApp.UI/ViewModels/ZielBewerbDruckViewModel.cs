@@ -3,6 +3,7 @@ using Microsoft.Win32.SafeHandles;
 using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.Lib.Extensions;
 using StockApp.Lib.ViewModels;
+using StockApp.Prints.Receipts;
 using StockApp.Prints.Teamresult;
 using StockApp.Prints.ZielResult;
 using StockApp.UI.Commands;
@@ -45,6 +46,16 @@ public class ZielBewerbDruckViewModel : ViewModelBase
             PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "ZielResult");
             _printPreview.ShowDialog();
         },
+        (p) => { return true; });
+
+    private ICommand _druckQuittungenCommand;
+    public ICommand DruckQuittungenCommand => _druckQuittungenCommand ??= new RelayCommand(
+         async (p) =>
+         {
+             var _printPreview = new PrintPreview(await ReceiptsFactory.Create(_turnierStore.Turnier));
+             PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "Receipt");
+             _printPreview.ShowDialog();
+         },
         (p) => { return true; });
 
     public ICommand ImageHeaderSelectCommand => new RelayCommand(
