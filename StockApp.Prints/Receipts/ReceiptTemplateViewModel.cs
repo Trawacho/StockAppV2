@@ -1,6 +1,7 @@
 ﻿using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Core.Wettbewerb.Zielbewerb;
+using StockApp.Lib.ViewModels;
 using StockApp.Prints.Components;
 using System.Collections.Generic;
 using System.Windows;
@@ -8,11 +9,11 @@ using System.Windows.Controls;
 
 namespace StockApp.Prints.Receipts;
 
-public class ReceiptTemplateViewModel : PrintTemplateViewModelBase
+public class ReceiptTemplateViewModel : ViewModelBase
 {
     private readonly ITurnier _turnier;
 
-    public ReceiptTemplateViewModel(ITurnier turnier) : base(turnier)
+    public ReceiptTemplateViewModel(ITurnier turnier) 
     {
         _turnier = turnier;
         InitBodyElements();
