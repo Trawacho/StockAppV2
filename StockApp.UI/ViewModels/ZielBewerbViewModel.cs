@@ -1,10 +1,12 @@
 ﻿using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.Lib.ViewModels;
+using StockApp.UI.com;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
 using StockApp.UI.Services;
 using StockApp.UI.Stores;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -51,7 +53,7 @@ public class ZielBewerbViewModel : ViewModelBase
         Teilnehmerliste.DisposeAndClear();
         foreach (var tln in _zielBewerb.Teilnehmerliste)
         {
-            Teilnehmerliste.Add(new TeilnehmerViewModel(tln));
+            Teilnehmerliste.Add(new TeilnehmerViewModel(tln, _turnierStore));
         }
     }
 
@@ -103,11 +105,13 @@ public class TeilnehmerViewModel : ViewModelBase
 {
     private readonly ITeilnehmer _teilnehmer;
     public ITeilnehmer Teilnehmer => _teilnehmer;
-    public TeilnehmerViewModel(ITeilnehmer teilnehmer)
+    private readonly IEnumerable<IVerein> _vereine;
+    public TeilnehmerViewModel(ITeilnehmer teilnehmer, ITurnierStore store)
     {
         _teilnehmer = teilnehmer;
         _teilnehmer.OnlineStatusChanged += OnlineStatusChanged;
         _teilnehmer.StartNumberChanged += StartNumberChanged;
+        _vereine = store.TemplateVereine;
     }
 
 
@@ -163,6 +167,8 @@ public class TeilnehmerViewModel : ViewModelBase
         }
     }
 
+    public IEnumerable<string> TemplateVereine => _vereine.Select(x => x.Name);
+
     public string Verein
     {
         get => _teilnehmer.Vereinsname;
@@ -211,4 +217,13 @@ public class TeilnehmerViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
+
+    public ICommand VereinSelectedEnterCommand => new RelayCommand(
+        (p) =>
+        {
+            var x = _vereine?.FirstOrDefault(v => v.Name == Verein);
+            if (x != null)
+                Nation = x.Land + "/" + x.Region + "/" + x.Bundesland + "/" + x.Kreis;
+        },
+        (p) => true);
 }
