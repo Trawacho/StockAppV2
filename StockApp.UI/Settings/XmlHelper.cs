@@ -11,7 +11,7 @@ public static class XmlHelper
 {
     // Note: the built-in TypeConverters are crashing on some machines for unknown reason. (TypeDescriptor.GetConverter(typeof(Point)))
     //private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-    private static readonly ILogger _log;
+    private static readonly ILogger _log = null;
 
     public static float ParseFloat(string str)
     {

@@ -130,21 +130,6 @@ public class BroadcastService : IBroadcastService
 #endif
     }
 
-    static byte[] DeCompress(byte[] data)
-    {
-        if (data == null)
-            return null;
-
-        using var input = new MemoryStream(data);
-        using var output = new MemoryStream();
-        using (var datastream = new DeflateStream(input, CompressionMode.Decompress))
-        {
-            datastream.CopyTo(output);
-        }
-
-        return output.ToArray();
-    }
-
     private class UdpState
     {
         public UdpClient udpClient;
