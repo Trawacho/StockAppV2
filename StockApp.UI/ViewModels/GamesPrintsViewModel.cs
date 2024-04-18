@@ -2,7 +2,6 @@
 using StockApp.Lib.ViewModels;
 using StockApp.Prints.Receipts;
 using StockApp.Prints.Spielplan;
-using StockApp.Prints.Teamresult;
 using StockApp.UI.Commands;
 using StockApp.UI.Components;
 using StockApp.UI.Extensions;
@@ -30,13 +29,38 @@ public class GamesPrintsViewModel : ViewModelBase
 
     public bool Has6Turns => !Has8Turns;
 
-    public bool HasSummarizedScoreCards { get => _hasSummarizedScoreCards; set => SetProperty(ref _hasSummarizedScoreCards, value); }
+    public bool HasSummarizedScoreCards
+    {
+        get => _hasSummarizedScoreCards;
+        set => SetProperty(
+            ref _hasSummarizedScoreCards,
+            value,
+            () => PreferencesManager.TeamBewerbSettings.HasSummarizedScoreCards = value);
+    }
 
-    public bool HasNamesOnScoreCard { get => _hasNamesOnScoreCard; set => SetProperty(ref _hasNamesOnScoreCard, value); }
+    public bool HasNamesOnScoreCard
+    {
+        get => _hasNamesOnScoreCard;
+        set => SetProperty(
+            ref _hasNamesOnScoreCard,
+            value,
+            () => PreferencesManager.TeamBewerbSettings.HasNamesOnScoreCard = value);
+    }
 
-    public bool HasScoreCardsOptimizedForStockTV { get => _hasScoreCardsOptimizedForStockTV; set => SetProperty(ref _hasScoreCardsOptimizedForStockTV, value); }
+    public bool HasScoreCardsOptimizedForStockTV
+    {
+        get => _hasScoreCardsOptimizedForStockTV;
+        set => SetProperty(ref _hasScoreCardsOptimizedForStockTV, value);
+    }
 
-    public bool HasOpponentOnScoreCard { get => _hasOpponentOnScoreCard; set => SetProperty(ref _hasOpponentOnScoreCard, value); }
+    public bool HasOpponentOnScoreCard
+    {
+        get => _hasOpponentOnScoreCard;
+        set => SetProperty(
+            ref _hasOpponentOnScoreCard,
+            value,
+            () => PreferencesManager.TeamBewerbSettings.HasOpponentOnScoreCard = value);
+    }
 
     #region Commands
 
@@ -80,6 +104,10 @@ public class GamesPrintsViewModel : ViewModelBase
         _turnierStore = turnierStore;
 
         _teamBewerb.Is8TurnsGameChanged += TeamBewerb_Is8TurnsGameChanged;
+
+        HasNamesOnScoreCard = PreferencesManager.TeamBewerbSettings.HasNamesOnScoreCard;
+        HasOpponentOnScoreCard = PreferencesManager.TeamBewerbSettings.HasOpponentOnScoreCard;
+        HasSummarizedScoreCards = PreferencesManager.TeamBewerbSettings.HasSummarizedScoreCards;
     }
 
     protected override void Dispose(bool disposing)

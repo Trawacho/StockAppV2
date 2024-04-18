@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:conv="clr-namespace:StockApp.UI.Converters"
              xmlns:local="clr-namespace:StockApp.UI.Views" 
              xmlns:components="clr-namespace:StockApp.UI.Components"
              mc:Ignorable="d" 
@@ -49,6 +50,7 @@
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                             <Setter Property="IsThreeState" Value="False"/>
                         </Style>
+                        <conv:EnumBooleanConverter x:Key="enumBooleanConverter"/>
                     </StackPanel.Resources>
                     <CheckBox Content="von StockTV"
                               IsThreeState="False"
@@ -56,23 +58,22 @@
                               Margin="10 5 0 10"
                               IsChecked="{Binding Path=AcceptNetworkResults}"/>
 
-
-                    <RadioButton IsChecked="{Binding Path=InputPerTeam}" 
+                    <RadioButton IsChecked="{Binding Path=InputMethod, Converter={StaticResource enumBooleanConverter}, Mode=TwoWay, ConverterParameter=PerTeam}"
                                  Content=".. pro Team (nur Summe)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
 
-                    <RadioButton IsChecked="{Binding Path=InputPerTeamAndKehre}" 
+                    <RadioButton IsChecked="{Binding Path=InputMethod, Converter={StaticResource enumBooleanConverter}, Mode=TwoWay, ConverterParameter=PerTeamWithTurns}"
                                  Content=".. pro Team (jede Kehre)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
 
-                    <RadioButton IsChecked="{Binding Path=InputAfterGame}" 
+                    <RadioButton IsChecked="{Binding Path=InputMethod, Converter={StaticResource enumBooleanConverter}, Mode=TwoWay, ConverterParameter=AfterGame}" 
                                  Content=".. nach jedem Spiel (nur Summe)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
 
-                    <RadioButton IsChecked="{Binding Path=InputAfterGameAndKehre}" 
+                    <RadioButton IsChecked="{Binding Path=InputMethod, Converter={StaticResource enumBooleanConverter}, Mode=TwoWay, ConverterParameter=AfterGameWithTurns}" 
                                  Content=".. nach jedem Spiel (jede Kehre)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />

@@ -9,6 +9,7 @@ public class PreferencesManager
 {
     public const string FORMAT_VERSION = "1.0";
     private readonly GeneralAppSettings _generalAppSettings = new();
+    private readonly TeamBewerbSettings _teamBewerbSettings = new();
     private static PreferencesManager _instance = null;
     private static readonly object _locker = new();
     private readonly ILogger _log = null;
@@ -18,8 +19,16 @@ public class PreferencesManager
         get
         {
             _instance ??= new PreferencesManager();
-
             return _instance._generalAppSettings;
+        }
+    }
+
+    public static TeamBewerbSettings TeamBewerbSettings
+    {
+        get
+        {
+            _instance ??= new PreferencesManager();
+            return _instance._teamBewerbSettings;
         }
     }
 
@@ -105,6 +114,8 @@ public class PreferencesManager
         writer.WriteStartElement("StockAppSettings");
         writer.WriteElementString("FormatVersion", FORMAT_VERSION);
         WritePreference(writer, _generalAppSettings);
+        WritePreference(writer, _teamBewerbSettings);
+
     }
     private void ReadXML(XmlReader reader)
     {
@@ -122,6 +133,9 @@ public class PreferencesManager
             {
                 case "General":
                     _generalAppSettings.ReadXML(reader);
+                    break;
+                case "TeamBewerb":
+                    _teamBewerbSettings.ReadXML(reader);
                     break;
                 default:
                     reader.ReadOuterXml();
