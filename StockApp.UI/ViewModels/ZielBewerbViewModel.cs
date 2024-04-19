@@ -1,4 +1,5 @@
-﻿using StockApp.Core.Wettbewerb.Zielbewerb;
+﻿using StockApp.Comm.NetMqStockTV;
+using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.com;
 using StockApp.UI.Commands;
@@ -16,16 +17,18 @@ public class ZielBewerbViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
     private readonly ITurnierNetworkManager _turnierNetworkManager;
+    private readonly IStockTVService _stockTVService;
     private readonly IZielBewerb _zielBewerb;
     private ICommand _addPlayerCommand;
     private ICommand _removePlayerCommand;
     private TeilnehmerViewModel _selectedTeilnehmer;
     private ViewModelBase _wertungenViewModel;
 
-    public ZielBewerbViewModel(ITurnierStore turnierStore, ITurnierNetworkManager turnierNetworkManager)
+    public ZielBewerbViewModel(ITurnierStore turnierStore, ITurnierNetworkManager turnierNetworkManager, IStockTVService stockTVService)
     {
         _turnierStore = turnierStore;
         _turnierNetworkManager = turnierNetworkManager;
+        _stockTVService = stockTVService;
         _zielBewerb = _turnierStore.Turnier?.Wettbewerb as IZielBewerb;
         _zielBewerb.TeilnehmerCollectionChanged += TeilnehmerCollectionChanged;
         TeilnehmerCollectionChanged(this, EventArgs.Empty);
@@ -67,8 +70,8 @@ public class ZielBewerbViewModel : ViewModelBase
             _selectedTeilnehmer = value;
 
             if (value != null)
-                WertungenViewModel = value != null ? new ZielWertungenViewModel(_selectedTeilnehmer.Teilnehmer, _zielBewerb, _turnierNetworkManager)
-                    : new ZielWertungenViewModel(Teilnehmerliste.First().Teilnehmer, _zielBewerb, _turnierNetworkManager);
+                WertungenViewModel = value != null ? new ZielWertungenViewModel(_selectedTeilnehmer.Teilnehmer, _zielBewerb, _turnierNetworkManager, _stockTVService)
+                    : new ZielWertungenViewModel(Teilnehmerliste.First().Teilnehmer, _zielBewerb, _turnierNetworkManager, _stockTVService);
 
             RaisePropertyChanged();
         }

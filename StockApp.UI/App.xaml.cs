@@ -151,7 +151,7 @@ namespace StockApp.UI
 
         private INavigationService<ZielBewerbViewModel> CreateZielTeilnehmerNavigationService()
         {
-            return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager));
+            return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager, _stockTVService));
         }
 
         private INavigationService<ZielBewerbDruckViewModel> CreateZielDruckNavigationService()

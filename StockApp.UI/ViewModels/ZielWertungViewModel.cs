@@ -1,4 +1,5 @@
-﻿using StockApp.Core.Wettbewerb.Zielbewerb;
+﻿using StockApp.Comm.NetMqStockTV;
+using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
@@ -6,6 +7,7 @@ using StockApp.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -16,15 +18,17 @@ public class ZielWertungViewModel : ViewModelBase
     private readonly ITeilnehmer _teilnehmer;
     private readonly IZielBewerb _zielBewerb;
     private readonly ITurnierNetworkManager _turnierNetworkManager;
+    private readonly IStockTVService _stockTVService;
     private ICommand _setWertungOnlineCommand;
     private ICommand _setWertungOfflineCommand;
 
-    public ZielWertungViewModel(IWertung wertung, ITeilnehmer teilnehmer, IZielBewerb zielBewerb, ITurnierNetworkManager turnierNetworkManager)
+    public ZielWertungViewModel(IWertung wertung, ITeilnehmer teilnehmer, IZielBewerb zielBewerb, ITurnierNetworkManager turnierNetworkManager, IStockTVService stockTVService)
     {
         _wertung = wertung;
         _teilnehmer = teilnehmer;
         _zielBewerb = zielBewerb;
         _turnierNetworkManager = turnierNetworkManager;
+        _stockTVService = stockTVService;
         foreach (var d in _wertung.Disziplinen)
         {
             d.ValuesChanged += DisziplinValueChanged;
@@ -84,6 +88,9 @@ public class ZielWertungViewModel : ViewModelBase
             {
                 _turnierNetworkManager.AcceptNetworkResult = true;
                 _teilnehmer.SetOnline(SelectedBahn, _wertung.Nummer);
+
+                var tv = _stockTVService.StockTVCollection.FirstOrDefault(t => t.TVSettings.Bahn == SelectedBahn);
+                tv?.SendTeilnehmer(_teilnehmer.Name);
             },
             (p) => !IsOnline && SelectedBahn > 0 && _wertung.GesamtPunkte == 0);
     public ICommand SetWertungOfflineCommand => _setWertungOfflineCommand ??= new RelayCommand(
