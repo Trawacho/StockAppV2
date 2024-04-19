@@ -60,6 +60,9 @@ public class SerialisableTeilnehmer : ITeilnehmer
     public string Name => throw new NotImplementedException();
 
     [XmlIgnore]
+    public string NameForTV => throw new NotImplementedException();
+
+    [XmlIgnore]
     public int AktuelleBahn => throw new NotImplementedException();
 
     [XmlIgnore]

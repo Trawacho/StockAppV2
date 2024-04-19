@@ -90,11 +90,16 @@ public class ZielWertungViewModel : ViewModelBase
                 _teilnehmer.SetOnline(SelectedBahn, _wertung.Nummer);
 
                 var tv = _stockTVService.StockTVCollection.FirstOrDefault(t => t.TVSettings.Bahn == SelectedBahn);
-                tv?.SendTeilnehmer(_teilnehmer.Name);
+                tv?.SendTeilnehmer(_teilnehmer.NameForTV);
             },
             (p) => !IsOnline && SelectedBahn > 0 && _wertung.GesamtPunkte == 0);
     public ICommand SetWertungOfflineCommand => _setWertungOfflineCommand ??= new RelayCommand(
-            (p) => _teilnehmer.SetOffline(),
+            (p) =>
+            {
+                var tv = _stockTVService.StockTVCollection.FirstOrDefault(t => t.TVSettings.Bahn == SelectedBahn);
+                tv?.SendTeilnehmer(string.Empty);
+                _teilnehmer.SetOffline();
+            },
             (p) => IsOnline);
 
 }
