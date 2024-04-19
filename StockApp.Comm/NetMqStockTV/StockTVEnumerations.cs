@@ -45,6 +45,7 @@
         GetSettings = 21,
         ResetResult = 30,
         SetTeamNames = 40,
+        SetTeilnehmer = 41,
         SetImage = 50,
         GoToImage = 51,
         ClearImage = 52
