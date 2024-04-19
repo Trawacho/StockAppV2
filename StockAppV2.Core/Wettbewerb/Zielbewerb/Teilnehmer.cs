@@ -5,6 +5,7 @@ public interface ITeilnehmer
     public string Name { get; }
     public string LastName { get; set; }
     public string FirstName { get; set; }
+    public string NameForTV { get; }
     public string LicenseNumber { get; set; }
     public int Startnummer { get; set; }
     public string Vereinsname { get; set; }
@@ -78,6 +79,15 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     public new string Name => OnlineWertung != null
                             ? $"{base.Name} ({AktuelleBahn}) "
                             : base.Name;
+    public string NameForTV
+    {
+        get
+        {
+            return !string.IsNullOrWhiteSpace(Spielklasse)
+                ? $"{LastName} {FirstName}    ({Spielklasse})"
+                : $"{LastName} {FirstName}";
+        }
+    }
 
     public int Startnummer { get; set; }
 
