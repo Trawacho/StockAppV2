@@ -2,8 +2,8 @@
 //TODO: Enumerations vereinheitlichen oder zusammenführen mit Disziplinart
 public enum StockTVZielDisziplinName
 {
-    MassenVorne,
-    Schiessen,
-    MassenSeite,
-    Kombinieren
+    MassenMitte = 1,
+    Schiessen = 2,
+    MassenSeite = 3,
+    Kombinieren = 4
 }

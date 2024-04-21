@@ -3,16 +3,51 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb
 {
     public interface IWertung
     {
+        /// <summary>
+        /// Fortlaufende Nummer der Wertung
+        /// </summary>
         public int Nummer { get; set; }
+        /// <summary>
+        /// Disziplinen der Wertung
+        /// </summary>
         public IEnumerable<IDisziplin> Disziplinen { get; }
+        /// <summary>
+        /// Summer aller Punkte
+        /// </summary>
         public int GesamtPunkte { get; }
+        /// <summary>
+        /// True, wenn diese Wertung durch StockTV Daten gefüllt wird
+        /// </summary>
         public bool IsOnline { get; set; }
+        /// <summary>
+        /// True, wenn alle 24 Ergebnisse in der Wertung stehen
+        /// </summary>
+        /// <returns></returns>
         bool VersucheAllEntered();
+        /// <summary>
+        /// Es werden alle Werte der Versuche auf -1 gesetzt
+        /// </summary>
         void Reset();
+        /// <summary>
+        /// Summe der Punkte für die <see cref="Disziplinart.MassenMitte"/>
+        /// </summary>
         int PunkteMassenMitte { get; }
+        /// <summary>
+        /// Summe der Punkte für die <see cref="Disziplinart.Schiessen"/>
+        /// </summary>
         int PunkteSchuesse { get; }
+        /// <summary>
+        /// Summe der Punkte für die <see cref="Disziplinart.MassenSeite"/>
+        /// </summary>
         int PunkteMassenSeitlich { get; }
+        /// <summary>
+        /// Summe der Punkte für die <see cref="Disziplinart.Kombinieren"/>
+        /// </summary>
         int PunkteKombinieren { get; }
+
+        /// <summary>
+        /// Wird ausgeführt, wenn sich <see cref="IsOnline"/> ändert
+        /// </summary>
 
         event EventHandler OnlineStatusChanged;
     }
@@ -28,6 +63,7 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb
             var handler = OnlineStatusChanged;
             handler?.Invoke(this, EventArgs.Empty);
         }
+
         /// <summary>
         /// Default-Konstruktor
         /// </summary>
@@ -39,7 +75,7 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb
 
             var massenSeite = Disziplin.Create(Disziplinart.MassenSeite);
 
-            var kombinieren = Disziplin.Create(Disziplinart.Komibinieren);
+            var kombinieren = Disziplin.Create(Disziplinart.Kombinieren);
 
             _disziplinen = new List<IDisziplin> { massenMitte, schiessen, massenSeite, kombinieren };
 
@@ -48,25 +84,16 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb
 
         public static IWertung Create(int numberOfWertung) => new Wertung() { Nummer = numberOfWertung };
 
-        /// <summary>
-        /// Nummer der Wertung
-        /// </summary>
         public int Nummer { get; set; }
 
-        /// <summary>
-        /// Sammlung der 4 Disziplinen
-        /// </summary>
+
         public IEnumerable<IDisziplin> Disziplinen { get => _disziplinen; }
 
 
-        /// <summary>
-        /// TRUE wenn diese Wertung vom Teilnehmer online ist
-        /// </summary>
+
         public bool IsOnline { get => _isOnline; set { _isOnline = value; RaiseOnlineStatusChanged(); } }
 
-        /// <summary>
-        /// Jeder Versuch in jeder Disziplin wird auf -1 gesetzt
-        /// </summary>
+
         public void Reset()
         {
             foreach (var disziplin in _disziplinen)
@@ -81,24 +108,8 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb
         /// <returns></returns>
         internal int VersucheCount() => Disziplinen.Sum(d => d.VersucheCount());
 
-        /// <summary>
-        /// True, wenn alle Versuche eingegeben wurdne (24 Veruche)
-        /// </summary>
-        /// <returns></returns>
+
         public bool VersucheAllEntered() => VersucheCount() == 24;
-
-        //internal bool AddVersuch(int value)
-        //{
-        //    foreach (var d in _disziplinen)
-        //    {
-        //        if (d.AddVersuch(value))
-        //        {
-        //            return true;
-        //        }
-        //    }
-
-        //    return false;
-        //}
 
         #region READONLY  Punkte
 
@@ -110,7 +121,7 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb
 
         public int PunkteMassenSeitlich => Disziplinen.First(d => d.Disziplinart == Disziplinart.MassenSeite).Summe;
 
-        public int PunkteKombinieren => Disziplinen.First(d => d.Disziplinart == Disziplinart.Komibinieren).Summe;
+        public int PunkteKombinieren => Disziplinen.First(d => d.Disziplinart == Disziplinart.Kombinieren).Summe;
 
         #endregion
 

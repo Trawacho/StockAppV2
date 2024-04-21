@@ -7,7 +7,7 @@ public enum Disziplinart
     MassenMitte = 1,
     Schiessen = 2,
     MassenSeite = 3,
-    Komibinieren = 4
+    Kombinieren = 4
 }
 
 public interface IDisziplin
@@ -51,7 +51,7 @@ public interface IDisziplin
     /// <summary>
     /// Einem Versuch einen Wert zuweisen
     /// </summary>
-    /// <param name="nr">Nummer des Versuchs</param>
+    /// <param name="nr">Nummer des Versuchs (1.....6)</param>
     /// <param name="value">Wert des Versuchs</param>
     void SetVersuch(int nr, int value);
 }
@@ -145,7 +145,7 @@ internal class Disziplin : IDisziplin
             {
                 Disziplinart.MassenMitte => "Massen Mitte",
                 Disziplinart.MassenSeite => "Massen Seite",
-                Disziplinart.Komibinieren => "Kombinieren",
+                Disziplinart.Kombinieren => "Kombinieren",
                 Disziplinart.Schiessen => "Schiessen",
                 _ => throw new InvalidEnumArgumentException("ungültige Disziplinart")
             };
@@ -174,11 +174,11 @@ internal class Disziplin : IDisziplin
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    /// <param name="nr"></param>
+    /// <param name="nr"><inheritdoc/></param>
     /// <param name="value"></param>
     public void SetVersuch(int nr, int value)
     {
-        AddVersuch(nr, value);
+        AddVersuch(nr - 1, value);
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ internal class Disziplin : IDisziplin
     /// <summary>
     /// Setzt den Wert in das Array der Versuche. Der Wert wird validiert.
     /// </summary>
-    /// <param name="index"></param>
+    /// <param name="index">0 ... 5</param>
     /// <param name="value"></param>
     private void AddVersuch(int index, int value)
     {

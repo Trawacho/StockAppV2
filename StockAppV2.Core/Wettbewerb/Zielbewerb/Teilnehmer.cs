@@ -269,7 +269,7 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
         {
             switch (zielDisziplin.Name)
             {
-                case StockTVZielDisziplinName.MassenVorne:
+                case StockTVZielDisziplinName.MassenMitte:
                     for (int i = 0; i < zielDisziplin.Versuche.Count; i++)
                     {
                         SetVersuch(Disziplinart.MassenMitte, i + 1, zielDisziplin.Versuche[i]);
@@ -290,7 +290,7 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
                 case StockTVZielDisziplinName.Kombinieren:
                     for (int i = 0; i < zielDisziplin.Versuche.Count; i++)
                     {
-                        SetVersuch(Disziplinart.Komibinieren, i + 1, zielDisziplin.Versuche[i]);
+                        SetVersuch(Disziplinart.Kombinieren, i + 1, zielDisziplin.Versuche[i]);
                     }
                     break;
 
@@ -364,17 +364,17 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
                 this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.MassenSeite).Versuch6 = value; break;
 
             case 19:
-                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Komibinieren).Versuch1 = value; break;
+                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Kombinieren).Versuch1 = value; break;
             case 20:
-                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Komibinieren).Versuch2 = value; break;
+                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Kombinieren).Versuch2 = value; break;
             case 21:
-                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Komibinieren).Versuch3 = value; break;
+                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Kombinieren).Versuch3 = value; break;
             case 22:
-                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Komibinieren).Versuch4 = value; break;
+                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Kombinieren).Versuch4 = value; break;
             case 23:
-                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Komibinieren).Versuch5 = value; break;
+                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Kombinieren).Versuch5 = value; break;
             case 24:
-                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Komibinieren).Versuch6 = value; break;
+                this.OnlineWertung.Disziplinen.First(d => d.Disziplinart == Disziplinart.Kombinieren).Versuch6 = value; break;
 
             default:
                 break;
