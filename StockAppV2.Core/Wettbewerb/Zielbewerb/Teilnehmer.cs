@@ -225,7 +225,7 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     /// </summary>
     public void SetOffline()
     {
-        AktuelleBahn = -1;
+        AktuelleBahn = 0;
         _wertungen.ToList().ForEach(w => w.IsOnline = false);
         RaiseOnlineStatusChanged();
     }

@@ -46,7 +46,6 @@ public class TeilnehmerViewModel : ViewModelBase
     private void StartNumberChanged(object sender, EventArgs e)
     {
         RaisePropertyChanged(nameof(Startnummer));
-
     }
 
 

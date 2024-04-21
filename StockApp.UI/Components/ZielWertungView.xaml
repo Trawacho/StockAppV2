@@ -165,33 +165,37 @@
 
 
         <StackPanel Orientation="Horizontal"
-                            Width="{Binding ElementName=dgDisziplinen, Path=ActualWidth}"
-                            Margin="0,10"
-                            Grid.Column="0" 
-                            HorizontalAlignment="Left" Grid.ColumnSpan="2">
+                    Width="{Binding ElementName=dgDisziplinen, Path=ActualWidth}"
+                    Margin="0,10"
+                    Grid.Column="0" 
+                    HorizontalAlignment="Left" Grid.ColumnSpan="2">
 
             <Label Content="Auf Bahn# "
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
 
+            
             <Label Content="{Binding Path=AktuelleBahn}"
-                           Visibility="{Binding Path=IsOnline, Converter={StaticResource BoolenToVisibilityConverter}}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                   Visibility="{Binding Path=IsOnline, Converter={StaticResource BoolenToVisibilityConverter}}"
+                   Width="50"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
 
+            
+            
             <ComboBox ItemsSource="{Binding Path=FreieBahnen}"
-                              SelectedItem="{Binding Path=SelectedBahn}"
-                              Visibility="{Binding Path=IsOffline, 
-                                                   Converter={StaticResource BoolenToVisibilityConverter}}"
-                              MinWidth="50"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center"/>
+                      SelectedItem="{Binding Path=SelectedBahn, Mode=TwoWay}"
+                      Visibility="{Binding Path=IsOffline, Converter={StaticResource BoolenToVisibilityConverter}}"
+                      Width="50"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
 
             <Button Command="{Binding Path=SetWertungOnlineCommand}"
                     Visibility="{Binding IsOffline, Converter={StaticResource BoolenToVisibilityConverter}}"
                     Content="Online" 
                     Margin="10,0"
                     Padding="5"/>
+            
             <Button Command="{Binding Path=SetWertungOfflineCommand}"
                     Visibility="{Binding IsOnline, Converter={StaticResource BoolenToVisibilityConverter}}"
                     Content="Offline" 
@@ -199,12 +203,12 @@
                     Padding="5"/>
 
             <Label Content="Online"
-                           Foreground="Red"
-                           FontWeight="Bold"
-                           Visibility="{Binding Path=IsOnline, Converter={StaticResource BoolenToVisibilityConverter}}"
-                           Margin="10,0"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                   Foreground="Red"
+                   FontWeight="Bold"
+                   Visibility="{Binding Path=IsOnline, Converter={StaticResource BoolenToVisibilityConverter}}"
+                   Margin="10,0"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
         </StackPanel>
 
 

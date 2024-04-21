@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:StockApp.UI.Views" xmlns:components="clr-namespace:StockApp.UI.Components"
+             xmlns:local="clr-namespace:StockApp.UI.Views" 
+             xmlns:components="clr-namespace:StockApp.UI.Components"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="1000">
 
@@ -119,41 +120,6 @@
                 <StackPanel>
                     <TextBlock Text="Spielerdaten" FontSize="16" FontWeight="Bold"/>
                     <ContentControl Content="{Binding SelectedTeilnehmer}" />
-                    <!--<Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Grid.Resources>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="Margin" Value="0 5 5 0"/>
-                            </Style>
-
-                            <Style TargetType="TextBox">
-                                <Setter Property="Margin" Value="0 10 0 0"/>
-                                <Setter Property="Padding" Value="3"/>
-                            </Style>
-                        </Grid.Resources>
-                        <TextBlock Text="Nachname" Grid.Row="0"/>
-                        <TextBlock Text="Vorname" Grid.Row="1"/>
-                        <TextBlock Text="Verein" Grid.Row="2"/>
-                        <TextBlock Text="Nation" Grid.Row="3"/>
-                        <TextBlock Text="Passnummer" Grid.Row="4"/>
-                        <TextBox Grid.Row="0" Grid.Column="1"/>
-                        <TextBox Grid.Row="1" Grid.Column="1"/>
-                        <TextBox Grid.Row="2" Grid.Column="1"/>
-                        <TextBox Grid.Row="3" Grid.Column="1"/>
-                        <TextBox Grid.Row="4" Grid.Column="1"/>
-                    </Grid>-->
                 </StackPanel>
 
                 <!-- Wertungen-->

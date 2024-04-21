@@ -126,7 +126,7 @@ internal class ZielBewerb : IZielBewerb
 
         _zielBahnen = new List<int>();
 
-        for (int i = 1; i <= 15; i++)
+        for (int i = 0; i <= 15; i++)
         {
             _zielBahnen.Add(i);
         }

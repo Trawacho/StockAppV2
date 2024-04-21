@@ -21,6 +21,7 @@ public class ZielWertungViewModel : ViewModelBase
     private readonly IStockTVService _stockTVService;
     private ICommand _setWertungOnlineCommand;
     private ICommand _setWertungOfflineCommand;
+    private int _selectedBahn;
 
     public ZielWertungViewModel(IWertung wertung, ITeilnehmer teilnehmer, IZielBewerb zielBewerb, ITurnierNetworkManager turnierNetworkManager, IStockTVService stockTVService)
     {
@@ -36,6 +37,8 @@ public class ZielWertungViewModel : ViewModelBase
         }
 
         _teilnehmer.OnlineStatusChanged += OnlineStatusChanged;
+
+        SelectedBahn = _teilnehmer.AktuelleBahn;
     }
 
     private void DisziplinValueChanged(object sender, EventArgs e)
@@ -81,24 +84,28 @@ public class ZielWertungViewModel : ViewModelBase
 
     public IEnumerable<int> FreieBahnen => _zielBewerb.FreieBahnen;
 
-    public int SelectedBahn { get; set; }
+    public int SelectedBahn
+    {
+        get => _selectedBahn;
+        set => SetProperty(ref _selectedBahn, value);
+    }
 
     public ICommand SetWertungOnlineCommand => _setWertungOnlineCommand ??= new RelayCommand(
             (p) =>
             {
                 _turnierNetworkManager.AcceptNetworkResult = true;
                 _teilnehmer.SetOnline(SelectedBahn, _wertung.Nummer);
-
-                var tv = _stockTVService.StockTVCollection.FirstOrDefault(t => t.TVSettings.Bahn == SelectedBahn);
-                tv?.SendTeilnehmer(_teilnehmer.NameForTV);
+                _stockTVService.StockTVCollection.FirstOrDefault(t => t.TVSettings.Bahn == SelectedBahn)?.SendTeilnehmer(_teilnehmer.NameForTV);
             },
             (p) => !IsOnline && SelectedBahn > 0 && _wertung.GesamtPunkte == 0);
+
     public ICommand SetWertungOfflineCommand => _setWertungOfflineCommand ??= new RelayCommand(
             (p) =>
             {
                 var tv = _stockTVService.StockTVCollection.FirstOrDefault(t => t.TVSettings.Bahn == SelectedBahn);
                 tv?.SendTeilnehmer(string.Empty);
                 _teilnehmer.SetOffline();
+                SelectedBahn = _teilnehmer.AktuelleBahn;
             },
             (p) => IsOnline);
 

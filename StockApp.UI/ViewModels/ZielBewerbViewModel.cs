@@ -33,7 +33,6 @@ public class ZielBewerbViewModel : ViewModelBase
         SelectedTeilnehmer = Teilnehmerliste?.First();
     }
 
-
     protected override void Dispose(bool disposing)
     {
         if (!_disposed)
@@ -58,43 +57,37 @@ public class ZielBewerbViewModel : ViewModelBase
         }
     }
 
+    public ObservableCollection<TeilnehmerViewModel> Teilnehmerliste { get; } = new();
+
     public TeilnehmerViewModel SelectedTeilnehmer
     {
         get => _selectedTeilnehmer;
-        set
-        {
-            if (_selectedTeilnehmer == value) return;
-            _selectedTeilnehmer?.Dispose();
-            _selectedTeilnehmer = value;
-
-            if (value != null)
-                WertungenViewModel = value != null ? new ZielWertungenViewModel(_selectedTeilnehmer.Teilnehmer, _zielBewerb, _turnierNetworkManager, _stockTVService)
-                    : new ZielWertungenViewModel(Teilnehmerliste.First().Teilnehmer, _zielBewerb, _turnierNetworkManager, _stockTVService);
-
-            RaisePropertyChanged();
-        }
+        set => SetProperty(
+            ref _selectedTeilnehmer,
+            value,
+            () =>
+            {
+                if (SelectedTeilnehmer != null)
+                    WertungenViewModel = new ZielWertungenViewModel(SelectedTeilnehmer.Teilnehmer, _zielBewerb, _turnierNetworkManager, _stockTVService);
+            });
     }
-
-    public ObservableCollection<TeilnehmerViewModel> Teilnehmerliste { get; } = new();
 
     public ViewModelBase WertungenViewModel
     {
         get => _wertungenViewModel;
-        set
-        {
-            if (_wertungenViewModel == value) return;
-            _wertungenViewModel?.Dispose();
-            _wertungenViewModel = value;
-            RaisePropertyChanged();
-        }
+        set => SetProperty(ref _wertungenViewModel, value);
     }
-
 
     public ICommand AddPlayerCommand => _addPlayerCommand ??= new RelayCommand(
         (p) => _zielBewerb.AddNewTeilnehmer(),
         (p) => _zielBewerb.CanAddTeilnehmer());
 
     public ICommand RemovePlayerCommand => _removePlayerCommand ??= new RelayCommand(
-        (p) => _zielBewerb.RemoveTeilnehmer(SelectedTeilnehmer.Teilnehmer),
-        (p) => _zielBewerb.CanRemoveTeilnehmer() && SelectedTeilnehmer != null);
+        (p) =>
+        {
+            SelectedTeilnehmer.Dispose();
+            _zielBewerb.RemoveTeilnehmer(SelectedTeilnehmer.Teilnehmer);
+            SelectedTeilnehmer = Teilnehmerliste.First();
+        },
+        (p) => _zielBewerb.CanRemoveTeilnehmer() && SelectedTeilnehmer != null && !SelectedTeilnehmer.Teilnehmer.HasOnlineWertung);
 }
