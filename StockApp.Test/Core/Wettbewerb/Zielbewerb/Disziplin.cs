@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using StockApp.Comm.NetMqStockTV;
 using StockApp.Core.Wettbewerb.Zielbewerb;
 
 namespace StockApp.Test
@@ -9,7 +10,7 @@ namespace StockApp.Test
         [SetUp]
         public void Setup()
         {
-            _disziplin = Disziplin.Create(Disziplinart.Schiessen);
+            _disziplin = Disziplin.Create(StockTVZielDisziplinName.Schiessen);
         }
 
         [Test]

@@ -1,4 +1,5 @@
-﻿using StockApp.Core.Wettbewerb.Zielbewerb;
+﻿using StockApp.Comm.NetMqStockTV;
+using StockApp.Core.Wettbewerb.Zielbewerb;
 using System.Xml.Serialization;
 
 namespace StockApp.XML;
@@ -33,7 +34,7 @@ public class SerialisableDisziplin : IDisziplin
     }
 
 
-    public Disziplinart Disziplinart { get; set; }
+    public StockTVZielDisziplinName Disziplinart { get; set; }
 
     public int Versuch1 { get; set; }
     public int Versuch2 { get; set; }

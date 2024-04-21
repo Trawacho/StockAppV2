@@ -1,4 +1,6 @@
 ﻿
+using StockApp.Comm.NetMqStockTV;
+
 namespace StockApp.Core.Wettbewerb.Zielbewerb
 {
     public interface IWertung
@@ -69,13 +71,13 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb
         /// </summary>
         private Wertung()
         {
-            var massenMitte = Disziplin.Create(Disziplinart.MassenMitte);
+            var massenMitte = Disziplin.Create(StockTVZielDisziplinName.MassenMitte);
 
-            var schiessen = Disziplin.Create(Disziplinart.Schiessen);
+            var schiessen = Disziplin.Create(StockTVZielDisziplinName.Schiessen);
 
-            var massenSeite = Disziplin.Create(Disziplinart.MassenSeite);
+            var massenSeite = Disziplin.Create(StockTVZielDisziplinName.MassenSeite);
 
-            var kombinieren = Disziplin.Create(Disziplinart.Kombinieren);
+            var kombinieren = Disziplin.Create(StockTVZielDisziplinName.Kombinieren);
 
             _disziplinen = new List<IDisziplin> { massenMitte, schiessen, massenSeite, kombinieren };
 
@@ -115,13 +117,13 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb
 
         public int GesamtPunkte => Disziplinen.Sum(d => d.Summe);
 
-        public int PunkteMassenMitte => Disziplinen.First(d => d.Disziplinart == Disziplinart.MassenMitte).Summe;
+        public int PunkteMassenMitte => Disziplinen.First(d => d.Disziplinart == StockTVZielDisziplinName.MassenMitte).Summe;
 
-        public int PunkteSchuesse => Disziplinen.First(d => d.Disziplinart == Disziplinart.Schiessen).Summe;
+        public int PunkteSchuesse => Disziplinen.First(d => d.Disziplinart == StockTVZielDisziplinName.Schiessen).Summe;
 
-        public int PunkteMassenSeitlich => Disziplinen.First(d => d.Disziplinart == Disziplinart.MassenSeite).Summe;
+        public int PunkteMassenSeitlich => Disziplinen.First(d => d.Disziplinart == StockTVZielDisziplinName.MassenSeite).Summe;
 
-        public int PunkteKombinieren => Disziplinen.First(d => d.Disziplinart == Disziplinart.Kombinieren).Summe;
+        public int PunkteKombinieren => Disziplinen.First(d => d.Disziplinart == StockTVZielDisziplinName.Kombinieren).Summe;
 
         #endregion
 

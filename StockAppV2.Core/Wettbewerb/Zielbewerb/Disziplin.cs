@@ -1,21 +1,15 @@
-﻿using System.ComponentModel;
+﻿using StockApp.Comm.NetMqStockTV;
+using System.ComponentModel;
 
 namespace StockApp.Core.Wettbewerb.Zielbewerb;
-//TODO: Enumerations vereinheitlichen oder zusammenführen mit StockTVZielDisziplinName
-public enum Disziplinart
-{
-    MassenMitte = 1,
-    Schiessen = 2,
-    MassenSeite = 3,
-    Kombinieren = 4
-}
+
 
 public interface IDisziplin
 {
     /// <summary>
     /// Art der Disziplin dieser 6 Versuche
     /// </summary>
-    Disziplinart Disziplinart { get; }
+    StockTVZielDisziplinName Disziplinart { get; }
     /// <summary>
     /// Friendly name of Disziplinart
     /// </summary>
@@ -74,7 +68,7 @@ internal class Disziplin : IDisziplin
     /// Standard Konstruktor
     /// </summary>
     /// <param name="art"></param>
-    private Disziplin(Disziplinart art)
+    private Disziplin(StockTVZielDisziplinName art)
     {
         Disziplinart = art;
 
@@ -87,7 +81,7 @@ internal class Disziplin : IDisziplin
         _versuche[5] = -1;
     }
 
-    public static IDisziplin Create(Disziplinart disziplinart) => new Disziplin(disziplinart);
+    public static IDisziplin Create(StockTVZielDisziplinName disziplinart) => new Disziplin(disziplinart);
 
     #region Properties
 
@@ -126,7 +120,7 @@ internal class Disziplin : IDisziplin
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Disziplinart Disziplinart { get; }
+    public StockTVZielDisziplinName Disziplinart { get; }
 
 
     /// <summary>
@@ -143,10 +137,10 @@ internal class Disziplin : IDisziplin
         {
             return Disziplinart switch
             {
-                Disziplinart.MassenMitte => "Massen Mitte",
-                Disziplinart.MassenSeite => "Massen Seite",
-                Disziplinart.Kombinieren => "Kombinieren",
-                Disziplinart.Schiessen => "Schiessen",
+                StockTVZielDisziplinName.MassenMitte => "Massen Mitte",
+                StockTVZielDisziplinName.MassenSeite => "Massen Seite",
+                StockTVZielDisziplinName.Kombinieren => "Kombinieren",
+                StockTVZielDisziplinName.Schiessen => "Schiessen",
                 _ => throw new InvalidEnumArgumentException("ungültige Disziplinart")
             };
         }
@@ -202,11 +196,11 @@ internal class Disziplin : IDisziplin
         {
             _versuche[index] = value;
         }
-        else if (Disziplinart == Disziplinart.Schiessen && IsSchussValue(value))
+        else if (Disziplinart == StockTVZielDisziplinName.Schiessen && IsSchussValue(value))
         {
             _versuche[index] = value;
         }
-        else if (Disziplinart != Disziplinart.Schiessen && IsMassValue(value))
+        else if (Disziplinart != StockTVZielDisziplinName.Schiessen && IsMassValue(value))
         {
             _versuche[index] = value;
         }
