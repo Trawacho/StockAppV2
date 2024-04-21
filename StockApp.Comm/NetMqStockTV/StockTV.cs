@@ -39,6 +39,12 @@ public interface IStockTV : IEquatable<IStockTV>, IComparable<IStockTV>, IDispos
 
     void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen);
 
+    /// <summary>
+    /// Send Name to StockTV for Zielbewerb
+    /// </summary>
+    /// <param name="teilnehmer"></param>
+    void SendTeilnehmer(string teilnehmer);
+
     void RemoveFromCollection();
 }
 
@@ -338,6 +344,15 @@ public class StockTV : IStockTV
             valueString += $"{b.SpielNummer}:{b.TeamNameA}:{b.TeamNameB};";
         }
         _appClient?.SendToStockTV(MessageTopic.SetTeamNames, valueString);
+    }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <param name="teilnehmer"></param>
+    public void SendTeilnehmer(string teilnehmer)
+    {
+        _appClient?.SendToStockTV(MessageTopic.SetTeilnehmer, teilnehmer);
     }
 
     public void SetMarketingImage(byte[] imageAsByteArray, string fileName) =>

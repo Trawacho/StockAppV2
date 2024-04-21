@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Collections" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\StockApp.Lib\StockApp.Lib.csproj" />
     <ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
   </ItemGroup>

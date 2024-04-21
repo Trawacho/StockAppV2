@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:StockApp.UI.Views" 
              xmlns:components="clr-namespace:StockApp.UI.Components" xmlns:conv="clr-namespace:StockApp.Lib.Converters;assembly=StockApp.Lib"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="800">
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
         <Style TargetType="UserControl">
             <Setter Property="Width" Value="600"/>
@@ -94,7 +94,7 @@
 
         <components:TopHeader TopHeaderText ="Druck Ausgabe"/>
 
-        <StackPanel Grid.Row="1" Orientation="Vertical">
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,0,0,-110" Grid.RowSpan="2">
 
 
             <Grid>
@@ -258,12 +258,20 @@
 
             </Grid>
 
-            <Button Content="Druck..."
-                    Width="100"
+            <Button Content="Druck Ergebnisliste..."
+                    Width="200"
                     Height="33"
                     HorizontalAlignment="Left"
                     Margin="30 10 0 0"
                     Command="{Binding DruckResultCommand}"
+                    Style="{StaticResource FileSelectButtonStyle}"/>
+            
+            <Button Content="Druck Quittungen..."
+                    Width="200"
+                    Height="33"
+                    HorizontalAlignment="Left"
+                    Margin="30 10 0 0"
+                    Command="{Binding DruckQuittungenCommand}"
                     Style="{StaticResource FileSelectButtonStyle}"/>
       
         </StackPanel>

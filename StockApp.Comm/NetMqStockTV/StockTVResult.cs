@@ -4,15 +4,13 @@ using System.Text.Json;
 
 namespace StockApp.Comm.NetMqStockTV;
 
-
-
 public interface IStockTVResult
 {
     byte[] Data { get; }
     IStockTVSettings TVSettings { get; }
     IList<IStockTVGameResult> Results { get; }
+    IStockTVZielbewerb ResultZielbewerb { get; }
     event Action ResultChanged;
-
     IBroadCastTelegram AsBroadCastTelegram();
     void SetResult(byte[] array);
 }
@@ -40,6 +38,7 @@ public class StockTVResult : IStockTVResult
     public IStockTVSettings TVSettings { get; private set; }
 
     public IList<IStockTVGameResult> Results { private set; get; }
+    public IStockTVZielbewerb ResultZielbewerb { private set; get; }
 
     public void SetResult(byte[] array)
     {
@@ -53,10 +52,10 @@ public class StockTVResult : IStockTVResult
         }
         else
         {
-            TVSettings?.SetSettings(array.Take(10).ToArray()); //_tvSettings = new StockTVSettings(array.Take(10).ToArray());
+            TVSettings?.SetSettings(array.Take(10).ToArray());
         }
 
-        if (TVSettings.MessageVersion == 0 || TVSettings.GameModus == GameMode.Ziel)
+        if (TVSettings.MessageVersion == 0)
         {
             byte gamenumber = 1;
 
@@ -74,15 +73,22 @@ public class StockTVResult : IStockTVResult
         else if (TVSettings.MessageVersion == 1)
         {
             var jsonMessage = array.Skip(10);
-
             var jsonString = Encoding.UTF8.GetString(jsonMessage.ToArray(), 0, jsonMessage.Count());
 
-            var jsonGames = JsonSerializer.Deserialize<List<StockTVGame>>(jsonString);
-            Results.Clear();
-            foreach (var game in jsonGames)
+            if (TVSettings.GameModus != GameMode.Ziel)
             {
-                Results.Add(
-                    new StockTVGameResult(game.GameNumber, game.Turns));
+                var jsonGames = JsonSerializer.Deserialize<List<StockTVGame>>(jsonString);
+                Results.Clear();
+                foreach (var game in jsonGames)
+                {
+                    Results.Add(
+                        new StockTVGameResult(game.GameNumber, game.Turns));
+                }
+            }
+            else
+            {
+                var jsonZielbewerb = JsonSerializer.Deserialize<StockTVZielbewerb>(jsonString);
+                ResultZielbewerb = jsonZielbewerb;
             }
         }
 
@@ -102,7 +108,13 @@ public class StockTVResult : IStockTVResult
 
     public override string ToString()
     {
-        return $"Gruppe: {TVSettings.Spielgruppe}; Bahn: {TVSettings.Bahn}; Spiele:{Results.Count} | {string.Join("-", Results.Select(x => String.Format("{0}:{1}", x.ValueA, x.ValueB)))}";
+        return TVSettings.GameModus != GameMode.Ziel
+            ? $"Gruppe: {TVSettings.Spielgruppe}; Bahn: {TVSettings.Bahn}; Spiele:{Results.Count} | {string.Join("-", Results.Select(x => String.Format("{0}:{1}", x.ValueA, x.ValueB)))}"
+            : $"Bahn: {TVSettings.Bahn} Anzahl Versuche: {TVSettings.TurnsPerGame} | " +
+                $"MaMi: {string.Join("-", ResultZielbewerb.MassenVorne.Versuche.Select(t => t))} | " +
+                $"Schi: {string.Join("-", ResultZielbewerb.Schiessen.Versuche.Select(t => t))} | " +
+                $"MaSe: {string.Join("-", ResultZielbewerb.MassenSeite.Versuche.Select(t => t))} | " +
+                $"Komb: {string.Join("-", ResultZielbewerb.Kombinieren.Versuche.Select(t => t))}";
     }
 
     /// <summary>

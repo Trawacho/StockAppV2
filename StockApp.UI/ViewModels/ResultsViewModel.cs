@@ -3,6 +3,7 @@ using StockApp.Lib.ViewModels;
 using StockApp.Prints.Teamresult;
 using StockApp.UI.Commands;
 using StockApp.UI.Components;
+using StockApp.UI.Enumerations;
 using StockApp.UI.Services;
 using StockApp.UI.Settings;
 using StockApp.UI.Stores;
@@ -16,13 +17,10 @@ public class ResultsViewModel : ViewModelBase
     private readonly IDialogStore _dialogStore;
     private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
     private readonly ITurnierNetworkManager _turnierNetworkManager;
-    private bool? _inputAfterGame;
-    private bool? _inputPerTeam;
-    private bool? _inputPerTeamAndKehre;
-    private bool? _inputAfterGameAndKehre;
+    private TeamBewerbInputMethod _inputMethod;
     private ViewModelBase _resultsEntryViewModel;
-
     private ICommand _printTeamResultsCommand;
+
     public ICommand PrintTeamResultsCommand => _printTeamResultsCommand ??= new AsyncRelayCommand(
         async (p) =>
         {
@@ -34,56 +32,16 @@ public class ResultsViewModel : ViewModelBase
 
     public ICommand ShowLiveResultCommand { get; init; }
 
-    public bool? InputAfterGame
-    {
-        get => _inputAfterGame;
-        set => SetProperty(
-            ref _inputAfterGame,
-            value,
-            () =>
-            {
-                if (value == true)
-                    ResultsEntryViewModel = new ResultInputAfterGameViewModel(TeamBewerb.GetAllGames());
-            });
-    }
 
-    public bool? InputPerTeam
+    public TeamBewerbInputMethod InputMethod
     {
-        get => _inputPerTeam;
-        set => SetProperty(
-            ref _inputPerTeam,
-            value,
-            () =>
-            {
-                if (value == true)
-                    ResultsEntryViewModel = new ResultInputPerTeamViewModel(TeamBewerb.Teams);
-            });
-    }
-
-    public bool? InputPerTeamAndKehre
-    {
-        get => _inputPerTeamAndKehre;
-        set => SetProperty(
-            ref _inputPerTeamAndKehre,
-            value,
-            () =>
-            {
-                if (value == true)
-                    ResultsEntryViewModel = new ResultInputPerTeamAndKehreViewModel(TeamBewerb.Teams, TeamBewerb.Is8TurnsGame);
-            });
-    }
-
-    public bool? InputAfterGameAndKehre
-    {
-        get => _inputAfterGameAndKehre;
-        set => SetProperty(
-            ref _inputAfterGameAndKehre,
-            value,
-            () =>
-            {
-                if (value == true)
-                    ResultsEntryViewModel = new ResultInputAfterGameWithKehreViewModel(TeamBewerb.GetAllGames(), TeamBewerb.Is8TurnsGame);
-            });
+        get => _inputMethod;
+        set
+        {
+            _inputMethod = value;
+            PreferencesManager.TeamBewerbSettings.TeamBewerbInputMethod = value;
+            SetResultsEntryViewModel(value);
+        }
     }
 
     public bool RankingNewIERVersion
@@ -112,17 +70,12 @@ public class ResultsViewModel : ViewModelBase
         _dialogStore = dialogStore;
         _turnierNetworkManager = turnierNetworkManager;
 
-        InputAfterGame = false;
-        InputAfterGameAndKehre = false;
-        InputPerTeamAndKehre = false;
-        InputPerTeam = true;
-
-
         ShowLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
                 new DialogService<LiveResultsTeamViewModel>(
                     _dialogStore,
                     () => new LiveResultsTeamViewModel(TeamBewerb), false));
 
+        InputMethod = PreferencesManager.TeamBewerbSettings.TeamBewerbInputMethod;
     }
 
     protected override void Dispose(bool disposing)
@@ -131,9 +84,28 @@ public class ResultsViewModel : ViewModelBase
         {
             if (disposing)
             {
-                ResultsEntryViewModel.Dispose();
+                ResultsEntryViewModel?.Dispose();
             }
             _disposed = true;
+        }
+    }
+
+    private void SetResultsEntryViewModel(TeamBewerbInputMethod inputMethod)
+    {
+        switch (inputMethod)
+        {
+            case TeamBewerbInputMethod.AfterGame:
+                ResultsEntryViewModel = new ResultInputAfterGameViewModel(TeamBewerb.GetAllGames());
+                break;
+            case TeamBewerbInputMethod.AfterGameWithTurns:
+                ResultsEntryViewModel = new ResultInputAfterGameWithKehreViewModel(TeamBewerb.GetAllGames(), TeamBewerb.Is8TurnsGame);
+                break;
+            case TeamBewerbInputMethod.PerTeam:
+                ResultsEntryViewModel = new ResultInputPerTeamViewModel(TeamBewerb.Teams);
+                break;
+            case TeamBewerbInputMethod.PerTeamWithTurns:
+                ResultsEntryViewModel = new ResultInputPerTeamAndKehreViewModel(TeamBewerb.Teams, TeamBewerb.Is8TurnsGame);
+                break;
         }
     }
 }

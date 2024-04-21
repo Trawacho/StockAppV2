@@ -28,7 +28,6 @@ namespace StockApp.UI
         private readonly IBroadcastService _broadCastService;
         private readonly MainViewModel _mainViewModel;
         private readonly MainWindow _mainWindow;
-        private readonly string _assemblyVersion;
 
         public App()
         {
@@ -37,7 +36,6 @@ namespace StockApp.UI
             _dialogStore.Register<LiveResultsZielViewModel, LiveResultZielView>();
 
             var _systemVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            _assemblyVersion = _systemVersion.ToString();
             Software.Initialize(_systemVersion);
             Software.SanityCheckDirectories();
             PreferencesManager.Initialize();
@@ -153,7 +151,7 @@ namespace StockApp.UI
 
         private INavigationService<ZielBewerbViewModel> CreateZielTeilnehmerNavigationService()
         {
-            return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager));
+            return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager, _stockTVService));
         }
 
         private INavigationService<ZielBewerbDruckViewModel> CreateZielDruckNavigationService()

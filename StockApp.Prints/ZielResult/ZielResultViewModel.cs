@@ -40,7 +40,7 @@ public class ZielResultViewModel : PrintTemplateViewModelBase
         var grid = new Grid();
         var label = new Label()
         {
-            Content = klasse ??= $"nicht zugeordnet",
+            Content = klasse ?? $"nicht zugeordnet",
             HorizontalAlignment = HorizontalAlignment.Stretch,
             HorizontalContentAlignment = HorizontalAlignment.Center,
             FontSize = fontSize,
