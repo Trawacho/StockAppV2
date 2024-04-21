@@ -63,5 +63,10 @@ public class SerialisableDisziplin : IDisziplin
         throw new NotImplementedException();
     }
 
+    public void SetVersuch(int nr, int value)
+    {
+        throw new NotImplementedException();
+    }
+
     #endregion
 }

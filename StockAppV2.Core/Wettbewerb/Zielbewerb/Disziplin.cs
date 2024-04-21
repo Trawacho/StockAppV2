@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace StockApp.Core.Wettbewerb.Zielbewerb;
-
+//TODO: Enumerations vereinheitlichen oder zusammenführen mit StockTVZielDisziplinName
 public enum Disziplinart
 {
     MassenMitte = 1,
@@ -12,6 +12,9 @@ public enum Disziplinart
 
 public interface IDisziplin
 {
+    /// <summary>
+    /// Art der Disziplin dieser 6 Versuche
+    /// </summary>
     Disziplinart Disziplinart { get; }
     /// <summary>
     /// Friendly name of Disziplinart
@@ -23,17 +26,41 @@ public interface IDisziplin
     int Versuch4 { get; set; }
     int Versuch5 { get; set; }
     int Versuch6 { get; set; }
+
+    /// <summary>
+    /// Summe aller Versuche die >= 0 sind
+    /// </summary>
     int Summe { get; }
 
+    /// <summary>
+    /// Anzahl der Versuche die eingegeben wurden ( 0 bis 6 )
+    /// </summary>
+    /// <returns></returns>
     int VersucheCount();
+
+    /// <summary>
+    /// Jeder Versuch wird auf -1 gesetzt
+    /// </summary>
     void Reset();
 
+    /// <summary>
+    /// Wird ausgelöst, wenn sich ein Wert in einem Versuch ändert
+    /// </summary>
     event EventHandler ValuesChanged;
 
+    /// <summary>
+    /// Einem Versuch einen Wert zuweisen
+    /// </summary>
+    /// <param name="nr">Nummer des Versuchs</param>
+    /// <param name="value">Wert des Versuchs</param>
+    void SetVersuch(int nr, int value);
 }
 
 internal class Disziplin : IDisziplin
 {
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public event EventHandler ValuesChanged;
     protected void RaiseValuesChanged()
     {
@@ -97,18 +124,18 @@ internal class Disziplin : IDisziplin
 
 
     /// <summary>
-    /// Art der Disziplin dieser 6 Versuche
+    /// <inheritdoc/>
     /// </summary>
     public Disziplinart Disziplinart { get; }
 
 
     /// <summary>
-    /// Summe aller Versuche die >= 0 sind
+    /// <inheritdoc/>
     /// </summary>
     public int Summe => _versuche.Where(x => x >= 0).Sum();
 
     /// <summary>
-    /// Bzeichnung der Disziplin
+    /// <inheritdoc/>>
     /// </summary>
     public string Name
     {
@@ -132,7 +159,7 @@ internal class Disziplin : IDisziplin
     #region Public
 
     /// <summary>
-    /// Jeder Versuch wird auf -1 gesetzt
+    ///<inheritdoc/>
     /// </summary>
     public void Reset()
     {
@@ -145,7 +172,17 @@ internal class Disziplin : IDisziplin
     }
 
     /// <summary>
-    /// Anzahl der Versuche die eingegeben wurden ( 0 bis 6 )
+    /// <inheritdoc/>
+    /// </summary>
+    /// <param name="nr"></param>
+    /// <param name="value"></param>
+    public void SetVersuch(int nr, int value)
+    {
+        AddVersuch(nr, value);
+    }
+
+    /// <summary>
+    /// <inheritdoc/>
     /// </summary>
     /// <returns></returns>
     public int VersucheCount() => _versuche.Where(v => v >= 0).Count();
@@ -176,21 +213,6 @@ internal class Disziplin : IDisziplin
 
         RaiseValuesChanged();
     }
-
-    //private bool AddVersuch(int value)
-    //{
-    //    if (VersucheCount() < 6)
-    //    {
-    //        _versuche[VersucheCount()] = value;
-    //        RaiseValuesChanged();
-    //        return true;
-    //    }
-    //    else
-    //    {
-    //        return false;
-    //    }
-
-    //}
 
     /// <summary>
     /// Prüft, ob der Wert in einem Schuss-Versuch gültig ist
@@ -223,5 +245,8 @@ internal class Disziplin : IDisziplin
 
     #endregion
 
-
+    public override string ToString()
+    {
+        return $"Disziplin: {Disziplinart} | Summe: {Summe} | {Versuch1} # {Versuch2} # {Versuch3} # {Versuch4} # {Versuch5} # {Versuch6}";
+    }
 }

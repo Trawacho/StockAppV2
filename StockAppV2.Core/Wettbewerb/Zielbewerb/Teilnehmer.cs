@@ -1,34 +1,107 @@
-﻿namespace StockApp.Core.Wettbewerb.Zielbewerb;
+﻿using StockApp.Comm.NetMqStockTV;
+
+namespace StockApp.Core.Wettbewerb.Zielbewerb;
 
 public interface ITeilnehmer
 {
+    /// <summary>
+    /// AnzeigeName. Wenn Online, mit Bahnnummer
+    /// </summary>
     public string Name { get; }
+    /// <summary>
+    /// Nachname
+    /// </summary>
     public string LastName { get; set; }
+    /// <summary>
+    /// Vorname
+    /// </summary>
     public string FirstName { get; set; }
+    /// <summary>
+    /// Name für StockTV, mit Spielklasse wenn vorhanden
+    /// </summary>
     public string NameForTV { get; }
+    /// <summary>
+    /// Passnummer
+    /// </summary>
     public string LicenseNumber { get; set; }
+    /// <summary>
+    /// Startnummer
+    /// </summary>
     public int Startnummer { get; set; }
+    /// <summary>
+    /// Vereinsname des Spielers
+    /// </summary>
     public string Vereinsname { get; set; }
+    /// <summary>
+    /// Nation des Spieler, kann auch Region, Bundesland, Kreis oder Bezirk sein
+    /// </summary>
     public string Nation { get; set; }
+    /// <summary>
+    /// Spielklasse des Spielers, z.B. U14m, Damen, Herren,usw.
+    /// </summary>
     string Spielklasse { get; set; }
+    /// <summary>
+    /// Nummer der Bahn, auf der sich der Spieler zur Versuchsabgabe befindet
+    /// </summary>
     public int AktuelleBahn { get; }
+    /// <summary>
+    /// TRUE, wenn sicher der Spieler auf einer Bahn befindet
+    /// </summary>
     public bool HasOnlineWertung { get; }
+    /// <summary>
+    /// Die gewählte Wertung, die durch StockTV mit Daten gefüllt wird oder NULL
+    /// </summary>
     public IWertung OnlineWertung { get; }
+    /// <summary>
+    /// Alle Wertungen des Spielers
+    /// </summary>
     public IEnumerable<IWertung> Wertungen { get; }
-
+    /// <summary>
+    /// Summe aller Punkte aller Wertungen
+    /// </summary>
     public int GesamtPunkte { get; }
 
+    /// <summary>
+    /// Teilnehmer auf einer Bahn onlinee schalten, Es wird <see cref="AktuelleBahn"/> und <see cref="OnlineWertung"/> aktualisiert
+    /// </summary>
+    /// <param name="bahnNummer"></param>
+    /// <param name="wertungsNummer"></param>
     void SetOnline(int bahnNummer, int wertungsNummer);
+    /// <summary>
+    /// Teilnehmer Offline schalten. Es wird <see cref="AktuelleBahn"/> auf -1 und <see cref="OnlineWertung"/> auf NULL gesetzt
+    /// </summary>
     void SetOffline();
+    /// <summary>
+    /// Dem Teilnehmer eine neue Wertung anfügen
+    /// </summary>
+    /// <returns></returns>
     IWertung AddNewWertung();
+    /// <summary>
+    /// Wertung beim Teilnehmer entfernen
+    /// </summary>
+    /// <param name="wertung"></param>
     void RemoveWertung(IWertung wertung);
+    /// <summary>
+    /// TRUE, wenn eine Wertung angefügt werden kann (max 4 Wertungen möglich)
+    /// </summary>
+    /// <returns></returns>
     bool CanAddWertung();
+    /// <summary>
+    /// TRUE, wenn eine Wertung entfernt werden kann (mind. 1 Wertung muss bleiben)
+    /// </summary>
+    /// <returns></returns>
     bool CanRemoveWertung();
     /// <summary>
     /// Occours after a Wertung has added or removed
     /// </summary>
     event EventHandler WertungenChanged;
+    /// <summary>
+    /// Occours after the State of IsOnline changed
+    /// </summary>
     event EventHandler OnlineStatusChanged;
+    /// <summary>
+    /// Wird ausgeführ, wenn sich die Startnummer ändert
+    /// </summary>
     event EventHandler StartNumberChanged;
 }
 
@@ -40,7 +113,9 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
 
     #endregion
 
-
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public event EventHandler WertungenChanged;
     protected void RaiseWertungenChanged()
     {
@@ -48,7 +123,9 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
         hanlder?.Invoke(this, EventArgs.Empty);
     }
 
-
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public event EventHandler OnlineStatusChanged;
     protected void RaiseOnlineStatusChanged()
     {
@@ -56,7 +133,9 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public event EventHandler StartNumberChanged;
     protected void RaiseStartNumberChanged()
     {
@@ -74,11 +153,15 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     public static ITeilnehmer Create() => new Teilnehmer();
 
     /// <summary>
-    /// AnzeigeName. Wenn Online, mit Bahnnummer
+    /// <inheritdoc/>
     /// </summary>
     public new string Name => OnlineWertung != null
                             ? $"{base.Name} ({AktuelleBahn}) "
                             : base.Name;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public string NameForTV
     {
         get
@@ -89,13 +172,24 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
         }
     }
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public int Startnummer { get; set; }
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public string Vereinsname { get; set; }
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public string Nation { get; set; }
-
-    public string Spielklasse { get; set; } 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public string Spielklasse { get; set; }
 
     /// <summary>
     /// Wert > 0 wenn Teilnehmer aktuell auf einer Bahn spielt.
@@ -161,6 +255,62 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     /// Liste der Wertungen
     /// </summary>
     public IEnumerable<IWertung> Wertungen => _wertungen;
+
+    internal void SetVersuch(IStockTVZielbewerb bewerb)
+    {
+        if (OnlineWertung == null)
+            return;
+
+        this.OnlineWertung.Reset();
+        if (bewerb.MassenVorne.Versuche.Count > 6)
+            Wertungen.FirstOrDefault(w => w.Nummer == OnlineWertung.Nummer + 1)?.Reset();
+
+        foreach (var zielDisziplin in bewerb.Disziplinen())
+        {
+            switch (zielDisziplin.Name)
+            {
+                case StockTVZielDisziplinName.MassenVorne:
+                    for (int i = 0; i < zielDisziplin.Versuche.Count; i++)
+                    {
+                        SetVersuch(Disziplinart.MassenMitte, i + 1, zielDisziplin.Versuche[i]);
+                    }
+                    break;
+                case StockTVZielDisziplinName.Schiessen:
+                    for (int i = 0; i < zielDisziplin.Versuche.Count; i++)
+                    {
+                        SetVersuch(Disziplinart.Schiessen, i + 1, zielDisziplin.Versuche[i]);
+                    }
+                    break;
+                case StockTVZielDisziplinName.MassenSeite:
+                    for (int i = 0; i < zielDisziplin.Versuche.Count; i++)
+                    {
+                        SetVersuch(Disziplinart.MassenSeite, i + 1, zielDisziplin.Versuche[i]);
+                    }
+                    break;
+                case StockTVZielDisziplinName.Kombinieren:
+                    for (int i = 0; i < zielDisziplin.Versuche.Count; i++)
+                    {
+                        SetVersuch(Disziplinart.Komibinieren, i + 1, zielDisziplin.Versuche[i]);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    private void SetVersuch(Disziplinart disziplinart, int versuchNr, int value)
+    {
+        if (versuchNr <= 6)
+            OnlineWertung.Disziplinen.First(d => d.Disziplinart == disziplinart).SetVersuch(versuchNr, value);
+        else
+        {
+            var nextWertung = Wertungen.FirstOrDefault(w => w.Nummer == OnlineWertung.Nummer + 1) ?? this.AddNewWertung();
+            nextWertung.Disziplinen.First(d => d.Disziplinart == disziplinart).SetVersuch(versuchNr - 6, value);
+        }
+    }
 
     /// <summary>
     /// Es wird der Versuch in der OnlineWertung eingetragen

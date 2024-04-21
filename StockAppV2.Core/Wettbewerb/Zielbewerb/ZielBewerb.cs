@@ -5,25 +5,91 @@ namespace StockApp.Core.Wettbewerb.Zielbewerb;
 
 public interface IZielBewerb : IBewerb
 {
+    /// <summary>
+    /// Liste der Teilnehmer nach Startnummer sortiert
+    /// </summary>
     IOrderedEnumerable<ITeilnehmer> Teilnehmerliste { get; }
+    /// <summary>
+    /// Liste aller Bahnen nach Bahnnummer sortiert
+    /// </summary>
     IOrderedEnumerable<int> Bahnen { get; }
+    /// <summary>
+    /// Liste aller freier Bahnen nach Bahnnummer sortiert
+    /// </summary>
     IOrderedEnumerable<int> FreieBahnen { get; }
+    /// <summary>
+    /// Dem <see cref="IZielBewerb"/> einen Teilnehmer anfügen
+    /// </summary>
+    /// <param name="teilnehmer"></param>
     void AddTeilnehmer(ITeilnehmer teilnehmer);
+    /// <summary>
+    /// Dem <see cref="IZielBewerb" einen neuen Teilnehmer anfügen
+    /// </summary>
     void AddNewTeilnehmer();
+    /// <summary>
+    /// True, wenn ein neuer Teilnehmer angefügt werden kann
+    /// </summary>
+    /// <returns></returns>
     bool CanAddTeilnehmer();
+    /// <summary>
+    /// TRUE, wenn ein Teilnhemer entfernt werden kann
+    /// </summary>
+    /// <returns></returns>
     bool CanRemoveTeilnehmer();
+    /// <summary>
+    /// Teilnehmer entfernen
+    /// </summary>
+    /// <param name="teilnehmer"></param>
     void RemoveTeilnehmer(ITeilnehmer teilnehmer);
+    /// <summary>
+    /// Alle Teilnehmer einer Spielklasse sortiert nach Gesamtpunkte
+    /// </summary>
+    /// <param name="spielKlass"></param>
+    /// <returns></returns>
     IEnumerable<ITeilnehmer> GetTeilnehmerRanked(string spielKlass);
+    /// <summary>
+    /// Alle Teilnehmer soritert nach Gesamtpunkte
+    /// </summary>
+    /// <returns></returns>
     IEnumerable<ITeilnehmer> GetTeilnehmerRanked();
+    /// <summary>
+    /// Einen Teilnehmer in der Startliste verschieben
+    /// </summary>
+    /// <param name="oldIndex"></param>
+    /// <param name="newIndex"></param>
     void MoveTeilnehmer(int oldIndex, int newIndex);
 
+    /// <summary>
+    /// Text, der am Ende der Ergebnisliste steht
+    /// </summary>
     string EndText { get; set; }
+    /// <summary>
+    /// Schriftgröße der Teilnehmerliste in der Ergebnisliste
+    /// </summary>
     int FontSize { get; set; }
+    /// <summary>
+    /// Vertikaler Abstand zwischen Teilnehmer in der Ergebnisliste
+    /// </summary>
     int RowSpace { get; set; }
+    /// <summary>
+    /// Bild, das auf der Ergebnisliste oben mittig ist (Pfad zur Datei)
+    /// </summary>
     string ImageHeaderFileName { get; set; }
+    /// <summary>
+    /// Bild, das auf der Ergebnisliste oben rechts ist (Pfad zur Datei)
+    /// </summary>
     string ImageTopRightFileName { get; set; }
+    /// <summary>
+    /// Bild, das auf der Ergebnisliste oben links ist (Pfad zur Datei)
+    /// </summary>
     string ImageTopLeftFileName { get; set; }
+    /// <summary>
+    /// TRUE, Wenn <see cref="ITeilnehmer.Vereinsname"> auf der Ergebnisteliste angedruckt werden soll
+    /// </summary>
     bool HasTeamname { get; set; }
+    /// <summary>
+    /// TRUE, wenn <see cref="ITeilnehmer.Name"/> auf der Ergebnisliste angedruckt werden soll
+    /// </summary>
     bool HasNation { get; set; }
 
     /// <summary>
@@ -210,11 +276,43 @@ internal class ZielBewerb : IZielBewerb
 
     private IBroadCastTelegram _lastTelegram;
 
-    public void SetStockTVResult(IStockTVResult tVResult) => SetBroadcastData(tVResult.AsBroadCastTelegram());
+    public void SetStockTVResult(IStockTVResult tVResult)
+    {
+        if (tVResult.TVSettings.MessageVersion == 0)
+        {
+            SetBroadcastData(tVResult.AsBroadCastTelegram());
+            return;
+        }
+
+        if (tVResult.TVSettings.GameModus != GameMode.Ziel)
+            return;
+
+        try
+        {
+            if (this.Teilnehmerliste.FirstOrDefault(t => t.AktuelleBahn == tVResult.TVSettings.Bahn) is Teilnehmer spieler)
+            {
+                if (spieler.OnlineWertung.VersucheAllEntered() && tVResult.ResultZielbewerb.HasNoAttempts())
+                {
+                    spieler.SetWertungOfflineOrNext();
+                }
+                else
+                {
+                    spieler?.SetVersuch(tVResult.ResultZielbewerb);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("SetStockTVResult: " + ex.Message.ToString());
+#endif
+        }
+    }
 
     public void SetBroadcastData(IBroadCastTelegram telegram)
     {
         if (telegram.StockTVModus != 100) return;
+        if (telegram.MessageVersion != 0) return;
 
         if (telegram.Equals(_lastTelegram))
         {
