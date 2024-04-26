@@ -253,9 +253,8 @@
                          Text="{Binding Path=RowSpace}"
                          HorizontalContentAlignment="Center"
                          Width="25"/>
-                         
-
             </Grid>
+            
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition  SharedSizeGroup="col1"/>
@@ -270,6 +269,25 @@
                          ToolTip="Schriftgröße der Tabelle. Wert zw. 12 und 24. Standard = 14"
                          Width="25"/>
             </Grid>
+            
+            
+            <Grid> 
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Style="{StaticResource LabelsLeft}"
+                           Text="Splitgruppe trennen:"/>
+                <CheckBox Grid.Column="1"
+                          Content="Ja/Nein"
+                          ToolTip="Pro Gruppe eine eigene Ergebnisliste"
+                          IsThreeState="False"
+                          VerticalAlignment="Center"
+                          IsEnabled="{Binding Path=IsSplitGruppe}"
+                          IsChecked="{Binding Path=PageBreakSplitGroup}"/>
+            </Grid>
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
