@@ -93,6 +93,11 @@ public interface ITeamBewerb : IBewerb
     int FontSize { get; set; }
 
     /// <summary>
+    /// Bei Splitgruppen nach der ersten Tabelle einen Seitenumbruch einfügen
+    /// </summary>
+    bool PageBreakSplitGroup { get; set; }
+
+    /// <summary>
     /// Nummer der Spielgruppe
     /// </summary>
     int SpielGruppe { get; set; }
@@ -297,6 +302,11 @@ public class TeamBewerb : ITeamBewerb
     public int FontSize { get; set; } = 14;
 
     /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public bool PageBreakSplitGroup { get; set; }
+
+    /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind
     /// 
     /// Default: 0
@@ -336,7 +346,21 @@ public class TeamBewerb : ITeamBewerb
     /// <summary>
     /// Es werden alle Teams entfernt
     /// </summary>
-    public void Reset() => RemoveAllTeams();
+    public void Reset()
+    {
+        RemoveAllTeams();
+        Endtext = string.Empty;
+        FontSize = 12;
+        RowSpace = 0;
+        ImageHeaderFilename = string.Empty;
+        ImageTopLeftFilename = string.Empty;
+        ImageTopRightFilename = string.Empty;
+        AnzahlAufsteiger = 0;
+        AnzahlAbsteiger = 0;
+        NumberOfTeamsWithNamedPlayerOnResult = 0;
+        PageBreakSplitGroup = false;
+        TeamNameWithStartnumber = false;
+    }
 
     #region Functions
 

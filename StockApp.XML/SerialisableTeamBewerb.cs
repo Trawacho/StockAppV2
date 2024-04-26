@@ -47,6 +47,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         ImageHeaderFilename = bewerb.ImageHeaderFilename;
         RowSpace = bewerb.RowSpace;
         FontSize = bewerb.FontSize;
+        PageBreakSplitGroup = bewerb.PageBreakSplitGroup;
     }
 
 
@@ -64,6 +65,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.AnzahlAufsteiger = AnzahlAufsteiger;
         teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
         teamBewerb.Endtext = Endtext;
+        teamBewerb.PageBreakSplitGroup = PageBreakSplitGroup;
         teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
         teamBewerb.ImageTopLeftFilename = ImageTopLeftFilename;
         teamBewerb.ImageTopRightFilename = ImageTopRightFilename;
@@ -184,6 +186,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlElement(ElementName = "FontSize")]
     public int FontSize { get; set; }
+
+    [XmlElement(ElementName ="PageBreakSplitGroup")]
+    public bool PageBreakSplitGroup { get; set; }
 
     [XmlElement(ElementName = "PlayerNames")]
     public int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
