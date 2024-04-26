@@ -136,6 +136,14 @@ internal class ZielBewerb : IZielBewerb
     {
         _teilnehmerliste.Clear();
         AddNewTeilnehmer();
+        EndText = string.Empty;
+        FontSize = 12;
+        RowSpace = 0;
+        ImageHeaderFileName = string.Empty;
+        ImageTopLeftFileName = string.Empty;
+        ImageTopRightFileName = string.Empty;
+        HasTeamname = false;
+        HasNation = false;
     }
 
 
