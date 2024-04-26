@@ -39,8 +39,7 @@ public class PrintHelper
 
     }
 
-
-    public async Task LoadReport(Func<UIElement> reportFactory, CancellationToken cancellationToken)
+    public async Task LoadReport(Func<UIElement> reportFactory, Func<UIElement> tableHeaderFactory, CancellationToken cancellationToken)
     {
         var printTicket = new PrintTicket()
         {
@@ -62,7 +61,7 @@ public class PrintHelper
             var printerMinMargins = _printing.GetMinimumPageMargins(printCapabilities);
             AdjustMargins(ref desiredMargin, printerMinMargins);
 
-            var pages = await _paginator.PaginateAsync(reportFactory, pageSize, desiredMargin, cancellationToken);
+            var pages = await _paginator.PaginateAsync(reportFactory, tableHeaderFactory, pageSize, desiredMargin, cancellationToken);
             var fixedDocument = _paginator.GetFixedDocumentFromPages(pages, pageSize);
 
             // We now could simply assign the fixedDocument to GeneratedDocument
@@ -85,6 +84,9 @@ public class PrintHelper
             GeneratedDocument = fixedDocument;
         }
     }
+
+    public async Task LoadReport(Func<UIElement> reportFactory, CancellationToken cancellationToken) => await LoadReport(reportFactory, null, cancellationToken);
+    
 
 
     private void CleanXpsDocumentResources()

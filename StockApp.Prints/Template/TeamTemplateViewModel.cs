@@ -1,6 +1,7 @@
 ﻿using StockApp.Core.Factories;
 using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Lib;
 using StockApp.Lib.Models;
 using StockApp.Lib.ViewModels;
 using StockApp.Prints.Converters;
@@ -21,13 +22,13 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         _turnier = turnier;
         _teamBewerb = ((IContainerTeamBewerbe)turnier.Wettbewerb).CurrentTeamBewerb;
 
-       
+
         IsVergleich = GamePlanFactory.LoadAllGameplans().FirstOrDefault(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
         IsBestOf = _teamBewerb.Teams.Count() == 2;
 
 
         RankedTeamsTableViewModels = new List<RankedTeamsTableViewModel>();
-        foreach (var item in _turnier.ContainerTeamBewerbe.TeamBewerbe)
+        var item = _turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
         {
             if (item.IsSplitGruppe)
             {
@@ -45,8 +46,15 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 
     private void InitTeamRankingGrid()
     {
+        BodyElements = new();
+        int x = 0;
+        var pageBreaker = _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.PageBreakSplitGroup;
+
         foreach (var rankedTeamsTableViewModel in RankedTeamsTableViewModels)
         {
+            if (pageBreaker && x > 0)
+                BodyElements.Add(GetPageBreaker(true));
+
             BodyElements.Add(GetGroupNameGrid(rankedTeamsTableViewModel.GroupName));
 
             BodyElements.Add(GetTableHeader(fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize, fontWeight: FontWeights.Bold));
@@ -58,8 +66,26 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
                     fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize,
                     rowSpace: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace));
             }
+            if (pageBreaker)
+            {
+                BodyElements.Add(GetEndtextGridRow(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext));
+                BodyElements.Add(GetOfficialsGridRow(_turnier.OrgaDaten.Referee, _turnier.OrgaDaten.ComputingOfficer, _turnier.OrgaDaten.CompetitionManager));
+            }
 
+            x++;
         }
+        if (!pageBreaker)
+        {
+            BodyElements.Add(GetEndtextGridRow(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext));
+            BodyElements.Add(GetOfficialsGridRow(_turnier.OrgaDaten.Referee, _turnier.OrgaDaten.ComputingOfficer, _turnier.OrgaDaten.CompetitionManager));
+        }
+    }
+
+    private static Grid GetPageBreaker(bool breakPage)
+    {
+        var grid = new Grid();
+        Document.SetPageBreakProperty(grid, breakPage);
+        return grid;
     }
 
     private static Grid GetGroupNameGrid(string groupName)
@@ -126,10 +152,11 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 
         return grid;
     }
-   
-    private static Grid GetTableHeader(double fontSize, FontWeight fontWeight)
+
+    internal static Grid GetTableHeader(double fontSize, FontWeight fontWeight)
     {
         var grid = GetGridTemplate();
+        grid.Name = "TableHeaderGrid";
 
         var lblRang = new Label()
         {
@@ -277,8 +304,88 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         return teamGrid;
     }
 
+    private static Grid GetEndtextGridRow(string text)
+    {
+        var grid = new Grid() { HorizontalAlignment = HorizontalAlignment.Center };
+        var textblock = new TextBlock()
+        {
+            FontSize = 12,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            TextAlignment = TextAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Bottom,
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 10, 0, 10),
+            Text = text
+        };
+        grid.Children.Add(textblock);
+        return grid;
+    }
 
-    public List<Grid> BodyElements { get; set; } = new();
+    private static Grid GetOfficialsGridRow(IExecutive schiedsrichter, IExecutive rechenbuero, IExecutive wettbewerbsleiter)
+    {
+        var grid = new Grid
+        {
+            Margin = new Thickness(0)
+        };
+
+        grid.ColumnDefinitions.Add(new ColumnDefinition());
+        grid.ColumnDefinitions.Add(new ColumnDefinition());
+        grid.ColumnDefinitions.Add(new ColumnDefinition());
+
+        var schiriPanel = GetExecutivesStackPanel(schiedsrichter.Name, schiedsrichter.ClubName, "(Schiedsrichter)");
+        Grid.SetColumn(schiriPanel, 0);
+        var rechenbueroPanel = GetExecutivesStackPanel(rechenbuero.Name, rechenbuero.ClubName, "(Wertungsführer)");
+        Grid.SetColumn(rechenbueroPanel, 1);
+        var wblPanel = GetExecutivesStackPanel(wettbewerbsleiter.Name, wettbewerbsleiter.ClubName, "(Wettbewerbsleiter)");
+        Grid.SetColumn(wblPanel, 2);
+
+        if (!string.IsNullOrEmpty(schiedsrichter.Name))
+            grid.Children.Add(schiriPanel);
+
+        if (!string.IsNullOrEmpty(rechenbuero.Name))
+            grid.Children.Add(rechenbueroPanel);
+
+        if (!string.IsNullOrEmpty(wettbewerbsleiter.Name))
+            grid.Children.Add(wblPanel);
+
+        return grid;
+    }
+
+    private static StackPanel GetExecutivesStackPanel(string name, string team, string description)
+    {
+        var panel = new StackPanel
+        {
+            Orientation = Orientation.Vertical
+        };
+
+        panel.Children.Add(new TextBlock()
+        {
+            Text = name,
+            FontSize = 12,
+            TextAlignment = TextAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Stretch
+        });
+
+        panel.Children.Add(new TextBlock()
+        {
+            Text = team,
+            FontSize = 12,
+            TextAlignment = TextAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Stretch
+        });
+
+        panel.Children.Add(new TextBlock()
+        {
+            Text = description,
+            FontSize = 12,
+            TextAlignment = TextAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Stretch
+        });
+
+        return panel;
+    }
+
+    public List<Grid> BodyElements { get; set; }
     public List<RankedTeamsTableViewModel> RankedTeamsTableViewModels { get; init; }
     public ViewModelBase BestOfViewModel => IsBestOf ? new BestOfDetailViewModel(_teamBewerb, isLive: false) : default;
     public ViewModelBase RankedClubViewModel => IsVergleich ? new RankedClubTableViewModel(_teamBewerb, isLive: false) { AsDataGrid = false } : default;
