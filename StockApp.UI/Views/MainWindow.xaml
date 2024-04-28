@@ -4,7 +4,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:StockApp.UI.ViewModels" 
-        xmlns:b="http://schemas.microsoft.com/xaml/behaviors" xmlns:custom="clr-namespace:ModalControl;assembly=ModalControl"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
+        xmlns:modalcontrol="clr-namespace:StockApp.UI.Controls"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance
                             Type=vm:MainViewModel,
@@ -81,10 +82,10 @@
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto">
             <Grid>
-                
-                <custom:Modal  IsOpen="{Binding IsModalOpen}" Panel.ZIndex="1" DockPanel.Dock="Left">
 
-                    <Grid Margin="10">
+                <modalcontrol:Modal x:Name="modalcontrol"  IsOpen="{Binding IsModalOpen, Mode=OneWay}" Panel.ZIndex="10" DockPanel.Dock="Left">
+
+                        <Grid Margin="10">
 
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -106,7 +107,7 @@
 
                     </Grid>
 
-                </custom:Modal>
+                </modalcontrol:Modal>
 
                 <ContentControl Content="{Binding Path=CurrentViewModel}"  Margin="5"/>
                 
