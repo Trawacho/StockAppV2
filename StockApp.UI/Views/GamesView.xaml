@@ -4,11 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:conv="clr-namespace:StockApp.UI.Converters" 
-             xmlns:loadingspinnercontrol="clr-namespace:LoadingSpinnerControl;assembly=LoadingSpinnerControl"
-             xmlns:components="clr-namespace:StockApp.UI.Components"
+             xmlns:components="clr-namespace:StockApp.UI.Components" 
+             xmlns:loadingspinnercontrol="clr-namespace:LoadingSpinnerControl;assembly=StockApp.Lib"
              mc:Ignorable="d" 
              Grid.IsSharedSizeScope="true">
 
+    <!--xmlns:loadingspinnercontrol="clr-namespace:LoadingSpinnerControl;assembly=LoadingSpinnerControl"-->
+    
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
         <Style TargetType="UserControl">
             <Setter Property="Background" Value="White"/>
