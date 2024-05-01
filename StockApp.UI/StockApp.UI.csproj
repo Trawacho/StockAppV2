@@ -19,9 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="com\Vereine.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
+		<EmbeddedResource Include="com\Vereine.json"/>
 		<Content Include="Ressources\StockApp.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

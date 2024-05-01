@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace StockApp.UI.com;
 
@@ -10,7 +13,11 @@ public static class VereineFactory
     {
         try
         {
-            var json = File.ReadAllText(@"./com/Vereine.json");
+            var resourceName = "StockApp.UI.com.Vereine.json";
+            var assembly = Assembly.GetExecutingAssembly();
+            using Stream stram = assembly.GetManifestResourceStream(resourceName);
+            using var reader = new StreamReader(stram);
+            var json = reader.ReadToEnd();
             var vereine = JsonSerializer.Deserialize<IEnumerable<Verein>>(json);
             return vereine;
         }
@@ -20,4 +27,3 @@ public static class VereineFactory
         }
     }
 }
-
