@@ -24,7 +24,9 @@ public class Paginator : IPaginator
     /// <param name="pageMargins">Desired page margins. This will be subtracted from page size.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of type <see cref="ContentControl"/> that contains the pages resulting from pagination.</returns>
-    public async Task<List<UIElement>> PaginateAsync(Func<UIElement> pageFactory, Size pageSize, Thickness pageMargins, CancellationToken cancellationToken)
+    public async Task<List<UIElement>> PaginateAsync(Func<UIElement> pageFactory, Size pageSize, Thickness pageMargins, CancellationToken cancellationToken) => await PaginateAsync(pageFactory, null, pageSize, pageMargins, cancellationToken);
+
+    public async Task<List<UIElement>> PaginateAsync(Func<UIElement> pageFactory, Func<UIElement> tableHeaderFactory, Size pageSize, Thickness pageMargins, CancellationToken cancellationToken)
     {
         Dictionary<string, ItemsControlData> paginationTracker = null;
         var processedPages = new List<UIElement>();
@@ -62,6 +64,11 @@ public class Paginator : IPaginator
 
             // First stage of processing where we set things like current page number, hiding elements, etc...
             PreProcessing(pageLogicalChildren, pageNumber);
+
+            if (pageNumber > 1 && tableHeaderFactory is not null)
+            {
+                paginationTracker.First().Value.InsertAtCurrentIndex(tableHeaderFactory());
+            }
 
             // Second stage is pagination where we go through the items controls until no more items are left in paginationTracker
             var createNextPage = Paginate(pageLogicalChildren, paginationTracker);
@@ -183,6 +190,8 @@ public class Paginator : IPaginator
         var itemsControlsToPaginate = pageLogicalChildren.OfType<ItemsControl>()
             .Where(i => i.GetValue(Document.PaginateProperty) is bool paginate && paginate).ToList();
 
+
+
         // Paginate lists
         foreach (var itemsControl in itemsControlsToPaginate)
         {
@@ -232,6 +241,15 @@ public class Paginator : IPaginator
         for (var i = startIndex; i < items.Length; i++)
         {
             var item = items.GetValue(i);
+
+            if (item is DependencyObject dp
+                && dp.GetValue(Document.PageBreakProperty) is bool pageBreak
+                && pageBreak)
+            {
+                currentItemIndex = i + 1;
+                return true;
+            }
+
             itemsControl.Items.Add(item);
             itemsControl.UpdateLayout();
 
@@ -327,8 +345,26 @@ public class Paginator : IPaginator
             CurrentIndex = currentIndex;
         }
 
-        public Array Items { get; }
+        public Array Items { get; internal set; }
         public int CurrentIndex { get; internal set; }
+        public void InsertAtCurrentIndex(UIElement item)
+        {
+            var newItem = Convert.ChangeType(item, Items.GetValue(0).GetType());
+
+            var newArray = Array.CreateInstance(Items.GetValue(0).GetType(), Items.Length + 1);
+
+            for (int i = 0; i < Items.Length; i++)
+            {
+                if (i < CurrentIndex - 1)
+                    newArray.SetValue(Items.GetValue(i), i);
+                else if (i == CurrentIndex - 1)
+                    newArray.SetValue(newItem, i);
+                else
+                    newArray.SetValue(Items.GetValue(i), i + 1);
+            }
+            Items = newArray;
+
+        }
 
         public override string ToString()
         {

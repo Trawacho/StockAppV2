@@ -160,6 +160,20 @@ public class OptionsViewModel : ViewModelBase
         }
     }
 
+    public bool PageBreakSplitGroup
+    {
+        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.PageBreakSplitGroup;
+        set
+        {
+            if(_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.PageBreakSplitGroup != value)
+            {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.PageBreakSplitGroup = value;
+                RaisePropertyChanged();
+            }
+        }
+    }
+    public bool IsSplitGruppe => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.IsSplitGruppe;
+
 
 
     public ICommand ImageLinksObenResetCommand => new RelayCommand(

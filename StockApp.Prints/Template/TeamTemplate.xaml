@@ -71,43 +71,36 @@
                     <ColumnDefinition Width="3cm"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="3.0cm"/>
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto" MinHeight="3cm" MaxHeight="6cm"/>
+                    <RowDefinition Height="auto" MaxHeight="2cm"/>
                 </Grid.RowDefinitions>
 
-                <Viewbox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Height="3cm">
-                    <Image Source="{Binding ImageHeaderPath, TargetNullValue={x:Null}}"
-                   Stretch="Fill"
-                   HorizontalAlignment="Center"/>
-                </Viewbox>
+                <Image Source="{Binding ImageHeaderPath, TargetNullValue={x:Null}}"
+                       Stretch="Uniform"
+                       Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" 
+                       HorizontalAlignment="Center"/>
 
-                <Viewbox Grid.Row="0" Grid.Column="0" >
-                    <Image Source="{Binding ImageTopLeftPath, TargetNullValue={x:Null}}"
-                   Stretch="Fill"/>
-                </Viewbox>
+                <Image Source="{Binding ImageTopLeftPath, TargetNullValue={x:Null}}" Stretch="Uniform" Grid.Row="0" Grid.Column="0"/>
 
-                <Viewbox Grid.Row="0" Grid.Column="1"
-                 Visibility="{Binding Path=IsTitle1stLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image Source="{Binding ImageTopRightPath, TargetNullValue={x:Null}}" Stretch="Uniform" Grid.Row="0" Grid.Column="2"/>
+
+                <Viewbox Grid.Row="0" Grid.Column="1" MaxHeight="3cm" Margin="5"
+                         Visibility="{Binding Path=IsTitle1stLine, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="{Binding Title}" 
-                   FontWeight="Bold"
-                   TextAlignment="Center"
-                   TextWrapping="Wrap"/>
+                               FontWeight="Bold"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Viewbox>
 
-                <Viewbox Grid.Row="1" Grid.Column="0" 
-                 Grid.ColumnSpan="3" 
-                 MaxHeight="2cm" 
-                 Visibility="{Binding Path=IsTitle2ndLine, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Viewbox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" MaxHeight="2cm"
+                         Visibility="{Binding Path=IsTitle2ndLine, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <TextBlock Text="{Binding Title}" 
-                       FontWeight="Bold"
-                       TextAlignment="Center"
-                       TextWrapping="Wrap"/>
+                               FontWeight="Bold"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
                 </Viewbox>
 
-                <Viewbox Grid.Row="0" Grid.Column="2" >
-                    <Image Source="{Binding ImageTopRightPath, TargetNullValue={x:Null}}"
-                   Stretch="Fill"/>
-                </Viewbox>
+
             </Grid>
 
             <Label Grid.Row="1" Grid.Column="0" 
@@ -196,75 +189,6 @@
                         HorizontalAlignment="Stretch" 
                         Margin="0 15 0 0"
                         Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-
-        <!-- Endtext -->
-        <TextBlock Grid.Row="4"
-            FontSize="12"
-            HorizontalAlignment="Stretch"
-            TextAlignment="Center"
-            VerticalAlignment="Bottom"
-            TextWrapping="Wrap"
-            Margin="0 10 0 10"
-            Text="{Binding Endtext}"/>
-
-
-        <!-- Fußzeile für Offizielle-->
-        <Grid Margin="1cm 0" Grid.Row="5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-
-
-
-            <StackPanel Orientation="Vertical"
-                        Grid.Column="0">
-                <TextBlock Text="{Binding RefereeName}"
-                           TextAlignment="Center"
-                           HorizontalAlignment="Stretch"/>
-                <TextBlock Text="{Binding RefereeClub}"
-                           TextAlignment="Center"
-                           HorizontalAlignment="Stretch"/>
-                <TextBlock Text="(Schiedsrichter)"
-                           Visibility="{Binding HasReferee, Converter={StaticResource BooleanToVisibilityConverter}}"
-                           HorizontalAlignment="Stretch"
-                           TextAlignment="Center"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical"
-                        Grid.Column="1">
-                <TextBlock Text="{Binding ComputingOfficerName}"
-                           TextAlignment="Center"
-                           HorizontalAlignment="Stretch"/>
-                <TextBlock Text="{Binding ComputingOfficerClub}"
-                           TextAlignment="Center"
-                           HorizontalAlignment="Stretch"/>
-                <TextBlock Text="(Wertungsführer)"
-                           Visibility="{Binding HasComputingOfficer, Converter={StaticResource BooleanToVisibilityConverter}}"
-                           HorizontalAlignment="Stretch"
-                           TextAlignment="Center"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical"
-                        Grid.Column="2">
-                <TextBlock Text="{Binding CompetitionManagerName}"
-                           TextAlignment="Center"
-                           HorizontalAlignment="Stretch"/>
-                <TextBlock Text="{Binding CompetitionManagerClub}"
-                           TextAlignment="Center"
-                           HorizontalAlignment="Stretch"/>
-                <TextBlock Text="(Wettbewerbsleiter)"
-                           Visibility="{Binding HasCompetitionManager, Converter={StaticResource BooleanToVisibilityConverter}}"
-                           HorizontalAlignment="Stretch"
-                           TextAlignment="Center"/>
-            </StackPanel>
-
-        </Grid>
 
         <!-- Footer Bemerkung -->
         <TextBlock Grid.Row="6" 

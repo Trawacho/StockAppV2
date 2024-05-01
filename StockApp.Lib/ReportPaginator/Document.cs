@@ -5,6 +5,7 @@ namespace StockApp.Lib;
 
 public static class Document
 {
+    #region VisibleOnFirstPageOnlyProperty
     /// <summary>
     /// If true, <see cref="Paginator"/> shows this element only on the first page.
     /// </summary>
@@ -21,7 +22,28 @@ public static class Document
     {
         element.SetValue(VisibleOnFirstPageOnlyProperty, value);
     }
+    #endregion
 
+    #region PageBreakProperty
+    /// <summary>
+    /// If true, <see cref="Paginator"/> creates new Page after this element
+    /// </summary>
+    public static readonly DependencyProperty PageBreakProperty =
+        DependencyProperty.RegisterAttached("PageBreak", typeof(bool?), typeof(Document),
+            new PropertyMetadata(default(bool?)));
+
+    public static bool? GetPageBreakProperty(DependencyObject element)
+    {
+        return (bool?)element.GetValue(PageBreakProperty);
+    }
+
+    public static void SetPageBreakProperty(DependencyObject element, bool? value)
+    {
+        element.SetValue(PageBreakProperty, value);
+    }
+    #endregion 
+
+    #region SetCurrentPageNumberAttachedPropertyProperty
     /// <summary>
     /// If true, <see cref="Paginator"/> knows to set the <see cref="CurrentPageNumberProperty"/> on this element.
     /// </summary>
@@ -38,6 +60,9 @@ public static class Document
     {
         element.SetValue(SetCurrentPageNumberAttachedPropertyProperty, value);
     }
+    #endregion
+
+    #region CurrentPageNumberProperty
 
     /// <summary>
     /// Holds the current page number processed by <see cref="Paginator"/>.
@@ -54,7 +79,9 @@ public static class Document
     {
         element.SetValue(CurrentPageNumberProperty, value);
     }
+    #endregion
 
+    #region SetLastPageNumberAttachedPropertyProperty
     /// <summary>
     /// If set to true, <see cref="Paginator"/> knows to set the <see cref="LastPageNumberProperty"/> on this element.
     /// </summary>
@@ -71,7 +98,9 @@ public static class Document
     {
         element.SetValue(SetLastPageNumberAttachedPropertyProperty, value);
     }
+    #endregion
 
+    #region LastPageNumberProperty
     /// <summary>
     /// Holds the last page number processed by <see cref="Paginator"/>.
     /// </summary>
@@ -87,7 +116,9 @@ public static class Document
     {
         element.SetValue(LastPageNumberProperty, value);
     }
+    #endregion
 
+    #region PaginateProperty
     /// <summary>
     /// If true, enables <see cref="Paginator"/> to paginate any control that is or derives from <see cref="ItemsControl"/>.
     /// </summary>
@@ -103,4 +134,5 @@ public static class Document
     {
         element.SetValue(PaginateProperty, value);
     }
+    #endregion
 }
