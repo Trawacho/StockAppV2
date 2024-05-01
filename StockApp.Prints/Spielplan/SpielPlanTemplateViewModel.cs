@@ -92,4 +92,9 @@ public class SpielPlanTemplateViewModel : PrintTemplateViewModelBase
 
     public static string HeaderString => "Spielplan";
 
+    public bool IsTitle2ndLine => ImageHeaderPath != null;
+    public bool IsTitle1stLine => ImageHeaderPath == null;
+    public string ImageTopLeftPath => ImageHeaderPath == null ? _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename : null;
+    public string ImageTopRightPath => ImageHeaderPath == null ? _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename : null;
+    public string ImageHeaderPath => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename;
 }
