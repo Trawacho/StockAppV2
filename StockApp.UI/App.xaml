@@ -2,8 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:components="clr-namespace:StockApp.UI.Components"
+             xmlns:controls="clr-namespace:StockApp.UI.Controls"
              xmlns:vm="clr-namespace:StockApp.UI.ViewModels"
-             xmlns:vs="clr-namespace:StockApp.UI.Views">
+             xmlns:vs="clr-namespace:StockApp.UI.Views" 
+             xmlns:converters="clr-namespace:StockApp.UI.Converters">
 
 
     <Application.Resources>
@@ -68,7 +70,7 @@
         <DataTemplate DataType="{x:Type vm:ResultInputAfterGameViewModel}">
             <components:ResultInputAfterGameView/>
         </DataTemplate>
-        
+
         <DataTemplate DataType="{x:Type vm:ResultInputAfterGameWithKehreViewModel}">
             <components:ResultInputAfterGameWithKehreView/>
         </DataTemplate>
@@ -149,7 +151,88 @@
             <Setter Property="Margin" Value="5"/>
         </Style>
 
+        <Style TargetType="controls:Modal" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type controls:Modal}">
+                        <ControlTemplate.Resources>
+                            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                        </ControlTemplate.Resources>
+                        <Grid Background="{TemplateBinding Background}" Visibility="{TemplateBinding IsOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Border
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     BorderBrush="{TemplateBinding BorderBrush}"
+                     BorderThickness="{TemplateBinding BorderThickness}"
+                     UseLayoutRounding="True">
+                                <Grid>
+                                    <Grid.OpacityMask>
+                                        <VisualBrush Visual="{Binding ElementName=border}" />
+                                    </Grid.OpacityMask>
+                                    <Border
+                             x:Name="border"
+                             Background="White"
+                             CornerRadius="5" />
+                                    <ContentControl Content="{TemplateBinding Content}" />
+                                </Grid>
+                                <Border.Effect>
+                                    <DropShadowEffect
+                             BlurRadius="10"
+                             ShadowDepth="10"
+                             Color="Gray" />
+                                </Border.Effect>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
+        <Style TargetType="{x:Type controls:LoadingSpinner}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type controls:LoadingSpinner}">
+                        <ControlTemplate.Resources>
+                            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                            <converters:DiameterAndThicknessToStrokeDashArrayConverter x:Key="DiameterAndThicknessToStrokeDashArrayConverter" />
+                        </ControlTemplate.Resources>
+                        <Ellipse
+                 Width="{TemplateBinding Diameter}"
+                 Height="{TemplateBinding Diameter}"
+                 RenderTransformOrigin="0.5 0.5"
+                 Stroke="{TemplateBinding Color}"
+                 StrokeDashCap="{TemplateBinding Cap}"
+                 StrokeThickness="{TemplateBinding Thickness}"
+                 Visibility="{TemplateBinding IsLoading,
+                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Ellipse.StrokeDashArray>
+                                <MultiBinding Converter="{StaticResource DiameterAndThicknessToStrokeDashArrayConverter}">
+                                    <Binding Path="Diameter" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="Thickness" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </Ellipse.StrokeDashArray>
+                            <Ellipse.RenderTransform>
+                                <RotateTransform x:Name="Rotation" Angle="0" />
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Triggers>
+                                <EventTrigger RoutedEvent="Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <DoubleAnimation
+                                     Storyboard.TargetName="Rotation"
+                                     Storyboard.TargetProperty="Angle"
+                                     From="0"
+                                     To="360" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
     </Application.Resources>
-    
+
 </Application>

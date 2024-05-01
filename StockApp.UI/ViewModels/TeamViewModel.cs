@@ -103,7 +103,7 @@ public class TeamViewModel : ViewModelBase
         }
     }
 
-    public IEnumerable<string> TemplateVereine => _vereine.Select(x => x.Name);
+    public IEnumerable<string> TemplateVereine => _vereine?.Select(x => x.Name);
 
     public ICommand TeamSelectedEnterCommand => new RelayCommand(
         (p) =>
