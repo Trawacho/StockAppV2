@@ -9,7 +9,7 @@
   <Identity
     Name="DanielSturm.398111F88F849"
     Publisher="CN=0A81FCDC-FB94-4A05-85FC-B40234F6BA13"
-    Version="1.7.1.0" />
+    Version="1.7.2.0" />
 
   <Properties>
     <DisplayName>StockApp V2</DisplayName>
