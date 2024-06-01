@@ -19,4 +19,5 @@ public class LoadITurnierTest
         LoadingModule.Load(ref turnier, $@"C:\Temp\test.xml");
         _ = LoadingModule.Load($@"C:\Temp\test.xml");
     }
+
 }

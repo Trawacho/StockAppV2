@@ -30,7 +30,10 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
     private readonly INavigationService<TeamsViewModel> _teamsNavigationService;
     private readonly INavigationService<GamesViewModel> _gamesNavigationService;
     private readonly INavigationService<ResultsViewModel> _resultsNavigationService;
+    
     private readonly INavigationService<ZielBewerbViewModel> _zielTeilnehmerNavigationService;
+    private readonly INavigationService<ZielBewerbDruckViewModel> _zielDruckNavigationService;
+    private readonly INavigationService<OptionsViewModel> _optionsNavigationService;
     private readonly IDialogService<LiveResultsZielViewModel> _liveResultZielDialogService;
 
     public ICommand NavigateTurnierCommand { get; }
@@ -48,6 +51,8 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
                                INavigationService<ResultsViewModel> resultsNavigationService,
                                INavigationService<StockTVCollectionViewModel> stockTVsNavigationService,
                                INavigationService<ZielBewerbViewModel> zielTeilnehmerNavigationService,
+                               INavigationService<ZielBewerbDruckViewModel> zielDruckNavigationService,
+                               INavigationService<OptionsViewModel> outputNavigationService,
                                IDialogService<LiveResultsZielViewModel> liveResultZielDialogService)
     {
         _turnierStore = turnierStore;
@@ -56,6 +61,8 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
         _gamesNavigationService = gamesNavigationService;
         _resultsNavigationService = resultsNavigationService;
         _zielTeilnehmerNavigationService = zielTeilnehmerNavigationService;
+        _zielDruckNavigationService = zielDruckNavigationService;
+        _optionsNavigationService = outputNavigationService;
         _liveResultZielDialogService = liveResultZielDialogService;
         NavigateTurnierCommand = new NavigateCommand<TurnierViewModel>(turnierNavigationService);
         NavigateContestCommand = new NavigateCommand<WettbewerbsartViewModel>(contestNavigationService);
@@ -94,9 +101,11 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
                                                   teamBewerbContainerNaviagationService: _teamBewerbContainerNavigationService,
                                                   teamsNavigationService: _teamsNavigationService,
                                                   gamesNavigationService: _gamesNavigationService,
-                                                  resultsNavigationService: _resultsNavigationService)
+                                                  resultsNavigationService: _resultsNavigationService,
+                                                  optionsNavigationService: _optionsNavigationService)
                     : new NavigtaionZielViewModel(_zielTeilnehmerNavigationService,
-                                                  _liveResultZielDialogService);
+                                                  _liveResultZielDialogService,
+                                                  _zielDruckNavigationService);
 
         RaisePropertyChanged(nameof(IsTeamBewerb));
         RaisePropertyChanged(nameof(IsZielBewerb));

@@ -54,6 +54,9 @@ public class TeamResultPageViewModel
 
 
     public string Title => _turnier.OrgaDaten.TournamentName;
+    public bool IsTitle2ndLine => ImageHeaderPath != null;
+    public bool IsTitle1stLine => ImageHeaderPath == null;
+
     public string Durchführer => _turnier.OrgaDaten.Operator;
     public bool HasOperator { get; init; }
 
@@ -79,5 +82,32 @@ public class TeamResultPageViewModel
     public bool IsVergleich { get; init; }
     public bool IsBestOf { get; init; }
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1 || _turnier.ContainerTeamBewerbe.TeamBewerbe.Where(b => b.IsSplitGruppe).Any();
-    public string HeaderString => $"E R G E B N I S";
+    public string HeaderString => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.IsEachGameDone(false) ? $"E R G E B N I S" : "Zwischenergebnis";
+
+    public string Endtext => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext;
+    public string Footer
+    {
+        get
+        {
+            var footerText = string.Empty;
+
+            if (_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Teams.Any(t => t.TeamStatus != TeamStatus.Normal))
+                footerText = TeamStatusExtension.FooterText();
+
+            if (_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Teams.Any(t => t.StrafSpielpunkte > 0))
+            {
+                if (!string.IsNullOrEmpty(footerText))
+                    footerText += "; ";
+
+                footerText += "$ = Spielpunktstrafe";
+            }
+
+            return footerText;
+        }
+    }
+
+
+    public string ImageTopLeftPath => ImageHeaderPath == null ?  _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename : null;
+    public string ImageTopRightPath => ImageHeaderPath == null ?  _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename : null;
+    public string ImageHeaderPath => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename;
 }

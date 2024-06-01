@@ -112,7 +112,7 @@ public class TeamsViewModel : ViewModelBase
         _turnierStore = turnierStore;
         CurrentBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
 
-        Teams = new ObservableCollection<TeamViewModel>(CurrentBewerb.Teams.Select(s => new TeamViewModel(s)));
+        Teams = new ObservableCollection<TeamViewModel>(CurrentBewerb.Teams.Select(s => new TeamViewModel(s, _turnierStore)));
 
         _addNewTeamCommand = new RelayCommand((p) => AddTeam(), (p) => CurrentBewerb.Teams.Count() < turnierStore.MaxCountOfTeams);
         _removeTeamCommand = new RelayCommand((p) => RemoveTeam(), (p) => SelectedTeam != null);
@@ -139,6 +139,6 @@ public class TeamsViewModel : ViewModelBase
         Teams.DisposeAndClear();
 
         foreach (ITeam team in _currentBewerb.Teams)
-            Teams.Add(new TeamViewModel(team));
+            Teams.Add(new TeamViewModel(team, _turnierStore));
     }
 }

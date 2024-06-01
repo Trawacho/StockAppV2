@@ -1,7 +1,9 @@
 ﻿using StockApp.Core.Factories;
 using StockApp.Core.Turnier;
+using StockApp.UI.com;
 using StockApp.UI.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace StockApp.UI.Stores;
@@ -24,6 +26,7 @@ public interface ITurnierStore
     /// </summary>
     int MaxCountOfTeams { get; }
 
+    IEnumerable<IVerein> TemplateVereine { get; }
 
 }
 
@@ -43,12 +46,13 @@ public class TurnierStore : ITurnierStore
     }
 
 
-    public TurnierStore()
+    public TurnierStore(IEnumerable<IVerein> templateVereine)
     {
         Turnier = Core.Turnier.Turnier.Create();
         _xmlFileService = new XmlFileService(Turnier);
         _xmlFileService.FullFilePathChanged += XmlFullFileNameChanged;
         MaxCountOfTeams = GamePlanFactory.LoadAllGameplans().Select(t => t.Teams).Max();
+        TemplateVereine = templateVereine;
     }
 
 
@@ -61,9 +65,12 @@ public class TurnierStore : ITurnierStore
             CurrentTurnierChanged?.Invoke(this, EventArgs.Empty);
         }
     }
+
     public string FileName => _xmlFileService.FullFilePath;
 
     public int MaxCountOfTeams { get; init; }
+
+    public IEnumerable<IVerein> TemplateVereine { get; init; }
 
     public void Load() => _xmlFileService.Load(ref _turnier);
     public void Load(string fullFileName) => _xmlFileService.Load(ref _turnier, fullFileName);

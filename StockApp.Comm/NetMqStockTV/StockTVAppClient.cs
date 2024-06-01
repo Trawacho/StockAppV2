@@ -232,8 +232,8 @@ namespace StockApp.Comm.NetMqStockTV
         {
             var frames = new List<NetMQFrame>()
             {
-                new NetMQFrame(topic.ToString()),
-                new NetMQFrame(value)
+                new(topic.ToString()),
+                new(value)
             };
 
             if (additionalValue != null)
@@ -249,7 +249,7 @@ namespace StockApp.Comm.NetMqStockTV
         {
             var frames = new List<NetMQFrame>()
             {
-                new NetMQFrame(topic.ToString()),
+                new(topic.ToString()),
                 NetMQFrame.Empty
             };
 

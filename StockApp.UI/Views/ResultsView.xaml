@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:StockApp.UI.Views" xmlns:components="clr-namespace:StockApp.UI.Components"
+             xmlns:conv="clr-namespace:StockApp.UI.Converters"
+             xmlns:local="clr-namespace:StockApp.UI.Views" 
+             xmlns:components="clr-namespace:StockApp.UI.Components"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800" >
 
@@ -38,7 +40,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                
+
                 <TextBlock Text="Eingabe.." Style="{StaticResource VmHeader}"/>
 
                 <StackPanel Grid.Row="1" Margin="0 0 0 30">
@@ -48,6 +50,7 @@
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                             <Setter Property="IsThreeState" Value="False"/>
                         </Style>
+                        <conv:EnumBooleanConverter x:Key="enumBooleanConverter"/>
                     </StackPanel.Resources>
                     <CheckBox Content="von StockTV"
                               IsThreeState="False"
@@ -55,29 +58,28 @@
                               Margin="10 5 0 10"
                               IsChecked="{Binding Path=AcceptNetworkResults}"/>
 
-
-                    <RadioButton IsChecked="{Binding Path=InputPerTeam}" 
+                    <RadioButton IsChecked="{Binding Path=InputMethod, Converter={StaticResource enumBooleanConverter}, Mode=TwoWay, ConverterParameter=PerTeam}"
                                  Content=".. pro Team (nur Summe)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
 
-                    <RadioButton IsChecked="{Binding Path=InputPerTeamAndKehre}" 
+                    <RadioButton IsChecked="{Binding Path=InputMethod, Converter={StaticResource enumBooleanConverter}, Mode=TwoWay, ConverterParameter=PerTeamWithTurns}"
                                  Content=".. pro Team (jede Kehre)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
 
-                    <RadioButton IsChecked="{Binding Path=InputAfterGame}" 
+                    <RadioButton IsChecked="{Binding Path=InputMethod, Converter={StaticResource enumBooleanConverter}, Mode=TwoWay, ConverterParameter=AfterGame}" 
                                  Content=".. nach jedem Spiel (nur Summe)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
-                    
-                    <RadioButton IsChecked="{Binding Path=InputAfterGameAndKehre}" 
+
+                    <RadioButton IsChecked="{Binding Path=InputMethod, Converter={StaticResource enumBooleanConverter}, Mode=TwoWay, ConverterParameter=AfterGameWithTurns}" 
                                  Content=".. nach jedem Spiel (jede Kehre)" 
                                  GroupName="TeamOrName"
                                  Margin="10,5" />
-                    
+
                 </StackPanel>
-                
+
                 <ContentControl Grid.Row="2" Content="{Binding ResultsEntryViewModel}"/>
             </Grid>
 
@@ -85,41 +87,7 @@
             <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0"  >
 
                 <TextBlock Text="Ausgabe" Style="{StaticResource VmHeader}" FontSize="18"/>
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    
-                    <Label Grid.Row="0" Grid.Column="0" 
-                           Margin="0 0 5 0"
-                           HorizontalContentAlignment="Right"
-                           Content="Wertung nach IER 2022:"/>
-                    <CheckBox Grid.Row="0" Grid.Column="1" 
-                              HorizontalAlignment="Left" VerticalAlignment="Center"
-                              IsChecked="{Binding Path=RankingNewIERVersion}"
-                              />
-                    
-                    <Label Grid.Row="1" Grid.Column="0"
-                           HorizontalContentAlignment="Right"
-                           Margin="0 0 5 0"
-                           Content="Mannschaften mit Spielernamen:"/>
-                    <TextBox Grid.Row="1" Grid.Column="1"
-                        Text="{Binding Path=NumberOfTeamsWithNamedPlayerOnResult,
-                                        Mode=TwoWay,
-                                        UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="2"
-                             Padding="5"
-                             MinWidth="30"
-                             HorizontalAlignment="Stretch"
-                             HorizontalContentAlignment="Center"
-                             VerticalContentAlignment="Center"/>
-                </Grid>
+                               
                 <Button Content="Ergebnisliste" 
                         Margin="0 10" 
                         Padding="30 10" 
@@ -132,6 +100,7 @@
                         Width="150"
                         Command="{Binding Path=ShowLiveResultCommand}"
                         HorizontalAlignment="Left"/>
+                
             </StackPanel>
 
         </Grid>

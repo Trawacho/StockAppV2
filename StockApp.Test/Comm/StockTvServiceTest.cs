@@ -27,7 +27,7 @@ namespace StockApp.Test.Comm
                 if (loopCounter > 10) break;
             }
 
-            Assert.IsTrue(_service.StockTVCollection.Any());
+            Assert.That(_service.StockTVCollection.Any(), Is.True);
             _service.StockTVCollection.First().RemoveFromCollection();
 
             loopCounter = 0;
@@ -48,7 +48,7 @@ namespace StockApp.Test.Comm
             _service ??= new StockTVService();
             _service.AddManual("hostname", "192.168.100.136");
             var manual = _service.StockTVCollection.First();
-            Assert.IsNotNull(manual);
+            Assert.That(manual, !Is.Null);
             manual.TVSettings.ColorModus = ColorMode.Dark;
             manual.TVSettingsSend();
 

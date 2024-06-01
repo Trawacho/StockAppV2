@@ -83,6 +83,13 @@ public interface ISpielstand
     int GetCountOfWinningTurnsTeamA(bool live);
     int GetCountOfWinningTurnsTeamB(bool live);
 
+    /// <summary>
+    /// True, wenn TeamA oder TeamB Punkte hat
+    /// </summary>
+    /// <param name="live"></param>
+    /// <returns></returns>
+    bool IsMasterSpielstandVorhanden(bool live);
+
     event EventHandler SpielStandChanged;
 }
 
@@ -96,22 +103,22 @@ public class Spielstand : ISpielstand
     #region Properties (all as readonly)
 
     /// <summary>
-    /// Punkte von TeamA
+    /// Punkte von TeamA (Summer der Kehren)
     /// </summary>
     public int Punkte_Master_TeamA { get => Kehren_Master?.Sum(k => k.PunkteTeamA) ?? 0; }
 
     /// <summary>
-    /// Punkte von TeamB
+    /// Punkte von TeamB (Summer der Kehren)
     /// </summary>
     public int Punkte_Master_TeamB { get => Kehren_Master?.Sum(k => k.PunkteTeamB) ?? 0; }
 
     /// <summary>
-    /// Punkte von TeamA aus dem NetzwerkService
+    /// Punkte von TeamA aus dem NetzwerkService (Summer der Kehren)
     /// </summary>
     public int Punkte_Live_TeamA { get => Kehren_Live?.Sum(k => k.PunkteTeamA) ?? 0; }
 
     /// <summary>
-    /// Punkte von TeamV aus dem NetzwerkService
+    /// Punkte von TeamB aus dem NetzwerkService (Summer der Kehren)
     /// </summary>
     public int Punkte_Live_TeamB { get => Kehren_Live?.Sum(k => k.PunkteTeamB) ?? 0; }
 
@@ -367,6 +374,10 @@ public class Spielstand : ISpielstand
             : Kehren_Master?.Count(k => k.PunkteTeamB > k.PunkteTeamA) ?? 0;
 
 
+    public bool IsMasterSpielstandVorhanden(bool live = false) =>
+        live
+            ? Punkte_Live_TeamA + Punkte_Live_TeamB > 0
+            : Punkte_Master_TeamA + Punkte_Master_TeamB > 0;
 
     #endregion
 

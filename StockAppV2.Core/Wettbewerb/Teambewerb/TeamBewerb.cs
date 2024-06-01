@@ -48,6 +48,56 @@ public interface ITeamBewerb : IBewerb
     int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
 
     /// <summary>
+    /// Text, der unterhalb der Tabelle bei einer Ergebnisliste angezeigt wird
+    /// </summary>
+    public string Endtext { get; set; }
+
+    /// <summary>
+    /// Anzahl der Mannschaften die als Aufsteiger in der Ergebnisliste gekennzeichnet werden
+    /// </summary>
+    int AnzahlAufsteiger { get; set; }
+
+    /// <summary>
+    /// Anzahl der Mannschaften die als Absteiger in der Ergebnisliste gekennzeichnet werden
+    /// </summary>
+    int AnzahlAbsteiger { get; set; }
+
+    /// <summary>
+    /// Beim Mannschaftsnamen wird die Startnummer mit angegeben
+    /// </summary>
+    bool TeamNameWithStartnumber { get; set; }
+
+    /// <summary>
+    /// Image Links Oben - Dateiname
+    /// </summary>
+    string ImageTopLeftFilename { get; set; }
+
+    /// <summary>
+    /// Image Rechts Oben - Dateiname
+    /// </summary>
+    string ImageTopRightFilename { get; set; }
+
+    /// <summary>
+    /// Image oben in der Mitte - Dateiname
+    /// </summary>
+    string ImageHeaderFilename { get; set; }
+
+    /// <summary>
+    /// Zeilenabstand in der Ergebnisliste
+    /// </summary>
+    int RowSpace { get; set; }
+
+    /// <summary>
+    /// FontSize für die Ergebnistabelle
+    /// </summary>
+    int FontSize { get; set; }
+
+    /// <summary>
+    /// Bei Splitgruppen nach der ersten Tabelle einen Seitenumbruch einfügen
+    /// </summary>
+    bool PageBreakSplitGroup { get; set; }
+
+    /// <summary>
     /// Nummer der Spielgruppe
     /// </summary>
     int SpielGruppe { get; set; }
@@ -103,14 +153,15 @@ public interface ITeamBewerb : IBewerb
     /// <summary>
     /// Occours when a game is added or removed to a team
     /// </summary>
-    public event EventHandler GamesChanged;
+    event EventHandler GamesChanged;
 
-    public IEnumerable<IGame> GetAllGames(bool withBreaks = true);
+    IEnumerable<IGame> GetAllGames(bool withBreaks = true);
 
-    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false);
+    IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false);
 
-    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false);
+    IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false);
 
+    bool IsEachGameDone(bool live);
 }
 
 
@@ -149,6 +200,7 @@ public class TeamBewerb : ITeamBewerb
     private readonly List<ITeam> _teams = new();
     private int _numberOfGameRounds = 1;
     private bool _is8TurnsGame;
+    private string _endText;
 
     #endregion
 
@@ -205,6 +257,56 @@ public class TeamBewerb : ITeamBewerb
     public int NumberOfTeamsWithNamedPlayerOnResult { get; set; } = 3;
 
     /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int AnzahlAufsteiger { get; set; } = 0;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int AnzahlAbsteiger { get; set; } = 0;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public string Endtext { get => _endText; set => _endText = value?.Trim(); }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public bool TeamNameWithStartnumber { get; set; } = false;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public string ImageTopLeftFilename { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public string ImageTopRightFilename { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public string ImageHeaderFilename { get; set; }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int RowSpace { get; set; } = 0;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int FontSize { get; set; } = 14;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public bool PageBreakSplitGroup { get; set; }
+
+    /// <summary>
     /// Nummer der Gruppe, wenn mehrere Gruppen gleichzeitig auf der Spielfläche sind
     /// 
     /// Default: 0
@@ -244,7 +346,21 @@ public class TeamBewerb : ITeamBewerb
     /// <summary>
     /// Es werden alle Teams entfernt
     /// </summary>
-    public void Reset() => RemoveAllTeams();
+    public void Reset()
+    {
+        RemoveAllTeams();
+        Endtext = string.Empty;
+        FontSize = 12;
+        RowSpace = 0;
+        ImageHeaderFilename = string.Empty;
+        ImageTopLeftFilename = string.Empty;
+        ImageTopRightFilename = string.Empty;
+        AnzahlAufsteiger = 0;
+        AnzahlAbsteiger = 0;
+        NumberOfTeamsWithNamedPlayerOnResult = 0;
+        PageBreakSplitGroup = false;
+        TeamNameWithStartnumber = false;
+    }
 
     #region Functions
 
@@ -316,12 +432,16 @@ public class TeamBewerb : ITeamBewerb
     public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false)
     {
         var comparer = new TeamRankingComparer(live, IERVersion);
-        return Teams.Where(t => 
-            groupOne 
+        return Teams.Where(t =>
+            groupOne
                 ? t.StartNumber <= Teams.Count() / 2
                 : t.StartNumber > Teams.Count() / 2
                 ).OrderBy(t => t, comparer);
     }
+
+
+    public bool IsEachGameDone(bool live = false) => Teams.Where(t => t.TeamStatus == TeamStatus.Normal).All(t => t.IsEachGameDone(live));
+
 
     #endregion
 

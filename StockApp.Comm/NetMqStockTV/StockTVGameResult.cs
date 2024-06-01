@@ -7,7 +7,7 @@
         {
             Turns = new List<StockTVTurn>()
             {
-                new StockTVTurn()
+                new()
                 {
                     TurnNumber = 1,
                     PointsA = Convert.ToByte(a),

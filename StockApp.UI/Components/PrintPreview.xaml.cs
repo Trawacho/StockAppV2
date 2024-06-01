@@ -8,11 +8,21 @@ namespace StockApp.UI.Components
     /// </summary>
     public partial class PrintPreview : Window
     {
-        public PrintPreview(FixedDocument courtCards)
+        public PrintPreview()
         {
             InitializeComponent();
+        }
+
+        public PrintPreview(FixedDocument courtCards) : this()
+        {
             Document = courtCards;
         }
+
+        public PrintPreview(IDocumentPaginatorSource paginatorSource) : this()
+        {
+            Document = paginatorSource;
+        }
+
         public IDocumentPaginatorSource Document
         {
             get { return _viewer.Document; }

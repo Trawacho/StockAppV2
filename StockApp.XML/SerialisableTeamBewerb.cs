@@ -36,9 +36,19 @@ public class SerialisableTeamBewerb : ITeamBewerb
         ID = bewerb.ID;
         Gruppenname = bewerb.Gruppenname;
         GameplanId = bewerb.GameplanId;
+        IsSplitGruppe = bewerb.IsSplitGruppe;
+        NumberOfTeamsWithNamedPlayerOnResult = bewerb.NumberOfTeamsWithNamedPlayerOnResult;
+        AnzahlAufsteiger = bewerb.AnzahlAufsteiger;
+        AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
+        Endtext = bewerb.Endtext;
+        TeamNameWithStartnumber = bewerb.TeamNameWithStartnumber;
+        ImageTopLeftFilename = bewerb.ImageTopLeftFilename;
+        ImageTopRightFilename = bewerb.ImageTopRightFilename;
+        ImageHeaderFilename = bewerb.ImageHeaderFilename;
+        RowSpace = bewerb.RowSpace;
+        FontSize = bewerb.FontSize;
+        PageBreakSplitGroup = bewerb.PageBreakSplitGroup;
     }
-
-
 
 
     internal void ToNormal(ITeamBewerb teamBewerb)
@@ -50,6 +60,20 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.SpielGruppe = SpielGruppe;
         teamBewerb.IERVersion = IERVersion;
         teamBewerb.Gruppenname = Gruppenname;
+        teamBewerb.IsSplitGruppe = IsSplitGruppe;
+        teamBewerb.NumberOfTeamsWithNamedPlayerOnResult = NumberOfTeamsWithNamedPlayerOnResult;
+        teamBewerb.AnzahlAufsteiger = AnzahlAufsteiger;
+        teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
+        teamBewerb.Endtext = Endtext;
+        teamBewerb.PageBreakSplitGroup = PageBreakSplitGroup;
+        teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
+        teamBewerb.ImageTopLeftFilename = ImageTopLeftFilename;
+        teamBewerb.ImageTopRightFilename = ImageTopRightFilename;
+        teamBewerb.ImageHeaderFilename = ImageHeaderFilename;
+        if (RowSpace >= 0 && RowSpace <= 99)
+            teamBewerb.RowSpace = RowSpace;
+        if (FontSize >= 12 && FontSize <= 24)
+            teamBewerb.FontSize = FontSize;
 
 
 
@@ -136,7 +160,38 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlArray(ElementName = "Spiele")]
     public List<SerialisableGame> SerialisableGames { get; set; }
 
+    [XmlElement(ElementName = "Aufsteiger")]
+    public int AnzahlAufsteiger { get; set; } = 0;
 
+    [XmlElement(ElementName = "Absteiger")]
+    public int AnzahlAbsteiger { get; set; } = 0;
+
+    [XmlElement(ElementName = "Endtext")]
+    public string Endtext { get; set; }
+
+    [XmlElement(ElementName = "TeamNameWithStarnumber")]
+    public bool TeamNameWithStartnumber { get; set; }
+
+    [XmlElement(ElementName = "ImageTopLeft")]
+    public string ImageTopLeftFilename { get; set; }
+
+    [XmlElement(ElementName = "ImageTopRight")]
+    public string ImageTopRightFilename { get; set; }
+
+    [XmlElement(ElementName = "ImageHeader")]
+    public string ImageHeaderFilename { get; set; }
+
+    [XmlElement(ElementName = "RowSpace")]
+    public int RowSpace { get; set; }
+
+    [XmlElement(ElementName = "FontSize")]
+    public int FontSize { get; set; }
+
+    [XmlElement(ElementName ="PageBreakSplitGroup")]
+    public bool PageBreakSplitGroup { get; set; }
+
+    [XmlElement(ElementName = "PlayerNames")]
+    public int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
 
     #region XMLIgnore
 
@@ -146,8 +201,6 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public IEnumerable<IGame> Games => throw new NotImplementedException();
     [XmlIgnore]
     public int NumberOfCourts => throw new NotImplementedException();
-    [XmlIgnore]
-    public int NumberOfTeamsWithNamedPlayerOnResult { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 
 
@@ -161,72 +214,40 @@ public class SerialisableTeamBewerb : ITeamBewerb
     #region Methods
 
     public void AddTeam(ITeam team) => throw new NotImplementedException();
-    public void AddNewTeam()
-    {
-        throw new NotImplementedException();
-    }
+    public void AddNewTeam() => throw new NotImplementedException();
 
-    public void CreateGames()
-    {
-        throw new NotImplementedException();
-    }
 
-    public IEnumerable<IGame> GetAllGames(bool withBreaks = true)
-    {
-        throw new NotImplementedException();
-    }
+    public void CreateGames() => throw new NotImplementedException();
 
-    public int GetCountOfGames()
-    {
-        throw new NotImplementedException();
-    }
 
-    public int GetCountOfGamesPerCourt()
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<IGame> GetAllGames(bool withBreaks = true) => throw new NotImplementedException();
 
-    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live)
-    {
-        throw new NotImplementedException();
-    }
 
-    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false)
-    {
-        throw new NotImplementedException();
-    }
+    public int GetCountOfGames() => throw new NotImplementedException();
 
-    public void RemoveTeam(ITeam team)
-    {
-        throw new NotImplementedException();
-    }
 
-    public void RemoveAllTeams()
-    {
-        throw new NotImplementedException();
-    }
+    public int GetCountOfGamesPerCourt() => throw new NotImplementedException();
 
-    public void SetBroadcastData(IBroadCastTelegram telegram)
-    {
-        throw new NotImplementedException();
-    }
 
-    public void SetStockTVResult(IStockTVResult tVResult)
-    {
-        throw new NotImplementedException();
-    }
+    public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live) => throw new NotImplementedException();
+
+
+    public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false) => throw new NotImplementedException();
+
+    public void RemoveTeam(ITeam team) => throw new NotImplementedException();
+
+    public void RemoveAllTeams() => throw new NotImplementedException();
+
+    public void SetBroadcastData(IBroadCastTelegram telegram) => throw new NotImplementedException();
+
+    public void SetStockTVResult(IStockTVResult tVResult) => throw new NotImplementedException();
 
     public void Reset() { }
 
-    public void AddVirtualTeams(int count)
-    {
-        throw new NotImplementedException();
-    }
+    public void AddVirtualTeams(int count) => throw new NotImplementedException();
 
-    public void RemoveAllVirtualTeams()
-    {
-        throw new NotImplementedException();
-    }
+    public void RemoveAllVirtualTeams() => throw new NotImplementedException();
+    public bool IsEachGameDone(bool live) => throw new NotImplementedException();
     #endregion
 
     #endregion

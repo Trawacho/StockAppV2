@@ -38,7 +38,7 @@ public class GameFactoryTest
 
         foreach (var gameplan in GamePlanFactory.LoadAllGameplans().Where(g => g.IsSplit))
         {
-            var games = gameplan.GetAllGames().Where(g => g.game.A <= gameplan.Teams / 2 && g.game.B <= gameplan.Teams / 2);
+            var games = gameplan.GetAllGames().Where(g => g.game.A <= gameplan.Teams / 2 && g.game.B <= gameplan.Teams / 2).Where(t => t.game.A != 0 && t.game.B != 0);
             var ersteStartnummer = games.Select(g => g.game.A).Union(games.Select(g => g.game.B)).Distinct().Min();
             var letzteStartnummer = games.Select(g => g.game.A).Union(games.Select(g => g.game.B)).Distinct().Max();
             var anzzahlStartnummern = letzteStartnummer - ersteStartnummer + 1;

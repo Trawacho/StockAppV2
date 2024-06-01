@@ -1,10 +1,13 @@
 ﻿using StockApp.Comm.Broadcasting;
 using StockApp.Comm.NetMqStockTV;
+using StockApp.UI.com;
 using StockApp.UI.Services;
+using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using StockApp.UI.ViewModels;
 using StockApp.UI.Views;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 
 namespace StockApp.UI
@@ -32,10 +35,18 @@ namespace StockApp.UI
             _dialogStore.Register<LiveResultsTeamViewModel, LiveResultTeamView>();
             _dialogStore.Register<LiveResultsZielViewModel, LiveResultZielView>();
 
+            var _systemVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            Software.Initialize(_systemVersion);
+            Software.SanityCheckDirectories();
+            PreferencesManager.Initialize();
+            Software.ConfigureInstance();
+
+
             _navigationStore = new NavigationStore();
 
-            _turnierStore = new TurnierStore();
 
+            var _templateVereine = VereineFactory.Load();
+            _turnierStore = new TurnierStore(_templateVereine);
 
             _stockTVService = new StockTVService();
             _broadCastService = new BroadcastService();
@@ -53,10 +64,16 @@ namespace StockApp.UI
                                                            resultsNavigationService: CreateResultsNavigationService(),
                                                            stockTVsNavigationService: CreateStockTVsNavigationService(),
                                                            zielTeilnehmerNavigationService: CreateZielTeilnehmerNavigationService(),
+                                                           zielDruckNavigationService: CreateZielDruckNavigationService(),
+                                                           outputNavigationService: CreateOutputNavigationService(),
                                                            liveResultZielDialogService: CreateLiveReusltsZielDialogService());
+
+
 
             _mainViewModel = new MainViewModel(_navigationViewModel, _navigationStore, _turnierStore);
             _mainWindow = new MainWindow() { DataContext = _mainViewModel };
+
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_mainWindow, "MainWindow");
         }
 
 
@@ -75,7 +92,6 @@ namespace StockApp.UI
 
             _mainViewModel.RequestClose += RequestCloseHandler;
             MainWindow = _mainWindow;
-
 
             _dialogStore.SetOwner(MainWindow);
             _mainWindow.Show();
@@ -135,7 +151,17 @@ namespace StockApp.UI
 
         private INavigationService<ZielBewerbViewModel> CreateZielTeilnehmerNavigationService()
         {
-            return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager));
+            return new NavigationService<ZielBewerbViewModel>(_navigationStore, () => new ZielBewerbViewModel(_turnierStore, _turnierNetworkManager, _stockTVService));
+        }
+
+        private INavigationService<ZielBewerbDruckViewModel> CreateZielDruckNavigationService()
+        {
+            return new NavigationService<ZielBewerbDruckViewModel>(_navigationStore, () => new ZielBewerbDruckViewModel(_turnierStore));
+        }
+
+        private INavigationService<OptionsViewModel> CreateOutputNavigationService()
+        {
+            return new NavigationService<OptionsViewModel>(_navigationStore, ()=> new OptionsViewModel(_turnierStore));
         }
 
         #endregion
@@ -151,6 +177,7 @@ namespace StockApp.UI
                 _turnierNetworkManager?.Dispose();
                 _stockTVService?.Dispose();
                 _broadCastService?.Dispose();
+                PreferencesManager.Save();
             }
             finally
             {

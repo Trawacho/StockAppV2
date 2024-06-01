@@ -7,32 +7,38 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
-		<Version>1.2.0.0</Version>
+		<Version>1.7.1.0</Version>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="com\Vereine.json" />
+		<None Remove="Ressources\icon_delete.png" />
 		<None Remove="Ressources\StockApp.ico" />
 		<None Remove="Ressources\StockAPP_512.png" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<EmbeddedResource Include="com\Vereine.json"/>
 		<Content Include="Ressources\StockApp.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Include="Ressources\icon_delete.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Resource Include="Ressources\StockAPP_512.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="LoadingSpinner.WPF" Version="1.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+		<PackageReference Include="DotNetProjects.WpfToolkit.Input" Version="6.1.94" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
 		<PackageReference Include="Prism.Core" Version="8.1.97" />
-		<PackageReference Include="SimpleModal.WPF" Version="1.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,7 +1,11 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
+using StockApp.Prints.Receipts;
+using StockApp.Prints.Spielplan;
 using StockApp.UI.Commands;
+using StockApp.UI.Components;
 using StockApp.UI.Extensions;
+using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using System.Linq;
 using System.Windows.Input;
@@ -25,13 +29,38 @@ public class GamesPrintsViewModel : ViewModelBase
 
     public bool Has6Turns => !Has8Turns;
 
-    public bool HasSummarizedScoreCards { get => _hasSummarizedScoreCards; set => SetProperty(ref _hasSummarizedScoreCards, value); }
+    public bool HasSummarizedScoreCards
+    {
+        get => _hasSummarizedScoreCards;
+        set => SetProperty(
+            ref _hasSummarizedScoreCards,
+            value,
+            () => PreferencesManager.TeamBewerbSettings.HasSummarizedScoreCards = value);
+    }
 
-    public bool HasNamesOnScoreCard { get => _hasNamesOnScoreCard; set => SetProperty(ref _hasNamesOnScoreCard, value); }
+    public bool HasNamesOnScoreCard
+    {
+        get => _hasNamesOnScoreCard;
+        set => SetProperty(
+            ref _hasNamesOnScoreCard,
+            value,
+            () => PreferencesManager.TeamBewerbSettings.HasNamesOnScoreCard = value);
+    }
 
-    public bool HasScoreCardsOptimizedForStockTV { get => _hasScoreCardsOptimizedForStockTV; set => SetProperty(ref _hasScoreCardsOptimizedForStockTV, value); }
+    public bool HasScoreCardsOptimizedForStockTV
+    {
+        get => _hasScoreCardsOptimizedForStockTV;
+        set => SetProperty(ref _hasScoreCardsOptimizedForStockTV, value);
+    }
 
-    public bool HasOpponentOnScoreCard { get => _hasOpponentOnScoreCard; set => SetProperty(ref _hasOpponentOnScoreCard, value); }
+    public bool HasOpponentOnScoreCard
+    {
+        get => _hasOpponentOnScoreCard;
+        set => SetProperty(
+            ref _hasOpponentOnScoreCard,
+            value,
+            () => PreferencesManager.TeamBewerbSettings.HasOpponentOnScoreCard = value);
+    }
 
     #region Commands
 
@@ -49,17 +78,22 @@ public class GamesPrintsViewModel : ViewModelBase
         },
         (p) => _teamBewerb.GetCountOfGames() > 0);
 
-    public ICommand PrintReceiptsCommand => _printReceiptsCommand ??= new RelayCommand(
-        (p) =>
+    public ICommand PrintReceiptsCommand => _printReceiptsCommand ??= new AsyncRelayCommand(
+        async (p) =>
         {
-            _ = Prints.Receipts.ReceiptsFactory.CreateReceipts(Prints.PageSizes.A4Size, _turnierStore.Turnier).ShowAsDialog();
-        },
+            var _printPreview = new PrintPreview(await ReceiptsFactory.Create(_turnierStore.Turnier));
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "Receipt");
+            _printPreview.ShowDialog();
+        }
+        ,
         (p) => (_teamBewerb.Teams?.Count() ?? 0) > 0);
 
-    public ICommand PrintSpielPlanCommand => _printSpielPlanCommand ??= new RelayCommand(
-        (p) =>
+    public ICommand PrintSpielPlanCommand => _printSpielPlanCommand ??= new AsyncRelayCommand(
+        async (p) =>
         {
-            _ = Prints.Spielplan.SpielPlanFactory.CreateSpielPlan(Prints.PageSizes.A4Size, _teamBewerb).ShowAsDialog();
+            var _printPreview = new PrintPreview(await SpielPlanFactory.Create(_turnierStore.Turnier));
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "SpielPlan");
+            _printPreview.ShowDialog();
         },
         (p) => _teamBewerb.GetCountOfGames() > 0);
 
@@ -70,6 +104,10 @@ public class GamesPrintsViewModel : ViewModelBase
         _turnierStore = turnierStore;
 
         _teamBewerb.Is8TurnsGameChanged += TeamBewerb_Is8TurnsGameChanged;
+
+        HasNamesOnScoreCard = PreferencesManager.TeamBewerbSettings.HasNamesOnScoreCard;
+        HasOpponentOnScoreCard = PreferencesManager.TeamBewerbSettings.HasOpponentOnScoreCard;
+        HasSummarizedScoreCards = PreferencesManager.TeamBewerbSettings.HasSummarizedScoreCards;
     }
 
     protected override void Dispose(bool disposing)

@@ -18,7 +18,8 @@ public class NavigationTeamViewModel : ViewModelBase
                                    INavigationService<TeamBewerbContainerViewModel> teamBewerbContainerNaviagationService,
                                    INavigationService<TeamsViewModel> teamsNavigationService,
                                    INavigationService<GamesViewModel> gamesNavigationService,
-                                   INavigationService<ResultsViewModel> resultsNavigationService)
+                                   INavigationService<ResultsViewModel> resultsNavigationService,
+                                   INavigationService<OptionsViewModel> optionsNavigationService)
     {
         _turnierStore = turnierStore;
 
@@ -30,6 +31,7 @@ public class NavigationTeamViewModel : ViewModelBase
         NavigateTeamsCommand = new NavigateCommand<TeamsViewModel>(teamsNavigationService);
         NavigateGamesCommand = new NavigateCommand<GamesViewModel>(gamesNavigationService);
         NavigateResultsCommand = new NavigateCommand<ResultsViewModel>(resultsNavigationService);
+        NavigateOptionsCommand = new NavigateCommand<OptionsViewModel>(optionsNavigationService);
     }
 
 
@@ -73,4 +75,5 @@ public class NavigationTeamViewModel : ViewModelBase
     public ICommand NavigateTeamsCommand { get; }
     public ICommand NavigateGamesCommand { get; }
     public ICommand NavigateResultsCommand { get; }
+    public ICommand NavigateOptionsCommand { get; }
 }

@@ -18,11 +18,11 @@ namespace StockApp.Test
         [Test]
         public void TestPublicFunctions()
         {
-            Assert.IsTrue(_player1.LicenseNumber == string.Empty);
+            Assert.That(_player1.LicenseNumber == string.Empty, Is.True);
             _player1.LicenseNumber = "321654";
-            Assert.IsTrue(_player1.LicenseNumber == "321654");
-            Assert.IsTrue(_player2.LastName == "Meier");
-            Assert.IsTrue(_player2.FirstName == "Josef");
+            Assert.That(_player1.LicenseNumber == "321654");
+            Assert.That(_player2.LastName == "Meier", Is.True);
+            Assert.That(_player2.FirstName == "Josef", Is.True);
         }
     }
 }

@@ -22,6 +22,7 @@ public interface IOrgaDaten
     /// Turnierbezeichnung
     /// </summary>
     public string TournamentName { get; set; }
+
     public IStartgebuehr EntryFee { get; set; }
     public IExecutive Referee { get; set; }
     public IExecutive CompetitionManager { get; set; }
@@ -60,6 +61,9 @@ public class OrgaDaten : IOrgaDaten
     /// Turniername
     /// </summary>
     public string TournamentName { get => _tournamentName; set => _tournamentName = value?.Trim(); }
+
+
+    
 
     /// <summary>
     /// Startgebühr pro Mannschaft

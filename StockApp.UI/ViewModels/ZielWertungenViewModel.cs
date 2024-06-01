@@ -1,4 +1,5 @@
-﻿using StockApp.Core.Wettbewerb.Zielbewerb;
+﻿using StockApp.Comm.NetMqStockTV;
+using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
@@ -15,6 +16,7 @@ public class ZielWertungenViewModel : ViewModelBase
     private readonly ITeilnehmer _teilnehmer;
     private readonly IZielBewerb _zielBewerb;
     private readonly ITurnierNetworkManager _turnierNetworkManager;
+    private readonly IStockTVService _stockTVService;
     private WertungViewModel _selectedWertung;
     private ICommand _removeWertungCommand;
     private ViewModelBase _wertungViewModel;
@@ -22,11 +24,12 @@ public class ZielWertungenViewModel : ViewModelBase
 
 
 
-    public ZielWertungenViewModel(ITeilnehmer teilnehmer, IZielBewerb zielBewerb, ITurnierNetworkManager turnierNetworkManager)
+    public ZielWertungenViewModel(ITeilnehmer teilnehmer, IZielBewerb zielBewerb, ITurnierNetworkManager turnierNetworkManager, IStockTVService stockTVService)
     {
         _teilnehmer = teilnehmer;
         _zielBewerb = zielBewerb;
         _turnierNetworkManager = turnierNetworkManager;
+        _stockTVService = stockTVService;
         _teilnehmer.WertungenChanged += WertungenChanged;
         WertungenChanged(this, EventArgs.Empty);
         SelectedWertung = _teilnehmer.HasOnlineWertung ? Wertungen.First(w => w.IsOnline) : Wertungen.First();
@@ -83,10 +86,10 @@ public class ZielWertungenViewModel : ViewModelBase
             _selectedWertung = value;
 
             WertungViewModel = value != null
-                        ? new ZielWertungViewModel(_selectedWertung.Wertung, _teilnehmer, _zielBewerb, _turnierNetworkManager)
+                        ? new ZielWertungViewModel(_selectedWertung.Wertung, _teilnehmer, _zielBewerb, _turnierNetworkManager, _stockTVService)
                         : _teilnehmer.HasOnlineWertung
-                            ? new ZielWertungViewModel(_teilnehmer.OnlineWertung, _teilnehmer, _zielBewerb, _turnierNetworkManager)
-                            : new ZielWertungViewModel(_teilnehmer.Wertungen.First(), _teilnehmer, _zielBewerb, _turnierNetworkManager);
+                            ? new ZielWertungViewModel(_teilnehmer.OnlineWertung, _teilnehmer, _zielBewerb, _turnierNetworkManager, _stockTVService)
+                            : new ZielWertungViewModel(_teilnehmer.Wertungen.First(), _teilnehmer, _zielBewerb, _turnierNetworkManager, _stockTVService);
 
         }
     }

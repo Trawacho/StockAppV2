@@ -19,11 +19,11 @@ public class TeamBewerbTest
     [Test]
     public void TestPublicFunctions()
     {
-        Assert.IsTrue(_teamBewerb.GetCountOfGames() == 0);
-        Assert.IsFalse(_teamBewerb.GetAllGames().Any());
-        Assert.IsTrue(_teamBewerb.GetCountOfGamesPerCourt() == 0);
-        Assert.IsFalse(_teamBewerb.GetGamesOfCourt(1).Any());
-        Assert.IsFalse(_teamBewerb.GetTeamsRanked(false).Any());
+        Assert.That(_teamBewerb.GetCountOfGames() == 0, Is.True);
+        Assert.That(_teamBewerb.GetAllGames().Any(), Is.False);
+        Assert.That(_teamBewerb.GetCountOfGamesPerCourt() == 0, Is.True);
+        Assert.That(_teamBewerb.GetGamesOfCourt(1).Any(), Is.False);
+        Assert.That(_teamBewerb.GetTeamsRanked(false).Any(),Is.False);
 
         int t = 7;
         int f = t / 2;
@@ -38,11 +38,11 @@ public class TeamBewerbTest
                         .First(p => p.Teams == 7), _teamBewerb.Teams);
 
 
-        Assert.IsTrue(_teamBewerb.GetTeamsRanked(false).Count() == t);
-        Assert.IsTrue(_teamBewerb.GetCountOfGames() == t * f);
-        Assert.IsTrue(_teamBewerb.GetAllGames(false).Count() == t * f);
-        Assert.IsTrue(_teamBewerb.GetCountOfGamesPerCourt() >= t);
-        Assert.IsTrue(_teamBewerb.GetGamesOfCourt(1).Count() == t);
+        Assert.That(_teamBewerb.GetTeamsRanked(false).Count() == t, Is.True);
+        Assert.That(_teamBewerb.GetCountOfGames() == t * f, Is.True);
+        Assert.That(_teamBewerb.GetAllGames(false).Count() == t * f, Is.True);
+        Assert.That(_teamBewerb.GetCountOfGamesPerCourt() >= t, Is.True);
+        Assert.That(_teamBewerb.GetGamesOfCourt(1).Count() == t, Is.True);
 
 
 

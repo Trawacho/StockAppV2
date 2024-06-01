@@ -77,5 +77,15 @@ public class SerialisableGame : IGame
     {
         throw new NotImplementedException();
     }
+
+    public bool IsGameDone(bool live)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ITeam GetOpponent(ITeam team)
+    {
+        throw new NotImplementedException();
+    }
     #endregion
 }

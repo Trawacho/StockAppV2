@@ -9,11 +9,13 @@ public class NavigtaionZielViewModel : ViewModelBase
 {
     public NavigtaionZielViewModel(
             INavigationService<ZielBewerbViewModel> zielTeilnehmerNavigationService,
-            IDialogService<LiveResultsZielViewModel> liveResultZielDialogCommand)
+            IDialogService<LiveResultsZielViewModel> liveResultZielDialogCommand,
+            INavigationService<ZielBewerbDruckViewModel> zielDruckNavigationService)
     {
 
         NavigateTeilnehmerCommand = new NavigateCommand<ZielBewerbViewModel>(zielTeilnehmerNavigationService);
         NavigateLiveResultCommand = new DialogCommand<LiveResultsZielViewModel>(liveResultZielDialogCommand);
+        NavigateDruckResultCommand = new NavigateCommand<ZielBewerbDruckViewModel>(zielDruckNavigationService);
     }
 
     protected override void Dispose(bool disposing)
@@ -30,4 +32,5 @@ public class NavigtaionZielViewModel : ViewModelBase
 
     public ICommand NavigateTeilnehmerCommand { get; }
     public ICommand NavigateLiveResultCommand { get; }
+    public ICommand NavigateDruckResultCommand { get; }
 }

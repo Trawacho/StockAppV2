@@ -60,5 +60,6 @@
     <StackPanel Orientation="Vertical" Background="#FF063852">
         <Button Content="Teilnehmer" Command="{Binding NavigateTeilnehmerCommand}"/>
         <Button Content="Live Ergebnisse" Command="{Binding NavigateLiveResultCommand}"/>
+        <Button Content="Druck Ausgabe" Command="{Binding NavigateDruckResultCommand}"/>
     </StackPanel>
 </UserControl>

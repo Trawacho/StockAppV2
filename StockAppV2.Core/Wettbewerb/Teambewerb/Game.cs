@@ -7,7 +7,7 @@ public interface IGame : IEquatable<IGame>
     int GameNumber { get; }
     int GameNumberOverAll { get; }
     bool IsTeamA_Starting { get; set; }
-
+    bool IsGameDone(bool live);
     ITeam TeamA { get; set; }
     ITeam TeamB { get; set; }
 
@@ -20,7 +20,7 @@ public interface IGame : IEquatable<IGame>
 
     ITeam GetStartingTeam();
     ITeam GetNotStartingTeam();
-
+    ITeam GetOpponent(ITeam team);
     string ToStringExtended();
 
     event EventHandler SpielstandChanged;
@@ -86,6 +86,11 @@ public class Game : IGame
     /// Das Team A hat Anspiel
     /// </summary>
     public bool IsTeamA_Starting { get; set; }
+
+    /// <summary>
+    /// True, wenn im Spielstand (Master) ein Ergebnis vorhanden ist.
+    /// </summary>
+    public bool IsGameDone(bool live = false) => Spielstand.IsMasterSpielstandVorhanden(live);
 
     /// <summary>
     /// Team A - 1
@@ -178,14 +183,12 @@ public class Game : IGame
     /// </summary>
     /// <param name="team"></param>
     /// <returns></returns>
-    public ITeam GetOpponent(ITeam team)
-    {
-        return team == TeamA
-                     ? TeamB
-                     : team == TeamB
-                             ? TeamA
-                             : null;
-    }
+    public ITeam GetOpponent(ITeam team) => 
+        team == TeamA
+            ? TeamB
+            : team == TeamB
+                ? TeamA
+                : null;
 
     /// <summary>
     /// Das anspielende Team
