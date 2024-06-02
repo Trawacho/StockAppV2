@@ -307,7 +307,7 @@ public class StockTV : IStockTV
         }
 
 #if DEBUG
-            Debug.WriteLine(sender.ToString() + " Receive: " + args.MessageTopic + " ==> " + string.Join("-", args));
+        Debug.WriteLine(sender.ToString() + " Receive: " + args.MessageTopic + " ==> " + string.Join("-", args));
 #endif
 
         if (args.MessageTopic == MessageTopic.GetResult)
@@ -319,7 +319,7 @@ public class StockTV : IStockTV
             TVSettings.SetSettings(args.MessageValue);
         }
     }
-    
+
     #endregion
 
     #region Methods to send commands to StockTV
@@ -341,7 +341,7 @@ public class StockTV : IStockTV
         string valueString = string.Empty;
         foreach (var b in begegnungen)
         {
-            valueString += $"{b.SpielNummer}:{b.TeamNameA}:{b.TeamNameB};";
+            valueString += b.GetStockTVString(TVSettings.NextBahnModus == NextCourtMode.Left);
         }
         _appClient?.SendToStockTV(MessageTopic.SetTeamNames, valueString);
     }

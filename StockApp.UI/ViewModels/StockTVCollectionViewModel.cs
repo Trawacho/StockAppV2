@@ -94,7 +94,8 @@ public class StockTVCollectionViewModel : ViewModelBase
                         {
                             SpielNummer = item.GameNumberOverAll,
                             TeamNameA = item.TeamA.TeamName,
-                            TeamNameB = item.TeamB.TeamName
+                            TeamNameB = item.TeamB.TeamName,
+                            IsAnspielTeamA = item.IsTeamA_Starting
                         });
                     }
                     tv?.SendTeamNames(begegnungen);
