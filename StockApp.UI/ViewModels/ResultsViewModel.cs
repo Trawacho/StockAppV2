@@ -7,6 +7,7 @@ using StockApp.UI.Enumerations;
 using StockApp.UI.Services;
 using StockApp.UI.Settings;
 using StockApp.UI.Stores;
+using System;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -15,7 +16,16 @@ public class ResultsViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
     private readonly IDialogStore _dialogStore;
-    private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+    private ITeamBewerb _teamBewerb;
+
+    private ITeamBewerb TeamBewerb
+    {
+        get => _teamBewerb;
+        set
+        {
+            SetProperty(ref _teamBewerb, value);  
+        }
+    }
     private readonly ITurnierNetworkManager _turnierNetworkManager;
     private TeamBewerbInputMethod _inputMethod;
     private ViewModelBase _resultsEntryViewModel;
@@ -30,7 +40,7 @@ public class ResultsViewModel : ViewModelBase
         },
         (p) => { return true; });
 
-    public ICommand ShowLiveResultCommand { get; init; }
+    public ICommand ShowLiveResultCommand { get; set; }
 
 
     public TeamBewerbInputMethod InputMethod
@@ -70,6 +80,11 @@ public class ResultsViewModel : ViewModelBase
         _dialogStore = dialogStore;
         _turnierNetworkManager = turnierNetworkManager;
 
+        _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += CurrentTeamBewerbChangend;
+
+        TeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+
+
         ShowLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
                 new DialogService<LiveResultsTeamViewModel>(
                     _dialogStore,
@@ -78,12 +93,26 @@ public class ResultsViewModel : ViewModelBase
         InputMethod = PreferencesManager.TeamBewerbSettings.TeamBewerbInputMethod;
     }
 
+    private void CurrentTeamBewerbChangend(object sender, EventArgs e)
+    {
+        TeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+
+
+        ShowLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
+                new DialogService<LiveResultsTeamViewModel>(
+                    _dialogStore,
+                    () => new LiveResultsTeamViewModel(TeamBewerb), false));
+
+        SetResultsEntryViewModel(InputMethod);
+    }
+
     protected override void Dispose(bool disposing)
     {
         if (!_disposed)
         {
             if (disposing)
             {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= CurrentTeamBewerbChangend;
                 ResultsEntryViewModel?.Dispose();
             }
             _disposed = true;

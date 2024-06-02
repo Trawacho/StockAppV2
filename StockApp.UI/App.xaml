@@ -122,10 +122,7 @@
         <DataTemplate DataType="{x:Type vm:TeamBewerbViewModel}">
             <components:TeamBewerbView/>
         </DataTemplate>
-
-        <DataTemplate DataType="{x:Type vm:GroupSelectorViewModel}">
-            <components:GroupSelectorView/>
-        </DataTemplate>
+       
 
         <Style  TargetType="TextBlock" x:Key="VmHeader">
             <Setter Property="FontWeight" Value="Bold"/>

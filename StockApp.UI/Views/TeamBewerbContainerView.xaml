@@ -112,7 +112,6 @@
 
         </Grid>
         
-        <ContentControl Grid.Row="3" Content="{Binding Path=GroupSelectorViewModel}" 
-                        Visibility="{Binding Path=IsGroupSelector, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        
     </Grid>
 </UserControl>

@@ -110,13 +110,22 @@ public class TeamsViewModel : ViewModelBase
     public TeamsViewModel(ITurnierStore turnierStore)
     {
         _turnierStore = turnierStore;
+        _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += CurrentTeamBewerbChangend;
+
         CurrentBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
 
         Teams = new ObservableCollection<TeamViewModel>(CurrentBewerb.Teams.Select(s => new TeamViewModel(s, _turnierStore)));
 
-        _addNewTeamCommand = new RelayCommand((p) => AddTeam(), (p) => CurrentBewerb.Teams.Count() < turnierStore.MaxCountOfTeams);
+        _addNewTeamCommand = new RelayCommand((p) => AddTeam(), (p) => CurrentBewerb?.Teams.Count() < turnierStore.MaxCountOfTeams);
         _removeTeamCommand = new RelayCommand((p) => RemoveTeam(), (p) => SelectedTeam != null);
         _modalCancelCommand = new RelayCommand(para => IsModalOpen = false);
+    }
+
+    private void CurrentTeamBewerbChangend(object sender, EventArgs eventArgs)
+    {
+        CurrentBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+
+        TeamsChanged(sender, eventArgs);
     }
 
     protected override void Dispose(bool disposing)
@@ -125,6 +134,7 @@ public class TeamsViewModel : ViewModelBase
         {
             if (disposing)
             {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= CurrentTeamBewerbChangend;
                 CurrentBewerb = null;
                 SelectedTeam?.Dispose();
                 SelectedTeam = null;

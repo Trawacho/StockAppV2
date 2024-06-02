@@ -3,6 +3,7 @@ using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Stores;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
@@ -14,18 +15,50 @@ public class GamesViewModel : ViewModelBase
     private readonly ITurnierStore _turnierStore;
     private ICommand _createGamesCommand;
     private bool _isCreatingGames;
+    private ITeamBewerb _currentTeamBewerb;
+    private ViewModelBase _gamesPrintsViewModel;
+    private IEnumerable<IGameplan> _gameplans;
 
-    private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+    private ITeamBewerb CurrentTeamBewerb
+    {
+        get => _currentTeamBewerb;
+        set
+        {
+            if (_currentTeamBewerb != null)
+                _currentTeamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
 
-    public ViewModelBase GamesPrintsViewModel { get; private set; }
+            SetProperty(ref _currentTeamBewerb, value);
+            if (value != null)
+                GamesPrintsViewModel = new GamesPrintsViewModel(CurrentTeamBewerb, _turnierStore);
+
+            if (value != null)
+                _currentTeamBewerb.GamesChanged += TeamBewerb_GamesChanged;
+        }
+    }
+
+    public ViewModelBase GamesPrintsViewModel
+    {
+        get => _gamesPrintsViewModel;
+        private set
+        {
+            SetProperty(ref _gamesPrintsViewModel, value);
+        }
+    }
     public bool IsCreatingGames { get => _isCreatingGames; set => SetProperty(ref _isCreatingGames, value); }
 
-    public IEnumerable<IGameplan> Gameplans { get; init; }
+    public IEnumerable<IGameplan> Gameplans
+    {
+        get => _gameplans;
+        private set
+        {
+            SetProperty(ref _gameplans, value);
+        }
+    }
 
     #region TeamBewerb - Depended Properties
 
-    public int CountOfGames => TeamBewerb.GetCountOfGames();
-    public int CountOfGamesPerCourt => TeamBewerb.GetCountOfGamesPerCourt();
+    public int CountOfGames => CurrentTeamBewerb.GetCountOfGames();
+    public int CountOfGamesPerCourt => CurrentTeamBewerb.GetCountOfGamesPerCourt();
     public bool HasMoreGameRounds => SpielRunden > 1;
     public bool HasGames => CountOfGames > 0;
     public bool HasNoGames => !HasGames;
@@ -34,52 +67,52 @@ public class GamesViewModel : ViewModelBase
     {
         get
         {
-            if (Gameplans.Any(g => g.ID == TeamBewerb.GameplanId))
-                return TeamBewerb.GameplanId;
+            if (Gameplans.Any(g => g.ID == CurrentTeamBewerb.GameplanId))
+                return CurrentTeamBewerb.GameplanId;
             else
                 return 0;
         }
         set
         {
-            if (TeamBewerb.GameplanId == value)
+            if (CurrentTeamBewerb.GameplanId == value)
                 return;
 
-            TeamBewerb.GameplanId = value;
+            CurrentTeamBewerb.GameplanId = value;
             RaisePropertyChanged();
         }
     }
 
     public bool HasChangeStart
     {
-        get => TeamBewerb.StartingTeamChange;
+        get => CurrentTeamBewerb.StartingTeamChange;
         set
         {
-            if (TeamBewerb.StartingTeamChange == value)
+            if (CurrentTeamBewerb.StartingTeamChange == value)
                 return;
 
-            TeamBewerb.StartingTeamChange = value;
+            CurrentTeamBewerb.StartingTeamChange = value;
             RaisePropertyChanged(nameof(HasChangeStart));
         }
     }
 
     public bool Has8Turns
     {
-        get => TeamBewerb.Is8TurnsGame;
+        get => CurrentTeamBewerb.Is8TurnsGame;
         set
         {
-            if (TeamBewerb.Is8TurnsGame == value) return;
-            TeamBewerb.Is8TurnsGame = value;
+            if (CurrentTeamBewerb.Is8TurnsGame == value) return;
+            CurrentTeamBewerb.Is8TurnsGame = value;
             RaisePropertyChanged();
         }
     }
 
     public int SpielRunden
     {
-        get => TeamBewerb.NumberOfGameRounds;
+        get => CurrentTeamBewerb.NumberOfGameRounds;
         set
         {
-            if (TeamBewerb.NumberOfGameRounds == value) return;
-            TeamBewerb.NumberOfGameRounds = value;
+            if (CurrentTeamBewerb.NumberOfGameRounds == value) return;
+            CurrentTeamBewerb.NumberOfGameRounds = value;
             RaisePropertyChanged(nameof(SpielRunden));
             RaisePropertyChanged(nameof(HasMoreGameRounds));
         }
@@ -93,12 +126,12 @@ public class GamesViewModel : ViewModelBase
             IsCreatingGames = true;
 
             //Entferne alle Spiele von allen Teams
-            foreach (var t in TeamBewerb.Teams)
+            foreach (var t in CurrentTeamBewerb.Teams)
                 t.ClearGames();
 
-            TeamBewerb.IsSplitGruppe = Gameplans.FirstOrDefault(p => p.ID == SelectedGameplanId)?.IsSplit ?? false;
+            CurrentTeamBewerb.IsSplitGruppe = Gameplans.FirstOrDefault(p => p.ID == SelectedGameplanId)?.IsSplit ?? false;
 
-            GamePlanFactory.MatchTeamAndGames(Gameplans.FirstOrDefault(g => g.ID == SelectedGameplanId), TeamBewerb.Teams, SpielRunden, HasChangeStart);
+            GamePlanFactory.MatchTeamAndGames(Gameplans.FirstOrDefault(g => g.ID == SelectedGameplanId), CurrentTeamBewerb.Teams, SpielRunden, HasChangeStart);
 
             IsCreatingGames = false;
         },
@@ -110,15 +143,23 @@ public class GamesViewModel : ViewModelBase
     public GamesViewModel(ITurnierStore turnierStore)
     {
         _turnierStore = turnierStore;
+        _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += CurrentTeamBewerbChangend;
+
+        CurrentTeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
 
         Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Count() == 1
-                          ? Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == TeamBewerb.Teams.Count())
-                          : Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == TeamBewerb.Teams.Count() && !t.IsSplit);
+                          ? Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == CurrentTeamBewerb.Teams.Count())
+                          : Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == CurrentTeamBewerb.Teams.Count() && !t.IsSplit);
+    }
 
+    private void CurrentTeamBewerbChangend(object sender, EventArgs e)
+    {
+        CurrentTeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+        Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Count() == 1
+                         ? Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == CurrentTeamBewerb.Teams.Count())
+                         : Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == CurrentTeamBewerb.Teams.Count() && !t.IsSplit);
 
-        GamesPrintsViewModel = new GamesPrintsViewModel(TeamBewerb, _turnierStore);
-
-        TeamBewerb.GamesChanged += TeamBewerb_GamesChanged;
+        TeamBewerb_GamesChanged(sender, e);
     }
 
     private void TeamBewerb_GamesChanged(object sender, System.EventArgs e)
@@ -126,6 +167,12 @@ public class GamesViewModel : ViewModelBase
         RaisePropertyChanged(nameof(HasNoGames));
         RaisePropertyChanged(nameof(CountOfGames));
         RaisePropertyChanged(nameof(CountOfGamesPerCourt));
+        RaisePropertyChanged(nameof(SpielRunden));
+        RaisePropertyChanged(nameof(HasMoreGameRounds));
+        RaisePropertyChanged(nameof(HasGames));
+        RaisePropertyChanged(nameof(SelectedGameplanId));
+        RaisePropertyChanged(nameof(HasChangeStart));
+        RaisePropertyChanged(nameof(Has8Turns));
     }
 
     protected override void Dispose(bool disposing)
@@ -134,7 +181,8 @@ public class GamesViewModel : ViewModelBase
         {
             if (disposing)
             {
-                TeamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= CurrentTeamBewerbChangend;
+                CurrentTeamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
                 GamesPrintsViewModel?.Dispose();
                 GamesPrintsViewModel = null;
             }

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:conv="clr-namespace:StockApp.UI.Converters"
              mc:Ignorable="d">
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
@@ -14,6 +15,36 @@
     </d:DesignerProperties.DesignStyle>
 
     <UserControl.Resources>
+
+        <Style TargetType="RadioButton" x:Key="RadioButtonStyle">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0"
+                                Background="{TemplateBinding Background}"
+                                Padding="15 10">
+
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="#FFF0810F"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -52,6 +83,9 @@
         </Style>
 
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        
+        <conv:GroupSelectorConverter x:Key="GroupSelectorConverter"/>
+        <conv:IsIntValueEqualParameterConverter x:Key="IsIntValueEqualParameterConverter"/>
 
     </UserControl.Resources>
 
@@ -72,7 +106,8 @@
             <Button Content="StockTV" Command="{Binding NavigateStockTVsCommand}"/>
         </StackPanel>
 
-        <Grid Grid.Row="1" VerticalAlignment="Bottom" Visibility="{Binding HasMoreThanOneGroup, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Grid.Row="1" VerticalAlignment="Bottom" 
+              Visibility="{Binding Groups, Converter={StaticResource GroupSelectorConverter}, ConverterParameter=2, UpdateSourceTrigger=PropertyChanged}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -81,10 +116,21 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button  Content="1"  Grid.Row="0" Grid.Column="0"/>
-            <Button  Content="2"  Grid.Row="0" Grid.Column="1"/>
-            <Button  Content="3"  Grid.Row="1" Grid.Column="0" Visibility="{Binding HasMoreThanTwoGroup, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Button  Content="4"  Grid.Row="1" Grid.Column="1" Visibility="{Binding HasMoreThanThreeGroup, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <RadioButton  Content="1"  Grid.Row="0" Grid.Column="0" Style="{StaticResource RadioButtonStyle}" 
+                          IsChecked="{Binding CurrentTeamBewerbId, Converter={StaticResource IsIntValueEqualParameterConverter}, ConverterParameter=1, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                          Command="{Binding Path=SelectGroupCommand}" CommandParameter="1"/>
+            <RadioButton  Content="2"  Grid.Row="0" Grid.Column="1" Style="{StaticResource RadioButtonStyle}"
+                          IsChecked="{Binding CurrentTeamBewerbId, Converter={StaticResource IsIntValueEqualParameterConverter}, ConverterParameter=2, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                          Command="{Binding Path=SelectGroupCommand}" CommandParameter="2"/>
+            <RadioButton  Content="3"  Grid.Row="1" Grid.Column="0" Style="{StaticResource RadioButtonStyle}"
+                          IsChecked="{Binding CurrentTeamBewerbId, Converter={StaticResource IsIntValueEqualParameterConverter}, ConverterParameter=3, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                          Command="{Binding Path=SelectGroupCommand}" CommandParameter="3"
+                          Visibility="{Binding Groups, Converter={StaticResource GroupSelectorConverter}, ConverterParameter=3, UpdateSourceTrigger=PropertyChanged}"/>
+            <RadioButton  Content="4"  Grid.Row="1" Grid.Column="1" Style="{StaticResource RadioButtonStyle}"
+                          IsChecked="{Binding CurrentTeamBewerbId, Converter={StaticResource IsIntValueEqualParameterConverter}, ConverterParameter=4, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                          Command="{Binding Path=SelectGroupCommand}" CommandParameter="4"
+                          Visibility="{Binding Groups, Converter={StaticResource GroupSelectorConverter}, ConverterParameter=4, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
     </Grid>
 

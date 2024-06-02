@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 
+//TODO: Die ViewModels für Eingabe und Optionen noch  auf die GroupSelector anpassen
 namespace StockApp.UI
 {
 
@@ -41,12 +42,11 @@ namespace StockApp.UI
             PreferencesManager.Initialize();
             Software.ConfigureInstance();
 
-
             _navigationStore = new NavigationStore();
-
 
             var _templateVereine = VereineFactory.Load();
             _turnierStore = new TurnierStore(_templateVereine);
+            
 
             _stockTVService = new StockTVService();
             _broadCastService = new BroadcastService();

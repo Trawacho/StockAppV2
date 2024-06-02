@@ -11,12 +11,41 @@ namespace StockApp.UI.ViewModels;
 public class OptionsViewModel : ViewModelBase
 {
     private readonly ITurnierStore _turnierStore;
-    private ITeamBewerb TeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+    private ITeamBewerb _teamBewerb;
+
+    private ITeamBewerb TeamBewerb
+    {
+        get => _teamBewerb; set
+        {
+            SetProperty(ref _teamBewerb, value);
+        }
+    }
+
     private readonly string _imageFileFilter = "Image Files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.bmp";
 
     public OptionsViewModel(ITurnierStore turnierStore)
     {
         _turnierStore = turnierStore;
+        TeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+
+        _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += ContainerTeamBewerbe_CurrentTeamBewerbChanged;
+    }
+
+    private void ContainerTeamBewerbe_CurrentTeamBewerbChanged(object sender, System.EventArgs e)
+    {
+        TeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+        RaisePropertyChanged(nameof(NumberOfTeamsWithNamedPlayerOnResult));
+        RaisePropertyChanged(nameof(AnzahlAufsteiger));
+        RaisePropertyChanged(nameof(AnzahlAbsteiger));
+        RaisePropertyChanged(nameof(EndText));
+        RaisePropertyChanged(nameof(TeamNameWithStartnumber));
+        RaisePropertyChanged(nameof(ImageLinksObenPath));
+        RaisePropertyChanged(nameof(ImageRechtsObenPath));
+        RaisePropertyChanged(nameof(ImageHeaderPath));
+        RaisePropertyChanged(nameof(RowSpace));
+        RaisePropertyChanged(nameof(FontSize));
+        RaisePropertyChanged(nameof(PageBreakSplitGroup));
+        RaisePropertyChanged(nameof(IsSplitGruppe));
     }
 
     protected override void Dispose(bool disposing)
@@ -25,11 +54,13 @@ public class OptionsViewModel : ViewModelBase
         {
             if (disposing)
             {
-                ;
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= ContainerTeamBewerbe_CurrentTeamBewerbChanged; ;
             }
             _disposed = true;
         }
     }
+
+    #region Properties
 
     public string NumberOfTeamsWithNamedPlayerOnResult
     {
@@ -73,11 +104,9 @@ public class OptionsViewModel : ViewModelBase
         }
     }
 
-    private static int StringToIntConverter(string value) => int.TryParse(value, out int result) ? result : 0;
-
     public string EndText
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext;
+        get => TeamBewerb.Endtext;
         set
         {
             _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext = value;
@@ -87,7 +116,7 @@ public class OptionsViewModel : ViewModelBase
 
     public bool TeamNameWithStartnumber
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.TeamNameWithStartnumber;
+        get => TeamBewerb.TeamNameWithStartnumber;
         set
         {
             _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.TeamNameWithStartnumber = value;
@@ -97,7 +126,7 @@ public class OptionsViewModel : ViewModelBase
 
     public string ImageLinksObenPath
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename;
+        get => TeamBewerb.ImageTopLeftFilename;
         set
         {
             if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopLeftFilename != value)
@@ -110,7 +139,7 @@ public class OptionsViewModel : ViewModelBase
 
     public string ImageRechtsObenPath
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename;
+        get => TeamBewerb.ImageTopRightFilename;
         set
         {
             if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageTopRightFilename != value)
@@ -123,7 +152,7 @@ public class OptionsViewModel : ViewModelBase
 
     public string ImageHeaderPath
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename;
+        get => TeamBewerb.ImageHeaderFilename;
         set
         {
             if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ImageHeaderFilename != value)
@@ -136,7 +165,7 @@ public class OptionsViewModel : ViewModelBase
 
     public int RowSpace
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace;
+        get => TeamBewerb.RowSpace;
         set
         {
             if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace != value)
@@ -149,7 +178,7 @@ public class OptionsViewModel : ViewModelBase
 
     public int FontSize
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize;
+        get => TeamBewerb.FontSize;
         set
         {
             if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize != value)
@@ -162,19 +191,22 @@ public class OptionsViewModel : ViewModelBase
 
     public bool PageBreakSplitGroup
     {
-        get => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.PageBreakSplitGroup;
+        get => TeamBewerb.PageBreakSplitGroup;
         set
         {
-            if(_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.PageBreakSplitGroup != value)
+            if (TeamBewerb.PageBreakSplitGroup != value)
             {
-                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.PageBreakSplitGroup = value;
+                TeamBewerb.PageBreakSplitGroup = value;
                 RaisePropertyChanged();
             }
         }
     }
-    public bool IsSplitGruppe => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.IsSplitGruppe;
+   
+    public bool IsSplitGruppe => TeamBewerb.IsSplitGruppe;
 
+    #endregion
 
+    #region Commands
 
     public ICommand ImageLinksObenResetCommand => new RelayCommand(
         (p) => ImageLinksObenPath = null,
@@ -216,4 +248,8 @@ public class OptionsViewModel : ViewModelBase
         },
         (p) => true);
 
+    #endregion
+
+
+    private static int StringToIntConverter(string value) => int.TryParse(value, out int result) ? result : 0;
 }

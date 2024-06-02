@@ -6,6 +6,7 @@ using StockApp.UI.Services;
 using StockApp.UI.Stores;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -16,9 +17,11 @@ public interface INavigationViewModel : IDisposable
     void NavigationReset();
     bool IsTeamBewerb { get; }
     bool IsZielBewerb { get; }
+    int Groups { get; }
     ICommand NavigateContestCommand { get; }
     ICommand NavigateStockTVsCommand { get; }
     ICommand NavigateTurnierCommand { get; }
+    ICommand SelectGroupCommand { get; }
 }
 
 public class NavigationViewModel : ViewModelBase, INavigationViewModel
@@ -39,8 +42,13 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
     public ICommand NavigateTurnierCommand { get; }
     public ICommand NavigateContestCommand { get; }
     public ICommand NavigateStockTVsCommand { get; }
-    public bool IsTeamBewerb => _turnierStore.Turnier.Wettbewerb is ITeamBewerb;
+   
+    public bool IsTeamBewerb => _turnierStore.Turnier.Wettbewerb is IContainerTeamBewerbe;
     public bool IsZielBewerb => _turnierStore.Turnier.Wettbewerb is IZielBewerb;
+    public int Groups => IsTeamBewerb 
+        ? _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Count() 
+        : 0;
+    public int CurrentTeamBewerbId => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ID;
 
     public NavigationViewModel(ITurnierStore turnierStore,
                                INavigationService<TeamBewerbContainerViewModel> teamBewerbContainerNavigationService,
@@ -67,9 +75,22 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
         NavigateTurnierCommand = new NavigateCommand<TurnierViewModel>(turnierNavigationService);
         NavigateContestCommand = new NavigateCommand<WettbewerbsartViewModel>(contestNavigationService);
         NavigateStockTVsCommand = new NavigateCommand<StockTVCollectionViewModel>(stockTVsNavigationService);
+        SelectGroupCommand = new RelayCommand((p) => SetSelectedGroup(p), _ => true);
 
         _turnierStore.Turnier.WettbewerbChanging += CurrentTurnier_WettbewerbChanging;
         _turnierStore.Turnier.WettbewerbChanged += CurrentTurnier_WettbewerbChanged;
+        _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbeChanged += ContainerTeamBewerbe_TeamBewerbeChanged;
+        _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += ContainerTeamBewerbe_CurrentTeamBewerbChanged;
+    }
+
+    private void ContainerTeamBewerbe_CurrentTeamBewerbChanged(object sender, EventArgs e)
+    {
+        RaisePropertyChanged(nameof(CurrentTeamBewerbId));
+    }
+
+    private void ContainerTeamBewerbe_TeamBewerbeChanged(object sender, EventArgs e)
+    {
+        RaisePropertyChanged(nameof(Groups));
     }
 
     protected override void Dispose(bool disposing)
@@ -81,6 +102,7 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
                 _currentNavigationViewModel?.Dispose();
                 _turnierStore.Turnier.WettbewerbChanging -= CurrentTurnier_WettbewerbChanging;
                 _turnierStore.Turnier.WettbewerbChanged -= CurrentTurnier_WettbewerbChanged;
+                _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbeChanged -= ContainerTeamBewerbe_TeamBewerbeChanged;
             }
             _disposed = true;
         }
@@ -119,6 +141,17 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
         {
             _currentNavigationViewModel?.Dispose();
             SetProperty(ref _currentNavigationViewModel, value);
+        }
+    }
+
+    
+    public ICommand SelectGroupCommand { get; } 
+    private void SetSelectedGroup(object p)
+    {
+        if(int.TryParse(p.ToString(), out int groupId))
+        {
+            var t = _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Single(t => t.ID == groupId);
+            _turnierStore.Turnier.ContainerTeamBewerbe.SetCurrentTeamBewerb(t);
         }
     }
 }

@@ -29,7 +29,6 @@ public class TeamBewerbContainerViewModel : ViewModelBase
 
         _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbeChanged += TeamBewerbe_TeamBewerbeChanged;
         SelectedTeamBewerb = TeamBewerbe?.First();
-        GroupSelectorViewModel = new GroupSelectorViewModel(_turnierStore);
     }
 
     protected override void Dispose(bool disposing)
@@ -38,7 +37,6 @@ public class TeamBewerbContainerViewModel : ViewModelBase
         {
             if (disposing)
             {
-                GroupSelectorViewModel.Dispose();
                 TeamBewerbe.DisposeAndClear();
                 SelectedTeamBewerb?.Dispose();
                 SelectedTeamBewerb = null;
@@ -70,7 +68,7 @@ public class TeamBewerbContainerViewModel : ViewModelBase
     public TeamBewerbViewModel SelectedTeamBewerb { get => _selectedTeamBewerb; set => SetProperty(ref _selectedTeamBewerb, value); }
     public ITeamBewerb ActiveTeamBewerb => _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
     public bool IsGroupSelector => _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1;
-    public GroupSelectorViewModel GroupSelectorViewModel { get; init; }
+    
 
     #endregion
 
