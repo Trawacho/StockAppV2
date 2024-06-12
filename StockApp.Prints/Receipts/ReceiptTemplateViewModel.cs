@@ -4,6 +4,7 @@ using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.Prints.Components;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,17 +13,27 @@ namespace StockApp.Prints.Receipts;
 public class ReceiptTemplateViewModel : ViewModelBase
 {
     private readonly ITurnier _turnier;
+    private readonly int _startNummer;
 
-    public ReceiptTemplateViewModel(ITurnier turnier) 
+    public ReceiptTemplateViewModel(ITurnier turnier)
     {
         _turnier = turnier;
         InitBodyElements();
     }
 
+    public ReceiptTemplateViewModel(ITurnier turnier, int startNummer)
+    {
+        _turnier = turnier;
+        _startNummer = startNummer;
+        InitBodyElements();
+    }
+
+
     private void InitBodyElements()
     {
         BodyElements = new();
-        if(_turnier.Wettbewerb is IZielBewerb bewerb)
+
+        if (_turnier.Wettbewerb is IZielBewerb bewerb)
         {
             foreach (var teilnehmer in bewerb.Teilnehmerliste)
             {
@@ -30,14 +41,22 @@ public class ReceiptTemplateViewModel : ViewModelBase
                 BodyElements.Add(GetReciept(von));
             }
         }
-        else if(_turnier.Wettbewerb is IContainerTeamBewerbe teamBewerb)
+        else if (_turnier.Wettbewerb is IContainerTeamBewerbe teamBewerb)
         {
-            foreach(var team in teamBewerb.CurrentTeamBewerb.Teams)
+            if (_startNummer == 0)
             {
+                foreach (var team in teamBewerb.CurrentTeamBewerb.Teams)
+                {
+                    BodyElements.Add(GetReciept(team.TeamName));
+                }
+            }
+            else
+            {
+                var team = teamBewerb.CurrentTeamBewerb.Teams.Single(t => t.StartNumber == _startNummer);
                 BodyElements.Add(GetReciept(team.TeamName));
             }
         }
-        
+
     }
 
     private Grid GetReciept(string von)

@@ -1,7 +1,10 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
+using StockApp.Prints.Receipts;
 using StockApp.UI.com;
 using StockApp.UI.Commands;
+using StockApp.UI.Components;
+using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using System;
 using System.Collections.Generic;
@@ -14,6 +17,7 @@ public class TeamViewModel : ViewModelBase
 {
 
     private readonly ITeam _team;
+    private readonly ITurnierStore _store;
     private TeamPlayersViewModel _teamPlayersViewModel;
     private readonly IEnumerable<string> _teamStatis;
     private readonly IEnumerable<IVerein> _vereine;
@@ -82,6 +86,7 @@ public class TeamViewModel : ViewModelBase
     public TeamViewModel(ITeam team, ITurnierStore store)
     {
         _team = team;
+        _store = store;
         TeamPlayersViewModel = new TeamPlayersViewModel(_team);
         _teamStatis = Enum.GetValues(typeof(TeamStatus))
                           .Cast<TeamStatus>()
@@ -113,4 +118,17 @@ public class TeamViewModel : ViewModelBase
                 Nation = x.Land + "/" + x.Region + "/" + x.Bundesland + "/" + x.Kreis;
         },
         (p) => true);
+
+    private ICommand _printReceiptCommand;
+    public ICommand PrintReceiptsCommand => _printReceiptCommand ??= new AsyncRelayCommand(
+        async (p) =>
+        {
+            var _printPreview = new PrintPreview(await ReceiptsFactory.Create(_store.Turnier, _team.StartNumber));
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "Receipt");
+            _printPreview.ShowDialog();
+        }
+        ,
+        (p) => true);
+
+   
 }

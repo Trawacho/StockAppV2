@@ -10,7 +10,7 @@
     <Grid>
         <ItemsControl Grid.Row="0" ItemsSource="{Binding Path=BodyElements}"
                lib:Document.Paginate="True"
-               x:Name="itemsTest"
+               x:Name="itemsQuittungen"
                Grid.IsSharedSizeScope="True"
                HorizontalAlignment="Stretch"
                HorizontalContentAlignment="Center"
