@@ -1,125 +1,29 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
-using StockApp.Prints.BaseClasses;
-using StockApp.Prints.Components;
-using StockApp.Prints.ScoreCards.Base;
-using System.Collections.Generic;
-using System.Linq;
+using StockApp.Lib;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 
 namespace StockApp.Prints.ScoreCards;
 
 public static class ScoreCardsFactory
 {
-    public static FixedDocument CreateScoreCards(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized, bool opponentOnScoreCards)
+    public static async Task<IDocumentPaginatorSource> Create(ITeamBewerb bewerb, int startNummer, bool namesOnScoreCard, bool summarizedScoreCards, bool opponentOnScoreCard)
     {
-        return new ScoreCardHelper(pageSize, bewerb, summarizedScoreCards, namesOnScoreCard, stockTvOptimized, opponentOnScoreCards).CreateScoreCards();
-    }
-}
+        UIElement reportFactory() => new ScoreCardTemplate(new ScoreCardTemplateViewModel(bewerb, startNummer, namesOnScoreCard, summarizedScoreCards, opponentOnScoreCard));
 
-class ScoreCardHelper : PrintsBaseClass
-{
-    private readonly ITeamBewerb _teamBewerb;
-    private readonly bool _summarizedScoreCards;
-    private readonly bool _namesOnScoreCard;
-    private readonly bool _stockTvOptimized;
-    private readonly bool _opponentOnScoreCards;
-
-    internal ScoreCardHelper(Size pageSize, ITeamBewerb bewerb, bool summarizedScoreCards, bool namesOnScoreCard, bool stockTvOptimized, bool opponentOnScoreCards) : base(pageSize)
-    {
-        _teamBewerb = bewerb;
-        _summarizedScoreCards = summarizedScoreCards;
-        _namesOnScoreCard = namesOnScoreCard;
-        _stockTvOptimized = stockTvOptimized;
-        _opponentOnScoreCards = opponentOnScoreCards;
+        var helper = new PrintHelper();
+        await helper.LoadReport(reportFactory, CancellationToken.None);
+        return helper.GeneratedDocument;
     }
 
-
-    internal FixedDocument CreateScoreCards()
+    public static async Task<IDocumentPaginatorSource> Create(ITeamBewerb bewerb, bool namesOnScoreCard, bool summarizedScoreCards, bool opponentOnScoreCard)
     {
-        var teamPanels = new List<StackPanel>();
+        UIElement reportFactory() => new ScoreCardTemplate(new ScoreCardTemplateViewModel(bewerb, namesOnScoreCard, summarizedScoreCards, opponentOnScoreCard));
 
-        foreach (var team in _teamBewerb.Teams.OrderBy(t => t.StartNumber)) //Für jedes Team eine Wertungs-Karte
-        {
-            if (_summarizedScoreCards)
-            {
-
-                teamPanels.Add(
-                    GetTeamPanel(
-                        team,
-                        team.Games
-                            .OrderBy(g => g.GameNumberOverAll),
-                        _teamBewerb.Is8TurnsGame,
-                        0,
-                        _opponentOnScoreCards
-                        ));
-
-            }
-            else
-            {
-                int maxRounds = team.Games.Max(r => r.RoundOfGame);
-                for (int gameRound = 1; gameRound <= maxRounds; gameRound++)
-                {
-                    teamPanels.Add(
-                        GetTeamPanel(
-                            team,
-                            team.Games
-                                .Where(g => g.RoundOfGame == gameRound)
-                                .OrderBy(r => r.GameNumber),
-                            _teamBewerb.Is8TurnsGame,
-                            maxRounds == 1 ? 0 : gameRound, _opponentOnScoreCards
-                            ));
-
-                }
-
-
-            }
-        }
-
-        return base.CreateFixedDocument(teamPanels, false);
+        var helper = new PrintHelper();
+        await helper.LoadReport(reportFactory, CancellationToken.None);
+        return helper.GeneratedDocument;
     }
-
-
-
-    /// <summary>
-    /// Eine Wertungskarte
-    /// </summary>
-    /// <param name="team">Wertungskarte für dieses Team</param>
-    /// <param name="games">Diese Spiele in der Wertungskarte anzeigen</param>
-    /// <param name="is8TurnGame">Wenn TRUE, dann werden 8 anstatt 7 Kehren gedruckt</param>
-    /// <param name="numberOfGameRound">optional, wenn >0, dann wird eine Information der Runde angedruckt</param>
-    /// <returns></returns>
-    private StackPanel GetTeamPanel(ITeam team, IEnumerable<IGame> games, bool is8TurnsGame, int numberOfGameRound, bool opponentOnScoreCards)
-    {
-        // alles was eine Wertungskarte braucht, kommt in ein Stackpanel
-        var panel = new StackPanel();
-
-        // Schneide Linie oben
-        panel.Children.Add(CutterLines.CutterLineTop());
-
-        // Kopfzeile mit Mannschaftsnamen und weitere Infos
-        panel.Children.Add(new ScoreCardHeader(team.StartNumber, team.TeamName, _namesOnScoreCard, is8TurnsGame, numberOfGameRound, _stockTvOptimized, opponentOnScoreCards));
-
-        // Spaltenüberschriften
-        panel.Children.Add(new ScoreCardHeaderGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
-
-
-        // pro Spiel eine weitere Zeile
-        foreach (var game in games)
-        {
-            panel.Children.Add(new GameGrid(game, team, is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
-        }
-
-        // Summenzeile am Ende
-        panel.Children.Add(new GameSummaryGrid(is8TurnsGame, _stockTvOptimized, opponentOnScoreCards));
-
-        // Schneidelinie unten
-        panel.Children.Add(CutterLines.CutterLine());
-
-        return panel;
-    }
-
-
-
 }

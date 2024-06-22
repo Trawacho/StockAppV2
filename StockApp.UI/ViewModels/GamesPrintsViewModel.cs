@@ -1,6 +1,7 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.Prints.Receipts;
+using StockApp.Prints.ScoreCards;
 using StockApp.Prints.Spielplan;
 using StockApp.UI.Commands;
 using StockApp.UI.Components;
@@ -65,9 +66,11 @@ public class GamesPrintsViewModel : ViewModelBase
     #region Commands
 
     public ICommand PrintScoreCardsCommand => _printScoreCardsCommand ??= new RelayCommand(
-        (p) =>
+        async (p) =>
         {
-            _ = Prints.ScoreCards.ScoreCardsFactory.CreateScoreCards(Prints.PageSizes.A4Size, _teamBewerb, HasSummarizedScoreCards, HasNamesOnScoreCard, HasScoreCardsOptimizedForStockTV, HasOpponentOnScoreCard).ShowAsDialog();
+            var _printPreview = new PrintPreview(await ScoreCardsFactory.Create(_teamBewerb, HasNamesOnScoreCard, HasSummarizedScoreCards, HasOpponentOnScoreCard));
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "WertungsKarte");
+            _printPreview.ShowDialog();
         },
         (p) => _teamBewerb.GetCountOfGames() > 0);
 
@@ -98,6 +101,7 @@ public class GamesPrintsViewModel : ViewModelBase
         (p) => _teamBewerb.GetCountOfGames() > 0);
 
     #endregion
+
     public GamesPrintsViewModel(ITeamBewerb teamBewerb, ITurnierStore turnierStore)
     {
         _teamBewerb = teamBewerb;

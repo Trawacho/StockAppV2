@@ -1,6 +1,7 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.Prints.Receipts;
+using StockApp.Prints.ScoreCards;
 using StockApp.UI.com;
 using StockApp.UI.Commands;
 using StockApp.UI.Components;
@@ -126,9 +127,23 @@ public class TeamViewModel : ViewModelBase
             var _printPreview = new PrintPreview(await ReceiptsFactory.Create(_store.Turnier, _team.StartNumber));
             PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "Receipt");
             _printPreview.ShowDialog();
-        }
-        ,
+        },
         (p) => true);
 
-   
+    private ICommand _printWertungskarteCommand;
+    public ICommand PrintWertungskarteCommand => _printWertungskarteCommand ??= new AsyncRelayCommand(
+        async (p) =>
+        {
+            var _printPreview = new PrintPreview(
+                await ScoreCardsFactory.Create(_store.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb
+                                             , _team.StartNumber
+                                             , PreferencesManager.TeamBewerbSettings.HasNamesOnScoreCard
+                                             , PreferencesManager.TeamBewerbSettings.HasSummarizedScoreCards     //TODO: dieser Wert stimmt auch noch nicht, hier nur zum Testen
+                                             , PreferencesManager.TeamBewerbSettings.HasOpponentOnScoreCard));
+
+
+            PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "WertungsKarte");
+            _printPreview.ShowDialog();
+        },
+        (p) => _store.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.GetCountOfGames() > 0);
 }

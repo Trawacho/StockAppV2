@@ -245,6 +245,8 @@ namespace StockApp.Prints.ScoreCards.Base
             #endregion
 
         }
+
+        internal ScoreCardHeaderGrid(bool is8TurnsGame, bool opponentOnScoreCards) : this(is8TurnsGame, false, opponentOnScoreCards) { }
    
     }
 }

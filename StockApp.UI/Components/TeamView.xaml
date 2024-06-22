@@ -16,16 +16,16 @@
 
     </d:DesignerProperties.DesignStyle>
 
- 
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-       
+
         <TextBlock Text="Mannschaftsdaten" Style="{StaticResource VmHeader}" FontSize="16"/>
-        
+
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
@@ -38,7 +38,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <TextBlock Text="Name:" Grid.Row="0" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
 
             <cx:AutoCompleteBox Grid.Row="0" Grid.Column="1" Margin="5" Padding="5"
@@ -54,7 +54,7 @@
                 </i:Interaction.Triggers>
             </cx:AutoCompleteBox>
 
-           
+
 
             <TextBlock Text="L/R/BL/K:" Grid.Row="1" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center" ToolTip="Land/Region/Bundesland/Kreis"/>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Nation}" Margin="5" Padding="5" ToolTip="Land/Region/Bundesland/Kreis"/>
@@ -65,12 +65,20 @@
                 <TextBox  Text="{Binding StrafSpielpunkte}" Margin="5" Padding="5" Width="30" HorizontalContentAlignment="Center" />
                 <TextBlock Text="Spielpunkte Abzug (Endwertung)" VerticalAlignment="Center" Margin="1"/>
             </StackPanel>
-            <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"  
-                    HorizontalAlignment="Center"
-                    Content="Quittung (einzel)" 
-                    Padding="10 7"
-                    ToolTip="Quittungsdruck"
-                    Command="{Binding Path=PrintReceiptsCommand}" />
+            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button HorizontalAlignment="Left"
+                        Content="Quittung (einzel)" 
+                        Padding="10 7"
+                        Margin="5"
+                        ToolTip="Quittungsdruck"
+                        Command="{Binding Path=PrintReceiptsCommand}" />
+                <Button HorizontalAlignment="Right"
+                        Content="Wertungskarte"
+                        Padding="10 7"
+                        Margin="5"
+                        ToolTip="Druck der Wertungskarte"
+                        Command="{Binding Path=PrintWertungskarteCommand}"/>
+            </StackPanel>
         </Grid>
 
 
