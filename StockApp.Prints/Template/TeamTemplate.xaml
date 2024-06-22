@@ -15,18 +15,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
-
-        <DataTemplate DataType="{x:Type libVm:BestOfDetailViewModel}">
-            <libVw:BestOfDetailView />
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type libVm:RankedClubTableViewModel}">
-            <libVw:RankedClubTableView/>
-        </DataTemplate>
-
-
     </UserControl.Resources>
-
 
     <Grid>
         <Grid.RowDefinitions>
@@ -45,13 +34,16 @@
             <!-- 6 Bemerkungen -->
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
 
         <!-- Kopfbereich mit Turnierinformationen -->
-        <Grid Grid.Row="0"  Width="19cm" HorizontalAlignment="Stretch">
+        <Grid Grid.Row="0"  
+              Width="19cm" 
+              HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
@@ -154,7 +146,7 @@
 
 
         <!--Trennlinie mit Überschrift-->
-        <StackPanel Grid.Row="1" >
+        <StackPanel Grid.Row="1">
             <TextBlock Text="created by StockApp" FontSize="7" HorizontalAlignment="Left" Margin="40,10,0,3"/>
             <Line X1="0" X2="1" Y1="0" Y2="0" StrokeThickness="1" Stretch="Fill" Stroke="Black"/>
 
@@ -168,8 +160,8 @@
 
 
         <!-- Mannschafts Tabelle -->
-
-        <ItemsControl Grid.Row="2" ItemsSource="{Binding Path=BodyElements}"
+        <ItemsControl Grid.Row="2" 
+                      ItemsSource="{Binding Path=BodyElements}"
                       lib:Document.Paginate="True"
                       x:Name="itemsTest"
                       Grid.IsSharedSizeScope="True"
@@ -177,19 +169,7 @@
                       HorizontalContentAlignment="Center"
                       Margin="0,0,0,2"/>
 
-        <!-- Club Tabelle bei Vergleich -->
-        <ContentControl Content="{Binding Path=RankedClubViewModel}" Grid.Row="3"
-                        HorizontalAlignment="Stretch"
-                        Margin="0 15"
-                        Visibility="{Binding Path=IsVergleich, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-
-        <!-- Detailtabelle bei BestOf-->
-        <ContentControl Content="{Binding Path=BestOfViewModel}" Grid.Row="3" 
-                        HorizontalAlignment="Stretch" 
-                        Margin="0 15 0 0"
-                        Visibility="{Binding Path=IsBestOf, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
+        
         <!-- Footer Bemerkung -->
         <TextBlock Grid.Row="6" 
             Margin="1cm 0.5cm 1cm 0cm" 

@@ -138,7 +138,7 @@ public class TeamViewModel : ViewModelBase
                 await ScoreCardsFactory.Create(_store.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb
                                              , _team.StartNumber
                                              , PreferencesManager.TeamBewerbSettings.HasNamesOnScoreCard
-                                             , PreferencesManager.TeamBewerbSettings.HasSummarizedScoreCards     //TODO: dieser Wert stimmt auch noch nicht, hier nur zum Testen
+                                             , PreferencesManager.TeamBewerbSettings.HasSummarizedScoreCards     
                                              , PreferencesManager.TeamBewerbSettings.HasOpponentOnScoreCard));
 
 

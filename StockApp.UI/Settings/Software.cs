@@ -48,7 +48,6 @@ public class Software
     /// </summary>
     public static void ConfigureInstance()
     {
-        //TODO: Funktion überprüfen
         Process[] instances = Process.GetProcessesByName("StockApp.UI");
         int instanceNumber = instances.Length;
         if (instanceNumber == 1)

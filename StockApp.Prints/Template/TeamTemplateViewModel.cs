@@ -4,6 +4,7 @@ using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib;
 using StockApp.Lib.Models;
 using StockApp.Lib.ViewModels;
+using StockApp.Lib.Views;
 using StockApp.Prints.Converters;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,6 +67,21 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
                     fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize,
                     rowSpace: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace));
             }
+
+            if (IsBestOf)
+            {
+                var grid = new Grid() { Margin = new Thickness(0, 25, 0, 0) };
+                grid.Children.Add(new BestOfDetailView() { DataContext = new BestOfDetailViewModel(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb, false) });
+                BodyElements.Add(grid);
+            }
+
+            if (IsVergleich)
+            {
+                var grid = new Grid() { Margin = new Thickness(0, 25, 0, 0) };
+                grid.Children.Add(new RankedClubTableView() { DataContext = new RankedClubTableViewModel(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb, false) });
+                BodyElements.Add(grid);
+            }
+
             if (pageBreaker)
             {
                 BodyElements.Add(GetEndtextGridRow(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext));
@@ -79,6 +95,7 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
             BodyElements.Add(GetEndtextGridRow(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext));
             BodyElements.Add(GetOfficialsGridRow(_turnier.OrgaDaten.Referee, _turnier.OrgaDaten.ComputingOfficer, _turnier.OrgaDaten.CompetitionManager));
         }
+
     }
 
     private static Grid GetPageBreaker(bool breakPage)

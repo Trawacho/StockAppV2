@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 
-//TODO: Die ViewModels für Eingabe und Optionen noch  auf die GroupSelector anpassen
 namespace StockApp.UI
 {
 
