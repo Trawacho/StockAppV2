@@ -4,6 +4,7 @@ using StockApp.Lib.Extensions;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Stores;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -114,6 +115,16 @@ public class OptionsViewModel : ViewModelBase
         }
     }
 
+    public string VorText
+    {
+        get => TeamBewerb.VorText;
+        set
+        {
+            _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.VorText = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public bool TeamNameWithStartnumber
     {
         get => TeamBewerb.TeamNameWithStartnumber;
@@ -189,6 +200,32 @@ public class OptionsViewModel : ViewModelBase
         }
     }
 
+    public int FontSizeVorText
+    {
+        get => TeamBewerb.FontSizeVorText;
+        set
+        {
+            if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSizeVorText != value)
+            {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSizeVorText = value.InRange(12, 24);
+                RaisePropertyChanged();
+            }
+        }
+    }
+
+    public int FontSizeEndText
+    {
+        get => TeamBewerb.FontSizeEndText;
+        set
+        {
+            if (_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSizeEndText != value)
+            {
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSizeEndText = value.InRange(12, 24);
+                RaisePropertyChanged();
+            }
+        }
+    }
+
     public bool PageBreakSplitGroup
     {
         get => TeamBewerb.PageBreakSplitGroup;
@@ -201,7 +238,7 @@ public class OptionsViewModel : ViewModelBase
             }
         }
     }
-   
+
     public bool IsSplitGruppe => TeamBewerb.IsSplitGruppe;
 
     #endregion

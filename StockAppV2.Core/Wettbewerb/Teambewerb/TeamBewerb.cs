@@ -53,6 +53,11 @@ public interface ITeamBewerb : IBewerb
     public string Endtext { get; set; }
 
     /// <summary>
+    /// Text, der oberhalb der Tabelle bei einer Ergebnisliste angezeigt wird
+    /// </summary>
+    public string VorText { get; set; }
+
+    /// <summary>
     /// Anzahl der Mannschaften die als Aufsteiger in der Ergebnisliste gekennzeichnet werden
     /// </summary>
     int AnzahlAufsteiger { get; set; }
@@ -91,6 +96,16 @@ public interface ITeamBewerb : IBewerb
     /// FontSize für die Ergebnistabelle
     /// </summary>
     int FontSize { get; set; }
+
+    /// <summary>
+    /// FontSize für den EndText in der Ergebnisliste
+    /// </summary>
+    int FontSizeEndText { get; set; }
+
+    /// <summary>
+    /// FontSize für den VorText in der Ergebnisliste
+    /// </summary>
+    int FontSizeVorText { get; set; }
 
     /// <summary>
     /// Bei Splitgruppen nach der ersten Tabelle einen Seitenumbruch einfügen
@@ -201,6 +216,7 @@ public class TeamBewerb : ITeamBewerb
     private int _numberOfGameRounds = 1;
     private bool _is8TurnsGame;
     private string _endText;
+    private string _vorText;
 
     #endregion
 
@@ -274,6 +290,11 @@ public class TeamBewerb : ITeamBewerb
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
+    public string VorText { get => _vorText; set => _vorText = value?.Trim(); }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public bool TeamNameWithStartnumber { get; set; } = false;
 
     /// <summary>
@@ -300,6 +321,16 @@ public class TeamBewerb : ITeamBewerb
     /// <inheritdoc/>
     /// </summary>
     public int FontSize { get; set; } = 14;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int FontSizeVorText { get; set; } = 12;
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int FontSizeEndText { get; set; } = 12;
 
     /// <summary>
     /// <inheritdoc/>
@@ -350,7 +381,9 @@ public class TeamBewerb : ITeamBewerb
     {
         RemoveAllTeams();
         Endtext = string.Empty;
-        FontSize = 12;
+        FontSize = 14;
+        FontSizeVorText = 12;
+        FontSizeEndText = 12;
         RowSpace = 0;
         ImageHeaderFilename = string.Empty;
         ImageTopLeftFilename = string.Empty;

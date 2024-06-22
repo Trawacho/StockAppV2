@@ -41,12 +41,15 @@ public class SerialisableTeamBewerb : ITeamBewerb
         AnzahlAufsteiger = bewerb.AnzahlAufsteiger;
         AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
         Endtext = bewerb.Endtext;
+        VorText = bewerb.VorText;
         TeamNameWithStartnumber = bewerb.TeamNameWithStartnumber;
         ImageTopLeftFilename = bewerb.ImageTopLeftFilename;
         ImageTopRightFilename = bewerb.ImageTopRightFilename;
         ImageHeaderFilename = bewerb.ImageHeaderFilename;
         RowSpace = bewerb.RowSpace;
         FontSize = bewerb.FontSize;
+        FontSizeVorText = bewerb.FontSizeVorText;
+        FontSizeEndText = bewerb.FontSizeEndText;
         PageBreakSplitGroup = bewerb.PageBreakSplitGroup;
     }
 
@@ -65,6 +68,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.AnzahlAufsteiger = AnzahlAufsteiger;
         teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
         teamBewerb.Endtext = Endtext;
+        teamBewerb.VorText = VorText;
         teamBewerb.PageBreakSplitGroup = PageBreakSplitGroup;
         teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
         teamBewerb.ImageTopLeftFilename = ImageTopLeftFilename;
@@ -74,8 +78,10 @@ public class SerialisableTeamBewerb : ITeamBewerb
             teamBewerb.RowSpace = RowSpace;
         if (FontSize >= 12 && FontSize <= 24)
             teamBewerb.FontSize = FontSize;
-
-
+        if(FontSizeVorText >= 12 && FontSizeVorText <= 24)
+            teamBewerb.FontSizeVorText = FontSizeVorText;
+        if (FontSizeEndText >= 12 && FontSizeEndText <= 24)
+            teamBewerb.FontSizeEndText = FontSizeEndText;
 
         //alle Teams löschen
         teamBewerb.RemoveAllTeams();
@@ -169,6 +175,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "Endtext")]
     public string Endtext { get; set; }
 
+    [XmlElement(ElementName = "VorText")]
+    public string VorText { get; set; }
+
     [XmlElement(ElementName = "TeamNameWithStarnumber")]
     public bool TeamNameWithStartnumber { get; set; }
 
@@ -187,7 +196,13 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "FontSize")]
     public int FontSize { get; set; }
 
-    [XmlElement(ElementName ="PageBreakSplitGroup")]
+    [XmlElement(ElementName = "FontSizeVorText")]
+    public int FontSizeVorText { get; set; }
+
+    [XmlElement(ElementName = "FontSizeEndText")]
+    public int FontSizeEndText { get; set; }
+
+    [XmlElement(ElementName = "PageBreakSplitGroup")]
     public bool PageBreakSplitGroup { get; set; }
 
     [XmlElement(ElementName = "PlayerNames")]

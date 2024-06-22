@@ -49,42 +49,48 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
     {
         BodyElements = new();
         int x = 0;
-        var pageBreaker = _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.PageBreakSplitGroup;
+        var pageBreaker = _teamBewerb.PageBreakSplitGroup;
+
+        if (!pageBreaker)
+            BodyElements.Add(GetTextGridRow(_teamBewerb.VorText, _teamBewerb.FontSizeVorText));
 
         foreach (var rankedTeamsTableViewModel in RankedTeamsTableViewModels)
         {
             if (pageBreaker && x > 0)
                 BodyElements.Add(GetPageBreaker(true));
 
+            if (pageBreaker)
+                BodyElements.Add(GetTextGridRow(_teamBewerb.VorText, _teamBewerb.FontSizeVorText));
+
             BodyElements.Add(GetGroupNameGrid(rankedTeamsTableViewModel.GroupName));
 
-            BodyElements.Add(GetTableHeader(fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize, fontWeight: FontWeights.Bold));
+            BodyElements.Add(GetTableHeader(fontSize: _teamBewerb.FontSize, fontWeight: FontWeights.Bold));
 
             foreach (var rankedTeamModel in rankedTeamsTableViewModel.RankedTeams)
             {
                 BodyElements.Add(GetTeamGridRow(
                     rankedTeamModel: rankedTeamModel,
-                    fontSize: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize,
-                    rowSpace: _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.RowSpace));
+                    fontSize: _teamBewerb.FontSize,
+                    rowSpace: _teamBewerb.RowSpace));
             }
 
             if (IsBestOf)
             {
                 var grid = new Grid() { Margin = new Thickness(0, 25, 0, 0) };
-                grid.Children.Add(new BestOfDetailView() { DataContext = new BestOfDetailViewModel(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb, false) });
+                grid.Children.Add(new BestOfDetailView() { DataContext = new BestOfDetailViewModel(_teamBewerb, false) });
                 BodyElements.Add(grid);
             }
 
             if (IsVergleich)
             {
                 var grid = new Grid() { Margin = new Thickness(0, 25, 0, 0) };
-                grid.Children.Add(new RankedClubTableView() { DataContext = new RankedClubTableViewModel(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb, false) });
+                grid.Children.Add(new RankedClubTableView() { DataContext = new RankedClubTableViewModel(_teamBewerb, false) });
                 BodyElements.Add(grid);
             }
 
             if (pageBreaker)
             {
-                BodyElements.Add(GetEndtextGridRow(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext));
+                BodyElements.Add(GetTextGridRow(_teamBewerb.Endtext, _teamBewerb.FontSizeEndText));
                 BodyElements.Add(GetOfficialsGridRow(_turnier.OrgaDaten.Referee, _turnier.OrgaDaten.ComputingOfficer, _turnier.OrgaDaten.CompetitionManager));
             }
 
@@ -92,7 +98,7 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         }
         if (!pageBreaker)
         {
-            BodyElements.Add(GetEndtextGridRow(_turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext));
+            BodyElements.Add(GetTextGridRow(_teamBewerb.Endtext, _teamBewerb.FontSizeEndText));
             BodyElements.Add(GetOfficialsGridRow(_turnier.OrgaDaten.Referee, _turnier.OrgaDaten.ComputingOfficer, _turnier.OrgaDaten.CompetitionManager));
         }
 
@@ -321,12 +327,12 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         return teamGrid;
     }
 
-    private static Grid GetEndtextGridRow(string text)
+    private static Grid GetTextGridRow(string text, int fontSize)
     {
         var grid = new Grid() { HorizontalAlignment = HorizontalAlignment.Center };
         var textblock = new TextBlock()
         {
-            FontSize = 12,
+            FontSize = fontSize,
             HorizontalAlignment = HorizontalAlignment.Stretch,
             TextAlignment = TextAlignment.Center,
             VerticalAlignment = VerticalAlignment.Bottom,
