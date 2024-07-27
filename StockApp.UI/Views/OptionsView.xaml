@@ -262,6 +262,19 @@
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="col1"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Style="{StaticResource LabelsLeft}"
+                           Text="TeamInfo:"/>
+                <ComboBox Grid.Column="1" 
+                          ItemsSource="{Binding TeamInfos}" 
+                          SelectedValue="{Binding TeamInfoToPrint}"
+                          Margin="0 0 0 10"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
                     <ColumnDefinition  SharedSizeGroup="col1"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>

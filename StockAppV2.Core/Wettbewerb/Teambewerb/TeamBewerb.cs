@@ -72,10 +72,15 @@ public interface ITeamBewerb : IBewerb
     /// </summary>
     bool TeamNameWithStartnumber { get; set; }
 
-    /// <summary>
-    /// Image Links Oben - Dateiname
-    /// </summary>
-    string ImageTopLeftFilename { get; set; }
+	/// <summary>
+	/// Welche Info zu dem Verein soll angezeigt werden, Kreis, Region, usw...
+	/// </summary>
+	public TeamInfo TeamInfo { get; set; }
+
+	/// <summary>
+	/// Image Links Oben - Dateiname
+	/// </summary>
+	string ImageTopLeftFilename { get; set; }
 
     /// <summary>
     /// Image Rechts Oben - Dateiname
@@ -296,6 +301,11 @@ public class TeamBewerb : ITeamBewerb
     /// <inheritdoc/>
     /// </summary>
     public bool TeamNameWithStartnumber { get; set; } = false;
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public TeamInfo TeamInfo { get; set; } = TeamInfo.Keine;
 
     /// <summary>
     /// <inheritdoc/>

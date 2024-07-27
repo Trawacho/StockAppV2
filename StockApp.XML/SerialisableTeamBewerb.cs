@@ -43,6 +43,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         Endtext = bewerb.Endtext;
         VorText = bewerb.VorText;
         TeamNameWithStartnumber = bewerb.TeamNameWithStartnumber;
+        TeamInfo = bewerb.TeamInfo;
         ImageTopLeftFilename = bewerb.ImageTopLeftFilename;
         ImageTopRightFilename = bewerb.ImageTopRightFilename;
         ImageHeaderFilename = bewerb.ImageHeaderFilename;
@@ -71,6 +72,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.VorText = VorText;
         teamBewerb.PageBreakSplitGroup = PageBreakSplitGroup;
         teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
+        teamBewerb.TeamInfo = TeamInfo;
         teamBewerb.ImageTopLeftFilename = ImageTopLeftFilename;
         teamBewerb.ImageTopRightFilename = ImageTopRightFilename;
         teamBewerb.ImageHeaderFilename = ImageHeaderFilename;
@@ -180,6 +182,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlElement(ElementName = "TeamNameWithStarnumber")]
     public bool TeamNameWithStartnumber { get; set; }
+    
+    [XmlElement(ElementName = "Teaminfo")]
+    public TeamInfo TeamInfo { get; set; }
 
     [XmlElement(ElementName = "ImageTopLeft")]
     public string ImageTopLeftFilename { get; set; }

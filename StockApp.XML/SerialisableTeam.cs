@@ -13,7 +13,10 @@ public class SerialisableTeam : ITeam
         StartNumber = team.StartNumber;
         TeamName = team.TeamName;
         Nation = team.Nation;
-        StrafSpielpunkte = team.StrafSpielpunkte;
+        Region = team.Region;
+        Bundesland = team.Bundesland;
+        Kreis = team.Kreis;
+		StrafSpielpunkte = team.StrafSpielpunkte;
         TeamStatus = team.TeamStatus;
         SerialisablePlayers = new List<SerialisablePlayer>();
         foreach (var player in team.Players)
@@ -24,8 +27,27 @@ public class SerialisableTeam : ITeam
 
     internal void ToNormal(ITeam normal)
     {
-        normal.Nation = Nation;
-        normal.TeamName = TeamName;
+        if (Nation?.Contains('/') ?? false)
+        {
+            try
+            {
+                var s = Nation.Split("/");
+                normal.Nation = s[0];
+                normal.Region = s[1];
+                normal.Bundesland = s[2];
+                normal.Kreis = s[3];
+            }
+            catch { }
+        }
+        else
+        {
+            normal.Nation = Nation;
+            normal.Region = Region;
+            normal.Bundesland = Bundesland;
+            normal.Kreis = Kreis;
+            normal.TeamName = TeamName;
+        }
+
         foreach (var player in SerialisablePlayers)
         {
             normal.AddPlayer(player);
@@ -46,6 +68,9 @@ public class SerialisableTeam : ITeam
     public string TeamNameShort { get; }
     
     public string Nation { get; set; }
+    public string Region { get; set; }
+    public string Bundesland { get; set; }
+    public string Kreis { get; set; }
 
     [XmlArray(ElementName = "Spieler")]
     public List<SerialisablePlayer> SerialisablePlayers { get; set; }

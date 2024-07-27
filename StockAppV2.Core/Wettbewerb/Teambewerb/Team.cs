@@ -15,11 +15,7 @@ public interface ITeam : IEquatable<ITeam>
 	/// normal, entschuldigt, unentschuldigt, usw
 	/// </summary>
 	public TeamStatus TeamStatus { get; set; }
-
-	/// <summary>
-	/// Welche Info zu dem Verein soll angezeigt werden, Kreis, Region, usw...
-	/// </summary>
-	public TeamInfo TeamInfo { get; set; }
+	
 
 	/// <summary>
 	/// the first 25 characters from <see cref="TeamName"/>
@@ -143,10 +139,6 @@ public class Team : ITeam
 	/// </summary>
 	public TeamStatus TeamStatus { get; set; }
 	
-	/// <summary>
-	/// <inheritdoc/>
-	/// </summary>
-	public TeamInfo TeamInfo { get; set; }
 
 	/// <summary>
 	/// First 25 Characters from <see cref="TeamName"/>

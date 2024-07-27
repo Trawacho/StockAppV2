@@ -9,7 +9,6 @@ using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Input;
 
@@ -21,19 +20,13 @@ public class TeamViewModel : ViewModelBase
 	private readonly ITurnierStore _store;
 	private TeamPlayersViewModel _teamPlayersViewModel;
 	private readonly IEnumerable<string> _teamStatis;
-	private readonly IEnumerable<string> _teamInfos;
 	private readonly IEnumerable<IVerein> _vereine;
 
+	public IEnumerable<string> TemplateVereine => _vereine?.Select(x => x.Name);
+	
+	public IEnumerable<string> TeamStatis => _teamStatis;
+
 	public ITeam Team { get => _team; }
-	public string TeamName
-	{
-		get => _team.TeamName;
-		set
-		{
-			_team.TeamName = value;
-			RaisePropertyChanged();
-		}
-	}
 
 	public string StartNumber
 	{
@@ -43,6 +36,16 @@ public class TeamViewModel : ViewModelBase
 			{
 				_team.StartNumber = s;
 			}
+			RaisePropertyChanged();
+		}
+	}
+
+	public string TeamName
+	{
+		get => _team.TeamName;
+		set
+		{
+			_team.TeamName = value;
 			RaisePropertyChanged();
 		}
 	}
@@ -86,27 +89,12 @@ public class TeamViewModel : ViewModelBase
 		}
 	}
 
-	public IEnumerable<string> TeamStatis => _teamStatis;
-	public IEnumerable<string> TeamInfos => _teamInfos;
-
 	public string TeamStatus
 	{
 		get => _team.TeamStatus.Name();
 		set
 		{
 			_team.TeamStatus = TeamStatusExtension.FromName(value);
-			RaisePropertyChanged();
-		}
-	}
-
-	public string TeamInfo
-	{
-		get => _team.TeamInfo.ToString();
-		set
-		{
-			_team.TeamInfo = Enum.TryParse(value, out TeamInfo teamInfo) 
-				? teamInfo 
-				: Core.Wettbewerb.Teambewerb.TeamInfo.Keine;
 			RaisePropertyChanged();
 		}
 	}
@@ -127,6 +115,8 @@ public class TeamViewModel : ViewModelBase
 		set => SetProperty(ref _teamPlayersViewModel, value);
 	}
 
+	#region Constructor
+
 	public TeamViewModel(ITeam team, ITurnierStore store)
 	{
 		_team = team;
@@ -136,7 +126,6 @@ public class TeamViewModel : ViewModelBase
 						  .Cast<TeamStatus>()
 						  .Select(x => x.Name());
 
-		_teamInfos = Enum.GetNames(typeof(TeamInfo));
 
 		_vereine = store.TemplateVereine;
 	}
@@ -154,7 +143,9 @@ public class TeamViewModel : ViewModelBase
 		}
 	}
 
-	public IEnumerable<string> TemplateVereine => _vereine?.Select(x => x.Name);
+	#endregion Constructor
+
+	#region Commands
 
 	public ICommand TeamSelectedEnterCommand => new RelayCommand(
 		(p) =>
@@ -171,6 +162,7 @@ public class TeamViewModel : ViewModelBase
 		(p) => true);
 
 	private ICommand _printReceiptCommand;
+
 	public ICommand PrintReceiptsCommand => _printReceiptCommand ??= new AsyncRelayCommand(
 		async (p) =>
 		{
@@ -181,6 +173,7 @@ public class TeamViewModel : ViewModelBase
 		(p) => true);
 
 	private ICommand _printWertungskarteCommand;
+
 	public ICommand PrintWertungskarteCommand => _printWertungskarteCommand ??= new AsyncRelayCommand(
 		async (p) =>
 		{
@@ -196,4 +189,6 @@ public class TeamViewModel : ViewModelBase
 			_printPreview.ShowDialog();
 		},
 		(p) => _store.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.GetCountOfGames() > 0);
+	
+	#endregion Commands
 }
