@@ -17,7 +17,10 @@ public interface ITeam : IEquatable<ITeam>
     /// </summary>
     public string TeamNameShort { get; }
     public string Nation { get; set; }
-    public IEnumerable<IPlayer> Players { get; }
+    public string Region { get; set; }
+    public string Bundesland { get; set; }
+    public string Kreis { get; set; }
+	public IEnumerable<IPlayer> Players { get; }
     public IReadOnlyCollection<IGame> Games { get; }
     public IEnumerable<int> SpieleMitAnspiel();
     public IEnumerable<int> SpieleAufStartSeite();
