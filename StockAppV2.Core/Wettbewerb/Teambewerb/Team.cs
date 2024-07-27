@@ -135,16 +135,27 @@ public class Team : ITeam
     /// First 25 Characters from <see cref="TeamName"/>
     /// </summary>
     public string TeamNameShort => new(TeamName?.Take(25).ToArray() ?? Array.Empty<char>());
-
     /// <summary>
-    /// Info über Kreis, Bezirk, Verband oder Nation
+    /// <inheritdoc/>
     /// </summary>
-    public string Nation { get; set; }
+	public string Nation { get; set; }
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public string Region { get; set; }
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public string Bundesland { get; set; }
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public string Kreis { get; set; }
 
-    /// <summary>
-    /// Liste aller Spieler
-    /// </summary>
-    public IEnumerable<IPlayer> Players => _players.AsReadOnly();
+	/// <summary>
+	/// Liste aller Spieler
+	/// </summary>
+	public IEnumerable<IPlayer> Players => _players.AsReadOnly();
 
     /// <summary>
     /// Maximum Number of Players for a Team
