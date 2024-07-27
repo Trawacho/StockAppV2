@@ -13,7 +13,11 @@ public static class TeamTemplateFactory
     public static async Task<IDocumentPaginatorSource> Create(ITurnier turnier)
     {
         UIElement reportFactory() => new TeamTemplate(new TeamTemplateViewModel(turnier));
-        UIElement tableHeaderFactory() => TeamTemplateViewModel.GetTableHeader(turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize, FontWeights.Bold);
+        UIElement tableHeaderFactory() => 
+            TeamTemplateViewModel.GetTableHeader(
+                turnier.ContainerTeamBewerbe.CurrentTeamBewerb.FontSize, 
+                FontWeights.Bold, 
+                turnier.ContainerTeamBewerbe.CurrentTeamBewerb.TeamInfo);
 
         var helper = new PrintHelper();
         await helper.LoadReport(reportFactory, tableHeaderFactory, CancellationToken.None);

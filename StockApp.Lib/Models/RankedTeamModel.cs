@@ -42,6 +42,18 @@ public class RankedTeamModel
     public string StockPunkteDifferenz => $"{_team.GetStockPunkteDifferenz(_live)}";
     public bool HasPlayerNames => _printNameOfPlayer && !string.IsNullOrWhiteSpace(PlayerNames);
     public string AufAbSteiger => _aufAbSteiger;
+    public string TeamInfo(TeamInfo teamInfo)
+    {
+		return teamInfo switch
+		{
+			Core.Wettbewerb.Teambewerb.TeamInfo.Keine => string.Empty,
+			Core.Wettbewerb.Teambewerb.TeamInfo.Kreis => _team.Kreis,
+			Core.Wettbewerb.Teambewerb.TeamInfo.Bundesland => _team.Bundesland,
+			Core.Wettbewerb.Teambewerb.TeamInfo.Region => _team.Region,
+			Core.Wettbewerb.Teambewerb.TeamInfo.Nation => _team.Nation,
+			_ => string.Empty,
+		};
+	}
 
     public RankedTeamModel(int rank, ITeam team, bool printNameOfPlayer, bool live, string aufAbSteiger = "", bool teamNameWithStartnumber = false)
     {

@@ -6,6 +6,7 @@ using StockApp.Lib.Models;
 using StockApp.Lib.ViewModels;
 using StockApp.Lib.Views;
 using StockApp.Prints.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -64,14 +65,15 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 
             BodyElements.Add(GetGroupNameGrid(rankedTeamsTableViewModel.GroupName));
 
-            BodyElements.Add(GetTableHeader(fontSize: _teamBewerb.FontSize, fontWeight: FontWeights.Bold));
+            BodyElements.Add(GetTableHeader(fontSize: _teamBewerb.FontSize, fontWeight: FontWeights.Bold, teamInfo: _teamBewerb.TeamInfo));
 
             foreach (var rankedTeamModel in rankedTeamsTableViewModel.RankedTeams)
             {
                 BodyElements.Add(GetTeamGridRow(
                     rankedTeamModel: rankedTeamModel,
                     fontSize: _teamBewerb.FontSize,
-                    rowSpace: _teamBewerb.RowSpace));
+                    rowSpace: _teamBewerb.RowSpace,
+                    teamInfo: _teamBewerb.TeamInfo));
             }
 
             if (IsBestOf)
@@ -128,7 +130,7 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         return grid;
     }
 
-    private static Grid GetGridTemplate()
+    private static Grid GetGridTemplate(TeamInfo teamInfo)
     {
         var grid = new Grid() { HorizontalAlignment = HorizontalAlignment.Stretch };
 
@@ -149,6 +151,15 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         {
             Width = new GridLength(1, GridUnitType.Star)
         });
+        //TeamInfo
+        if (teamInfo != TeamInfo.Keine)
+        {
+            grid.ColumnDefinitions.Add(new ColumnDefinition()
+            {
+                Width = GridLength.Auto,
+                SharedSizeGroup = "C"
+            });
+        }
         //Spielpunkte
         grid.ColumnDefinitions.Add(new ColumnDefinition()
         {
@@ -176,11 +187,12 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
         return grid;
     }
 
-    internal static Grid GetTableHeader(double fontSize, FontWeight fontWeight)
+    internal static Grid GetTableHeader(double fontSize, FontWeight fontWeight, TeamInfo teamInfo)
     {
-        var grid = GetGridTemplate();
+        var grid = GetGridTemplate(teamInfo);
         grid.Name = "TableHeaderGrid";
 
+        int gCol = 1;
         var lblRang = new Label()
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -190,8 +202,9 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
             HorizontalContentAlignment = HorizontalAlignment.Center,
             Content = "Rang"
         };
-        Grid.SetColumn(lblRang, 1);
+        Grid.SetColumn(lblRang, gCol++);
         grid.Children.Add(lblRang);
+
         var lblTeam = new Label()
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -201,8 +214,24 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
             HorizontalContentAlignment = HorizontalAlignment.Left,
             Content = "Mannschaft"
         };
-        Grid.SetColumn(lblTeam, 2);
+        Grid.SetColumn(lblTeam, gCol++);
         grid.Children.Add(lblTeam);
+        
+        if (teamInfo != TeamInfo.Keine)
+        {
+            var lblTeamInfo = new Label()
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 0, 0, 0),
+                FontSize = fontSize,
+                FontWeight = fontWeight,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Content = Enum.GetName(teamInfo)
+            };
+            Grid.SetColumn(lblTeamInfo, gCol++);
+            grid.Children.Add(lblTeamInfo);
+        }
+
         var lblSpPkt = new Label()
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -212,7 +241,7 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
             HorizontalContentAlignment = HorizontalAlignment.Center,
             Content = "Punkte"
         };
-        Grid.SetColumn(lblSpPkt, 3);
+        Grid.SetColumn(lblSpPkt, gCol++);
         grid.Children.Add(lblSpPkt);
         var lblDiff = new Label()
         {
@@ -223,7 +252,7 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
             HorizontalContentAlignment = HorizontalAlignment.Center,
             Content = "Diff"
         };
-        Grid.SetColumn(lblDiff, 4);
+        Grid.SetColumn(lblDiff, gCol++);
         grid.Children.Add(lblDiff);
         var lblStPkt = new Label()
         {
@@ -234,44 +263,52 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
             HorizontalContentAlignment = HorizontalAlignment.Center,
             Content = "StockPunkte"
         };
-        Grid.SetColumn(lblStPkt, 5);
+        Grid.SetColumn(lblStPkt, gCol++);
         grid.Children.Add(lblStPkt);
 
         return grid;
     }
 
-    private static Grid GetTeamGridRow(RankedTeamModel rankedTeamModel, double fontSize, int rowSpace)
+    private static Grid GetTeamGridRow(RankedTeamModel rankedTeamModel, double fontSize, int rowSpace, TeamInfo teamInfo)
     {
-        var teamGrid = GetGridTemplate();
+        var teamGrid = GetGridTemplate(teamInfo);
 
         if (rankedTeamModel.Rank % 2 == 0)
         {
             teamGrid.Background = System.Windows.Media.Brushes.WhiteSmoke;
         }
 
+        int gCol = 0;
 
         var lblAufAb = new Label() { Content = rankedTeamModel.AufAbSteiger, FontSize = fontSize / 2, Padding = new Thickness(0), VerticalContentAlignment = VerticalAlignment.Center };
-        Grid.SetColumn(lblAufAb, 0);
+        Grid.SetColumn(lblAufAb, gCol++);
         teamGrid.Children.Add(lblAufAb);
 
         var lblTeamRang = new Label() { Content = rankedTeamModel.Rank, FontSize = fontSize, Padding = new Thickness(0), HorizontalContentAlignment = HorizontalAlignment.Center };
-        Grid.SetColumn(lblTeamRang, 1);
+        Grid.SetColumn(lblTeamRang, gCol++);
         teamGrid.Children.Add(lblTeamRang);
 
         var lblTeamName = new Label() { Content = rankedTeamModel.TeamName, FontSize = fontSize, Padding = new Thickness(0), HorizontalContentAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 0) };
-        Grid.SetColumn(lblTeamName, 2);
+        Grid.SetColumn(lblTeamName, gCol++);
         teamGrid.Children.Add(lblTeamName);
 
-        var lblTeamSpielPunkte = new Label() { Content = rankedTeamModel.SpielPunkte, FontSize = fontSize, Padding = new Thickness(0), HorizontalContentAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 0, 0, 0) };
-        Grid.SetColumn(lblTeamSpielPunkte, 3);
+        if(teamInfo != TeamInfo.Keine)
+        {
+            var lblTeamInfo = new Label() { Content = rankedTeamModel.TeamInfo(teamInfo), FontSize = fontSize, Padding = new Thickness(0), HorizontalContentAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 0, 0, 0) };
+			Grid.SetColumn(lblTeamInfo, gCol++);
+			teamGrid.Children.Add(lblTeamInfo);
+		}
+
+		var lblTeamSpielPunkte = new Label() { Content = rankedTeamModel.SpielPunkte, FontSize = fontSize, Padding = new Thickness(0), HorizontalContentAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 0, 0, 0) };
+        Grid.SetColumn(lblTeamSpielPunkte, gCol++);
         teamGrid.Children.Add(lblTeamSpielPunkte);
 
         var lblTeamDiff = new Label() { Content = rankedTeamModel.StockPunkteDifferenz, FontSize = fontSize, Padding = new Thickness(0), HorizontalContentAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 0, 0, 0) };
-        Grid.SetColumn(lblTeamDiff, 4);
+        Grid.SetColumn(lblTeamDiff, gCol++);
         teamGrid.Children.Add(lblTeamDiff);
 
         var lblTeamStockPunkte = new Label() { Content = rankedTeamModel.StockPunkte, FontSize = fontSize, Padding = new Thickness(0), HorizontalContentAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 0, 0, 0) };
-        Grid.SetColumn(lblTeamStockPunkte, 5);
+        Grid.SetColumn(lblTeamStockPunkte, gCol++);
         teamGrid.Children.Add(lblTeamStockPunkte);
 
         if (rankedTeamModel.HasPlayerNames)
