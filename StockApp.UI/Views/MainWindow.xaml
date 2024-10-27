@@ -6,6 +6,7 @@
         xmlns:vm="clr-namespace:StockApp.UI.ViewModels" 
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
         xmlns:modalcontrol="clr-namespace:StockApp.UI.Controls"
+        xmlns:conv="clr-namespace:StockApp.UI.Converters"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance
                             Type=vm:MainViewModel,
@@ -23,7 +24,7 @@
                                    PassEventArgsToCommand="True"/>
         </b:EventTrigger>
     </b:Interaction.Triggers>
-    
+
     <Window.InputBindings>
         <KeyBinding Gesture="CTRL+N" Command="{Binding Path=NewTournamentCommand}"/>
         <KeyBinding Gesture="CTRL+O" Command="{Binding Path=OpenTournamentCommand}"/>
@@ -34,8 +35,9 @@
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:LogLevelCheckedConverter x:Key="LogLevelCheckedConverter"/>
     </Window.Resources>
-    
+
     <DockPanel>
 
         <Menu DockPanel.Dock="Top" Padding="5">
@@ -53,11 +55,46 @@
                           InputGestureText="Strg+Shift+S"
                           Command="{Binding Path=SaveAsTournamentCommand}"/>
                 <Separator/>
+                <MenuItem Header="LogLevel">
+                    <MenuItem Header="Off" 
+                              Command="{Binding Path=SetLogLevelCommand}" 
+                              CommandParameter="off" 
+                              IsChecked="{Binding Path=LogLevel, Mode=TwoWay, 
+                                                  UpdateSourceTrigger=PropertyChanged, 
+                                                  ConverterParameter=off, 
+                                                  Converter={StaticResource LogLevelCheckedConverter}}"/>
+                    <MenuItem Header="Info"  
+                              Command="{Binding Path=SetLogLevelCommand}" 
+                              CommandParameter="info" 
+                              IsChecked="{Binding Path=LogLevel, Mode=TwoWay, 
+                                                  UpdateSourceTrigger=PropertyChanged,
+                                                  ConverterParameter=info, 
+                                                  Converter={StaticResource LogLevelCheckedConverter}}"/>
+                    
+                    <MenuItem Header="Debug"  
+                              Command="{Binding Path=SetLogLevelCommand}" 
+                              CommandParameter="debug" 
+                              IsChecked="{Binding Path=LogLevel, Mode=TwoWay, 
+                                                  UpdateSourceTrigger=PropertyChanged, 
+                                                  ConverterParameter=debug, 
+                                                  Converter={StaticResource LogLevelCheckedConverter}}"/>
+                    <MenuItem Header="All"  
+                              Command="{Binding Path=SetLogLevelCommand}"
+                              CommandParameter="all" 
+                              IsChecked="{Binding Path=LogLevel, Mode=TwoWay, 
+                                                  UpdateSourceTrigger=PropertyChanged, 
+                                                  ConverterParameter=all, 
+                                                  Converter={StaticResource LogLevelCheckedConverter}}"/>
+                    <Separator/>
+                    <MenuItem Header="Open Logfile Folder..."
+                              Command="{Binding Path=OpenLogFileCommand}"/>
+                </MenuItem>
+                <Separator/>
                 <MenuItem Header="Beenden" 
                           InputGestureText="Alt+F4"
                           Command="{Binding Path=ExitApplicationCommand}"/>
             </MenuItem>
-            
+
         </Menu>
 
         <StatusBar DockPanel.Dock="Bottom">
@@ -66,13 +103,13 @@
             <TextBlock Text="{Binding Path=ActiveTeamBewerbGroupName}" HorizontalAlignment="Left" TextAlignment="Left"/>
             <Separator />
             <TextBlock Text="{Binding Path=FileName}" HorizontalAlignment="Right" TextAlignment="Right"/>
-            
+
             <!--<TextBlock Text="{Binding Path=StockTVCount}"/>-->
         </StatusBar>
 
         <ContentControl Content="{Binding Path=NavigationViewModel}" DockPanel.Dock="Left" Width="180" Margin="5 5 0 5"/>
 
-        
+
 
         <ScrollViewer DockPanel.Dock="Left"
                       HorizontalAlignment="Stretch"
@@ -85,7 +122,7 @@
 
                 <modalcontrol:Modal x:Name="modalcontrol"  IsOpen="{Binding IsModalOpen, Mode=OneWay}" Panel.ZIndex="10" DockPanel.Dock="Left">
 
-                        <Grid Margin="10">
+                    <Grid Margin="10">
 
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -110,7 +147,7 @@
                 </modalcontrol:Modal>
 
                 <ContentControl Content="{Binding Path=CurrentViewModel}"  Margin="5"/>
-                
+
             </Grid>
         </ScrollViewer>
 

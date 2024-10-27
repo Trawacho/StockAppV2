@@ -7,7 +7,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
-		<Version>1.9.0.0</Version>
+		<Version>1.10.0.0</Version>
 		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="com\Vereine.json"/>
+		<EmbeddedResource Include="com\Vereine.json" />
 		<Content Include="Ressources\StockApp.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -36,9 +36,10 @@
 	
 	<ItemGroup>
 		<PackageReference Include="DotNetProjects.WpfToolkit.Input" Version="6.1.94" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
-		<PackageReference Include="Prism.Core" Version="8.1.97" />
+		<PackageReference Include="log4net" Version="3.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+		<PackageReference Include="Prism.Core" Version="9.0.537" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,6 +48,12 @@
 		<ProjectReference Include="..\StockApp.Prints\StockApp.Prints.csproj" />
 		<ProjectReference Include="..\StockApp.XML\StockApp.XML.csproj" />
 		<ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="log4net.config">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

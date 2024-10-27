@@ -59,7 +59,7 @@ public class OptionsViewModel : ViewModelBase
 		{
 			if (disposing)
 			{
-				_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= ContainerTeamBewerbe_CurrentTeamBewerbChanged; ;
+				_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= ContainerTeamBewerbe_CurrentTeamBewerbChanged;
 			}
 			_disposed = true;
 		}

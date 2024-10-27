@@ -16,6 +16,10 @@ namespace StockApp.UI.ViewModels;
 
 public class TeamViewModel : ViewModelBase
 {
+
+	private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
 	private readonly ITeam _team;
 	private readonly ITurnierStore _store;
 	private TeamPlayersViewModel _teamPlayersViewModel;

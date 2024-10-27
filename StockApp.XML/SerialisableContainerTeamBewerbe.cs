@@ -40,7 +40,7 @@ public class SerialisableContainerTeamBewerbe : IContainerTeamBewerbe
         int i = 1;
         while (SerialisableTeamBewerbe.Count > containerTeamBewerbe.TeamBewerbe.Count())
         {
-            SerialisableTeamBewerbe[1].ToNormal(containerTeamBewerbe.AddNew());
+            SerialisableTeamBewerbe[i].ToNormal(containerTeamBewerbe.AddNew());
             i++;
         }
     }

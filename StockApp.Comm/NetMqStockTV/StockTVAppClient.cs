@@ -25,7 +25,11 @@ namespace StockApp.Comm.NetMqStockTV
     /// </summary>
     internal class StockTVAppClient : IStockTVAppClient
     {
-        public void Dispose()
+
+		private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
+		public void Dispose()
         {
             Dispose(true);
         }
@@ -50,10 +54,13 @@ namespace StockApp.Comm.NetMqStockTV
         public event EventHandler<StockTVMessageReceivedEventArgs> MessageReceived;
         protected void RaiseMessageReceived(NetMQFrame topic, NetMQFrame value)
         {
-            var handler = MessageReceived;
+			var handler = MessageReceived;
             MessageTopic mt = (MessageTopic)Enum.Parse(typeof(MessageTopic), topic.ConvertToString());
-            handler?.Invoke(this, new StockTVMessageReceivedEventArgs(mt, value.ToByteArray(true)));
-        }
+			var valueArr = value.ToByteArray(true);
+			handler?.Invoke(this, new StockTVMessageReceivedEventArgs(mt, valueArr));
+            
+			_logger.Debug($"{mt} received, {string.Join("-", valueArr.Take(10))} {Encoding.UTF8.GetString(valueArr.Skip(10).ToArray())}");
+		}
 
         public event EventHandler<bool> ConnectedChanged;
         protected void RaiseConnectedChanged()

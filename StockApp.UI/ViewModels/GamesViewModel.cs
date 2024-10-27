@@ -147,17 +147,26 @@ public class GamesViewModel : ViewModelBase
 
         CurrentTeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
 
+		//TODO: die Anzahl der verfügbaren Mannschaften, ohne die Entschuldigten. Sollte auch beim Erstellen der Spiele berücksichtigt werden
+		// damit die entschuldigten Mannschaften nicht am Ende stehen müssen. 
+		// Funktion noch nicht ausreichend getestet!! ... was ist bei Splitgruppen!!!
+		int teamsCount = CurrentTeamBewerb.Teams.Where(t => t.TeamStatus != TeamStatus.Entschuldigt).Count();
         Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Count() == 1
-                          ? Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == CurrentTeamBewerb.Teams.Count())
-                          : Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == CurrentTeamBewerb.Teams.Count() && !t.IsSplit);
+                          ? Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == teamsCount)
+                          : Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == teamsCount && !t.IsSplit);
     }
 
     private void CurrentTeamBewerbChangend(object sender, EventArgs e)
     {
         CurrentTeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
-        Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Count() == 1
-                         ? Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == CurrentTeamBewerb.Teams.Count())
-                         : Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == CurrentTeamBewerb.Teams.Count() && !t.IsSplit);
+
+		//TODO: die Anzahl der verfügbaren Mannschaften, ohne die Entschuldigten. Sollte auch beim Erstellen der Spiele berücksichtigt werden
+		// damit die entschuldigten Mannschaften nicht am Ende stehen müssen
+		// Funktion noch nicht ausreichend getestet!! ... was ist bei Splitgruppen!!!
+		int teamsCount = CurrentTeamBewerb.Teams.Where(t => t.TeamStatus != TeamStatus.Entschuldigt).Count();
+		Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbe.Count() == 1
+                         ? Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == teamsCount)
+                         : Gameplans = _turnierStore.Turnier.ContainerTeamBewerbe.Gameplans.Where(t => t.Teams == teamsCount && !t.IsSplit);
 
         TeamBewerb_GamesChanged(sender, e);
     }
