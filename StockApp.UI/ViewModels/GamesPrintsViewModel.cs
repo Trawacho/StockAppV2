@@ -15,7 +15,12 @@ namespace StockApp.UI.ViewModels;
 
 public class GamesPrintsViewModel : ViewModelBase
 {
-    private readonly ITeamBewerb _teamBewerb;
+
+	private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
+
+	private readonly ITeamBewerb _teamBewerb;
     private readonly ITurnierStore _turnierStore;
     private ICommand _printScoreCardsCommand;
     private ICommand _printCourtCardsCommand;

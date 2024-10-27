@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StockApp.Prints.ScoreCards"
-             xmlns:lib="clr-namespace:StockApp.Lib;assembly=StockApp.Lib"
+            xmlns:lib="clr-namespace:StockApp.Lib.ReportPaginator;assembly=StockApp.Lib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>

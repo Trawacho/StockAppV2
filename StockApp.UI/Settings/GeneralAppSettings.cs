@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using log4net.Core;
+using System.Xml;
 
 namespace StockApp.UI.Settings;
 
@@ -14,6 +15,15 @@ public class GeneralAppSettings : ISettingsSerializer
     {
         WindowPlaceManager = new WindowPlaceManager();
     }
+
+    private Level _logLevel;
+
+    public Level LogLevel
+    {
+        get { return _logLevel; }
+        set { _logLevel = value; }
+    }
+
 
     public bool InstancesOwnPreferences { get; internal set; }
 

@@ -9,11 +9,10 @@ namespace StockApp.UI.Settings;
 
 public static class XmlHelper
 {
-    // Note: the built-in TypeConverters are crashing on some machines for unknown reason. (TypeDescriptor.GetConverter(typeof(Point)))
-    //private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-    private static readonly ILogger _log = null;
+	// Note: the built-in TypeConverters are crashing on some machines for unknown reason. (TypeDescriptor.GetConverter(typeof(Point)))
+	private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-    public static float ParseFloat(string str)
+	public static float ParseFloat(string str)
     {
         bool read = float.TryParse(str, NumberStyles.Any, CultureInfo.InvariantCulture, out float x);
         if (read)

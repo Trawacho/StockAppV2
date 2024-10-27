@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StockApp.Prints.ZielResult" 
              xmlns:conv="clr-namespace:StockApp.Lib.Converters;assembly=StockApp.Lib"
-             xmlns:lib="clr-namespace:StockApp.Lib;assembly=StockApp.Lib"
+             xmlns:lib="clr-namespace:StockApp.Lib.ReportPaginator;assembly=StockApp.Lib"
              mc:Ignorable="d" 
              FontFamily="Calibri"
              FontSize="14"
