@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:StockApp.Lib.ViewModels"
-             xmlns:lib="clr-namespace:StockApp.Lib"
+             xmlns:lib="clr-namespace:StockApp.Lib.ReportPaginator"
              xmlns:conv="clr-namespace:StockApp.Lib.Converters"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=vm:RankedTeamsTableViewModel, IsDesignTimeCreatable=True}">

@@ -12,9 +12,9 @@ public class PreferencesManager
     private readonly TeamBewerbSettings _teamBewerbSettings = new();
     private static PreferencesManager _instance = null;
     private static readonly object _locker = new();
-    private readonly ILogger _log = null;
+	private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-    public static GeneralAppSettings GeneralAppSettings
+	public static GeneralAppSettings GeneralAppSettings
     {
         get
         {

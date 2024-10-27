@@ -1,8 +1,8 @@
 ﻿using StockApp.Core.Factories;
 using StockApp.Core.Turnier;
 using StockApp.Core.Wettbewerb.Teambewerb;
-using StockApp.Lib;
 using StockApp.Lib.Models;
+using StockApp.Lib.ReportPaginator;
 using StockApp.Lib.ViewModels;
 using StockApp.Lib.Views;
 using StockApp.Prints.Converters;

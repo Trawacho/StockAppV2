@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="log4net" Version="3.0.1" />
     <PackageReference Include="NetMQ" Version="4.0.1.13" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
     <PackageReference Include="Zeroconf" Version="3.6.11" />

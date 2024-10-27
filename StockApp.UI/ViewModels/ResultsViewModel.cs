@@ -1,6 +1,6 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
-using StockApp.Prints.Teamresult;
+using StockApp.Prints.Template;
 using StockApp.UI.Commands;
 using StockApp.UI.Components;
 using StockApp.UI.Enumerations;
@@ -18,7 +18,9 @@ public class ResultsViewModel : ViewModelBase
     private readonly IDialogStore _dialogStore;
     private ITeamBewerb _teamBewerb;
 
-    private ITeamBewerb TeamBewerb
+	private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+	private ITeamBewerb TeamBewerb
     {
         get => _teamBewerb;
         set

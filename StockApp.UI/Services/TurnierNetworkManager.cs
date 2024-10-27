@@ -13,7 +13,9 @@ public interface ITurnierNetworkManager : IDisposable
 
 public class TurnierNetworkManager : ITurnierNetworkManager
 {
-    private readonly ITurnierStore _turnierStore;
+	private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+	private readonly ITurnierStore _turnierStore;
     private readonly IStockTVService _stockTVService;
     private readonly IBroadcastService _broadCastService;
     private bool _disposed;
@@ -76,7 +78,10 @@ public class TurnierNetworkManager : ITurnierNetworkManager
         {
             _acceptNetworkResult = value;
 
-            if (value)
+            _logger.Info($"Accept Network Result is set: {value}");
+
+
+			if (value)
                 Task.Factory.StartNew(() => _broadCastService.Start());
             else
                 Task.Factory.StartNew(() => _broadCastService.Stop());

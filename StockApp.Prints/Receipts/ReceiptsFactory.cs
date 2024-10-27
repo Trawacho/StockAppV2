@@ -1,5 +1,5 @@
 ﻿using StockApp.Core.Turnier;
-using StockApp.Lib;
+using StockApp.Lib.PrintingComponents;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
