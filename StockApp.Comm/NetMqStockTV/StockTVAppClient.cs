@@ -280,6 +280,19 @@ namespace StockApp.Comm.NetMqStockTV
             }
 
             _socket.SendMultipartMessage(m);
+            _logger.Info($"Send to StockTV: {ConvertToString(m)}");
+        }
+
+        private static string ConvertToString(NetMQMessage message)
+        {
+            try
+            {
+                return  message[1].ConvertToString() + "->" + string.Join("-", message[2].ToByteArray()); 
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
 
         #endregion
