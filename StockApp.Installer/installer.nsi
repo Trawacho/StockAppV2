@@ -4,11 +4,11 @@
 
 
 !ifndef FULL_VERSION
-!define FULL_VERSION      1.10.0.0
+!define FULL_VERSION      1.11.0.0
 !endif
 
 !ifndef SOURCE_DIR
-!define SOURCE_DIR        "..\StockApp.UI\bin\Release\net6.0-windows\win-x64\publish"
+!define SOURCE_DIR        "..\StockApp.UI\bin\Release\net8.0-windows7.0\win-x64\publish"
 !endif
 
 !ifndef INSTALLER_FILENAME
