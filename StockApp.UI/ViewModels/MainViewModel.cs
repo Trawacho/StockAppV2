@@ -199,6 +199,7 @@ public class MainViewModel : ViewModelBase
 				ToggleLogLevel(Level.Debug);
 			else if (p.ToString() == "off")
 				ToggleLogLevel(Level.Off);
+			_log.Info($"Changed LogLevel to: {p}");
 		},
 		(p) => true);
 
