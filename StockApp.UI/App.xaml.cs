@@ -11,9 +11,10 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 
+#pragma warning disable CA1859 
+
 namespace StockApp.UI
 {
-
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
@@ -195,3 +196,7 @@ namespace StockApp.UI
 		}
 	}
 }
+
+#pragma warning restore CA1859
+
+
