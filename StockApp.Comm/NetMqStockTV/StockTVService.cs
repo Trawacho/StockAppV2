@@ -20,7 +20,10 @@ public interface IStockTVService : IDisposable
 
 public class StockTVService : IStockTVService
 {
-    private readonly List<IStockTV> _stockTvList;
+
+	private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+	private readonly List<IStockTV> _stockTvList;
     private readonly IMdnsService _mdnsService;
     private readonly object _lock = new();
     private bool _disposed;
@@ -164,6 +167,7 @@ public class StockTVService : IStockTVService
                 newTV.StockTVDirectorChanged += StockTVDirectorChangedHandler;
 
                 _stockTvList.Add(newTV);
+                _logger.Info($"added new StockTV: {newTV}");
                 RaiseStockTVCollectionChanged(true);
             }
         }

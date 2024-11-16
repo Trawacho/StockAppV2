@@ -364,7 +364,12 @@ public class StockTV : IStockTV
     public void ClearMarketingImage() =>
         _appClient?.SendToStockTV(MessageTopic.ClearImage);
 
-    #endregion
+	#endregion
 
-    #endregion
+	#endregion
+
+	public override string ToString()
+	{
+        return $"{IPAddress}, {HostName}, {FW}";
+	}
 }

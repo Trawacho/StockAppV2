@@ -12,13 +12,16 @@ internal interface IMdnsService : IDisposable
 
 internal class MDnsService : IMdnsService
 {
-    private IDisposable _listenSubscription;
+	private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+	private IDisposable _listenSubscription;
     private bool _disposedValue;
     private readonly string _protocol = "_stockTV._tcp.local.";
 
     public event EventHandler<IMDnsHost> StockTVDiscovered;
     protected virtual void RaiseStockTVDiscoverd(MDnsHost host)
     {
+        _logger.Info($"StockTV Discoverd: {host}");
         var handler = StockTVDiscovered;
         handler?.Invoke(this, host);
     }

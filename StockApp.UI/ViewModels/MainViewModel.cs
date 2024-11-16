@@ -199,6 +199,7 @@ public class MainViewModel : ViewModelBase
 				ToggleLogLevel(Level.Debug);
 			else if (p.ToString() == "off")
 				ToggleLogLevel(Level.Off);
+			_log.Info($"Changed LogLevel to: {p}");
 		},
 		(p) => true);
 
@@ -206,13 +207,15 @@ public class MainViewModel : ViewModelBase
 	public ICommand OpenLogFileCommand => _openLogFileCommand ??= new RelayCommand(
 		(p) =>
 		{
-			var rootAppender = ((Hierarchy)LogManager.GetRepository())
-										 .Root.Appenders.OfType<FileAppender>()
-										 .FirstOrDefault();
+			//var rootAppender = ((Hierarchy)LogManager.GetRepository())
+			//							 .Root.Appenders.OfType<FileAppender>()
+			//							 .FirstOrDefault();
 
-			string filename = rootAppender != null ? rootAppender.File : string.Empty;
-			string path = Path.GetDirectoryName(filename);
+			//string filename = rootAppender != null ? rootAppender.File : string.Empty;
+			//string path = Path.GetDirectoryName(filename);
+			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StockApp") + "\\";
 			Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+			//todo: Erst prüfen, ob das Verzeichnis existiert. Prüfen, ob das in der StoreApp auch passt
 		},
 		(p) => true);
 
