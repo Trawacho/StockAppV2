@@ -8,6 +8,7 @@ using StockApp.UI.Stores;
 using StockApp.UI.ViewModels;
 using StockApp.UI.Views;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 
@@ -85,7 +86,7 @@ namespace StockApp.UI
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			log4net.Config.XmlConfigurator.Configure();
+			log4net.Config.XmlConfigurator.Configure( new FileInfo("log4net.config"));
 			Hierarchy hierarchy = log4net.LogManager.GetRepository() as Hierarchy;
 			PreferencesManager.GeneralAppSettings.LogLevel = hierarchy.Root.Level;
 
