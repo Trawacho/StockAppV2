@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StockApp.UI.Components" 
              xmlns:cx="clr-namespace:System.Windows.Controls;assembly=DotNetProjects.Input.Toolkit" 
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" >
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
@@ -47,13 +46,12 @@
                                 FilterMode="Contains"
                                 MinimumPrefixLength="4"
                                 Text="{Binding Path=TeamName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:KeyTrigger Key="Enter">
-                        <i:InvokeCommandAction Command="{Binding TeamSelectedEnterCommand}" />
-                    </i:KeyTrigger>
-                </i:Interaction.Triggers>
+               
+                <cx:AutoCompleteBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding TeamSelectedEnterCommand}" />
+                </cx:AutoCompleteBox.InputBindings>
+               
             </cx:AutoCompleteBox>
-
 
 
             <TextBlock Text="N/R/BL/K:" Grid.Row="1" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center" ToolTip="Nation/Region/Bundesland/Kreis"/>
@@ -65,10 +63,10 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Margin="2 0" Padding="5" ToolTip="Nation" Text="{Binding Nation}"/>
-                <TextBox Grid.Column="1" Margin="2 0" Padding="5" ToolTip="Region" Text="{Binding Region}"/>
-                <TextBox Grid.Column="2" Margin="2 0" Padding="5" ToolTip="Bundesland" Text="{Binding Bundesland}"/>
-                <TextBox Grid.Column="3" Margin="2 0" Padding="5" ToolTip="Kreis" Text="{Binding Kreis}"/>
+                <TextBox Grid.Column="0" Margin="5 0 2 0" Padding="5" ToolTip="Nation" Text="{Binding Nation}"/>
+                <TextBox Grid.Column="1" Margin="2 0 2 0" Padding="5" ToolTip="Region" Text="{Binding Region}"/>
+                <TextBox Grid.Column="2" Margin="2 0 2 0" Padding="5" ToolTip="Bundesland" Text="{Binding Bundesland}"/>
+                <TextBox Grid.Column="3" Margin="2 0 5 0" Padding="5" ToolTip="Kreis" Text="{Binding Kreis}"/>
             </Grid>
 
             <TextBlock Text="Status:" Grid.Row="2" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
