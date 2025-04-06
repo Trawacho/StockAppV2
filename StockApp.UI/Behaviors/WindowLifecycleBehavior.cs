@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using StockApp.UI.Parameters;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
@@ -77,10 +78,4 @@ public static class WindowLifecycleBehavior
 		}
 	}
 	#endregion
-}
-
-// Hilfsklasse für Cancel-Logik
-public class CancelCommandParameter
-{
-	public bool Cancel { get; set; }
 }
