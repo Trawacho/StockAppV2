@@ -68,7 +68,7 @@ public static class EventCommandBehavior
 
 
 	// Generischer Handler für Events
-	private static void EventHandler(object? sender, EventArgs e)
+	private static void EventHandler(object sender, EventArgs e)
 	{
 		if (sender is DependencyObject d)
 		{
