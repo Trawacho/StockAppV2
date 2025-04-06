@@ -4,10 +4,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:StockApp.UI.ViewModels" 
-        xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
         xmlns:modalcontrol="clr-namespace:StockApp.UI.Controls"
         xmlns:conv="clr-namespace:StockApp.UI.Converters"
+        xmlns:b="clr-namespace:StockApp.UI.Behaviors"
+        b:WindowLifecycleBehavior.ClosingCommand="{Binding ClosingCommand}"
         mc:Ignorable="d"
+        
         d:DataContext="{d:DesignInstance
                             Type=vm:MainViewModel,
                             IsDesignTimeCreatable=True}"
@@ -16,15 +18,8 @@
         MinWidth="800"
         MinHeight="600"
         FontFamily="Calibri"
-        FontSize="16" >
-
-    <b:Interaction.Triggers>
-        <b:EventTrigger EventName="Closing">
-            <b:InvokeCommandAction Command="{Binding ClosingCommand}" 
-                                   PassEventArgsToCommand="True"/>
-        </b:EventTrigger>
-    </b:Interaction.Triggers>
-
+        FontSize="16" 
+        >
     <Window.InputBindings>
         <KeyBinding Gesture="CTRL+N" Command="{Binding Path=NewTournamentCommand}"/>
         <KeyBinding Gesture="CTRL+O" Command="{Binding Path=OpenTournamentCommand}"/>

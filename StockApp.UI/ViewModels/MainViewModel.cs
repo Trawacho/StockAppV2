@@ -1,17 +1,15 @@
 ﻿using log4net;
-using log4net.Appender;
 using log4net.Core;
 using log4net.Repository;
 using log4net.Repository.Hierarchy;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
+using StockApp.UI.Parameters;
 using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 
@@ -30,13 +28,15 @@ public class MainViewModel : ViewModelBase
 
 	#region RequestClose [Event]
 
-	public event EventHandler<CancelEventArgs> RequestClose;
-	private void OnRequestClose(CancelEventArgs e)
+	public event EventHandler<CancelCommandParameter> RequestClose;
+
+	private void OnRequestClose(CancelCommandParameter e)
 	{
 		var handler = RequestClose;
 		handler?.Invoke(this, e);
 	}
-	private void RaiseOnRequestClose(CancelEventArgs e)
+
+	private void RaiseOnRequestClose(CancelCommandParameter e)
 	{
 		if (_turnierStore.IsDuty())
 		{
@@ -82,7 +82,7 @@ public class MainViewModel : ViewModelBase
 		SaveTournamentCommand = new RelayCommand((p) => _turnierStore.Save());
 
 		ExitApplicationCommand = new RelayCommand((p) => RaiseOnRequestClose(null));
-		ClosingCommand = new RelayCommand<CancelEventArgs>((p) => RaiseOnRequestClose(p));
+		ClosingCommand = new RelayCommand<CancelCommandParameter>((p) => RaiseOnRequestClose(p));
 
 		ModalOkCommand = new RelayCommand(
 			(p) =>

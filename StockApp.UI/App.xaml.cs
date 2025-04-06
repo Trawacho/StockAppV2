@@ -2,17 +2,17 @@
 using StockApp.Comm.Broadcasting;
 using StockApp.Comm.NetMqStockTV;
 using StockApp.UI.com;
+using StockApp.UI.Parameters;
 using StockApp.UI.Services;
 using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using StockApp.UI.ViewModels;
 using StockApp.UI.Views;
-using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Windows;
 
-#pragma warning disable CA1859 
+#pragma warning disable CA1859
 
 namespace StockApp.UI
 {
@@ -86,7 +86,7 @@ namespace StockApp.UI
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			log4net.Config.XmlConfigurator.Configure( new FileInfo("log4net.config"));
+			log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.config"));
 			Hierarchy hierarchy = log4net.LogManager.GetRepository() as Hierarchy;
 			PreferencesManager.GeneralAppSettings.LogLevel = hierarchy.Root.Level;
 
@@ -109,7 +109,7 @@ namespace StockApp.UI
 			base.OnStartup(e);
 		}
 
-		private void RequestCloseHandler(object sender, CancelEventArgs e)
+		private void RequestCloseHandler(object sender, CancelCommandParameter e)
 		{
 			_mainViewModel.RequestClose -= RequestCloseHandler;
 			App.Current.Shutdown();
