@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:cx="clr-namespace:System.Windows.Controls;assembly=DotNetProjects.Input.Toolkit"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:StockApp.UI.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
@@ -49,11 +48,14 @@
                             FilterMode="Contains"
                             MinimumPrefixLength="4"
                             Text="{Binding Path=Verein, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-            <i:Interaction.Triggers>
+            <cx:AutoCompleteBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding VereinSelectedEnterCommand}" />
+            </cx:AutoCompleteBox.InputBindings>
+            <!--<i:Interaction.Triggers>
                 <i:KeyTrigger Key="Enter">
                     <i:InvokeCommandAction Command="{Binding VereinSelectedEnterCommand}"/>
                 </i:KeyTrigger>
-            </i:Interaction.Triggers>
+            </i:Interaction.Triggers>-->
         </cx:AutoCompleteBox>
 
 
