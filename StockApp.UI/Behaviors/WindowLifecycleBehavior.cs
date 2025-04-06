@@ -23,22 +23,23 @@ public static class WindowLifecycleBehavior
 
 	private static void OnLoadedCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
-		if (d is Window window)
+		if (d is FrameworkElement element)
 		{
-			window.Loaded -= OnWindowLoaded;
-			window.Loaded += OnWindowLoaded;
+			element.Loaded -= OnElementLoaded;
+			element.Loaded += OnElementLoaded;
 		}
 	}
-
-	private static void OnWindowLoaded(object sender, RoutedEventArgs e)
+	private static void OnElementLoaded(object sender, RoutedEventArgs e)
 	{
-		if (sender is Window window)
+		if (sender is FrameworkElement element)
 		{
-			var command = GetLoadedCommand(window);
+			var command = GetLoadedCommand(element);
 			if (command?.CanExecute(null) == true)
 				command.Execute(null);
 		}
 	}
+
+
 	#endregion
 
 	#region ClosingCommand
