@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="log4net" Version="3.0.3" />
-    <PackageReference Include="NetMQ" Version="4.0.1.13" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
-    <PackageReference Include="Zeroconf" Version="3.6.11" />
+    <PackageReference Include="log4net" Version="3.2.0" />
+    <PackageReference Include="NetMQ" Version="4.0.2.2" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.1" />
+    <PackageReference Include="System.Formats.Asn1" Version="10.0.1" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.1" />
+    <PackageReference Include="System.Text.Json" Version="10.0.1" />
+    <PackageReference Include="Zeroconf" Version="3.7.16" />
   </ItemGroup>
 
 	<ItemGroup>
