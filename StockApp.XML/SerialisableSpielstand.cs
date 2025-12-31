@@ -55,9 +55,10 @@ public class SerialisableSpielstand : ISpielstand
 
 #pragma warning disable 67
     public event EventHandler SpielStandChanged;
+	public event EventHandler SetByHandChanged;
 #pragma warning restore 67
 
-    public void CopyLiveToMasterValues()
+	public void CopyLiveToMasterValues()
     {
         throw new NotImplementedException();
     }
@@ -71,12 +72,7 @@ public class SerialisableSpielstand : ISpielstand
     {
         throw new NotImplementedException();
     }
-
-    //public IKehre GetKehre(int kehrenNummer, bool isLive = false)
-    //{
-    //    throw new NotImplementedException();
-    //}
-
+    
     public int GetSpielPunkteTeamA(bool live)
     {
         throw new NotImplementedException();
@@ -136,5 +132,10 @@ public class SerialisableSpielstand : ISpielstand
     {
         throw new NotImplementedException();
     }
-    #endregion
+
+	public void UnLock()
+	{
+		throw new NotImplementedException();
+	}
+	#endregion
 }

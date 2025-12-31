@@ -8,6 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
+        
         <Style TargetType="UserControl">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Width" Value="600"/>
@@ -17,11 +18,9 @@
     </d:DesignerProperties.DesignStyle>
 
     <UserControl.Resources>
-
         <Style TargetType="DataGridCell" x:Key="DisableSelection">
             <Setter Property="Focusable" Value="False"/>
         </Style>
-
     </UserControl.Resources>
 
 
@@ -67,7 +66,6 @@
                                 <Setter Property="Background" Value="Green"/>
                             </Trigger>
                         </Style.Triggers>
-
                     </Style>
 
                     <Style TargetType="DataGridCell" x:Key="DisableSelectionSumValue">
@@ -102,6 +100,13 @@
                         </Style.Triggers>
                     </Style>
 
+                    <Style x:Key="centeredCheckBox" TargetType="{x:Type CheckBox}">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+
                     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConvert"/>
 
                     <comp:BindingProxy x:Key="proxy" Data="{Binding}"/>
@@ -109,8 +114,6 @@
                 </DataGrid.Resources>
 
                 <DataGrid.Columns>
-
-
 
                     <DataGridTextColumn Header="Bahn"  
                                         Binding="{Binding Path=Bahn, Mode=OneWay, UpdateSourceTrigger=Default}"
@@ -134,12 +137,14 @@
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="2"  IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre2vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="3" IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre3vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
@@ -175,8 +180,9 @@
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="8" IsReadOnly="False" 
-                                       Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, 
+                                        Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, 
                                                     Converter={StaticResource BooleanToVisibilityConvert}}"
                                         Binding="{Binding Path=Kehre8vonTeam1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
@@ -207,36 +213,42 @@
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="2" IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre2vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="3" IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre3vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="4" IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre4vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="5" IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre5vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="6" IsReadOnly="False" 
                                         Binding="{Binding Path=Kehre6vonTeam2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CellStyle="{StaticResource datagridcellEditStyle}"
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="7" IsReadOnly="False" 
                                         Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, 
                                                     Converter={StaticResource BooleanToVisibilityConvert}}"
@@ -245,6 +257,7 @@
                                         HeaderStyle="{StaticResource colHeaderCenter}" 
                                         ElementStyle="{StaticResource verticalCenterEdit}"
                                         EditingElementStyle="{StaticResource editTextBox}"/>
+                    
                     <DataGridTextColumn Header="8" IsReadOnly="False" 
                                         Visibility="{Binding Data.Has8Turns, Source={StaticResource proxy}, 
                                                     Converter={StaticResource BooleanToVisibilityConvert}}"
@@ -263,6 +276,14 @@
                                         CellStyle="{StaticResource DisableSelectionSumValue}"
                                         IsReadOnly="True"/>
 
+                    <DataGridCheckBoxColumn Header="StockTV&#x0a;gesperrt"
+                                            Binding="{Binding Path=IsSetByHand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="auto"
+                                            HeaderStyle="{StaticResource colHeaderCenter}"
+                                            ElementStyle="{StaticResource centeredCheckBox}"
+                                            EditingElementStyle="{StaticResource centeredCheckBox}"
+                                            IsReadOnly="False"/>
+
                 </DataGrid.Columns>
 
             </DataGrid>
@@ -270,4 +291,5 @@
         </StackPanel>
 
     </Grid>
+    
 </UserControl>

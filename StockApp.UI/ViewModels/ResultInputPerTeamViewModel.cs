@@ -37,7 +37,6 @@ public class ResultInputPerTeamViewModel : ViewModelBase
 
     public ObservableCollection<PointsPerTeamAndGameViewModel> PointsPerTeam { get; } = new();
 
-
     public ResultInputPerTeamViewModel(IEnumerable<ITeam> teams)
     {
         foreach (var team in teams)
@@ -126,14 +125,22 @@ public class ResultInputPerTeamViewModel : ViewModelBase
             }
         }
 
-        public PointsPerTeamAndGameViewModel(IGame game, ITeam team)
+		public bool IsSetByHand
+		{
+			set
+			{
+				_game.Spielstand.UnLock();
+				RaisePropertyChanged();
+			}
+			get => _game.Spielstand.IsSetByHand;
+		}
+
+		public PointsPerTeamAndGameViewModel(IGame game, ITeam team)
         {
             _game = game;
             _team = team;
             _game.SpielstandChanged += SpielstandChanged;
         }
-
-
 
         protected override void Dispose(bool disposing)
         {

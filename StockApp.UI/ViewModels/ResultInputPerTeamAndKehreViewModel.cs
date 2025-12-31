@@ -13,158 +13,168 @@ namespace StockApp.UI.ViewModels;
 
 internal class ResultInputPerTeamAndKehreViewModel : ViewModelBase
 {
-    private readonly bool _is8TurnsGame;
-    private ITeam _selectedTeam;
+	private readonly bool _is8TurnsGame;
+	private ITeam _selectedTeam;
 
-    public ResultInputPerTeamAndKehreViewModel(IEnumerable<ITeam> teams, bool is8TurnsGame)
-    {
-        _is8TurnsGame = is8TurnsGame;
+	private void SetPointsPerTeam()
+	{
+		KehrenPerTeam.Clear();
 
-        foreach (var team in teams)
-        {
-            Teams.Add(team);
-        }
+		if (SelectedTeam == null) return;
 
-        SelectedTeam = Teams?.FirstOrDefault();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                SelectedTeam = null;
-                Teams?.Clear();
-                KehrenPerTeam.DisposeAndClear();
-            }
-            _disposed = true;
-        }
-    }
-
-    public ITeam SelectedTeam
-    {
-        get => _selectedTeam;
-        set => SetProperty(
-            ref _selectedTeam,
-            value,
-            () =>
-            {
-                SetPointsPerTeam();
-            });
-    }
-
-    public ObservableCollection<ITeam> Teams { get; } = new();
-
-    public ObservableCollection<KehrePerTeamAndGameViewModel> KehrenPerTeam { get; } = new();
-
-    public bool Has8Turns => _is8TurnsGame;
-
-    private void SetPointsPerTeam()
-    {
-        KehrenPerTeam.Clear();
-
-        if (SelectedTeam == null) return;
-
-        foreach (var game in SelectedTeam?.Games?.OrderBy(g => g.GameNumberOverAll))
-        {
-            KehrenPerTeam.Add(new KehrePerTeamAndGameViewModel(game, SelectedTeam));
-        }
-    }
+		foreach (var game in SelectedTeam?.Games?.OrderBy(g => g.GameNumberOverAll))
+		{
+			KehrenPerTeam.Add(new KehrePerTeamAndGameViewModel(game, SelectedTeam));
+		}
+	}
 
 
+	public ITeam SelectedTeam
+	{
+		get => _selectedTeam;
+		set => SetProperty(
+			ref _selectedTeam,
+			value,
+			() =>
+			{
+				SetPointsPerTeam();
+			});
+	}
 
+	public ObservableCollection<ITeam> Teams { get; } = new();
 
-    public class KehrePerTeamAndGameViewModel : KehrenBaseModel, INotifyPropertyChanged
-    {
-        private void Game_SpielstandChanged(object sender, EventArgs e)
-        {
-            RaisePropertyChanged(nameof(StockPunkte1));
-            RaisePropertyChanged(nameof(StockPunkte2));
-        }
+	public ObservableCollection<KehrePerTeamAndGameViewModel> KehrenPerTeam { get; } = new();
 
-        private readonly ITeam _team;
+	public bool Has8Turns => _is8TurnsGame;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+	public ResultInputPerTeamAndKehreViewModel(IEnumerable<ITeam> teams, bool is8TurnsGame)
+	{
+		_is8TurnsGame = is8TurnsGame;
 
-        public KehrePerTeamAndGameViewModel(IGame game, ITeam team) : base(game)
-        {
-            _team = team;
-            _game.SpielstandChanged += Game_SpielstandChanged;
-        }
+		foreach (var team in teams)
+		{
+			Teams.Add(team);
+		}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _game.SpielstandChanged -= Game_SpielstandChanged;
-                }
-                _disposed = true;
-            }
-        }
+		SelectedTeam = Teams?.FirstOrDefault();
+	}
 
-        public bool IsBreakGame => _game.IsPauseGame();
-        public int GameNumber => _game.GameNumberOverAll;
-        public string Gegner
-        {
-            get
-            {
-                if (IsBreakGame)
-                    return "Setzt aus";
+	protected override void Dispose(bool disposing)
+	{
+		if (!_disposed)
+		{
+			if (disposing)
+			{
+				SelectedTeam = null;
+				Teams?.Clear();
+				KehrenPerTeam.DisposeAndClear();
+			}
+			_disposed = true;
+		}
+	}
 
-                return _team.StartNumber == _game.TeamA.StartNumber
-                    ? _game.TeamB.TeamName
-                    : _game.TeamA.TeamName;
-            }
-        }
+	public class KehrePerTeamAndGameViewModel : KehrenBaseModel, INotifyPropertyChanged
+	{
+		private void Game_SpielstandChanged(object sender, EventArgs e)
+		{
+			RaisePropertyChanged(nameof(StockPunkte1));
+			RaisePropertyChanged(nameof(StockPunkte2));
+		}
 
-        public override int StockPunkte1 => _team.StartNumber == _game.TeamA.StartNumber ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
+		private readonly ITeam _team;
 
-        public override int StockPunkte2 => _team.StartNumber != _game.TeamA.StartNumber ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
 
-        protected override void SetKehre(int kehrenNummer, int value, bool team1, string propName1, [CallerMemberName] string propName2 = null)
-        {
-            if (IsBreakGame) return;
+		public bool IsBreakGame => _game.IsPauseGame();
 
-            if (value > 100) value = 0;
+		public int GameNumber => _game.GameNumberOverAll;
 
-            if (team1)
-            {
-                if (_team.StartNumber == _game.TeamA.StartNumber)
-                    _game.Spielstand.SetMasterKehre(kehrenNummer, teamA: value, teamB: value != 0 ? 0 : int.MinValue);
-                else
-                    _game.Spielstand.SetMasterKehre(kehrenNummer, teamA: value != 0 ? 0 : int.MinValue, teamB: value);
-            }
-            else
-            {
-                if (_team.StartNumber != _game.TeamA.StartNumber)
-                    _game.Spielstand.SetMasterKehre(kehrenNummer, teamA: value, teamB: value != 0 ? 0 : int.MinValue);
-                else
-                    _game.Spielstand.SetMasterKehre(kehrenNummer, teamA: value != 0 ? 0 : int.MinValue, teamB: value);
-            }
+		public string Gegner
+		{
+			get
+			{
+				if (IsBreakGame)
+					return "Setzt aus";
 
-            RaisePropertyChanged(propName1);
-            RaisePropertyChanged(propName2);
-            RaisePropertyChanged(nameof(StockPunkte1));
-            RaisePropertyChanged(nameof(StockPunkte2));
-        }
+				return _team.StartNumber == _game.TeamA.StartNumber
+					? _game.TeamB.TeamName
+					: _game.TeamA.TeamName;
+			}
+		}
 
-        protected override int GetKehre(int kehrenNummer, bool team1)
-        {
-            if (team1)
-                return _team.StartNumber == _game.TeamA.StartNumber
-                    ? _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamA ?? 0
-                    : _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamB ?? 0;
-            else
-                return _team.StartNumber != _game.TeamA.StartNumber
-                ? _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamA ?? 0
-                : _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamB ?? 0;
-        }
-    }
+		public override int StockPunkte1 => _team.StartNumber == _game.TeamA.StartNumber ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
+
+		public override int StockPunkte2 => _team.StartNumber != _game.TeamA.StartNumber ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
+
+		public bool IsSetByHand
+		{
+			set
+			{
+				_game.Spielstand.UnLock();
+				RaisePropertyChanged();
+			}
+			get => _game.Spielstand.IsSetByHand;
+		}
+
+		protected override void SetKehre(int kehrenNummer, int value, bool team1, string propName1, [CallerMemberName] string propName2 = null)
+		{
+			if (IsBreakGame) return;
+
+			if (value > 100) value = 0;
+
+			if (team1)
+			{
+				if (_team.StartNumber == _game.TeamA.StartNumber)
+					_game.Spielstand.SetMasterKehre(kehrenNummer, teamA: value, teamB: value != 0 ? 0 : int.MinValue);
+				else
+					_game.Spielstand.SetMasterKehre(kehrenNummer, teamA: value != 0 ? 0 : int.MinValue, teamB: value);
+			}
+			else
+			{
+				if (_team.StartNumber != _game.TeamA.StartNumber)
+					_game.Spielstand.SetMasterKehre(kehrenNummer, teamA: value, teamB: value != 0 ? 0 : int.MinValue);
+				else
+					_game.Spielstand.SetMasterKehre(kehrenNummer, teamA: value != 0 ? 0 : int.MinValue, teamB: value);
+			}
+
+			RaisePropertyChanged(propName1);
+			RaisePropertyChanged(propName2);
+			RaisePropertyChanged(nameof(StockPunkte1));
+			RaisePropertyChanged(nameof(StockPunkte2));
+		}
+
+		protected override int GetKehre(int kehrenNummer, bool team1)
+		{
+			if (team1)
+				return _team.StartNumber == _game.TeamA.StartNumber
+					? _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamA ?? 0
+					: _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamB ?? 0;
+			else
+				return _team.StartNumber != _game.TeamA.StartNumber
+				? _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamA ?? 0
+				: _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamB ?? 0;
+		}
+		
+		public KehrePerTeamAndGameViewModel(IGame game, ITeam team) : base(game)
+		{
+			_team = team;
+			_game.SpielstandChanged += Game_SpielstandChanged;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (!_disposed)
+			{
+				if (disposing)
+				{
+					_game.SpielstandChanged -= Game_SpielstandChanged;
+				}
+				_disposed = true;
+			}
+		}
+	}
 }
