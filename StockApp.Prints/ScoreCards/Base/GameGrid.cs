@@ -14,7 +14,7 @@ internal class GameGrid : ScoreCardGrid
     /// <param name="team"></param>
     /// <param name="is8TurnsGame"></param>
     /// <param name="forStockTV"></param>
-    public GameGrid(IGame game, ITeam team, bool is8TurnsGame, bool forStockTV, bool opponentOnScoreCards) : base(is8TurnsGame, forStockTV, opponentOnScoreCards)
+    public GameGrid(IGame game, ITeam team, bool is8TurnsGame, bool forStockTV, bool opponentOnScoreCards) : base(is8TurnsGame, opponentOnScoreCards)
     {
 
         int colCounter = this.ColumnDefinitions.Count;

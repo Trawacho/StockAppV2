@@ -186,7 +186,8 @@ public class TeamViewModel : ViewModelBase
 											 , _team.StartNumber
 											 , PreferencesManager.TeamBewerbSettings.HasNamesOnScoreCard
 											 , PreferencesManager.TeamBewerbSettings.HasSummarizedScoreCards
-											 , PreferencesManager.TeamBewerbSettings.HasOpponentOnScoreCard));
+											 , PreferencesManager.TeamBewerbSettings.HasOpponentOnScoreCard
+											 ,_store.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.WertungskarteAsCupCard));
 
 
 			PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_printPreview, "WertungsKarte");

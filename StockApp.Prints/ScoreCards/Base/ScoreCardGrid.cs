@@ -17,9 +17,9 @@ namespace StockApp.Prints.ScoreCards.Base
         /// </summary>
         /// <param name="kehren8"></param>
         /// <param name="forStockTV"></param>
-        internal ScoreCardGrid(bool kehren8, bool forStockTV, bool opponentOnScoreCards)
+        internal ScoreCardGrid(bool kehren8, bool opponentOnScoreCards)
         {
-            SetWidthValues(kehren8, forStockTV, opponentOnScoreCards);
+            SetWidthValues(kehren8, opponentOnScoreCards);
 
             #region ColumnDefinitions
 
@@ -31,9 +31,6 @@ namespace StockApp.Prints.ScoreCards.Base
             ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_fixedValuesWidth) });
             //Anspiel
             ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_fixedValuesWidth) });
-
-            //Eingabe Farbe
-            if (forStockTV) ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_inputColorValueWidth) });
 
 
             //Kehre 1 - 6,7,8
@@ -55,7 +52,7 @@ namespace StockApp.Prints.ScoreCards.Base
             //Summe
             ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_sumValueWidth) });
             //Strafpunkte
-            if (!opponentOnScoreCards && !forStockTV) ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_penaltyValueWidth) });
+            if (!opponentOnScoreCards ) ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_penaltyValueWidth) });
             //Punkte
             ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_pointsValueWidth) });
             #endregion
@@ -87,7 +84,7 @@ namespace StockApp.Prints.ScoreCards.Base
             //Summe
             ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_sumValueWidth) });
             //Strafpunkte
-            if (!opponentOnScoreCards && !forStockTV) ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_penaltyValueWidth) });
+            if (!opponentOnScoreCards) ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_penaltyValueWidth) });
             //Punkte
             ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(_pointsValueWidth) });
 
@@ -116,7 +113,7 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(line);
         }
 
-        private void SetWidthValues(bool kehren8, bool forStockTV, bool opponentName)
+        private void SetWidthValues(bool kehren8, bool opponentName)
         {
             if (opponentName)
             {
@@ -131,7 +128,7 @@ namespace StockApp.Prints.ScoreCards.Base
             }
             else
             {
-                _fixedValuesWidth = kehren8 || forStockTV ? PixelConverter.CmToPx(0.55) : PixelConverter.CmToPx(0.6);
+                _fixedValuesWidth = kehren8 ? PixelConverter.CmToPx(0.55) : PixelConverter.CmToPx(0.6);
 
                 _turnValuesWidth = kehren8 ? PixelConverter.CmToPx(0.65) : PixelConverter.CmToPx(0.7);
                 _sumValueWidth = kehren8 ? PixelConverter.CmToPx(1.0) : PixelConverter.CmToPx(1.2);

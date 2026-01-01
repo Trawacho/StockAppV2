@@ -4,249 +4,120 @@ using System.Windows.Controls;
 
 namespace StockApp.Prints.ScoreCards.Base
 {
-    internal class ScoreCardHeaderGrid : ScoreCardGrid
-    {
-        internal ScoreCardHeaderGrid(bool is8TurnsGame, bool forStockTV, bool opponentOnScoreCards) 
-            : base(is8TurnsGame, forStockTV, opponentOnScoreCards)
-        {
-            //Two Rows
-            RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PixelConverter.CmToPx(0.60)) });
-            RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PixelConverter.CmToPx(0.60)) });
+	internal class ScoreCardHeaderGrid : ScoreCardGrid
+	{
+		internal ScoreCardHeaderGrid(bool is8TurnsGame, bool opponentOnScoreCards)
+			: base(is8TurnsGame, opponentOnScoreCards)
+		{
+			// Two Rows
+			RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PixelConverter.CmToPx(0.60)) });
+			RowDefinitions.Add(new RowDefinition() { Height = new GridLength(PixelConverter.CmToPx(0.60)) });
 
-            int colCounter = 0;
-            int kehrenColSpan = opponentOnScoreCards
-                                    ? 6
-                                    : is8TurnsGame
-                                        ? 8
-                                        : 7;
+			int colCounter = 0;
+			int kehrenColSpan = opponentOnScoreCards
+									? 6
+									: is8TurnsGame
+										? 8
+										: 7;
 
-            #region Texte  Moarschaft
+			#region Texte Moarschaft (links)
 
-            //Borders
-            var BorderSpiel = new ScoreCardField("Bahn", 270);
-            SetRowSpan(BorderSpiel, 2);
-            SetColumn(BorderSpiel, colCounter);
-            SetRow(BorderSpiel, 0);
-            Children.Add(BorderSpiel);
-            colCounter++;
+			// fixe Felder links
+			AddField(ref colCounter, "Bahn", 270, rowSpan: 2);
+			AddField(ref colCounter, "Gegner", 270, rowSpan: 2);
+			AddField(ref colCounter, "Anspiel", 270, rowSpan: 2);
 
-            var BorderBahn = new ScoreCardField("Gegner", 270);
-            SetRowSpan(BorderBahn, 2);
-            SetColumn(BorderBahn, colCounter);
-            SetRow(BorderSpiel, 0);
-            Children.Add(BorderBahn);
-            colCounter++;
+			// "K e h r e n" Titel (ColumnSpan, aber colCounter NICHT vorverschieben)
+			AddSpanTitle(colCounter, "K e h r e n", kehrenColSpan);
 
-            var BorderAnspiel = new ScoreCardField("Anspiel", 270);
-            SetRowSpan(BorderAnspiel, 2);
-            SetColumn(BorderAnspiel, colCounter);
-            SetRow(BorderSpiel, 0);
-            Children.Add(BorderAnspiel);
-            colCounter++;
+			// nummerierte Kehren (Row 1) — per Schleife statt Wiederholung
+			AddKehrenGroup(ref colCounter, is8TurnsGame, include7and8: !opponentOnScoreCards);
 
-            if (!opponentOnScoreCards && forStockTV)
-            {
-                var BorderEingabe = new ScoreCardField("Eingabe", 0);
-                SetColumn(BorderEingabe, 4);
-                SetColumn(BorderEingabe, colCounter);
-                SetRowSpan(BorderEingabe, 4);
-                Children.Add(BorderEingabe);
-                colCounter++;
-            }
+			// Summe, ggf. Strafpunkte, Punkte
+			var sumField = AddField(ref colCounter, "Summe", 0, rowSpan: 2);
+			sumField.Textblock.FontWeight = FontWeights.Bold;
 
-            var BorderKehre = new ScoreCardField("K e h r e n");
-            SetColumnSpan(BorderKehre, kehrenColSpan);
-            SetColumn(BorderKehre, colCounter);
-            SetRow(BorderKehre, 0);
-            Children.Add(BorderKehre);
+			if (!opponentOnScoreCards)
+			{
+				AddField(ref colCounter, "Straf-\r\npunkte", 0, rowSpan: 2);
+			}
 
-            var BorderKehre1 = new ScoreCardField("1");
-            SetColumn(BorderKehre1, colCounter);
-            SetRow(BorderKehre1, 1);
-            Children.Add(BorderKehre1);
-            colCounter++;
+			var punkteField = AddField(ref colCounter, "Gewinn-\r\npunkte", 0, rowSpan: 2);
+			punkteField.Textblock.FontWeight = FontWeights.Bold;
 
-            var BorderKehre2 = new ScoreCardField("2");
-            SetColumn(BorderKehre2, colCounter);
-            SetRow(BorderKehre2, 1);
-            Children.Add(BorderKehre2);
-            colCounter++;
+			#endregion
 
-            var BorderKehre3 = new ScoreCardField("3");
-            SetColumn(BorderKehre3, colCounter);
-            SetRow(BorderKehre3, 1);
-            Children.Add(BorderKehre3);
-            colCounter++;
+			// Abstand / Trennung wie im Original
+			colCounter++;
 
-            var BorderKehre4 = new ScoreCardField("4");
-            SetColumn(BorderKehre4, colCounter);
-            SetRow(BorderKehre4, 1);
-            Children.Add(BorderKehre4);
-            colCounter++;
+			#region Texte Gegner (rechts)
 
-            var BorderKehre5 = new ScoreCardField("5");
-            SetColumn(BorderKehre5, colCounter);
-            SetRow(BorderKehre5, 1);
-            Children.Add(BorderKehre5);
-            colCounter++;
+			AddField(ref colCounter, "Spiel", 270, rowSpan: 2);
 
-            var BorderKehre6 = new ScoreCardField("6");
-            SetColumn(BorderKehre6, colCounter);
-            SetRow(BorderKehre6, 1);
-            Children.Add(BorderKehre6);
-            colCounter++;
+			AddSpanTitle(colCounter, "K e h r e n", kehrenColSpan);
 
-            if (!opponentOnScoreCards)
-            {
-                var BorderKehre7 = new ScoreCardField("7");
-                SetColumn(BorderKehre7, colCounter);
-                SetRow(BorderKehre7, 1);
-                Children.Add(BorderKehre7);
-                colCounter++;
+			AddKehrenGroup(ref colCounter, is8TurnsGame, include7and8: !opponentOnScoreCards);
 
-                if (is8TurnsGame)
-                {
-                    var BorderKehre8 = new ScoreCardField("8");
-                    SetColumn(BorderKehre8, colCounter);
-                    SetRow(BorderKehre8, 1);
-                    Children.Add(BorderKehre8);
-                    colCounter++;
-                }
-            }
+			var sumFieldG = AddField(ref colCounter, "Summe", 0, rowSpan: 2);
+			sumFieldG.Textblock.FontWeight = FontWeights.Bold;
 
-            var BorderSumme = new ScoreCardField("Summe", 0);
-            BorderSumme.Textblock.FontWeight = FontWeights.Bold;
-            SetColumn(BorderSumme, colCounter);
-            SetRowSpan(BorderSumme, 2);
-            Children.Add(BorderSumme);
-            colCounter++;
+			if (!opponentOnScoreCards)
+			{
+				AddField(ref colCounter, "Straf-\r\npunkte", 0, rowSpan: 2);
+			}
 
-            if (!opponentOnScoreCards && !forStockTV)
-            {
-                var BorderStrafSumme = new ScoreCardField("Straf-\r\npunkte", 0);
-                SetColumn(BorderStrafSumme, colCounter);
-                SetRowSpan(BorderStrafSumme, 2);
-                Children.Add(BorderStrafSumme);
-                colCounter++;
-            }
+			var punkteFieldG = AddField(ref colCounter, "Gewinn-\r\npunkte", 0, rowSpan: 2);
+			punkteFieldG.Textblock.FontWeight = FontWeights.Bold;
 
+			if (opponentOnScoreCards)
+			{
+				colCounter++;
+				AddField(ref colCounter, "Gegner", 0, rowSpan: 2);
+			}
 
-            var BorderPunkte = new ScoreCardField("Gewinn-\r\npunkte", 0);
-            BorderPunkte.Textblock.FontWeight = FontWeights.Bold;
-            SetColumn(BorderPunkte, colCounter);
-            SetRowSpan(BorderPunkte, 2);
-            Children.Add(BorderPunkte);
-            colCounter++;
+			#endregion
+		}
 
-            #endregion
+		// Erstellt ein Feld, setzt Row/Column/RowSpan/ColumnSpan und erhöht col um colSpan.
+		private ScoreCardField AddField(ref int col, string text, int? width = null, int row = 0, int rowSpan = 1, int colSpan = 1)
+		{
+			ScoreCardField field = width.HasValue ? new ScoreCardField(text, width.Value) : new ScoreCardField(text);
+			if (rowSpan > 1) SetRowSpan(field, rowSpan);
+			if (colSpan > 1) SetColumnSpan(field, colSpan);
+			SetColumn(field, col);
+			SetRow(field, row);
+			Children.Add(field);
+			col += colSpan;
+			return field;
+		}
 
-            colCounter++;
+		// Fügt einen Titel mit ColumnSpan an der aktuellen Startspalte ein, ohne colCounter zu ändern.
+		private void AddSpanTitle(int startCol, string text, int span)
+		{
+			var title = new ScoreCardField(text);
+			SetColumnSpan(title, span);
+			SetColumn(title, startCol);
+			SetRow(title, 0);
+			Children.Add(title);
+		}
 
-            #region Texte Gegner
+		// Fügt die nummerierten Kehren (1..6 und optional 7/8) hinzu; erhöht col entsprechend.
+		private void AddKehrenGroup(ref int col, bool is8TurnsGame, bool include7and8)
+		{
+			// Standard 1..6
+			for (int i = 1; i <= 6; i++)
+			{
+				AddField(ref col, i.ToString(), row: 1);
+			}
 
-            var BorderGegner = new ScoreCardField("Spiel", 270);
-            SetRowSpan(BorderGegner, 2);
-            SetColumn(BorderGegner, colCounter);
-            Children.Add(BorderGegner);
-            colCounter++;
-
-            var BorderKehreG = new ScoreCardField("K e h r e n");
-            SetColumnSpan(BorderKehreG, kehrenColSpan);
-            SetColumn(BorderKehreG, colCounter);
-            SetRow(BorderKehreG, 0);
-            Children.Add(BorderKehreG);
-
-            var BorderKehre1G = new ScoreCardField("1");
-            SetColumn(BorderKehre1G, colCounter);
-            SetRow(BorderKehre1G, 1);
-            Children.Add(BorderKehre1G);
-            colCounter++;
-
-            var BorderKehre2G = new ScoreCardField("2");
-            SetColumn(BorderKehre2G, colCounter);
-            SetRow(BorderKehre2G, 1);
-            Children.Add(BorderKehre2G);
-            colCounter++;
-
-            var BorderKehre3G = new ScoreCardField("3");
-            SetColumn(BorderKehre3G, colCounter);
-            SetRow(BorderKehre3G, 1);
-            Children.Add(BorderKehre3G);
-            colCounter++;
-
-            var BorderKehre4G = new ScoreCardField("4");
-            SetColumn(BorderKehre4G, colCounter);
-            SetRow(BorderKehre4G, 1);
-            Children.Add(BorderKehre4G);
-            colCounter++;
-
-            var BorderKehre5G = new ScoreCardField("5");
-            SetColumn(BorderKehre5G, colCounter);
-            SetRow(BorderKehre5G, 1);
-            Children.Add(BorderKehre5G);
-            colCounter++;
-
-            var BorderKehre6G = new ScoreCardField("6");
-            SetColumn(BorderKehre6G, colCounter);
-            SetRow(BorderKehre6G, 1);
-            Children.Add(BorderKehre6G);
-            colCounter++;
-
-            if (!opponentOnScoreCards)
-            {
-                var BorderKehre7G = new ScoreCardField("7");
-                SetColumn(BorderKehre7G, colCounter);
-                SetRow(BorderKehre7G, 1);
-                Children.Add(BorderKehre7G);
-                colCounter++;
-
-                if (is8TurnsGame)
-                {
-                    var BorderKehre8G = new ScoreCardField("8");
-                    SetColumn(BorderKehre8G, colCounter);
-                    SetRow(BorderKehre8G, 1);
-                    Children.Add(BorderKehre8G);
-                    colCounter++;
-                }
-            }
-
-            var BorderSummeG = new ScoreCardField("Summe", 0);
-            BorderSummeG.Textblock.FontWeight = FontWeights.Bold;
-            SetColumn(BorderSummeG, colCounter);
-            SetRowSpan(BorderSummeG, 2);
-            Children.Add(BorderSummeG);
-            colCounter++;
-
-
-            if (!opponentOnScoreCards && !forStockTV)
-            {
-                var BorderStrafSummeG = new ScoreCardField("Straf-\r\npunkte", 0);
-                SetColumn(BorderStrafSummeG, colCounter);
-                SetRowSpan(BorderStrafSummeG, 2);
-                Children.Add(BorderStrafSummeG);
-                colCounter++;
-            }
-
-            var BorderPunkteG = new ScoreCardField("Gewinn-\r\npunkte", 0);
-            BorderPunkteG.Textblock.FontWeight = FontWeights.Bold;
-            SetColumn(BorderPunkteG, colCounter);
-            SetRowSpan(BorderPunkteG, 2);
-            Children.Add(BorderPunkteG);
-
-            if (opponentOnScoreCards)
-            {
-                colCounter++;
-                var BorderNameG = new ScoreCardField("Gegner", 0);
-                SetColumn(BorderNameG, colCounter);
-                SetRowSpan(BorderNameG, 2);
-                Children.Add(BorderNameG);
-            }
-
-            #endregion
-
-        }
-
-        internal ScoreCardHeaderGrid(bool is8TurnsGame, bool opponentOnScoreCards) : this(is8TurnsGame, false, opponentOnScoreCards) { }
-   
-    }
+			if (include7and8)
+			{
+				AddField(ref col, "7", row: 1);
+				if (is8TurnsGame)
+				{
+					AddField(ref col, "8", row: 1);
+				}
+			}
+		}
+	}
 }
