@@ -1,6 +1,8 @@
 ﻿using StockApp.UI.Dialogs;
 using StockApp.UI.Stores;
 using System;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace StockApp.UI.Services;
 
@@ -64,9 +66,51 @@ public class DialogService<TDialogModel> : IDialogService<TDialogModel>
         {
             _dialogStore.RemoveDialog(dialogModel);
             dialogModel.WindowCloseRequested -= handler;
-            dialogModel.Dispose();
-            dialog.Close();
-        };
+
+			if (dialog is Window win)
+			{
+				// Dispose erst nach tatsächlichem Closed-Ereignis, nicht während Closing
+				EventHandler closedHandler = null;
+				closedHandler = (s, args) =>
+				{
+					win.Closed -= closedHandler;
+					try
+					{
+						dialogModel.Dispose();
+					}
+					catch
+					{
+						// Sicherstellen, dass Dispose-Fehler den UI-Thread nicht unterbrechen
+					}
+				};
+				win.Closed += closedHandler;
+
+				// Close asynchron planen, damit kein re-entrant Close während Closing ausgelöst wird
+				win.Dispatcher.BeginInvoke(new Action(() =>
+				{
+					try
+					{
+						win.Close();
+					}
+					catch
+					{
+						// Ignorieren: wenn WPF bereits im Closing/Closed ist, wird Closed dennoch ausgelöst
+					}
+				}), DispatcherPriority.Background);
+			}
+			else
+			{
+				// Fallback: für nicht-Window-Implementierungen sofort schließen und sofort Dispose
+				try
+				{
+					dialog.Close();
+				}
+				finally
+				{
+					try { dialogModel.Dispose(); } catch { }
+				}
+			}
+		};
 
         dialogModel.WindowCloseRequested += handler;
         dialog.DataContext = dialogModel;
