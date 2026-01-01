@@ -37,7 +37,7 @@ public interface IStockTV : IEquatable<IStockTV>, IComparable<IStockTV>, IDispos
     void ClearMarketingImage();
     void ShowMarketing();
 
-    void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen);
+    void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen, int gameOffset);
 
     /// <summary>
     /// Send Name to StockTV for Zielbewerb
@@ -336,12 +336,13 @@ public class StockTV : IStockTV
 
     public void TVSettingsSend() => _appClient?.SendToStockTV(MessageTopic.SetSettings, TVSettings.GetSettings());
 
-    public void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen)
+    public void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen, int gameOffset)
     {
         string valueString = string.Empty;
         foreach (var b in begegnungen)
         {
-            valueString += b.GetStockTVString(TVSettings.NextBahnModus == NextCourtMode.Left);
+            b.SpielNummer -= gameOffset; // Adjust game number by offset
+			valueString += b.GetStockTVString(TVSettings.NextBahnModus == NextCourtMode.Left);
         }
         _appClient?.SendToStockTV(MessageTopic.SetTeamNames, valueString);
     }

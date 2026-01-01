@@ -57,9 +57,18 @@ public class StockTVCollectionViewModel : ViewModelBase
     public ICommand DiscoverCommand { get; }
     public ICommand RecreateViewsCommand { get; }
     public ICommand SendTeamNamesCommand { get; init; }
+    public int GameOffset
+    {
+        get => _stockTVService.GameOffset;
+        set
+        {
+            _stockTVService.GameOffset = value;
+            RaisePropertyChanged(nameof(GameOffset));
+		}
+	}
 
 
-    private void StockTVService_StockTVCollectionChanged(object sender, StockTVCollectionChangedEventArgs e)
+	private void StockTVService_StockTVCollectionChanged(object sender, StockTVCollectionChangedEventArgs e)
     {
         App.Current.Dispatcher.Invoke(
             () => FillStockTvViewModelsCollection()
@@ -98,8 +107,8 @@ public class StockTVCollectionViewModel : ViewModelBase
                             IsAnspielTeamA = item.IsTeamA_Starting
                         });
                     }
-                    tv?.SendTeamNames(begegnungen);
-                }
+                    tv?.SendTeamNames(begegnungen, GameOffset);
+				}
             }
         }
 

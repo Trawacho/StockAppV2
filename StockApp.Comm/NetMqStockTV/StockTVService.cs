@@ -11,6 +11,11 @@ public interface IStockTVService : IDisposable
     void Discover();
     void AddManual(string hostname, string ipAddress);
 
+    /// <summary>
+    /// Gets or sets the offset value used to adjust the game's starting position
+    /// </summary>
+    int GameOffset { get; set; }
+
     IEnumerable<IStockTV> StockTVCollection { get; }
 
     event EventHandler<StockTVCollectionChangedEventArgs> StockTVCollectionChanged;
@@ -33,13 +38,11 @@ public class StockTVService : IStockTVService
         get
         {
 
-            if (_stockTvList.Any() && _stockTvList
+            if (_stockTvList.Count != 0 && _stockTvList
                                         .OrderBy(t => t.TVSettings.Spielgruppe)
                                         .ThenBy(t => t.TVSettings.Bahn)
                                         .First().TVSettings.NextBahnModus == NextCourtMode.Right)
             {
-
-
                 return _stockTvList.OrderBy(t => t.TVSettings.Spielgruppe)
                                         .ThenBy(t => t.TVSettings.Bahn)
                                         .ThenBy(t => t.HostName)
@@ -73,11 +76,17 @@ public class StockTVService : IStockTVService
     public event EventHandler<StockTVResultChangedEventArgs> StockTVResultChanged;
     protected virtual void RaiseStockTVResultChanged(IStockTV stockTV, StockTVResultChangedEventArgs args)
     {
-        var handler = StockTVResultChanged;
-        handler?.Invoke(stockTV, args);
+        args.GameOffset = GameOffset;
+		var handler = StockTVResultChanged;
+		handler?.Invoke(stockTV, args);
     }
 
-    public StockTVService()
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    public int GameOffset { get; set; } = 0;
+
+	public StockTVService()
     {
         _stockTvList = new List<IStockTV>();
 
@@ -85,7 +94,6 @@ public class StockTVService : IStockTVService
 
         _mdnsService.StockTVDiscovered += MdnsService_StockTVDiscovered;
     }
-
 
 
     #region mDNS Implementation

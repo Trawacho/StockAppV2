@@ -2,15 +2,16 @@
 
 public class StockTVResultChangedEventArgs : EventArgs
 {
-    public StockTVResultChangedEventArgs()
-    {
+	public StockTVResultChangedEventArgs()
+	{
 
-    }
+	}
 
-    public StockTVResultChangedEventArgs(IStockTVResult tVResult) : this()
-    {
-        TVResult = tVResult;
-    }
+	public StockTVResultChangedEventArgs(IStockTVResult tVResult) : this()
+	{
+		TVResult = tVResult;
+	}
 
-    public IStockTVResult TVResult { get; }
+	public IStockTVResult TVResult { get; }
+	public int GameOffset { get; set; } = 0;
 }

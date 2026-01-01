@@ -563,7 +563,7 @@ public class TeamBewerb : ITeamBewerb
 
     #endregion
 
-    public void SetStockTVResult(IStockTVResult tVResult)
+    public void SetStockTVResult(IStockTVResult tVResult, int gameOffset)
     {
         if (tVResult.TVSettings.MessageVersion == 0)
         {
@@ -584,11 +584,13 @@ public class TeamBewerb : ITeamBewerb
 
         foreach (var gameResult in tVResult.Results)
         {
-            //Prüfen ob das vorherige Spiel abgeschlossen ist und in den Master kopiert werden kann
-            var preGame = courtGames.FirstOrDefault(g => g.GameNumberOverAll == gameResult.GameNumber - 1);
+            int gameNumber = gameResult.GameNumber + gameOffset;
+
+			//Prüfen ob das vorherige Spiel abgeschlossen ist und in den Master kopiert werden kann
+			var preGame = courtGames.FirstOrDefault(g => g.GameNumberOverAll == gameNumber - 1);
             preGame?.Spielstand.CopyLiveToMasterValues();
 
-            var game = courtGames.FirstOrDefault(g => g.GameNumberOverAll == gameResult.GameNumber);
+            var game = courtGames.FirstOrDefault(g => g.GameNumberOverAll == gameNumber);
             if (game == null) continue; //Wenn kein Spiel gefunden wird, sofort zur nächsten iteration gehen
 
             game.Spielstand.Reset();

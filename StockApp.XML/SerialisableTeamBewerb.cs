@@ -260,7 +260,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     public void SetBroadcastData(IBroadCastTelegram telegram) => throw new NotImplementedException();
 
-    public void SetStockTVResult(IStockTVResult tVResult) => throw new NotImplementedException();
+    public void SetStockTVResult(IStockTVResult tVResult, int gameOffset) => throw new NotImplementedException();
 
     public void Reset() { }
 
