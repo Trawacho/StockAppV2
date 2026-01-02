@@ -16,13 +16,19 @@ internal class ResultInputPerTeamAndKehreViewModel : ViewModelBase
 	private readonly bool _is8TurnsGame;
 	private ITeam _selectedTeam;
 
+	private readonly bool _asCupModus = false;
+
 	private void SetPointsPerTeam()
 	{
 		KehrenPerTeam.Clear();
 
 		if (SelectedTeam == null) return;
 
-		foreach (var game in SelectedTeam?.Games?.OrderBy(g => g.GameNumberOverAll))
+		var games = _asCupModus
+				? SelectedTeam?.GetGamesOrderedForCupModus()
+				: SelectedTeam?.GetGamesOrderedByGameNumberOverAll();
+
+		foreach (var game in games)
 		{
 			KehrenPerTeam.Add(new KehrePerTeamAndGameViewModel(game, SelectedTeam));
 		}
@@ -47,9 +53,10 @@ internal class ResultInputPerTeamAndKehreViewModel : ViewModelBase
 
 	public bool Has8Turns => _is8TurnsGame;
 
-	public ResultInputPerTeamAndKehreViewModel(IEnumerable<ITeam> teams, bool is8TurnsGame)
+	public ResultInputPerTeamAndKehreViewModel(IEnumerable<ITeam> teams, bool is8TurnsGame, bool asCupModus)
 	{
 		_is8TurnsGame = is8TurnsGame;
+		_asCupModus = asCupModus;
 
 		foreach (var team in teams)
 		{
@@ -158,7 +165,7 @@ internal class ResultInputPerTeamAndKehreViewModel : ViewModelBase
 				? _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamA ?? 0
 				: _game.Spielstand.Kehren_Master.FirstOrDefault(k => k.KehrenNummer == kehrenNummer)?.PunkteTeamB ?? 0;
 		}
-		
+
 		public KehrePerTeamAndGameViewModel(IGame game, ITeam team) : base(game)
 		{
 			_team = team;
