@@ -118,5 +118,9 @@ public class SerialisableTeam : ITeam
 
     public bool IsEachGameDone(bool live) => throw new NotImplementedException();
 
-    #endregion
+    public IOrderedEnumerable<IGame> GetGamesOrderedByGameNumberOverAll() => throw new NotImplementedException();
+    
+    public IOrderedEnumerable<IGame> GetGamesOrderedForCupModus() => throw new NotImplementedException();
+
+	#endregion
 }
