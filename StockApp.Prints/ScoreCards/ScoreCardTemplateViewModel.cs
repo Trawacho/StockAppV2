@@ -53,10 +53,7 @@ public class ScoreCardTemplateViewModel : ViewModelBase
 			{
 				BodyElements.Add(GetScoreCardGrid(
 					team,
-					team.Games.Where(g => !g.IsPauseGame())
-								.Where(t => t.TeamA.StartNumber == team.StartNumber)
-								.OrderBy(o => o.TeamB.StartNumber)
-								.ThenBy(g => g.GameNumberOverAll),
+					team.GetGamesOrderedForCupModus(),
 					namesOnScoreCard,
 					is8TurnsGame,
 					0,
@@ -85,7 +82,7 @@ public class ScoreCardTemplateViewModel : ViewModelBase
 		{
 			BodyElements.Add(GetScoreCardGrid(
 				team,
-				team.Games.OrderBy(g => g.GameNumberOverAll),
+				team.GetGamesOrderedByGameNumberOverAll(),
 				namesOnScoreCard,
 				is8TurnsGame,
 				0,
