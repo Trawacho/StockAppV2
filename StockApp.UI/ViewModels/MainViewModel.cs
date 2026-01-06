@@ -1,4 +1,5 @@
 ﻿using log4net;
+using log4net.Appender;
 using log4net.Core;
 using log4net.Repository;
 using log4net.Repository.Hierarchy;
@@ -10,6 +11,7 @@ using StockApp.UI.Stores;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 
@@ -207,15 +209,56 @@ public class MainViewModel : ViewModelBase
 	public ICommand OpenLogFileCommand => _openLogFileCommand ??= new RelayCommand(
 		(p) =>
 		{
-			//var rootAppender = ((Hierarchy)LogManager.GetRepository())
-			//							 .Root.Appenders.OfType<FileAppender>()
-			//							 .FirstOrDefault();
+			// Read path from log4net configuration (FileAppender / RollingFileAppender).
+			string file = null;
+			try
+			{
+				var hierarchy = LogManager.GetRepository() as Hierarchy;
+				if (hierarchy != null)
+				{
+					var appenders = hierarchy.GetAppenders();
+					var fileAppender = appenders.OfType<FileAppender>().FirstOrDefault()
+									   ?? appenders.OfType<RollingFileAppender>().FirstOrDefault();
 
-			//string filename = rootAppender != null ? rootAppender.File : string.Empty;
-			//string path = Path.GetDirectoryName(filename);
-			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StockApp") + "\\";
-			Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
-			//todo: Erst prüfen, ob das Verzeichnis existiert. Prüfen, ob das in der StoreApp auch passt
+					if (fileAppender != null)
+					{
+						file = (fileAppender as FileAppender)?.File ?? (fileAppender as RollingFileAppender)?.File;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				_log?.Warn("Unable to read log4net appenders to locate log file path.", ex);
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(file))
+			{
+				_log?.Warn("No file appender configured in log4net; cannot determine log folder.");
+				return;
+			}
+
+			// Make path absolute if relative
+			if (!Path.IsPathRooted(file))
+			{
+				file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
+			}
+
+			var folderPath = Path.GetDirectoryName(file);
+			if (string.IsNullOrWhiteSpace(folderPath) || !Directory.Exists(folderPath))
+			{
+				_log?.Warn($"Log folder '{folderPath}' does not exist.");
+				return;
+			}
+
+			try
+			{
+				Process.Start(new ProcessStartInfo(folderPath) { UseShellExecute = true });
+			}
+			catch (Exception ex)
+			{
+				_log?.Error($"Unable to open folder '{folderPath}' in Explorer.", ex);
+			}
 		},
 		(p) => true);
 
