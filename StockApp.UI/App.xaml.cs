@@ -9,6 +9,7 @@ using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using StockApp.UI.ViewModels;
 using StockApp.UI.Views;
+using System;
 using System.Reflection;
 using System.Windows;
 
@@ -97,10 +98,21 @@ namespace StockApp.UI
 			Hierarchy hierarchy = log4net.LogManager.GetRepository() as Hierarchy;
 			PreferencesManager.GeneralAppSettings.LogLevel = hierarchy.Root.Level;
 
-			for (int i = 0; i != e.Args.Length; ++i)
+			foreach (var arg in e.Args)
 			{
-				if (e.Args[i].EndsWith(".skmr"))
-					_turnierStore.Load(e.Args[i]);
+				if (arg.EndsWith(".skmr", StringComparison.OrdinalIgnoreCase))
+				{
+					try
+					{
+						_turnierStore.Load(arg);
+					}
+					catch (Exception ex)
+					{
+						_log.Error($"Fehler beim Laden der Turnierdatei '{arg}'", ex);
+						MessageBox.Show($"Fehler beim Laden der Turnierdatei '{arg}': {ex.Message}", "Fehler beim Laden der Turnierdatei", MessageBoxButton.OK, MessageBoxImage.Error);
+					}
+					break; // Erste passende Datei laden und Schleife beenden
+				}
 			}
 
 			INavigationService<TurnierViewModel> turnierNavigationService = CreateTurnierNavigationService();

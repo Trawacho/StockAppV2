@@ -45,6 +45,17 @@
         </uap:DefaultTile >
         <uap:SplashScreen Image="Images\SplashScreen.png" />
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="skmrfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.skmr</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>StockApp Datei</uap:DisplayName>
+            <uap:Logo>Images\Logo.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 
