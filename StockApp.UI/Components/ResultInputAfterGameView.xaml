@@ -13,15 +13,12 @@
             <Setter Property="Width" Value="600"/>
             <Setter Property="Height" Value="800"/>
         </Style>
-
-        
     </d:DesignerProperties.DesignStyle>
+  
     <UserControl.Resources>
-
         <Style TargetType="DataGridCell" x:Key="DisableSelection">
             <Setter Property="Focusable" Value="False"/>
         </Style>
-
     </UserControl.Resources>
 
     <Grid>
@@ -69,21 +66,24 @@
                                 <Setter Property="Background" Value="Green"/>
                             </Trigger>
                         </Style.Triggers>
-
                     </Style>
-
                     
                     <Style x:Key="colHeaderCenter" TargetType="DataGridColumnHeader">
                         <Setter Property="HorizontalContentAlignment" Value="Center" />
                     </Style>
-
                     
                     <Style x:Key="verticalCenter" TargetType="{x:Type TextBlock}">
                         <Setter Property="Margin" Value="5"/>
                         <Setter Property="TextAlignment" Value="Center"/>
                     </Style>
 
-                    
+                    <Style x:Key="centeredCheckBox" TargetType="{x:Type CheckBox}">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+
                     <Style x:Key="editTextBox" TargetType="{x:Type TextBox}">
                         <Setter Property="TextAlignment" Value="Center"/>
                         <Setter Property="VerticalAlignment" Value="Stretch"/>
@@ -94,7 +94,6 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
-                    
 
                 </DataGrid.Resources>
 
@@ -140,13 +139,20 @@
                                         EditingElementStyle="{StaticResource editTextBox}"
                                         IsReadOnly="False"/>
 
+                    <DataGridCheckBoxColumn Header="StockTV&#x0a;gesperrt"
+                                            Binding="{Binding Path=IsSetByHand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="auto"
+                                            HeaderStyle="{StaticResource colHeaderCenter}"
+                                            ElementStyle="{StaticResource centeredCheckBox}"
+                                            EditingElementStyle="{StaticResource centeredCheckBox}"
+                                            IsReadOnly="False"/>
+
                 </DataGrid.Columns>
 
             </DataGrid>
 
-
         </StackPanel>
 
-
     </Grid>
+
 </UserControl>

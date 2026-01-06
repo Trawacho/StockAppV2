@@ -66,6 +66,18 @@ public interface ITeam : IEquatable<ITeam>
 	double GetStockNote(bool live = false);
 	(int positiv, int negativ) GetStockPunkte(bool live = false);
 	int GetStockPunkteDifferenz(bool live = false);
+
+	/// <summary>
+	/// Retrieves all games ordered by their overall game number in ascending order.
+	/// </summary>
+	/// <returns>An ordered sequence of games, sorted by their overall game number from lowest to highest.</returns>
+	IOrderedEnumerable<IGame> GetGamesOrderedByGameNumberOverAll();
+
+	/// <summary>
+	/// Returns the games for the cup modus in the order of opponents and game numbers in ascending order without games with pauses.
+	/// </summary>
+	/// <returns>An ordered sequence of games for the cup modus.</returns>
+	IOrderedEnumerable<IGame> GetGamesOrderedForCupModus();
 }
 
 public class Team : ITeam
@@ -202,7 +214,7 @@ public class Team : ITeam
 		var result = new List<int>();
 
 		// Nach SpielNummer sortierte Liste
-		var sortedGames = Games.OrderBy(g => g.GameNumberOverAll).ToList();
+		var sortedGames = GetGamesOrderedByGameNumberOverAll().ToList();
 
 		for (int i = 0; i < sortedGames.Count; i++)
 		{
@@ -215,7 +227,7 @@ public class Team : ITeam
 	public IEnumerable<int> SpieleMitAnspiel()
 	{
 		var result = new List<int>();
-		var sortedGames = Games.OrderBy(g => g.GameNumberOverAll).ToList();
+		var sortedGames = GetGamesOrderedByGameNumberOverAll().ToList();
 
 		for (int i = 0; i < sortedGames.Count; i++)
 		{
@@ -232,7 +244,26 @@ public class Team : ITeam
 		Games.Where(g => !g.IsPauseGame() && g.GetOpponent(this).TeamStatus == TeamStatus.Normal)
 			 .All(g => g.IsGameDone(live));
 
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	/// <returns><inheritdoc/></returns>
+	public IOrderedEnumerable<IGame> GetGamesOrderedByGameNumberOverAll()
+	{
+		return Games.OrderBy(g => g.GameNumberOverAll);
+	}
 
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	/// <returns><inheritdoc/></returns>
+	public IOrderedEnumerable<IGame> GetGamesOrderedForCupModus()
+	{
+		return Games.Where(g => !g.IsPauseGame())
+					.Where(g => g.TeamA.StartNumber == this.StartNumber)
+					.OrderBy(g => g.TeamB.StartNumber)
+					.ThenBy(g => g.GameNumberOverAll);
+	}
 
 	#endregion
 

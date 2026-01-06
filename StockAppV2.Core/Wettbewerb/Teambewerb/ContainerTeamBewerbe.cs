@@ -151,11 +151,11 @@ public class ContainerTeamBewerbe : IContainerTeamBewerbe
         }
     }
 
-    public void SetStockTVResult(IStockTVResult tVResult)
+    public void SetStockTVResult(IStockTVResult tVResult, int gameOffset)
     {
         foreach (var bewerb in TeamBewerbe.Where(t => t.SpielGruppe == tVResult.TVSettings.Spielgruppe))
         {
-            bewerb.SetStockTVResult(tVResult);
+            bewerb.SetStockTVResult(tVResult, gameOffset);
         }
     }
 

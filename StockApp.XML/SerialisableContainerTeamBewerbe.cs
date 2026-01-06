@@ -81,7 +81,7 @@ public class SerialisableContainerTeamBewerbe : IContainerTeamBewerbe
         throw new NotImplementedException();
     }
 
-    public void SetStockTVResult(IStockTVResult tVResult)
+    public void SetStockTVResult(IStockTVResult tVResult, int gameOffset)
     {
         throw new NotImplementedException();
     }

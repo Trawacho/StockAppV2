@@ -132,10 +132,10 @@ public class ResultsViewModel : ViewModelBase
                 ResultsEntryViewModel = new ResultInputAfterGameWithKehreViewModel(TeamBewerb.GetAllGames(), TeamBewerb.Is8TurnsGame);
                 break;
             case TeamBewerbInputMethod.PerTeam:
-                ResultsEntryViewModel = new ResultInputPerTeamViewModel(TeamBewerb.Teams);
+                ResultsEntryViewModel = new ResultInputPerTeamViewModel(TeamBewerb.Teams, TeamBewerb.WertungskarteAsCupCard);
                 break;
             case TeamBewerbInputMethod.PerTeamWithTurns:
-                ResultsEntryViewModel = new ResultInputPerTeamAndKehreViewModel(TeamBewerb.Teams, TeamBewerb.Is8TurnsGame);
+                ResultsEntryViewModel = new ResultInputPerTeamAndKehreViewModel(TeamBewerb.Teams, TeamBewerb.Is8TurnsGame, TeamBewerb.WertungskarteAsCupCard);
                 break;
         }
     }

@@ -13,8 +13,8 @@ namespace StockApp.Prints.ScoreCards.Base
         private readonly string _teamName;
 
 
-        private ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8, bool forStockTV, bool opponentOnScoreCards)
-            : base(kehren8, forStockTV, opponentOnScoreCards)
+        private ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8,  bool opponentOnScoreCards, string nameGegner)
+            : base(kehren8, opponentOnScoreCards)
         {
             int columnSpan = opponentOnScoreCards
                                 ? 5
@@ -94,7 +94,7 @@ namespace StockApp.Prints.ScoreCards.Base
             //Gegener
             var textBlockGegner = new TextBlock()
             {
-                Text = "Gegner",
+                Text = nameGegner,
                 FontWeight = FontWeights.Normal,
                 FontSize = 12,
                 FontFamily = _fnt,
@@ -106,8 +106,8 @@ namespace StockApp.Prints.ScoreCards.Base
             Children.Add(textBlockGegner);
         }
 
-        internal ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8, int numberOfRound, bool forStockTV, bool opponentOnScoreCards)
-            : this(startNumber, teamName, printTeamName, kehren8, forStockTV, opponentOnScoreCards)
+        internal ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8, int numberOfRound, bool opponentOnScoreCards, string nameGegner)
+            : this(startNumber, teamName, printTeamName, kehren8, opponentOnScoreCards, nameGegner)
         {
             if (numberOfRound > 0)
             {
@@ -124,7 +124,5 @@ namespace StockApp.Prints.ScoreCards.Base
                 Children.Add(textBlockRound);
             }
         }
-        internal ScoreCardHeader(int startNumber, string teamName, bool printTeamName, bool kehren8, int numberOfRound, bool opponentOnScoreCards)
-            : this(startNumber, teamName, printTeamName, kehren8, numberOfRound, false, opponentOnScoreCards) { }
     }
 }

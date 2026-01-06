@@ -4,9 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StockApp.UI.Views" 
-             xmlns:components="clr-namespace:StockApp.UI.Components" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:StockApp.UI.Behaviors"
+             b:WindowLifecycleBehavior.LoadedCommand="{Binding Path=OnLoadedCommand}"
+             xmlns:components="clr-namespace:StockApp.UI.Components" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="450" d:DesignWidth="900"
              >
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
@@ -16,13 +18,6 @@
             <Setter Property="Height" Value="800"/>
         </Style>
     </d:DesignerProperties.DesignStyle>
-
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction
-                Command="{Binding Path=OnLoadedCommand}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
 
     <Grid Background="WhiteSmoke">
 
@@ -34,7 +29,7 @@
         </Grid.RowDefinitions>
         <components:TopHeader TopHeaderText="StockTV Übersicht"/>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
+        <StackPanel Orientation="Horizontal" Grid.Row="1" >
             <Button Content="StockTV suchen" 
                 Command="{Binding Path=DiscoverCommand}"  
                 HorizontalAlignment="Left"  
@@ -49,17 +44,27 @@
                     Height="50" 
                     Margin="10 0" 
                     ToolTip="Mannschaftsnamen aus Spielplan an StockTVs senden" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20 0">
+
+            <StackPanel Orientation="Vertical" Margin="20 0" Height="50">
+                    <Label Content="Spiel Offset:" HorizontalContentAlignment="Left" Height="25"/>
+                    <TextBox Margin="0 0 0 0" Height="25"
+                             HorizontalContentAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Text="{Binding Path=GameOffset, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20 0" Height="50">
                 <StackPanel>
-                    <Label Content="IP-Adresse:"/>
+                    <Label Content="IP-Adresse:" Height="25"/>
                     <TextBox MinWidth="150" Margin="0 0 10 0" Height="25"
-                         HorizontalContentAlignment="Center"
-                         VerticalContentAlignment="Center"
-                         Text="{Binding Path=IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                             HorizontalContentAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Text="{Binding Path=IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
                 <Button Content="Add" Padding="10" 
                         Width="75" Command="{Binding Path=AddManualCommand}"/>
             </StackPanel>
+            
         </StackPanel>
 
         <ItemsControl ItemsSource="{Binding StockTvViewModels}" Grid.Row="2" Margin="0 15 0 0">

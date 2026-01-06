@@ -6,7 +6,7 @@ namespace StockApp.Prints.ScoreCards.Base;
 
 internal class GameSummaryGrid : ScoreCardGrid
 {
-    internal GameSummaryGrid(bool is8TurnsGame, bool forStockTv, bool opponentOnScoreCards) : base(is8TurnsGame, forStockTv, opponentOnScoreCards)
+    internal GameSummaryGrid(bool is8TurnsGame, bool opponentOnScoreCards) : base(is8TurnsGame, opponentOnScoreCards)
     {
         RowDefinitions.Add(new RowDefinition()
         {
@@ -24,7 +24,6 @@ internal class GameSummaryGrid : ScoreCardGrid
         Children.Add(textBlockWerbung);
 
         int startColumn = is8TurnsGame ? 9 : 8;
-        startColumn += forStockTv ? 1 : 0;
         if (opponentOnScoreCards) startColumn = 7;
 
 
@@ -40,7 +39,7 @@ internal class GameSummaryGrid : ScoreCardGrid
         Children.Add(BorderSumme);
         startColumn++;
 
-        if (!opponentOnScoreCards && !forStockTv)
+        if (!opponentOnScoreCards)
         {
             var BorderStrafSumme = new ScoreCardField(string.Empty, 0);
             SetColumn(BorderStrafSumme, startColumn);
@@ -71,7 +70,7 @@ internal class GameSummaryGrid : ScoreCardGrid
         Children.Add(BorderSummeG);
         startColumn++;
 
-        if (!opponentOnScoreCards && !forStockTv)
+        if (!opponentOnScoreCards)
         {
             var BorderStrafSummeG = new ScoreCardField(string.Empty, 0);
             SetColumn(BorderStrafSummeG, startColumn);
@@ -84,6 +83,4 @@ internal class GameSummaryGrid : ScoreCardGrid
         SetColumn(BorderPunkteG, startColumn);
         Children.Add(BorderPunkteG);
     }
-
-    internal GameSummaryGrid(bool is8TurnsGame, bool opponentOnScoreCards):this(is8TurnsGame, false, opponentOnScoreCards) { }
 }

@@ -7,15 +7,15 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
-		<Version>1.11.0.0</Version>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Version>1.12.0.0</Version>
+		<Platforms>AnyCpu</Platforms>
+		<PackageIcon>StockAPP_512.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Remove="com\Vereine.json" />
 		<None Remove="Ressources\icon_delete.png" />
 		<None Remove="Ressources\StockApp.ico" />
-		<None Remove="Ressources\StockAPP_512.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -36,9 +36,8 @@
 	
 	<ItemGroup>
 		<PackageReference Include="DotNetProjects.WpfToolkit.Input" Version="6.1.94" />
-		<PackageReference Include="log4net" Version="3.0.3" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+		<PackageReference Include="log4net" Version="3.2.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
 		<PackageReference Include="Prism.Core" Version="9.0.537" />
 	</ItemGroup>
 
@@ -51,8 +50,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="log4net.config">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  <None Update="Ressources\StockAPP_512.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
 	  </None>
 	</ItemGroup>
 

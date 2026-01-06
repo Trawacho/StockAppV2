@@ -284,7 +284,15 @@ internal class ZielBewerb : IZielBewerb
 
     private IBroadCastTelegram _lastTelegram;
 
-    public void SetStockTVResult(IStockTVResult tVResult)
+    /// <summary>
+    /// Updates the stock TV result for a participant based on the provided result data and game offset.
+    /// </summary>
+    /// <remarks>If the message version in the TV settings is zero, the method sends broadcast data instead of
+    /// updating participant results. Only results for the 'Ziel' game mode are processed; other modes are
+    /// ignored.</remarks>
+    /// <param name="tVResult">The result data containing TV settings and competition results to apply. Cannot be null.</param>
+    /// <param name="gameOffset">not used in this part</param>
+    public void SetStockTVResult(IStockTVResult tVResult, int gameOffset)
     {
         if (tVResult.TVSettings.MessageVersion == 0)
         {

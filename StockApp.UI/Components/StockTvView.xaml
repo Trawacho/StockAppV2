@@ -5,15 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:StockApp.UI.Components" 
              xmlns:converters="clr-namespace:StockApp.UI.Converters" 
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:StockApp.UI.Behaviors"
+             b:EventCommandBehavior.Event="Loaded"
+             b:EventCommandBehavior.Command="{Binding Path=OnLoadedCommand}"
              mc:Ignorable="d" >
 
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding Path=OnLoadedCommand}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
-    
     <d:DesignerProperties.DesignStyle>
         <Style TargetType="UserControl">
             <Setter Property="Background" Value="White"/>
@@ -26,7 +22,6 @@
     </UserControl.Resources>
 
     <Border BorderThickness="2" BorderBrush="#FF2D2C2C" Margin="0" >
-        <!--<Viewbox >-->
         <StackPanel Orientation="Vertical" Background="#FFE6DF44">
 
             <!--Header-->
@@ -36,7 +31,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <CheckBox IsChecked="{Binding Path=Director, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="False" Grid.Column="0" VerticalAlignment="Center"/>
 
                 <TextBlock Grid.Column="1" Text="StockTV by Daniel Sturm" 
@@ -48,18 +43,16 @@
                                ToolTip="{Binding Path=Identifier}">
                 </TextBlock>
                 <Label Grid.Column="2" Content="X" 
-                           FontSize="9" 
-                           FontWeight="Bold" 
-                           Foreground="White"
-                           HorizontalContentAlignment="Right" 
-                           HorizontalAlignment="Right" 
-                           VerticalAlignment="Center"
-                           ToolTip="StockTV Modul schliessen">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseLeftButtonDown">
-                            <i:InvokeCommandAction Command="{Binding Path=StockTvCloseCommand}" CommandParameter="{Binding Path=StockTV}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                       FontSize="9" 
+                       FontWeight="Bold" 
+                       Foreground="White"
+                       HorizontalContentAlignment="Right" 
+                       HorizontalAlignment="Right" 
+                       VerticalAlignment="Center"
+                       ToolTip="StockTV Modul schliessen"
+                       b:EventCommandBehavior.Event="MouseLeftButtonDown"     
+                       b:EventCommandBehavior.Command="{Binding Path=StockTvCloseCommand}"
+                       b:EventCommandBehavior.CommandParameter="{Binding Path=StockTV}">
                 </Label>
             </Grid>
 
@@ -121,8 +114,6 @@
                          Text="{Binding CourtNumber}"/>
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Spielgruppe:" x:Name="labelSpielgruppe"/>
-                <!--<TextBox Grid.Row="1" Grid.Column="1" 
-                         Text="{Binding ElementName=ucStockTV, Path=Spielgruppe, Converter={StaticResource intToStringConverter}}"/>-->
                 <ComboBox Grid.Row="1" Grid.Column="1"
                               SelectedValue="{Binding Path=GameGroup}"
                               ItemsSource="{Binding Path=GameGroups, Mode=OneWay}"/>
@@ -255,24 +246,22 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <Grid.Resources>
                     <Style TargetType="TextBlock">
                         <Setter Property="FontSize" Value="12"/>
                         <Setter Property="Foreground" Value="WhiteSmoke"/>
                     </Style>
                 </Grid.Resources>
-                
+
                 <TextBlock ToolTip="Öffnet Windows Device Portal im Standardbrowser" 
                            Text="Windows Device Portal"
                            HorizontalAlignment="Left"
                            FontSize="9"
-                           Margin="4">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseLeftButtonDown">
-                            <i:InvokeCommandAction Command="{Binding Path=StockTvOpenWebsiteCommand}" CommandParameter="{Binding Path=StockTV}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                           Margin="4"
+                           b:EventCommandBehavior.Event="MouseLeftButtonDown" 
+                           b:EventCommandBehavior.Command="{Binding Path=StockTvOpenWebsiteCommand}"
+                           b:EventCommandBehavior.CommandParameter="{Binding Path=StockTV}">
                 </TextBlock>
                 <TextBlock Grid.Column="1" 
                            Text="{Binding Path=FirmwareVersion}" 
@@ -283,7 +272,6 @@
 
 
         </StackPanel>
-        <!--</Viewbox>-->
     </Border>
 
 </UserControl>

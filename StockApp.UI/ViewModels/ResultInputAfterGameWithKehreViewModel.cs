@@ -82,25 +82,32 @@ internal class ResultInputAfterGameWithKehreViewModel : ViewModelBase
 
     public class KehrenPerGameViewModel : KehrenBaseModel, INotifyPropertyChanged
     {
-        public KehrenPerGameViewModel(IGame game) : base(game)
-        {
+       
+		private void Game_SpielstandChanged(object sender, System.EventArgs e)
+		{
+			RaisePropertyChanged(nameof(StockPunkte1));
+            RaisePropertyChanged(nameof(StockPunkte2));
+		}
 
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected override void Dispose(bool disposing)
+		public KehrenPerGameViewModel(IGame game) : base(game)
+		{
+			_game.SpielstandChanged += Game_SpielstandChanged;
+		}
+
+		protected override void Dispose(bool disposing)
         {
             if (!_disposed)
             {
                 if (disposing)
                 {
-
-                }
+                    _game.SpielstandChanged -= Game_SpielstandChanged;
+				}
                 _disposed = true;
             }
         }
@@ -115,7 +122,17 @@ internal class ResultInputAfterGameWithKehreViewModel : ViewModelBase
 
         public override int StockPunkte2 => !_game.IsTeamA_Starting ? _game.Spielstand.Punkte_Master_TeamA : _game.Spielstand.Punkte_Master_TeamB;
 
-        protected override int GetKehre(int kehrenNummer, bool team1)
+		public bool IsSetByHand
+		{
+			set
+			{
+				_game.Spielstand.UnLock();
+				RaisePropertyChanged();
+			}
+			get => _game.Spielstand.IsSetByHand;
+		}
+
+		protected override int GetKehre(int kehrenNummer, bool team1)
         {
             if (team1)
             {

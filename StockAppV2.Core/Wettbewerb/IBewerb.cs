@@ -7,7 +7,7 @@ public interface IBewerb
 {
     void SetBroadcastData(IBroadCastTelegram telegram);
 
-    void SetStockTVResult(IStockTVResult tVResult);
+    void SetStockTVResult(IStockTVResult tVResult, int gameOffset);
 
     void Reset();
 }

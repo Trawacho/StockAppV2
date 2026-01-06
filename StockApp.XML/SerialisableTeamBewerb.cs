@@ -52,13 +52,14 @@ public class SerialisableTeamBewerb : ITeamBewerb
         FontSizeVorText = bewerb.FontSizeVorText;
         FontSizeEndText = bewerb.FontSizeEndText;
         PageBreakSplitGroup = bewerb.PageBreakSplitGroup;
-    }
+        WertungskarteAsCupCard = bewerb.WertungskarteAsCupCard;
+	}
 
 
     internal void ToNormal(ITeamBewerb teamBewerb)
     {
-
-        teamBewerb.NumberOfGameRounds = NumberOfGameRounds;
+        teamBewerb.WertungskarteAsCupCard = WertungskarteAsCupCard;
+		teamBewerb.NumberOfGameRounds = NumberOfGameRounds;
         teamBewerb.Is8TurnsGame = Is8TurnsGame;
         teamBewerb.StartingTeamChange = StartingTeamChange;
         teamBewerb.SpielGruppe = SpielGruppe;
@@ -213,6 +214,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
     [XmlElement(ElementName = "PlayerNames")]
     public int NumberOfTeamsWithNamedPlayerOnResult { get; set; }
 
+    [XmlElement(ElementName = "WertungskarteAsCupCard")]
+    public bool WertungskarteAsCupCard { get; set; }
+
     #region XMLIgnore
 
     [XmlIgnore]
@@ -234,23 +238,18 @@ public class SerialisableTeamBewerb : ITeamBewerb
     #region Methods
 
     public void AddTeam(ITeam team) => throw new NotImplementedException();
-    public void AddNewTeam() => throw new NotImplementedException();
 
+    public void AddNewTeam() => throw new NotImplementedException();
 
     public void CreateGames() => throw new NotImplementedException();
 
-
     public IEnumerable<IGame> GetAllGames(bool withBreaks = true) => throw new NotImplementedException();
-
 
     public int GetCountOfGames() => throw new NotImplementedException();
 
-
     public int GetCountOfGamesPerCourt() => throw new NotImplementedException();
 
-
     public IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live) => throw new NotImplementedException();
-
 
     public IOrderedEnumerable<ITeam> GetTeamsRanked(bool live = false) => throw new NotImplementedException();
 
@@ -260,13 +259,14 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     public void SetBroadcastData(IBroadCastTelegram telegram) => throw new NotImplementedException();
 
-    public void SetStockTVResult(IStockTVResult tVResult) => throw new NotImplementedException();
+    public void SetStockTVResult(IStockTVResult tVResult, int gameOffset) => throw new NotImplementedException();
 
     public void Reset() { }
 
     public void AddVirtualTeams(int count) => throw new NotImplementedException();
 
     public void RemoveAllVirtualTeams() => throw new NotImplementedException();
+    
     public bool IsEachGameDone(bool live) => throw new NotImplementedException();
     #endregion
 

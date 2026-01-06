@@ -1,17 +1,17 @@
 ﻿using log4net;
-using log4net.Appender;
 using log4net.Core;
 using log4net.Repository;
 using log4net.Repository.Hierarchy;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
+using StockApp.UI.Logging;
+using StockApp.UI.Parameters;
+using StockApp.UI.Services;
 using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 
@@ -30,13 +30,15 @@ public class MainViewModel : ViewModelBase
 
 	#region RequestClose [Event]
 
-	public event EventHandler<CancelEventArgs> RequestClose;
-	private void OnRequestClose(CancelEventArgs e)
+	public event EventHandler<CancelCommandParameter> RequestClose;
+
+	private void OnRequestClose(CancelCommandParameter e)
 	{
 		var handler = RequestClose;
 		handler?.Invoke(this, e);
 	}
-	private void RaiseOnRequestClose(CancelEventArgs e)
+
+	private void RaiseOnRequestClose(CancelCommandParameter e)
 	{
 		if (_turnierStore.IsDuty())
 		{
@@ -60,11 +62,10 @@ public class MainViewModel : ViewModelBase
 
 	}
 
-	public MainViewModel(INavigationViewModel navigationViewModel, INavigationStore navigationStore, ITurnierStore turnierStore)
+	public MainViewModel(INavigationViewModel navigationViewModel, INavigationStore navigationStore, ITurnierStore turnierStore, IDialogService<LogViewerViewModel> viewLogFileCommand)
 	{
 		_navigationStore = navigationStore;
 		_turnierStore = turnierStore;
-
 		NewTournamentCommand = new RelayCommand(
 			(p) =>
 			{
@@ -82,7 +83,7 @@ public class MainViewModel : ViewModelBase
 		SaveTournamentCommand = new RelayCommand((p) => _turnierStore.Save());
 
 		ExitApplicationCommand = new RelayCommand((p) => RaiseOnRequestClose(null));
-		ClosingCommand = new RelayCommand<CancelEventArgs>((p) => RaiseOnRequestClose(p));
+		ClosingCommand = new RelayCommand<CancelCommandParameter>((p) => RaiseOnRequestClose(p));
 
 		ModalOkCommand = new RelayCommand(
 			(p) =>
@@ -102,6 +103,8 @@ public class MainViewModel : ViewModelBase
 		_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += ContainerTeamBewerbe_ActiveTeamBewerbChanged;
 
 		NavigationViewModel = navigationViewModel;
+
+		ViewLogFileCommand = new DialogCommand<LogViewerViewModel>(viewLogFileCommand);
 	}
 	protected override void Dispose(bool disposing)
 	{
@@ -203,23 +206,40 @@ public class MainViewModel : ViewModelBase
 		},
 		(p) => true);
 
+	public ICommand ViewLogFileCommand { get; init; }
+
 	private ICommand _openLogFileCommand;
 	public ICommand OpenLogFileCommand => _openLogFileCommand ??= new RelayCommand(
 		(p) =>
 		{
-			//var rootAppender = ((Hierarchy)LogManager.GetRepository())
-			//							 .Root.Appenders.OfType<FileAppender>()
-			//							 .FirstOrDefault();
+			var file = LogConfigurator.GetLogFile();
+			if(file == null)
+			{
+				_log?.Error($"Unable to get logfile.");
+				return;
+			}
 
-			//string filename = rootAppender != null ? rootAppender.File : string.Empty;
-			//string path = Path.GetDirectoryName(filename);
-			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StockApp") + "\\";
-			Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
-			//todo: Erst prüfen, ob das Verzeichnis existiert. Prüfen, ob das in der StoreApp auch passt
+			var folderPath = Path.GetDirectoryName(file);
+			if (string.IsNullOrWhiteSpace(folderPath) || !Directory.Exists(folderPath))
+			{
+				_log?.Warn($"Log folder '{folderPath}' does not exist.");
+				return;
+			}
+
+			try
+			{
+				Process.Start(new ProcessStartInfo(folderPath) { UseShellExecute = true });
+			}
+			catch (Exception ex)
+			{
+				_log?.Error($"Unable to open folder '{folderPath}' in Explorer.", ex);
+			}
 		},
 		(p) => true);
 
 	#endregion
+
+	
 
 	private void ToggleLogLevel(Level level)
 	{

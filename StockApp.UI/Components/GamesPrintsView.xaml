@@ -63,13 +63,12 @@
                           IsEnabled="{Binding Has6Turns}"/>
             </StackPanel>
 
-            <TextBlock Text="StockTV:"
+            <TextBlock Text="Pokal:"
                        Grid.Row="3" Grid.Column="0" 
                        Style="{StaticResource TextBlockGrid}"/>
-            <CheckBox Content="Ausgabe der Wertungskarten für StockTV optimiert"
+            <CheckBox Content="Ausgabe der Wertungskarten für Pokal Runden"
                       Grid.Row="3" Grid.Column="1" Style="{StaticResource CheckBoxGrid}"
-                      IsChecked="{Binding HasScoreCardsOptimizedForStockTV}"
-                      IsEnabled="{Binding Has6Turns}"/>
+                      IsChecked="{Binding HasAsCupCard}"/>
 
 
             <Button Content="Wertungskarte"

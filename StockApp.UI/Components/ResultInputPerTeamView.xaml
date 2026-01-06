@@ -17,11 +17,9 @@
     
     
     <UserControl.Resources>
-
         <Style TargetType="DataGridCell" x:Key="DisableSelection">
             <Setter Property="Focusable" Value="False"/>
         </Style>
-
     </UserControl.Resources>
 
     <Grid>
@@ -67,7 +65,6 @@
                                 <Setter Property="Background" Value="Green"/>
                             </Trigger>
                         </Style.Triggers>
-
                     </Style>
 
                     <Style x:Key="colHeaderCenter" TargetType="DataGridColumnHeader">
@@ -88,6 +85,13 @@
                                 <Setter Property="Background" Value="Green"/>
                             </Trigger>
                         </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="centeredCheckBox" TargetType="{x:Type CheckBox}">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
                     </Style>
 
                 </DataGrid.Resources>
@@ -134,12 +138,20 @@
                                         ElementStyle="{StaticResource verticalCenter}"
                                         Width="auto"/>
 
+                    <DataGridCheckBoxColumn Header="StockTV&#x0a;gesperrt"
+                                            Binding="{Binding Path=IsSetByHand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="auto"
+                                            HeaderStyle="{StaticResource colHeaderCenter}"
+                                            ElementStyle="{StaticResource centeredCheckBox}"
+                                            EditingElementStyle="{StaticResource centeredCheckBox}"
+                                            IsReadOnly="False"/>
+
                 </DataGrid.Columns>
 
             </DataGrid>
 
         </StackPanel>
 
-
     </Grid>
+
 </UserControl>
