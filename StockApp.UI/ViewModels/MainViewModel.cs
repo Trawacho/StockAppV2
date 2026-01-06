@@ -1,17 +1,17 @@
 ﻿using log4net;
-using log4net.Appender;
 using log4net.Core;
 using log4net.Repository;
 using log4net.Repository.Hierarchy;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
+using StockApp.UI.Logging;
 using StockApp.UI.Parameters;
+using StockApp.UI.Services;
 using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 
@@ -62,11 +62,10 @@ public class MainViewModel : ViewModelBase
 
 	}
 
-	public MainViewModel(INavigationViewModel navigationViewModel, INavigationStore navigationStore, ITurnierStore turnierStore)
+	public MainViewModel(INavigationViewModel navigationViewModel, INavigationStore navigationStore, ITurnierStore turnierStore, IDialogService<LogViewerViewModel> viewLogFileCommand)
 	{
 		_navigationStore = navigationStore;
 		_turnierStore = turnierStore;
-
 		NewTournamentCommand = new RelayCommand(
 			(p) =>
 			{
@@ -104,6 +103,8 @@ public class MainViewModel : ViewModelBase
 		_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += ContainerTeamBewerbe_ActiveTeamBewerbChanged;
 
 		NavigationViewModel = navigationViewModel;
+
+		ViewLogFileCommand = new DialogCommand<LogViewerViewModel>(viewLogFileCommand);
 	}
 	protected override void Dispose(bool disposing)
 	{
@@ -205,43 +206,17 @@ public class MainViewModel : ViewModelBase
 		},
 		(p) => true);
 
+	public ICommand ViewLogFileCommand { get; init; }
+
 	private ICommand _openLogFileCommand;
 	public ICommand OpenLogFileCommand => _openLogFileCommand ??= new RelayCommand(
 		(p) =>
 		{
-			// Read path from log4net configuration (FileAppender / RollingFileAppender).
-			string file = null;
-			try
+			var file = LogConfigurator.GetLogFile();
+			if(file == null)
 			{
-				var hierarchy = LogManager.GetRepository() as Hierarchy;
-				if (hierarchy != null)
-				{
-					var appenders = hierarchy.GetAppenders();
-					var fileAppender = appenders.OfType<FileAppender>().FirstOrDefault()
-									   ?? appenders.OfType<RollingFileAppender>().FirstOrDefault();
-
-					if (fileAppender != null)
-					{
-						file = (fileAppender as FileAppender)?.File ?? (fileAppender as RollingFileAppender)?.File;
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				_log?.Warn("Unable to read log4net appenders to locate log file path.", ex);
+				_log?.Error($"Unable to get logfile.");
 				return;
-			}
-
-			if (string.IsNullOrWhiteSpace(file))
-			{
-				_log?.Warn("No file appender configured in log4net; cannot determine log folder.");
-				return;
-			}
-
-			// Make path absolute if relative
-			if (!Path.IsPathRooted(file))
-			{
-				file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
 			}
 
 			var folderPath = Path.GetDirectoryName(file);
@@ -263,6 +238,8 @@ public class MainViewModel : ViewModelBase
 		(p) => true);
 
 	#endregion
+
+	
 
 	private void ToggleLogLevel(Level level)
 	{

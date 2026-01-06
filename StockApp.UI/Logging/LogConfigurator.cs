@@ -1,10 +1,11 @@
-using System;
-using System.Diagnostics;
-using System.IO;
 using log4net;
 using log4net.Appender;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace StockApp.UI.Logging
 {
@@ -55,6 +56,47 @@ namespace StockApp.UI.Logging
 			{
 				Debug.WriteLine($"LogConfigurator.Configure failed: {ex}");
 			}
+		}
+
+		internal static string GetLogFile()
+		{
+			var _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+			// Read path from log4net configuration (FileAppender / RollingFileAppender).
+			string file = null;
+			try
+			{
+				if (LogManager.GetRepository() is Hierarchy hierarchy)
+				{
+					var appenders = hierarchy.GetAppenders();
+					var fileAppender = appenders.OfType<FileAppender>().FirstOrDefault()
+									   ?? appenders.OfType<RollingFileAppender>().FirstOrDefault();
+
+					if (fileAppender != null)
+					{
+						file = (fileAppender as FileAppender)?.File ?? (fileAppender as RollingFileAppender)?.File;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				_log?.Warn("Unable to read log4net appenders to locate log file path.", ex);
+				return null;
+			}
+
+			if (string.IsNullOrWhiteSpace(file))
+			{
+				_log?.Warn("No file appender configured in log4net; cannot determine log folder.");
+				return null;
+			}
+
+			// Make path absolute if relative
+			if (!Path.IsPathRooted(file))
+			{
+				file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
+			}
+
+			return file;
+
 		}
 	}
 }

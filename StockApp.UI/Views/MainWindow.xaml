@@ -83,6 +83,8 @@
                     <Separator/>
                     <MenuItem Header="Open Logfile Folder..."
                               Command="{Binding Path=OpenLogFileCommand}"/>
+                    <MenuItem Header="View Logfile..."
+                              Command="{Binding Path=ViewLogFileCommand}"/>
                 </MenuItem>
                 <Separator/>
                 <MenuItem Header="Beenden" 

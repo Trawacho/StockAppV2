@@ -1,0 +1,43 @@
+﻿<Window x:Class="StockApp.UI.Views.LogViewerView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:StockApp.UI.ViewModels"
+        xmlns:behaviors="clr-namespace:StockApp.UI.Behaviors"
+        Title="Log Viewer"
+        Height="600" Width="900"
+        WindowStartupLocation="CenterOwner"
+        behaviors:WindowLifecycleBehavior.ClosingCommand="{Binding CloseCommand}"
+        MinWidth="600" MinHeight="300">
+    <Window.DataContext>
+        <!--DataContext is normally assigned by caller (MainViewModel) when opening the view.
+		     This fallback lets the designer show something without code-behind.-->
+        <vm:LogViewerViewModel x:Name="DesignTimeViewModel" LogFileName="filename.log" />
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="6" Grid.Row="0" VerticalAlignment="Center">
+            <Button Content="Refresh" Command="{Binding RefreshCommand}" Margin="0,0,6,0" Padding="5,3"/>
+            <Button Content="Export..." Command="{Binding ExportCommand}" Margin="0,0,6,0" Padding="5, 3"/>
+            <CheckBox Content="Follow" IsChecked="{Binding IsFollowing, Mode=TwoWay}" Margin="0,0,6,0" Padding="5, 3" VerticalContentAlignment="Center"/>
+            <Button Content="Close" Command="{Binding CloseCommand}" Margin="0,0,6,0" Padding="5,3"/>
+            <TextBlock Text="{Binding LogFileName}" Margin="12,0,0,0" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <TextBox Grid.Row="1"
+				 Text="{Binding LogText, Mode=OneWay}"
+				 FontFamily="Consolas"
+				 FontSize="12"
+				 IsReadOnly="True"
+				 VerticalScrollBarVisibility="Auto"
+				 HorizontalScrollBarVisibility="Auto"
+				 TextWrapping="NoWrap"
+				 AcceptsReturn="True"
+				 Padding="6"
+				 behaviors:TextBoxAutoScrollBehavior.Follow="{Binding IsFollowing, Mode=OneWay}" />
+    </Grid>
+</Window>

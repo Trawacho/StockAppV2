@@ -9,7 +9,6 @@ using StockApp.UI.Settings;
 using StockApp.UI.Stores;
 using StockApp.UI.ViewModels;
 using StockApp.UI.Views;
-using System.IO;
 using System.Reflection;
 using System.Windows;
 
@@ -43,6 +42,7 @@ namespace StockApp.UI
 			_dialogStore = new DialogStore(null);
 			_dialogStore.Register<LiveResultsTeamViewModel, LiveResultTeamView>();
 			_dialogStore.Register<LiveResultsZielViewModel, LiveResultZielView>();
+			_dialogStore.Register<LogViewerViewModel, LogViewerView>();
 
 			var _systemVersion = Assembly.GetExecutingAssembly().GetName().Version;
 			Software.Initialize(_systemVersion);
@@ -79,7 +79,7 @@ namespace StockApp.UI
 
 
 
-			_mainViewModel = new MainViewModel(_navigationViewModel, _navigationStore, _turnierStore);
+			_mainViewModel = new MainViewModel(_navigationViewModel, _navigationStore, _turnierStore, CreateLogViewerDialogService());
 			_mainWindow = new MainWindow() { DataContext = _mainViewModel };
 
 			PreferencesManager.GeneralAppSettings.WindowPlaceManager.Register(_mainWindow, "MainWindow");
@@ -126,6 +126,11 @@ namespace StockApp.UI
 		private IDialogService<LiveResultsZielViewModel> CreateLiveReusltsZielDialogService()
 		{
 			return new DialogService<LiveResultsZielViewModel>(_dialogStore, () => new LiveResultsZielViewModel(_turnierStore), false);
+		}
+
+		private IDialogService<LogViewerViewModel> CreateLogViewerDialogService()
+		{
+			return new DialogService<LogViewerViewModel>(_dialogStore, () => new LogViewerViewModel(LogConfigurator.GetLogFile()), false);
 		}
 		#endregion
 
