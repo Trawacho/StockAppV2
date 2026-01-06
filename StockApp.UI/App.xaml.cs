@@ -2,6 +2,7 @@
 using StockApp.Comm.Broadcasting;
 using StockApp.Comm.NetMqStockTV;
 using StockApp.UI.com;
+using StockApp.UI.Logging;
 using StockApp.UI.Parameters;
 using StockApp.UI.Services;
 using StockApp.UI.Settings;
@@ -36,6 +37,8 @@ namespace StockApp.UI
 
 		public App()
 		{
+			// Configure logging as early as possible so Software.LogInfo() and other early calls are recorded.
+			LogConfigurator.Configure();
 
 			_dialogStore = new DialogStore(null);
 			_dialogStore.Register<LiveResultsTeamViewModel, LiveResultTeamView>();
@@ -86,7 +89,11 @@ namespace StockApp.UI
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.config"));
+			// Using programmatic configuration; do not load log4net.config from file here.
+			// If you keep a log4net.config for desktop-only scenarios, load it with an absolute path:
+			// var configFile = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.config"));
+			// log4net.Config.XmlConfigurator.Configure(configFile);
+
 			Hierarchy hierarchy = log4net.LogManager.GetRepository() as Hierarchy;
 			PreferencesManager.GeneralAppSettings.LogLevel = hierarchy.Root.Level;
 
