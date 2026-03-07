@@ -317,15 +317,21 @@ internal class ZielBewerb : IZielBewerb
                 }
             }
         }
+
+#if DEBUG
         catch (Exception ex)
         {
-#if DEBUG
             System.Diagnostics.Debug.WriteLine("SetStockTVResult: " + ex.Message.ToString());
+		}
+#else
+        catch (Exception)
+        {
+			// In production, we might want to log this exception instead of writing to debug output.
+		}
 #endif
-        }
-    }
+	}
 
-    public void SetBroadcastData(IBroadCastTelegram telegram)
+	public void SetBroadcastData(IBroadCastTelegram telegram)
     {
         if (telegram.StockTVModus != 100) return;
         if (telegram.MessageVersion != 0) return;

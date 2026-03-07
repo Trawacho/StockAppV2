@@ -18,7 +18,7 @@ Der folgende Befehl kompiliert das Packaging-Projekt und erstellt ein gebündelte
    /p:UapAppxPackageBuildMode=StoreUpload `
    /p:AppxPackageDir="C:\Users\daniel\source\repos\StockAppV2\StockApp.Packaging\AppPackages\" `
    /p:AppxSymbolPackageEnabled=True `
-   /p:AppxPackageSigningEnabled=false'
+   /p:AppxPackageSigningEnabled=false
 ~~~
 
 Was dieser Befehl bewirkt:  
