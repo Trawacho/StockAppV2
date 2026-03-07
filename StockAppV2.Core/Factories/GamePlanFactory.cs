@@ -7,124 +7,131 @@ namespace StockApp.Core.Factories;
 
 public static class GamePlanFactory
 {
-    public static IEnumerable<IGameplan> LoadAllGameplans()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = "StockApp.Core.Factories.gpf.json";
+	public static IEnumerable<IGameplan> LoadAllGameplans()
+	{
+		var assembly = Assembly.GetExecutingAssembly();
+		var resourceName = "StockApp.Core.Factories.gpf.json";
 
-        using Stream stream = assembly.GetManifestResourceStream(resourceName);
-        using StreamReader reader = new(stream);
-        string result = reader.ReadToEnd();
-        var jsongameplans = JsonSerializer.Deserialize<IEnumerable<JsonGameplan>>(result);
+		using Stream stream = assembly.GetManifestResourceStream(resourceName);
+		using StreamReader reader = new(stream);
+		string result = reader.ReadToEnd();
 
-        foreach (var game in jsongameplans)
-        {
-            yield return new Gameplan(game.Id, game.Description, game.IsVergleich, game.Teams, game.Courts, game.Plan, game.IsSplit);
-        }
-    }
+		var options = new JsonSerializerOptions
+		{
+			ReadCommentHandling = JsonCommentHandling.Skip,
+			AllowTrailingCommas = true
+		};
 
+		var jsongameplans = JsonSerializer.Deserialize<IEnumerable<JsonGameplan>>(result, options);
 
-    /// <summary>
-    /// Convert the given gameplan to the given teams.
-    /// </summary>
-    /// <param name="gameplan"></param>
-    /// <param name="teams">no virtual teams. without games</param>
-    public static void MatchTeamAndGames(IGameplan gameplan, IEnumerable<ITeam> teams, int rounds = 1, bool isStartingChanged = true)
-    {
-        if (gameplan is null) return;
-        //Ein liste für normale "Spiele" erzeugen
-
-        var normalGames = new List<IGame>();
-        var gameNrOverAll = 1;
-
-        for (int round = 1; round <= rounds; round++)
-        {
-            foreach (var gamenumber in gameplan.GameplanGamenumbers)
-            {
-                foreach (var game in gamenumber.Games.Where(g => g.A != 0 && g.B != 0)) //Keine Paarungen, bei denen A oder B als Startnummer 0 eingetragen ist.
-                {
-                    var normalGame = Game.Create(
-                        teams.FirstOrDefault(t => t.StartNumber == game.A),
-                        teams.FirstOrDefault(t => t.StartNumber == game.B),
-                        courtNumber: game.Court,
-                        gamenumber.Number,
-                        roundOfGame: round,
-                        gameNumberOverAll: gameNrOverAll,
-                        isTeamA_Starting: game.Court % 2 != 0
-                        );
-                    
-                    //Bei Splitgruppen mit 6,8,12,.. Bahnen, muss das Anspiel für die zweite Gruppe gedreht werden
-                    if (gameplan.IsSplit &&
-                        gameplan.Courts % 4 == 2 &&
-                        normalGame.CourtNumber > gameplan.Courts / 2)
-                    {
-                        normalGame.IsTeamA_Starting = game.Court % 2 == 0;
-                    }
-
-                    //Anspiel
-                    if (round % 2 == 0 && isStartingChanged) normalGame.IsTeamA_Starting = !normalGame.IsTeamA_Starting;
+		foreach (var game in jsongameplans)
+		{
+			yield return new Gameplan(game.Id, game.Description, game.IsVergleich, game.Teams, game.Courts, game.Plan, game.IsSplit);
+		}
+	}
 
 
-                    normalGames.Add(normalGame);
-                }
+	/// <summary>
+	/// Convert the given gameplan to the given teams.
+	/// </summary>
+	/// <param name="gameplan"></param>
+	/// <param name="teams">no virtual teams. without games</param>
+	public static void MatchTeamAndGames(IGameplan gameplan, IEnumerable<ITeam> teams, int rounds = 1, bool isStartingChanged = true)
+	{
+		if (gameplan is null) return;
+		//Ein liste für normale "Spiele" erzeugen
 
-                var teamsOnCourt = gamenumber.Games.Select(t => t.A)
-                                                   .Union(
-                                   gamenumber.Games.Select(t => t.B));
+		var normalGames = new List<IGame>();
+		var gameNrOverAll = 1;
 
-                var teamsOffCourt = Enumerable.Range(1, gameplan.Teams).Except(teamsOnCourt);
+		for (int round = 1; round <= rounds; round++)
+		{
+			foreach (var gamenumber in gameplan.GameplanGamenumbers)
+			{
+				foreach (var game in gamenumber.Games.Where(g => g.A != 0 && g.B != 0)) //Keine Paarungen, bei denen A oder B als Startnummer 0 eingetragen ist.
+				{
+					var normalGame = Game.Create(
+						teams.FirstOrDefault(t => t.StartNumber == game.A),
+						teams.FirstOrDefault(t => t.StartNumber == game.B),
+						courtNumber: game.Court,
+						gamenumber.Number,
+						roundOfGame: round,
+						gameNumberOverAll: gameNrOverAll,
+						isTeamA_Starting: game.Court % 2 != 0
+						);
 
-                foreach (var offTeam in teamsOffCourt)
-                {
-                    normalGames.Add(
-                        Game.Create(
-                        teams.FirstOrDefault(t => t.StartNumber == offTeam),
-                        teams.FirstOrDefault(t => t.StartNumber == offTeam),
-                        courtNumber: 0, //cause of the 0 it is a breakGame
-                        gamenumber.Number,
-                        roundOfGame: round,
-                        gameNumberOverAll: gameNrOverAll,
-                        isTeamA_Starting: false));
-                }
+					//Bei Splitgruppen mit 6,8,12,.. Bahnen, muss das Anspiel für die zweite Gruppe gedreht werden
+					if (gameplan.IsSplit &&
+						gameplan.Courts % 4 == 2 &&
+						normalGame.CourtNumber > gameplan.Courts / 2)
+					{
+						normalGame.IsTeamA_Starting = game.Court % 2 == 0;
+					}
 
-                gameNrOverAll++;
-            }
-        }
+					//Anspiel
+					if (round % 2 == 0 && isStartingChanged) normalGame.IsTeamA_Starting = !normalGame.IsTeamA_Starting;
 
-        // den Mannschaften die Spiele zuweisen
-        foreach (var team in teams)
-        {
-            var teamGames = normalGames.Where(g => g.TeamA.StartNumber == team.StartNumber || g.TeamB?.StartNumber == team.StartNumber);
-            foreach (var game in teamGames)
-                team.AddGame(game);
-        }
-    }
+
+					normalGames.Add(normalGame);
+				}
+
+				var teamsOnCourt = gamenumber.Games.Select(t => t.A)
+												   .Union(
+								   gamenumber.Games.Select(t => t.B));
+
+				var teamsOffCourt = Enumerable.Range(1, gameplan.Teams).Except(teamsOnCourt);
+
+				foreach (var offTeam in teamsOffCourt)
+				{
+					normalGames.Add(
+						Game.Create(
+						teams.FirstOrDefault(t => t.StartNumber == offTeam),
+						teams.FirstOrDefault(t => t.StartNumber == offTeam),
+						courtNumber: 0, //cause of the 0 it is a breakGame
+						gamenumber.Number,
+						roundOfGame: round,
+						gameNumberOverAll: gameNrOverAll,
+						isTeamA_Starting: false));
+				}
+
+				gameNrOverAll++;
+			}
+		}
+
+		// den Mannschaften die Spiele zuweisen
+		foreach (var team in teams)
+		{
+			var teamGames = normalGames.Where(g => g.TeamA.StartNumber == team.StartNumber || g.TeamB?.StartNumber == team.StartNumber);
+			foreach (var game in teamGames)
+				team.AddGame(game);
+		}
+	}
 }
 
 
 
 public class JsonGameplan
 {
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
+	[JsonPropertyName("id")]
+	public int Id { get; set; }
 
-    [JsonPropertyName("description")]
-    public string Description { get; set; }
+	[JsonPropertyName("description")]
+	public string Description { get; set; }
 
-    [JsonPropertyName("vergleich")]
-    public bool IsVergleich { get; set; }
+	[JsonPropertyName("vergleich")]
+	public bool IsVergleich { get; set; }
 
-    [JsonPropertyName("split")]
-    public bool IsSplit { get; set; }
+	[JsonPropertyName("split")]
+	public bool IsSplit { get; set; }
 
-    [JsonPropertyName("teams")]
-    public int Teams { get; set; }
+	[JsonPropertyName("teams")]
+	public int Teams { get; set; }
 
-    [JsonPropertyName("courts")]
-    public int Courts { get; set; }
+	[JsonPropertyName("courts")]
+	public int Courts { get; set; }
 
-    [JsonPropertyName("plan")]
-    public int[][] Plan { get; set; }
+	[JsonPropertyName("plan")]
+	public int[][] Plan { get; set; }
 }
 
 
