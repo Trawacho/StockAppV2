@@ -24,7 +24,7 @@ public class RankedTeamsTableViewModel : ViewModelBase
         ShowStockPunkte = true;
         _isLive = isLive;
         _groupName = showGroupName ? $"{_teamBewerb.Gruppenname}" : null;
-        _adjustedGames = useParagraph610 ? Paragraph610Evaluator.GetAdjustedGames(teamBewerb) : null;
+        _adjustedGames = useParagraph610 ? Paragraph610Evaluator.GetAdjustedGames(teamBewerb, isLive) : null;
 
         int rank = 1;
         foreach (var t in _teamBewerb.GetTeamsRanked())
@@ -47,7 +47,7 @@ public class RankedTeamsTableViewModel : ViewModelBase
         _isLive = isLive;
         ShowStockPunkte = showStockPunkte;
         _groupName = isSplitGroupOne ? "Gruppe A" : "Gruppe B";
-        _adjustedGames = useParagraph610 ? Paragraph610Evaluator.GetAdjustedGames(teamBewerb) : null;
+        _adjustedGames = useParagraph610 ? Paragraph610Evaluator.GetAdjustedGames(teamBewerb, isLive) : null;
 
         int rank = 1;
         foreach (var t in _teamBewerb.GetSplitTeamsRanked(isSplitGroupOne, isLive))

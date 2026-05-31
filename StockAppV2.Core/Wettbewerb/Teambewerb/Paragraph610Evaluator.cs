@@ -11,10 +11,10 @@ public static class Paragraph610Evaluator
     /// <summary>
     /// Checks if §610 applies: more than 50% of planned games were played (excluding pauses).
     /// </summary>
-    public static bool IsApplicable(ITeamBewerb teamBewerb)
+    public static bool IsApplicable(ITeamBewerb teamBewerb, bool live)
     {
         var allGames = teamBewerb.GetAllGames(withBreaks: false).ToList();
-        var playedGames = allGames.Where(g => g.IsGameDone(false)).ToList();
+        var playedGames = allGames.Where(g => g.IsGameDone(live: live)).ToList();
 
         if (allGames.Count == 0)
             return false;
@@ -27,7 +27,7 @@ public static class Paragraph610Evaluator
     /// Games are adjusted so all teams have the same count (minimum across all teams).
     /// If a team has more games than the minimum, its last game is excluded.
     /// </summary>
-    public static IReadOnlyDictionary<ITeam, IList<IGame>> GetAdjustedGames(ITeamBewerb teamBewerb)
+    public static IReadOnlyDictionary<ITeam, IList<IGame>> GetAdjustedGames(ITeamBewerb teamBewerb, bool live)
     {
         var result = new Dictionary<ITeam, IList<IGame>>();
 
@@ -36,7 +36,7 @@ public static class Paragraph610Evaluator
         foreach (var team in teamBewerb.Teams)
         {
             var playedGamesForTeam = team.Games
-                .Where(g => !g.IsPauseGame() && g.IsGameDone(false))
+                .Where(g => !g.IsPauseGame() && g.IsGameDone(live: live))
                 .OrderBy(g => g.GameNumberOverAll)
                 .ToList();
 

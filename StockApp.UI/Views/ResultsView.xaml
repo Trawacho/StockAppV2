@@ -89,6 +89,8 @@
                 <TextBlock Text="Ausgabe" Style="{StaticResource VmHeader}" FontSize="18"/>
 
                 <CheckBox Content="§610 anwenden"
+                          ToolTip= "Turnierabbruch nach §610, wenn mehr als die Hälfte der Spiele gespielt wurde"
+                          ToolTipService.ShowOnDisabled="True"
                           IsThreeState="False"
                           HorizontalAlignment="Left"
                           Margin="0 10"

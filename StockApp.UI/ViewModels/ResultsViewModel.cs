@@ -162,7 +162,7 @@ public class ResultsViewModel : ViewModelBase
 
     private void UpdateParagraph610Applicable()
     {
-        bool isApplicable = StockApp.Core.Wettbewerb.Teambewerb.Paragraph610Evaluator.IsApplicable(TeamBewerb);
+        bool isApplicable = StockApp.Core.Wettbewerb.Teambewerb.Paragraph610Evaluator.IsApplicable(TeamBewerb, live: false);
         IsParagraph610Applicable = isApplicable;
 
         if (!isApplicable && UseParagraph610)
