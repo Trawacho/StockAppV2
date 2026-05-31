@@ -6,6 +6,9 @@
 # StockAppInstaller.exe
 StockApp.Installer/StockAppInstaller.exe
 
+# Rulebook (lokal, nicht im Repository)
+.rulebook/
+
 # User-specific files
 *.rsuser
 *.suo
