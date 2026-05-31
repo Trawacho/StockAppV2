@@ -9,6 +9,9 @@ StockApp.Installer/StockAppInstaller.exe
 # Rulebook (lokal, nicht im Repository)
 .rulebook/
 
+# Claude Code settings (persönlich, nicht im Repository)
+.claude/
+
 # User-specific files
 *.rsuser
 *.suo
