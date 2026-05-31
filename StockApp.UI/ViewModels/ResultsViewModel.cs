@@ -64,6 +64,25 @@ public class ResultsViewModel : ViewModelBase
 
     public bool AcceptNetworkResults { get => _turnierNetworkManager.AcceptNetworkResult; set => _turnierNetworkManager.AcceptNetworkResult = value; }
 
+    private bool _isParagraph610Applicable;
+
+    public bool IsParagraph610Applicable
+    {
+        get => _isParagraph610Applicable;
+        private set => SetProperty(ref _isParagraph610Applicable, value);
+    }
+
+    public bool UseParagraph610
+    {
+        get => TeamBewerb.UseParagraph610;
+        set
+        {
+            if (TeamBewerb.UseParagraph610 == value) return;
+            TeamBewerb.UseParagraph610 = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public ViewModelBase ResultsEntryViewModel
     {
         get => _resultsEntryViewModel;
@@ -85,7 +104,7 @@ public class ResultsViewModel : ViewModelBase
         _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged += CurrentTeamBewerbChangend;
 
         TeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
-
+        SubscribeToTeamBewerbEvents();
 
         ShowLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
                 new DialogService<LiveResultsTeamViewModel>(
@@ -97,8 +116,9 @@ public class ResultsViewModel : ViewModelBase
 
     private void CurrentTeamBewerbChangend(object sender, EventArgs e)
     {
+        UnsubscribeFromTeamBewerbEvents(_teamBewerb);
         TeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
-
+        SubscribeToTeamBewerbEvents();
 
         ShowLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
                 new DialogService<LiveResultsTeamViewModel>(
@@ -108,6 +128,49 @@ public class ResultsViewModel : ViewModelBase
         SetResultsEntryViewModel(InputMethod);
     }
 
+    private void SubscribeToTeamBewerbEvents()
+    {
+        TeamBewerb.GamesChanged += TeamBewerb_GamesChanged;
+        foreach (var game in TeamBewerb.GetAllGames())
+        {
+            game.Spielstand.SpielStandChanged += Spielstand_SpielStandChanged;
+        }
+        UpdateParagraph610Applicable();
+    }
+
+    private void UnsubscribeFromTeamBewerbEvents(ITeamBewerb teamBewerb)
+    {
+        if (teamBewerb == null) return;
+        teamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
+        foreach (var game in teamBewerb.GetAllGames())
+        {
+            game.Spielstand.SpielStandChanged -= Spielstand_SpielStandChanged;
+        }
+    }
+
+    private void TeamBewerb_GamesChanged(object sender, EventArgs e)
+    {
+        UnsubscribeFromTeamBewerbEvents(TeamBewerb);
+        SubscribeToTeamBewerbEvents();
+        UpdateParagraph610Applicable();
+    }
+
+    private void Spielstand_SpielStandChanged(object sender, EventArgs e)
+    {
+        UpdateParagraph610Applicable();
+    }
+
+    private void UpdateParagraph610Applicable()
+    {
+        bool isApplicable = StockApp.Core.Wettbewerb.Teambewerb.Paragraph610Evaluator.IsApplicable(TeamBewerb);
+        IsParagraph610Applicable = isApplicable;
+
+        if (!isApplicable && UseParagraph610)
+        {
+            UseParagraph610 = false;
+        }
+    }
+
     protected override void Dispose(bool disposing)
     {
         if (!_disposed)
@@ -115,6 +178,7 @@ public class ResultsViewModel : ViewModelBase
             if (disposing)
             {
                 _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= CurrentTeamBewerbChangend;
+                UnsubscribeFromTeamBewerbEvents(TeamBewerb);
                 ResultsEntryViewModel?.Dispose();
             }
             _disposed = true;

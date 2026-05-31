@@ -10,6 +10,7 @@ public class RankedTeamsTableViewModel : ViewModelBase
     private readonly ITeamBewerb _teamBewerb;
     private readonly bool _isLive;
     private readonly string _groupName;
+    private readonly IReadOnlyDictionary<ITeam, IList<IGame>> _adjustedGames;
 
     public RankedTeamsTableViewModel()
     {
@@ -17,12 +18,14 @@ public class RankedTeamsTableViewModel : ViewModelBase
         ShowStockPunkte = true;
     }
 
-    public RankedTeamsTableViewModel(ITeamBewerb teamBewerb, bool isLive, bool showGroupName = false)
+    public RankedTeamsTableViewModel(ITeamBewerb teamBewerb, bool isLive, bool showGroupName = false, bool useParagraph610 = false)
     {
         _teamBewerb = teamBewerb;
         ShowStockPunkte = true;
         _isLive = isLive;
         _groupName = showGroupName ? $"{_teamBewerb.Gruppenname}" : null;
+        _adjustedGames = useParagraph610 ? Paragraph610Evaluator.GetAdjustedGames(teamBewerb) : null;
+
         int rank = 1;
         foreach (var t in _teamBewerb.GetTeamsRanked())
         {
@@ -31,19 +34,20 @@ public class RankedTeamsTableViewModel : ViewModelBase
                                                 printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult,
                                                 live: false,
                                                 aufAbSteiger: AufAbSteigerZeichen(rank),
-                                                teamNameWithStartnumber: _teamBewerb.TeamNameWithStartnumber));
+                                                teamNameWithStartnumber: _teamBewerb.TeamNameWithStartnumber,
+                                                filteredGames: _adjustedGames?.ContainsKey(t) == true ? ((List<IGame>)_adjustedGames[t]).AsReadOnly() : null));
             rank++;
         }
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;
-
     }
 
-    public RankedTeamsTableViewModel(ITeamBewerb teamBewerb, bool isLive, bool isSplitGroupOne, bool showStockPunkte)
+    public RankedTeamsTableViewModel(ITeamBewerb teamBewerb, bool isLive, bool isSplitGroupOne, bool showStockPunkte, bool useParagraph610 = false)
     {
         _teamBewerb = teamBewerb;
         _isLive = isLive;
         ShowStockPunkte = showStockPunkte;
         _groupName = isSplitGroupOne ? "Gruppe A" : "Gruppe B";
+        _adjustedGames = useParagraph610 ? Paragraph610Evaluator.GetAdjustedGames(teamBewerb) : null;
 
         int rank = 1;
         foreach (var t in _teamBewerb.GetSplitTeamsRanked(isSplitGroupOne, isLive))
@@ -53,11 +57,11 @@ public class RankedTeamsTableViewModel : ViewModelBase
                                                 printNameOfPlayer: rank <= _teamBewerb.NumberOfTeamsWithNamedPlayerOnResult,
                                                 live: _isLive,
                                                 aufAbSteiger: AufAbSteigerZeichen(rank),
-                                                teamNameWithStartnumber: _teamBewerb.TeamNameWithStartnumber));
+                                                teamNameWithStartnumber: _teamBewerb.TeamNameWithStartnumber,
+                                                filteredGames: _adjustedGames?.ContainsKey(t) == true ? ((List<IGame>)_adjustedGames[t]).AsReadOnly() : null));
             rank++;
         }
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;
-
     }
 
     public bool IERVersion2022 { get; init; }

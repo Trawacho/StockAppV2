@@ -19,27 +19,29 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
     private readonly ITurnier _turnier;
     private readonly ITeamBewerb _teamBewerb;
 
-    public TeamTemplateViewModel(ITurnier turnier) : base(turnier)
+    public TeamTemplateViewModel(ITurnier turnier)
+        : this(turnier, ((IContainerTeamBewerbe)turnier.Wettbewerb).CurrentTeamBewerb)
+    {
+    }
+
+    public TeamTemplateViewModel(ITurnier turnier, ITeamBewerb teamBewerbForPrint) : base(turnier)
     {
         _turnier = turnier;
-        _teamBewerb = ((IContainerTeamBewerbe)turnier.Wettbewerb).CurrentTeamBewerb;
-
+        _teamBewerb = teamBewerbForPrint;
 
         IsVergleich = GamePlanFactory.LoadAllGameplans().FirstOrDefault(g => g.ID == _teamBewerb.GameplanId)?.IsVergleich ?? false;
         IsBestOf = _teamBewerb.Teams.Count() == 2;
 
-
         RankedTeamsTableViewModels = new List<RankedTeamsTableViewModel>();
-        var item = _turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
         {
-            if (item.IsSplitGruppe)
+            if (_teamBewerb.IsSplitGruppe)
             {
-                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(item, isLive: false, isSplitGroupOne: true, showStockPunkte: true));
-                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(item, isLive: false, isSplitGroupOne: false, showStockPunkte: true));
+                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(_teamBewerb, isLive: false, isSplitGroupOne: true, showStockPunkte: true, useParagraph610: _teamBewerb.UseParagraph610));
+                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(_teamBewerb, isLive: false, isSplitGroupOne: false, showStockPunkte: true, useParagraph610: _teamBewerb.UseParagraph610));
             }
             else
             {
-                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(item, isLive: false, showGroupName: true));
+                RankedTeamsTableViewModels.Add(new RankedTeamsTableViewModel(_teamBewerb, isLive: false, showGroupName: true, useParagraph610: _teamBewerb.UseParagraph610));
             }
         }
         InitTeamRankingGrid();
@@ -467,7 +469,7 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 
     public bool IsBestOf { get; init; }
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1 || _turnier.ContainerTeamBewerbe.TeamBewerbe.Where(b => b.IsSplitGruppe).Any();
-    public string HeaderString => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.IsEachGameDone(false) ? $"E R G E B N I S" : "Zwischenergebnis";
+    public string HeaderString => (_teamBewerb.UseParagraph610 || _teamBewerb.IsEachGameDone(false)) ? $"E R G E B N I S" : "Zwischenergebnis";
 
     public string Endtext => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext;
     public string Footer

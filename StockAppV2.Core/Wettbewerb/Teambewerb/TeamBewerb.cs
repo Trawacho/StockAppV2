@@ -143,6 +143,11 @@ public interface ITeamBewerb : IBewerb
 	IERVersion IERVersion { get; set; }
 
 	/// <summary>
+	/// §610: Apply early tournament abort rule if applicable
+	/// </summary>
+	bool UseParagraph610 { get; set; }
+
+	/// <summary>
 	/// Add a new Team
 	/// </summary>
 	void AddNewTeam();
@@ -378,6 +383,11 @@ public class TeamBewerb : ITeamBewerb
 	/// <inheritdoc/>
 	/// </summary>
 	public bool WertungskarteAsCupCard { get; set; } = false;
+
+	/// <summary>
+	/// §610: Apply early tournament abort rule if applicable
+	/// </summary>
+	public bool UseParagraph610 { get; set; } = false;
 
 	#endregion
 

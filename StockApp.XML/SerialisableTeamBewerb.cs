@@ -225,6 +225,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public IEnumerable<IGame> Games => throw new NotImplementedException();
     [XmlIgnore]
     public int NumberOfCourts => throw new NotImplementedException();
+    [XmlIgnore]
+    public bool UseParagraph610 { get; set; } = false;
 
 
 

@@ -1,4 +1,6 @@
 ﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace StockApp.Lib.Models;
 
@@ -10,6 +12,7 @@ public class RankedTeamModel
     private readonly string _aufAbSteiger;
     private readonly bool _teamNameWithStartnumber;
     private readonly int _rank;
+    private readonly IReadOnlyCollection<IGame> _filteredGames;
 
     public int Rank => _rank;
     public string PlayerNames
@@ -33,13 +36,47 @@ public class RankedTeamModel
             }
         }
     }
-    public string TeamName => _teamNameWithStartnumber 
+    public string TeamName => _teamNameWithStartnumber
         ? "(" + _team.StartNumber + ") " + _team.TeamNamePublic.Trim()
         : _team.TeamNamePublic.Trim();
-    public string SpielPunkte => $"{_team.GetSpielPunkte(_live).positiv}:{_team.GetSpielPunkte(_live).negativ}";
-    public string StockPunkte => $"{_team.GetStockPunkte(_live).positiv}:{_team.GetStockPunkte(_live).negativ}";
-    public string StockNote => _team.GetStockNote(_live).ToString("F3");
-    public string StockPunkteDifferenz => $"{_team.GetStockPunkteDifferenz(_live)}";
+
+    public string SpielPunkte
+    {
+        get
+        {
+            var (pos, neg) = GetSpielPunkteFiltered();
+            return $"{pos}:{neg}";
+        }
+    }
+
+    public string StockPunkte
+    {
+        get
+        {
+            var (pos, neg) = GetStockPunkteFiltered();
+            return $"{pos}:{neg}";
+        }
+    }
+
+    public string StockNote
+    {
+        get
+        {
+            var (pos, neg) = GetStockPunkteFiltered();
+            double note = neg == 0 ? pos : System.Math.Round((double)pos / neg, 3);
+            return note.ToString("F3");
+        }
+    }
+
+    public string StockPunkteDifferenz
+    {
+        get
+        {
+            var (pos, neg) = GetStockPunkteFiltered();
+            return $"{pos - neg}";
+        }
+    }
+
     public bool HasPlayerNames => _printNameOfPlayer && !string.IsNullOrWhiteSpace(PlayerNames);
     public string AufAbSteiger => _aufAbSteiger;
     public string TeamInfo(TeamInfo teamInfo)
@@ -55,7 +92,7 @@ public class RankedTeamModel
 		};
 	}
 
-    public RankedTeamModel(int rank, ITeam team, bool printNameOfPlayer, bool live, string aufAbSteiger = "", bool teamNameWithStartnumber = false)
+    public RankedTeamModel(int rank, ITeam team, bool printNameOfPlayer, bool live, string aufAbSteiger = "", bool teamNameWithStartnumber = false, IReadOnlyCollection<IGame> filteredGames = null)
     {
         _rank = rank;
         _team = team;
@@ -63,6 +100,39 @@ public class RankedTeamModel
         _live = live;
         _aufAbSteiger = aufAbSteiger;
         _teamNameWithStartnumber = teamNameWithStartnumber;
+        _filteredGames = filteredGames;
+    }
+
+    private (int positiv, int negativ) GetSpielPunkteFiltered()
+    {
+        var games = _filteredGames ?? _team.Games;
+        int pos = games.Where(g => g.TeamA == _team && g.TeamB.TeamStatus == TeamStatus.Normal)
+                .Sum(s => s.Spielstand.GetSpielPunkteTeamA(_live)) +
+                games.Where(g => g.TeamB == _team && g.TeamA.TeamStatus == TeamStatus.Normal)
+                .Sum(s => s.Spielstand.GetSpielPunkteTeamB(_live));
+
+        int neg = games.Where(g => g.TeamA != _team && g.TeamA.TeamStatus == TeamStatus.Normal)
+                .Sum(s => s.Spielstand.GetSpielPunkteTeamA(_live)) +
+                games.Where(g => g.TeamB != _team && g.TeamB.TeamStatus == TeamStatus.Normal)
+                .Sum(s => s.Spielstand.GetSpielPunkteTeamB(_live));
+
+        return _team.TeamStatus == TeamStatus.Normal ? (pos - _team.StrafSpielpunkte, neg) : (0, 0);
+    }
+
+    private (int positiv, int negativ) GetStockPunkteFiltered()
+    {
+        var games = _filteredGames ?? _team.Games;
+        int pos = games.Where(g => g.TeamA == _team && g.TeamB.TeamStatus == TeamStatus.Normal)
+                .Sum(s => s.Spielstand.GetStockPunkteTeamA(_live)) +
+                games.Where(g => g.TeamB == _team && g.TeamA.TeamStatus == TeamStatus.Normal)
+                .Sum(s => s.Spielstand.GetStockPunkteTeamB(_live));
+
+        int neg = games.Where(g => g.TeamA != _team && g.TeamA.TeamStatus == TeamStatus.Normal)
+                .Sum(s => s.Spielstand.GetStockPunkteTeamA(_live)) +
+                games.Where(g => g.TeamB != _team && g.TeamB.TeamStatus == TeamStatus.Normal)
+                .Sum(s => s.Spielstand.GetStockPunkteTeamB(_live));
+
+        return _team.TeamStatus == TeamStatus.Normal ? (pos, neg) : (0, 0);
     }
 
 }

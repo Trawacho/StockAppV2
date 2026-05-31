@@ -87,10 +87,17 @@
             <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0"  >
 
                 <TextBlock Text="Ausgabe" Style="{StaticResource VmHeader}" FontSize="18"/>
-                               
-                <Button Content="Ergebnisliste" 
-                        Margin="0 10" 
-                        Padding="30 10" 
+
+                <CheckBox Content="§610 anwenden"
+                          IsThreeState="False"
+                          HorizontalAlignment="Left"
+                          Margin="0 10"
+                          IsChecked="{Binding Path=UseParagraph610}"
+                          IsEnabled="{Binding Path=IsParagraph610Applicable}"/>
+
+                <Button Content="Ergebnisliste"
+                        Margin="0 10"
+                        Padding="30 10"
                         Width="150"
                         Command="{Binding Path=PrintTeamResultsCommand}"
                         HorizontalAlignment="Left"/>
@@ -100,7 +107,7 @@
                         Width="150"
                         Command="{Binding Path=ShowLiveResultCommand}"
                         HorizontalAlignment="Left"/>
-                
+
             </StackPanel>
 
         </Grid>
