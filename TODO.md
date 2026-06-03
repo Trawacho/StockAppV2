@@ -50,13 +50,18 @@ This file tracks critical issues found during codebase analysis. See `docs/EVENT
 - **Status**: ✅ COMPLETED (2026-06-03)
 - **Priority**: MEDIUM (systematic review)
 - **Scope**: All 34 ViewModels in `StockApp.UI/ViewModels/` reviewed
-- **Commit**: `2e22eb5` (branch: `fix/critical-viewmodel-disposal-leaks`)
-- **Findings**: 3 CRITICAL issues fixed
-  - **LiveResultsZielViewModel**: Dispose child ViewModels in RefreshRanking() (line 103-109, 74-96)
-  - **ZielBewerbViewModel**: Dispose old WertungenViewModel in property setter (line 75-80)
-  - **ZielWertungenViewModel**: Already correct (setter already disposes)
+- **Commits**: 
+  - `2e22eb5` – Fixed 3 CRITICAL issues
+  - `64366cd` – Fixed 4 remaining HIGH issues
+- **Total Issues Fixed**: 7 out of 7 additional issues
+  - ✅ **LiveResultsZielViewModel**: Dispose child ViewModels in RefreshRanking()
+  - ✅ **ZielBewerbViewModel**: Dispose old WertungenViewModel
+  - ✅ **NavigationViewModel**: Added missing CurrentTeamBewerbChanged unsubscription
+  - ✅ **TeamsViewModel**: Dispose _modalOkCommand before reassignment
+  - ✅ **ResultsViewModel**: Property with disposal for ShowLiveResultCommand
+  - ✅ **TeilnehmerViewModel**: Lazy initialization for VereinSelectedEnterCommand
+  - ✅ **LogViewerViewModel & MainViewModel**: Already correct
 - **Tests**: All 22 NUnit tests passed ✅
-- **Report**: 7 additional HIGH/MEDIUM issues found and documented for future work
 
 ---
 
