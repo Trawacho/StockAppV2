@@ -77,6 +77,11 @@ public class LiveResultsZielViewModel : ViewModelBase, IDialogRequestClose
         {
             if (disposing)
             {
+                foreach (var viewModel in Ranking)
+                {
+                    viewModel.Dispose();
+                }
+                Ranking.Clear();
                 foreach (var spieler in ZielBewerb.Teilnehmerliste)
                 {
                     spieler.WertungenChanged -= ReAssignEvents;
@@ -102,6 +107,10 @@ public class LiveResultsZielViewModel : ViewModelBase, IDialogRequestClose
 
     private void RefreshRanking()
     {
+        foreach (var viewModel in Ranking)
+        {
+            viewModel.Dispose();
+        }
         Ranking.Clear();
         int rank = 1;
         foreach (var teilnehmer in ZielBewerb.GetTeilnehmerRanked())
