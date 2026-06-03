@@ -20,26 +20,15 @@ This file tracks critical issues found during codebase analysis. See `docs/EVENT
 
 ---
 
-### 🚨 2. GamesViewModel – GamesPrintsViewModel Not Disposed
-- **Status**: Pending
-- **Priority**: CRITICAL (each tournament load)
-- **File**: `StockApp.UI/ViewModels/GamesViewModel.cs:32-36`
-- **Problem**: Old GamesPrintsViewModel is replaced without calling Dispose()
-- **Impact**: Orphaned ViewModels accumulate in memory
-- **Fix**: Dispose old instance before replacing
-
-**Code to Fix**:
-```csharp
-public GamesPrintsViewModel GamesPrintsViewModel
-{
-    get => _gamesPrintsViewModel;
-    set
-    {
-        _gamesPrintsViewModel?.Dispose();  // ADD THIS LINE
-        SetProperty(ref _gamesPrintsViewModel, value);
-    }
-}
-```
+### ✅ 2. GamesViewModel – GamesPrintsViewModel Not Disposed
+- **Status**: ✅ COMPLETED (2026-06-03)
+- **Priority**: CRITICAL (was: each tournament load)
+- **File**: `StockApp.UI/ViewModels/GamesViewModel.cs`
+- **Commit**: `6887489` (branch: `fix/games-viewmodel-dispose-leak`)
+- **Solution**: Dispose old GamesPrintsViewModel before assigning new one
+  - Line 44: `_gamesPrintsViewModel?.Dispose()` in property setter
+- **Tests**: All 22 NUnit tests passed ✅
+- **Impact**: Eliminates orphaned child ViewModel per tournament load
 
 ---
 
