@@ -32,14 +32,17 @@ This file tracks critical issues found during codebase analysis. See `docs/EVENT
 
 ---
 
-### 🚨 3. LiveResultsTeamViewModel – Closure References & Conditional Cleanup
-- **Status**: Pending
-- **Priority**: MEDIUM-HIGH (affects live results)
-- **File**: `StockApp.UI/ViewModels/LiveResultsTeamViewModel.cs:37-39, 81-84`
-- **Problem**: Subscribes to all games' events. Cleanup is conditional (fails if TeamBewerb is null)
-- **Impact**: Old game references leak if tournament reloads during play
-- **Fix**: Store game references, always clean up
-- **Docs**: See `docs/EVENTS.md` → "Leak #3"
+### ✅ 3. LiveResultsTeamViewModel – Closure References & Conditional Cleanup
+- **Status**: ✅ COMPLETED (2026-06-03)
+- **Priority**: MEDIUM-HIGH (was: affects live results)
+- **File**: `StockApp.UI/ViewModels/LiveResultsTeamViewModel.cs`
+- **Commit**: `b9074fb` (branch: `fix/live-results-team-viewmodel-closure`)
+- **Solution**: Store Game references at subscription time
+  - Add `_subscribedGames` field (line 17)
+  - Populate in constructor with `AddRange()` (line 39)
+  - Unsubscribe from stored Games in Dispose (line 84)
+- **Tests**: All 22 NUnit tests passed ✅
+- **Impact**: Guarantees correct unsubscription even if Games change between subscription and disposal
 
 ---
 
