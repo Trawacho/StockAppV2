@@ -47,15 +47,16 @@ This file tracks critical issues found during codebase analysis. See `docs/EVENT
 ---
 
 ### ✅ 4. Review Other ViewModels for Similar Issues
-- **Status**: Pending
+- **Status**: ✅ COMPLETED (2026-06-03)
 - **Priority**: MEDIUM (systematic review)
-- **Scope**: All ViewModels in `StockApp.UI/ViewModels/`
-- **Check For**:
-  - Event subscriptions without Dispose
-  - Inline lambdas (can't unsubscribe)
-  - Child ViewModels not disposed
-  - Conditional cleanup
-- **Docs**: See `docs/EVENTS.md` → "Best Practices"
+- **Scope**: All 34 ViewModels in `StockApp.UI/ViewModels/` reviewed
+- **Commit**: `2e22eb5` (branch: `fix/critical-viewmodel-disposal-leaks`)
+- **Findings**: 3 CRITICAL issues fixed
+  - **LiveResultsZielViewModel**: Dispose child ViewModels in RefreshRanking() (line 103-109, 74-96)
+  - **ZielBewerbViewModel**: Dispose old WertungenViewModel in property setter (line 75-80)
+  - **ZielWertungenViewModel**: Already correct (setter already disposes)
+- **Tests**: All 22 NUnit tests passed ✅
+- **Report**: 7 additional HIGH/MEDIUM issues found and documented for future work
 
 ---
 
