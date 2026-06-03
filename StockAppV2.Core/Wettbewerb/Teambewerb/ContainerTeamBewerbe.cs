@@ -84,19 +84,30 @@ public class ContainerTeamBewerbe : IContainerTeamBewerbe
 
     public IEnumerable<IGameplan> Gameplans { get; private set; }
 
-    public void SetCurrentTeamBewerb(ITeamBewerb teamBewerb)
+    private void UnsubscribeFromCurrentTeamBewerb()
     {
         if (_currentTeamBewerb != null)
         {
-            _currentTeamBewerb.GamesChanged -= (s, e) => RaiseCurrentTeam_GamesChanged();
-            _currentTeamBewerb.TeamsChanged -= (s, e) => RaiseCurrentTeam_TeamsChanged();
+            _currentTeamBewerb.GamesChanged -= OnCurrentTeamBewerb_GamesChanged;
+            _currentTeamBewerb.TeamsChanged -= OnCurrentTeamBewerb_TeamsChanged;
         }
+    }
+
+    private void OnCurrentTeamBewerb_GamesChanged(object sender, EventArgs e)
+        => RaiseCurrentTeam_GamesChanged();
+
+    private void OnCurrentTeamBewerb_TeamsChanged(object sender, EventArgs e)
+        => RaiseCurrentTeam_TeamsChanged();
+
+    public void SetCurrentTeamBewerb(ITeamBewerb teamBewerb)
+    {
+        UnsubscribeFromCurrentTeamBewerb();
 
         if (teamBewerb != null)
         {
             _currentTeamBewerb = teamBewerb;
-            _currentTeamBewerb.GamesChanged += (s, e) => RaiseCurrentTeam_GamesChanged();
-            _currentTeamBewerb.TeamsChanged += (s, e) => RaiseCurrentTeam_TeamsChanged();
+            _currentTeamBewerb.GamesChanged += OnCurrentTeamBewerb_GamesChanged;
+            _currentTeamBewerb.TeamsChanged += OnCurrentTeamBewerb_TeamsChanged;
         }
 
         RaiseCurrentTeamBewerbChanged();
