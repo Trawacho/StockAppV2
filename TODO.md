@@ -6,24 +6,17 @@ This file tracks critical issues found during codebase analysis. See `docs/EVENT
 
 ## Memory Leaks (High Priority)
 
-### 🚨 1. ContainerTeamBewerbe – Lambda Capture Leak
-- **Status**: Pending
-- **Priority**: CRITICAL (happens 100x per session)
-- **File**: `StockAppV2.Core/Wettbewerb/Teambewerb/ContainerTeamBewerbe.cs:91-92, 98-99`
-- **Problem**: Lambda unsubscription doesn't work — each lambda is a different object
-- **Impact**: Every tournament load accumulates orphaned event subscriptions
-- **Fix**: Store handler reference instead of inline lambda
-- **Docs**: See `docs/EVENTS.md` → "Known Memory Leak Issues" → "Leak #1"
-
-**Code to Fix**:
-```csharp
-// WRONG:
-_currentTeamBewerb.GamesChanged -= (s, e) => RaiseCurrentTeam_GamesChanged();
-
-// CORRECT:
-_gamesChangedHandler = (s, e) => RaiseCurrentTeam_GamesChanged();
-_currentTeamBewerb.GamesChanged -= _gamesChangedHandler;
-```
+### ✅ 1. ContainerTeamBewerbe – Lambda Capture Leak
+- **Status**: ✅ COMPLETED (2026-06-03)
+- **Priority**: CRITICAL (was: happens 100x per session)
+- **File**: `StockAppV2.Core/Wettbewerb/Teambewerb/ContainerTeamBewerbe.cs`
+- **Commit**: `99f397f` (branch: `fix/container-teambewerbe-lambda-leak`)
+- **Solution**: Replaced inline lambdas with dedicated event handler methods
+  - `OnCurrentTeamBewerb_GamesChanged()` (line 94-95)
+  - `OnCurrentTeamBewerb_TeamsChanged()` (line 97-98)
+  - `UnsubscribeFromCurrentTeamBewerb()` for centralized cleanup (line 87-93)
+- **Tests**: All 22 NUnit tests passed ✅
+- **Impact**: Eliminates ~1 orphaned subscription per tournament load
 
 ---
 
