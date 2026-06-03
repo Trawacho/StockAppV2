@@ -1,46 +1,97 @@
-Das publishen über die GUI ist tlw. nicht möglich, da Fehler auftreten können.
-Daher hier ein paar Befehle, wie es über die Konsole funktioniert.
+ï»¿# StockApp.Packaging - MS Store AppBundle Erstellen
 
-1. Vorbereitung  
-Diese Befehle stellen die für das Projekt StockAppV2.sln benötigten Abhängigkeiten und NuGet-Pakete wieder her, wobei sie spezifisch auf zwei unterschiedliche Zielplattformen optimiert werden. Durch den Parameter -r (Runtime Identifier) werden zusätzlich die plattformspezifischen Bibliotheken für Windows 32-Bit (x86) sowie Windows 64-Bit (x64) vorbereitet. Dies stellt sicher, dass die Anwendung für beide Prozessorarchitekturen über alle notwendigen Komponenten verfügt, um später korrekt kompiliert und ausgeführt werden zu können.
-~~~  
-    dotnet restore .\StockAppV2.sln -r win-x86  
-    dotnet restore .\StockAppV2.sln -r win-x64
-~~~
-2. Publish  
-Der folgende Befehl kompiliert das Packaging-Projekt und erstellt ein gebündeltes App-Paket:
-~~~
-  msbuild ".\StockApp.Packaging\StockApp.Packaging.wapproj" /t:"Restore;Publish"  `
-   /p:Configuration=Release `
-   /p:Platform=x64 `
-   /p:AppxBundle=Always `
-   /p:AppxBundlePlatforms="x86|x64" `
-   /p:UapAppxPackageBuildMode=StoreUpload `
-   /p:AppxPackageDir="C:\Users\daniel\source\repos\StockAppV2\StockApp.Packaging\AppPackages\" `
-   /p:AppxSymbolPackageEnabled=True `
-   /p:AppxPackageSigningEnabled=false
-~~~
+Das Publishing Ã¼ber die Visual Studio GUI kann zu Fehlern fÃ¼hren. Diese Anleitung zeigt, wie du das AppBundle Ã¼ber die Kommandozeile korrekt erstellst.
 
-Was dieser Befehl bewirkt:  
-- Restore & Publish:  
-Er stellt zuerst alle Abhängigkeiten wieder her (Restore) und führt anschließend den Veröffentlichungsprozess (Publish) durch.
-- Release-Konfiguration:  
-Die Anwendung wird für die produktive Nutzung optimiert kompiliert (/p:Configuration=Release).
-- Multi-Plattform Bundle:  
-Es wird ein kombiniertes App-Bundle (.msixbundle oder .appxbundle) erstellt, das sowohl x86- als auch x64-Architekturen unterstützt.
-- Store-Vorbereitung:  
-Der Modus StoreUpload generiert zusätzlich eine .msixupload-Datei, die alle für den Microsoft Store notwendigen Artefakte enthält.
-- Symbole & Signierung: 
-Er erstellt Symbol-Pakete für das Debugging (AppxSymbolPackageEnabled=True), überspringt jedoch die lokale digitale Signierung (AppxPackageSigningEnabled=false), da diese in der Regel erst beim Store-Upload oder durch einen CI/CD-Prozess erfolgt.
-- Ausgabeverzeichnis:  
-Das fertige Paket wird im spezifischen Pfad unter \AppPackages\ abgelegt.  
+## 1. Vorbereitung - Dependencies fÃ¼r beide Architekturen
 
-WICHTIG: in allen .cspoj ist folgender Eintrag notwendig, damit das Packaging-Projekt die Abhängigkeiten korrekt findet:
-~~~
+Stelle sicher, dass die Dependencies fÃ¼r x86 und x64 verfÃ¼gbar sind:
+
+```powershell
+dotnet publish StockApp.UI/StockApp.UI.csproj -c Release -r win-x86 --self-contained
+dotnet publish StockApp.UI/StockApp.UI.csproj -c Release -r win-x64 --self-contained
+```
+
+**Warum?** Dies bereitet die plattformspezifischen Binaries fÃ¼r Windows 32-Bit (x86) und 64-Bit (x64) vor, die das AppBundle benÃ¶tigt.
+
+---
+
+## 2. AppBundle erstellen (MS Store Release)
+
+FÃ¼hre folgenden Befehl aus (als PowerShell):
+
+```powershell
+& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe" `
+  ".\StockApp.Packaging\StockApp.Packaging.wapproj" `
+  /t:Rebuild `
+  /p:Configuration=Release `
+  /p:Platform=x64 `
+  /p:AppxBundle=Always `
+  /p:AppxBundlePlatforms="x86|x64" `
+  /p:UapAppxPackageBuildMode=StoreUpload `
+  /p:AppxPackageDir="$(Get-Location)\StockApp.Packaging\AppPackages\" `
+  /p:AppxSymbolPackageEnabled=True `
+  /p:AppxPackageSigningEnabled=false
+```
+
+**Was dieser Befehl bewirkt:**
+
+| Parameter | Bedeutung |
+|-----------|-----------|
+| `/t:Rebuild` | VollstÃ¤ndiger Neuaufbau des Projekts |
+| `/p:Configuration=Release` | Produktive Optimierung (nicht Debug) |
+| `/p:Platform=x64` | Primary Build Platform (x64) |
+| `/p:AppxBundle=Always` | Erstellt ein .appxbundle (unterstÃ¼tzt beide Architekturen) |
+| `/p:AppxBundlePlatforms="x86\|x64"` | Beide Architekturen im Bundle |
+| `/p:UapAppxPackageBuildMode=StoreUpload` | Generiert .appxupload fÃ¼r MS Store |
+| `/p:AppxSymbolPackageEnabled=True` | Symbol-Pakete fÃ¼r Debugging |
+| `/p:AppxPackageSigningEnabled=false` | Signierung erfolgt im Store |
+
+---
+
+## 3. Output
+
+Das fertige AppBundle findest du unter:
+```
+.\StockApp.Packaging\AppPackages\StockApp.Packaging_<VERSION>_Test\
+```
+
+Wichtige Dateien:
+- `*.appxbundle` - Das Package fÃ¼r den MS Store
+- `*.appxsym` - Debug-Symbole (optional zum Store hochladen)
+
+---
+
+## 4. Wichtige Konfigurationen
+
+### RuntimeIdentifiers in .csproj
+
+Alle Projekte mÃ¼ssen folgende Zeile haben:
+
+```xml
 <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
-~~~
-Weitere Informationen: https://docs.microsoft.com/de-de/windows/msix/desktop/desktop-to-uwp-packaging-dot-net
-Hinweis: Es muss das MSBuild verwendet werden, welches zur installierten Visual Studio Version passt.
+```
 
+### Platforms in .csproj
 
+Alle Projekte mÃ¼ssen nur x86 und x64 unterstÃ¼tzen:
 
+```xml
+<Platforms>x86;x64</Platforms>
+```
+
+---
+
+## Troubleshooting
+
+| Problem | LÃ¶sung |
+|---------|--------|
+| `msbuild.exe nicht gefunden` | Nutze den vollstÃ¤ndigen Pfad wie oben (pass die Visual Studio Version an) |
+| `DesktopBridge.props nicht gefunden` | Installiere "Universal Windows Platform development" in Visual Studio |
+| `project.assets.json nicht gefunden` | LÃ¶sche `obj/` und `bin/` Ordner, versuche erneut |
+
+---
+
+## Referenzen
+
+- [Microsoft Docs: Desktop to UWP Packaging](https://docs.microsoft.com/windows/msix/desktop/desktop-to-uwp-packaging-dot-net)
+- [AppxBundle Format](https://docs.microsoft.com/windows/msix/overview)
