@@ -41,7 +41,7 @@ public class GameTests
         _game.CourtNumber = 3;
         Assert.That(_game.IsPauseGame(), Is.False);
         _game.TeamB = _game.TeamA;
-        Assert.That(_game.IsPauseGame, Is.True);
+        Assert.That(_game.IsPauseGame(), Is.True);
     }
 
 }

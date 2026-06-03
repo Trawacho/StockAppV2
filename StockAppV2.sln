@@ -29,16 +29,10 @@ Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "StockApp.Packaging", "Stock
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|ARM = Debug|ARM
-		Debug|ARM64 = Debug|ARM64
-		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
-		Release|ARM = Release|ARM
-		Release|ARM64 = Release|ARM64
-		Release|x64 = Release|x64
+		Debug|x64 = Debug|x64
 		Release|x86 = Release|x86
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BC46211D-D25E-42A3-BC6B-3BCB007B26CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -117,8 +111,8 @@ Global
 		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|ARM.Build.0 = Release|Any CPU
 		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|ARM64.Build.0 = Release|Any CPU
-		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|x64.ActiveCfg = Release|x64
-		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|x64.Build.0 = Release|x64
+		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|x64.ActiveCfg = Release|Any CPU
+		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|x64.Build.0 = Release|Any CPU
 		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|x86.ActiveCfg = Release|Any CPU
 		{EBDF588C-0CBE-487E-9A4F-A4BF08F974E1}.Release|x86.Build.0 = Release|Any CPU
 		{F6C61993-4DF7-4023-A6EA-486B52F93E97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

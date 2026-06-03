@@ -8,8 +8,8 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
-		<Version>1.13.0.0</Version>
-		<Platforms>AnyCpu</Platforms>
+		<Version>1.14.0.0</Version>
+		<Platforms>x86;x64</Platforms>
 		<PackageIcon>StockAPP_512.png</PackageIcon>
 	</PropertyGroup>
 

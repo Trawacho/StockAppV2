@@ -24,7 +24,7 @@ internal class MDnsTest
         _service.Discover();
 
         var constraint = Is.True.After(delayInMilliseconds: 100000, pollingInterval: 100);
-        Assert.That(() => _found == true, constraint);
+        Assert.That((System.Func<bool>)(() => _found == true), constraint);
         _service.Dispose();
 
     }

@@ -185,7 +185,7 @@ public class TeamRankingComparerTest
                             .OrderBy(t => t, comparer)
                             .ToList();
 
-        Assert.Multiple(() =>
+        Assert.Multiple((System.Action)(() =>
         {
             Assert.That(teamListe[0].GetSpielPunkte() == (12, 4), Is.True);
             Assert.That(teamListe[0].GetStockPunkte() == (87, 65), Is.True);
@@ -214,7 +214,7 @@ public class TeamRankingComparerTest
 
             Assert.That(comparer.Compare(teamListe[0], teamListe[1]), Is.EqualTo(-1));
             Assert.That(comparer.Compare(teamListe[4], teamListe[1]), Is.EqualTo(1));
-        });
+        }));
     }
 
 }

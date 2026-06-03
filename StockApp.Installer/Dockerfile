@@ -1,4 +1,4 @@
-FROM debian:unstable
+FROM debian:bookworm
 
 ARG NSIS_VERSION=3.08-2
 
@@ -6,8 +6,8 @@ ARG FirewallPlugin=https://nsis.sourceforge.io/mediawiki/images/e/e0/NSIS_Simple
 
 ARG ServicePlugin=https://nsis.sourceforge.io/mediawiki/images/c/c9/NSIS_Simple_Service_Plugin_1.30.zip
 
-RUN apt-get -t unstable update && \
-    apt-get -t unstable install -y curl unzip nsis=${NSIS_VERSION} && \
+RUN apt-get update && \
+    apt-get install -y curl unzip nsis && \
     apt-get clean
 
 RUN curl ${FirewallPlugin} -o /tmp/firewall_plugin.zip && \
