@@ -40,6 +40,7 @@
         /// <br>1 = BestOf</br>
         /// <br>2 = Turnier</br>
         /// <br>100 = Ziel</br>
+        /// <br>101 = Ziel2 (StockTV Version > 1.6.0.0)</br>
         /// </summary>
         public byte StockTVModus => _telegram[2];
 

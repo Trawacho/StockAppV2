@@ -300,7 +300,8 @@ internal class ZielBewerb : IZielBewerb
             return;
         }
 
-        if (tVResult.TVSettings.GameModus != GameMode.Ziel)
+        var gameModus = tVResult.TVSettings.GameModus;
+        if (gameModus != GameMode.Ziel && gameModus != GameMode.Ziel2 )
             return;
 
         try
