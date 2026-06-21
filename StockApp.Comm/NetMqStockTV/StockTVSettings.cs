@@ -83,6 +83,7 @@ public class StockTVSettings : IStockTVSettings
                         TurnsPerGame = 6;
                         break;
                     case GameMode.Ziel:
+                    case GameMode.Ziel2:
                     default:
                         break;
                 }
@@ -180,6 +181,7 @@ public class StockTVSettings : IStockTVSettings
                 s.TurnsPerGame = 6;
                 break;
             case GameMode.Ziel:
+            case GameMode.Ziel2:
                 break;
             default:
                 break;

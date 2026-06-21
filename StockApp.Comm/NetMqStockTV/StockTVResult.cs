@@ -80,7 +80,7 @@ public class StockTVResult : IStockTVResult
 			var jsonMessage = array.Skip(10);
 			var jsonString = Encoding.UTF8.GetString(jsonMessage.ToArray(), 0, jsonMessage.Count());
 
-			if (TVSettings.GameModus != GameMode.Ziel)
+			if (TVSettings.GameModus != GameMode.Ziel && TVSettings.GameModus != GameMode.Ziel2)
 			{
 				// var jsonGames = JsonSerializer.Deserialize<List<StockTVGame>>(jsonString);
 				if (TryDesirializeJSONToListOfStockTVGames(jsonString, out List<StockTVGame> jsonGames))
@@ -117,7 +117,7 @@ public class StockTVResult : IStockTVResult
 
 	public override string ToString()
 	{
-		return TVSettings.GameModus != GameMode.Ziel
+		return TVSettings.GameModus != GameMode.Ziel && TVSettings.GameModus != GameMode.Ziel2
 			? $"Gruppe: {TVSettings.Spielgruppe}; Bahn: {TVSettings.Bahn}; Spiele:{Results.Count} | {string.Join("-", Results.Select(x => String.Format("{0}:{1}", x.ValueA, x.ValueB)))}"
 			: $"Bahn: {TVSettings.Bahn} Anzahl Versuche: {TVSettings.TurnsPerGame} | " +
 				$"MaMi: {string.Join("-", ResultZielbewerb.MassenVorne.Versuche.Select(t => t))} | " +

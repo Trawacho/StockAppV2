@@ -1,4 +1,4 @@
-﻿using StockApp.Core.Wettbewerb.Zielbewerb;
+using StockApp.Core.Wettbewerb.Zielbewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.com;
 using StockApp.UI.Commands;
@@ -15,6 +15,7 @@ public class TeilnehmerViewModel : ViewModelBase
     private readonly ITeilnehmer _teilnehmer;
     public ITeilnehmer Teilnehmer => _teilnehmer;
     private readonly IEnumerable<IVerein> _vereine;
+        private ICommand _vereinSelectedEnterCommand;
     public TeilnehmerViewModel(ITeilnehmer teilnehmer, ITurnierStore store)
     {
         _teilnehmer = teilnehmer;
@@ -32,6 +33,7 @@ public class TeilnehmerViewModel : ViewModelBase
             {
                 _teilnehmer.OnlineStatusChanged -= OnlineStatusChanged;
                 _teilnehmer.StartNumberChanged -= StartNumberChanged;
+                (_vereinSelectedEnterCommand as IDisposable)?.Dispose();
             }
             _disposed = true;
         }
@@ -126,7 +128,7 @@ public class TeilnehmerViewModel : ViewModelBase
         }
     }
 
-    public ICommand VereinSelectedEnterCommand => new RelayCommand(
+    public ICommand VereinSelectedEnterCommand => _vereinSelectedEnterCommand ??= new RelayCommand(
         (p) =>
         {
             var x = _vereine?.FirstOrDefault(v => v.Name == Verein);

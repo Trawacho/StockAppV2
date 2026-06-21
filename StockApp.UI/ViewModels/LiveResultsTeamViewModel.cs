@@ -14,6 +14,7 @@ namespace StockApp.UI.ViewModels;
 public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
 {
     private readonly ITeamBewerb _teamBewerb;
+    private readonly List<IGame> _subscribedGames = new();
 
     public event EventHandler<DialogCloseRequestedEventArgs> DialogCloseRequested;
     public event EventHandler<WindowCloseRequestedEventArgs> WindowCloseRequested;
@@ -33,7 +34,8 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
 
         _teamBewerb.GamesChanged += TeamBewerb_GamesChanged;
 
-        foreach (var game in _teamBewerb.GetAllGames())
+        _subscribedGames.AddRange(_teamBewerb.GetAllGames());
+        foreach (var game in _subscribedGames)
         {
             game.SpielstandChanged += TeamBewerb_ResultChanged;
         }
@@ -78,7 +80,7 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
             if (disposing)
             {
                 _teamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
-                foreach (var game in _teamBewerb.GetAllGames())
+                foreach (var game in _subscribedGames)
                 {
                     game.SpielstandChanged -= TeamBewerb_ResultChanged;
                 }

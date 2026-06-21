@@ -6,71 +6,62 @@ This file tracks critical issues found during codebase analysis. See `docs/EVENT
 
 ## Memory Leaks (High Priority)
 
-### 🚨 1. ContainerTeamBewerbe – Lambda Capture Leak
-- **Status**: Pending
-- **Priority**: CRITICAL (happens 100x per session)
-- **File**: `StockAppV2.Core/Wettbewerb/Teambewerb/ContainerTeamBewerbe.cs:91-92, 98-99`
-- **Problem**: Lambda unsubscription doesn't work — each lambda is a different object
-- **Impact**: Every tournament load accumulates orphaned event subscriptions
-- **Fix**: Store handler reference instead of inline lambda
-- **Docs**: See `docs/EVENTS.md` → "Known Memory Leak Issues" → "Leak #1"
-
-**Code to Fix**:
-```csharp
-// WRONG:
-_currentTeamBewerb.GamesChanged -= (s, e) => RaiseCurrentTeam_GamesChanged();
-
-// CORRECT:
-_gamesChangedHandler = (s, e) => RaiseCurrentTeam_GamesChanged();
-_currentTeamBewerb.GamesChanged -= _gamesChangedHandler;
-```
+### ✅ 1. ContainerTeamBewerbe – Lambda Capture Leak
+- **Status**: ✅ COMPLETED (2026-06-03)
+- **Priority**: CRITICAL (was: happens 100x per session)
+- **File**: `StockAppV2.Core/Wettbewerb/Teambewerb/ContainerTeamBewerbe.cs`
+- **Commit**: `99f397f` (branch: `fix/container-teambewerbe-lambda-leak`)
+- **Solution**: Replaced inline lambdas with dedicated event handler methods
+  - `OnCurrentTeamBewerb_GamesChanged()` (line 94-95)
+  - `OnCurrentTeamBewerb_TeamsChanged()` (line 97-98)
+  - `UnsubscribeFromCurrentTeamBewerb()` for centralized cleanup (line 87-93)
+- **Tests**: All 22 NUnit tests passed ✅
+- **Impact**: Eliminates ~1 orphaned subscription per tournament load
 
 ---
 
-### 🚨 2. GamesViewModel – GamesPrintsViewModel Not Disposed
-- **Status**: Pending
-- **Priority**: CRITICAL (each tournament load)
-- **File**: `StockApp.UI/ViewModels/GamesViewModel.cs:32-36`
-- **Problem**: Old GamesPrintsViewModel is replaced without calling Dispose()
-- **Impact**: Orphaned ViewModels accumulate in memory
-- **Fix**: Dispose old instance before replacing
-
-**Code to Fix**:
-```csharp
-public GamesPrintsViewModel GamesPrintsViewModel
-{
-    get => _gamesPrintsViewModel;
-    set
-    {
-        _gamesPrintsViewModel?.Dispose();  // ADD THIS LINE
-        SetProperty(ref _gamesPrintsViewModel, value);
-    }
-}
-```
+### ✅ 2. GamesViewModel – GamesPrintsViewModel Not Disposed
+- **Status**: ✅ COMPLETED (2026-06-03)
+- **Priority**: CRITICAL (was: each tournament load)
+- **File**: `StockApp.UI/ViewModels/GamesViewModel.cs`
+- **Commit**: `6887489` (branch: `fix/games-viewmodel-dispose-leak`)
+- **Solution**: Dispose old GamesPrintsViewModel before assigning new one
+  - Line 44: `_gamesPrintsViewModel?.Dispose()` in property setter
+- **Tests**: All 22 NUnit tests passed ✅
+- **Impact**: Eliminates orphaned child ViewModel per tournament load
 
 ---
 
-### 🚨 3. LiveResultsTeamViewModel – Closure References & Conditional Cleanup
-- **Status**: Pending
-- **Priority**: MEDIUM-HIGH (affects live results)
-- **File**: `StockApp.UI/ViewModels/LiveResultsTeamViewModel.cs:37-39, 81-84`
-- **Problem**: Subscribes to all games' events. Cleanup is conditional (fails if TeamBewerb is null)
-- **Impact**: Old game references leak if tournament reloads during play
-- **Fix**: Store game references, always clean up
-- **Docs**: See `docs/EVENTS.md` → "Leak #3"
+### ✅ 3. LiveResultsTeamViewModel – Closure References & Conditional Cleanup
+- **Status**: ✅ COMPLETED (2026-06-03)
+- **Priority**: MEDIUM-HIGH (was: affects live results)
+- **File**: `StockApp.UI/ViewModels/LiveResultsTeamViewModel.cs`
+- **Commit**: `b9074fb` (branch: `fix/live-results-team-viewmodel-closure`)
+- **Solution**: Store Game references at subscription time
+  - Add `_subscribedGames` field (line 17)
+  - Populate in constructor with `AddRange()` (line 39)
+  - Unsubscribe from stored Games in Dispose (line 84)
+- **Tests**: All 22 NUnit tests passed ✅
+- **Impact**: Guarantees correct unsubscription even if Games change between subscription and disposal
 
 ---
 
 ### ✅ 4. Review Other ViewModels for Similar Issues
-- **Status**: Pending
+- **Status**: ✅ COMPLETED (2026-06-03)
 - **Priority**: MEDIUM (systematic review)
-- **Scope**: All ViewModels in `StockApp.UI/ViewModels/`
-- **Check For**:
-  - Event subscriptions without Dispose
-  - Inline lambdas (can't unsubscribe)
-  - Child ViewModels not disposed
-  - Conditional cleanup
-- **Docs**: See `docs/EVENTS.md` → "Best Practices"
+- **Scope**: All 34 ViewModels in `StockApp.UI/ViewModels/` reviewed
+- **Commits**: 
+  - `2e22eb5` – Fixed 3 CRITICAL issues
+  - `64366cd` – Fixed 4 remaining HIGH issues
+- **Total Issues Fixed**: 7 out of 7 additional issues
+  - ✅ **LiveResultsZielViewModel**: Dispose child ViewModels in RefreshRanking()
+  - ✅ **ZielBewerbViewModel**: Dispose old WertungenViewModel
+  - ✅ **NavigationViewModel**: Added missing CurrentTeamBewerbChanged unsubscription
+  - ✅ **TeamsViewModel**: Dispose _modalOkCommand before reassignment
+  - ✅ **ResultsViewModel**: Property with disposal for ShowLiveResultCommand
+  - ✅ **TeilnehmerViewModel**: Lazy initialization for VereinSelectedEnterCommand
+  - ✅ **LogViewerViewModel & MainViewModel**: Already correct
+- **Tests**: All 22 NUnit tests passed ✅
 
 ---
 

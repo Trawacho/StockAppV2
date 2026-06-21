@@ -75,7 +75,11 @@ public class ZielBewerbViewModel : ViewModelBase
     public ViewModelBase WertungenViewModel
     {
         get => _wertungenViewModel;
-        set => SetProperty(ref _wertungenViewModel, value);
+        set
+        {
+            _wertungenViewModel?.Dispose();
+            SetProperty(ref _wertungenViewModel, value);
+        }
     }
 
     public ICommand AddPlayerCommand => _addPlayerCommand ??= new RelayCommand(

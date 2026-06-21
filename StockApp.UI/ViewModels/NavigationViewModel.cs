@@ -103,6 +103,7 @@ public class NavigationViewModel : ViewModelBase, INavigationViewModel
                 _turnierStore.Turnier.WettbewerbChanging -= CurrentTurnier_WettbewerbChanging;
                 _turnierStore.Turnier.WettbewerbChanged -= CurrentTurnier_WettbewerbChanged;
                 _turnierStore.Turnier.ContainerTeamBewerbe.TeamBewerbeChanged -= ContainerTeamBewerbe_TeamBewerbeChanged;
+                _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerbChanged -= ContainerTeamBewerbe_CurrentTeamBewerbChanged;
             }
             _disposed = true;
         }

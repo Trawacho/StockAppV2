@@ -30,12 +30,17 @@ public class StockTVViewModel : ViewModelBase
         _stockTv.StockTVDirectorChanged += StockTVDirectorChanged;
 
         ColorModes = Enum.GetValues(typeof(ColorMode)).Cast<ColorMode>().ToList();
-        GameModes = Enum.GetValues(typeof(GameMode)).Cast<GameMode>().ToList();
+        GameModes = GetAvailableGameModes();
         NextCourts = Enum.GetValues(typeof(NextCourtMode)).Cast<NextCourtMode>().ToList();
         GameGroups = new List<string>() { "--", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
     }
 
 
+
+    private List<GameMode> GetAvailableGameModes()
+    {
+        return StockTVVersionHelper.GetAvailableGameModes(FirmwareVersion);
+    }
 
     protected override void Dispose(bool disposing)
     {
@@ -174,9 +179,12 @@ public class StockTVViewModel : ViewModelBase
         set
         {
             if (_stockTVSettings.GameModus == value) return;
+
+            if (!StockTVVersionHelper.IsGameModeSupportedByVersion(value, FirmwareVersion))
+                return;
+
             _stockTVSettings.GameModus = value;
             RaisePropertyChanged();
-
         }
     }
 
