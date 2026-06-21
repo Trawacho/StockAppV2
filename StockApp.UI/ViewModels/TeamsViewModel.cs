@@ -1,4 +1,4 @@
-﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
 using StockApp.UI.Extensions;
@@ -61,6 +61,7 @@ public class TeamsViewModel : ViewModelBase
         {
             IsModalOpen = true;
 
+            (_modalOkCommand as IDisposable)?.Dispose();
             _modalOkCommand = new RelayCommand(
                     (p) =>
                     {
@@ -85,6 +86,7 @@ public class TeamsViewModel : ViewModelBase
         {
             IsModalOpen = true;
 
+            (_modalOkCommand as IDisposable)?.Dispose();
             _modalOkCommand = new RelayCommand(
                 (p) =>
                 {
@@ -152,3 +154,4 @@ public class TeamsViewModel : ViewModelBase
             Teams.Add(new TeamViewModel(team, _turnierStore));
     }
 }
+

@@ -1,4 +1,4 @@
-﻿using StockApp.Comm.NetMqStockTV;
+using StockApp.Comm.NetMqStockTV;
 
 namespace StockApp.Core.Wettbewerb.Zielbewerb;
 
@@ -105,11 +105,42 @@ public interface ITeilnehmer
     event EventHandler StartNumberChanged;
 }
 
+/// <summary>
+/// Repräsentiert einen einzelnen Teilnehmer im Zielbewerb.
+/// <br/>
+/// Verwaltet die Wertungen (Durchgänge) des Teilnehmers und steuert den Online-Status
+/// für die Echtzeit-Datenübertragung von StockTV.
+/// <br/><br/>
+/// Unterstützte Ziel-Modi:
+/// <list type="bullet">
+///   <item><b>Ziel (6 Versuche/Disziplin):</b> Ein Durchgang mit 24 Versuchen → eine Wertung.</item>
+///   <item><b>Ziel (12 Versuche/Disziplin):</b> StockTV sendet 12 Werte pro Disziplin;
+///     Versuche 1–6 gehen in Wertung N, Versuche 7–12 automatisch in Wertung N+1.</item>
+///   <item><b>Ziel2:</b> Zwei Runden à 24 Versuche. StockTV löscht nach Runde 1 intern seine
+///     Listen und sendet Runde 2 als frische Werte 1–24. Die Klasse erkennt diesen
+///     Übergang anhand der Ziel2-Zustands-Flags und schreibt Runde 2 in die nächste Wertung.</item>
+/// </list>
+/// </summary>
 public class Teilnehmer : TBasePlayer, ITeilnehmer
 {
     #region Fields
 
     private readonly List<IWertung> _wertungen = new();
+
+    // Ziel2-Zustandsverwaltung für den Runden-Übergang (Runde 1 → Runde 2).
+    // Beide Flags werden bei jedem SetOnline()-Aufruf zurückgesetzt, sodass jede
+    // neue Online-Session sauber beginnt – unabhängig davon, ob die Wertung bereits
+    // Daten aus einer früheren Session enthält (Schutz vor False-Positive-Übergängen).
+    //
+    // Ablauf:
+    //   SetOnline()          → _ziel2NeedsInitialReset = true,  _ziel2CanTransition = false
+    //   Erster Ziel2-Aufruf  → Wertung resetten, _ziel2NeedsInitialReset = false, _ziel2CanTransition = true
+    //   Runde 1 läuft        → _ziel2CanTransition = true, aber VersucheAllEntered = false
+    //   Runde 2 startet      → _ziel2CanTransition = true + VersucheAllEntered = true → Übergang
+    //                          danach: _ziel2CanTransition = false (kein weiterer Übergang)
+    //   Runde 2 komplett     → _ziel2CanTransition = false → keine Wertung N+2 wird angelegt
+    private bool _ziel2NeedsInitialReset = false;
+    private bool _ziel2CanTransition = false;
 
     #endregion
 
@@ -207,21 +238,30 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     public bool HasOnlineWertung => _wertungen?.Any(w => w.IsOnline) ?? false;
 
     /// <summary>
-    /// Setzt den Wert für <see cref="AktuelleBahn"/>. 
-    /// <br>Die <see cref="Wertung"/> wird <see cref="Wertung.IsOnline"/> = true gesetzt.</br>
-    /// <br>Die restlichen auf FALSE</br>
+    /// Schaltet den Teilnehmer auf einer Bahn online und aktiviert die angegebene Wertung.
+    /// Setzt außerdem die Ziel2-Zustands-Flags zurück, damit die neue Session unabhängig
+    /// von eventuell vorhandenen Altdaten in der Wertung korrekt beginnt.
     /// </summary>
-    /// <param name="bahnNummer"></param>
+    /// <param name="bahnNummer">Nummer der Bahn, auf der der Teilnehmer spielt.</param>
+    /// <param name="wertungsNummer">Nummer der Wertung, die für diese Session aktiv ist.</param>
     public void SetOnline(int bahnNummer, int wertungsNummer)
     {
         AktuelleBahn = bahnNummer;
+
+        // Alle Wertungen deaktivieren, dann die gewünschte aktivieren
         _wertungen.ToList().ForEach(w => w.IsOnline = false);
         _wertungen.First(w => w.Nummer == wertungsNummer).IsOnline = true;
+
+        // Ziel2-Flags für die neue Session zurücksetzen
+        _ziel2NeedsInitialReset = true;
+        _ziel2CanTransition = false;
+
         RaiseOnlineStatusChanged();
     }
 
     /// <summary>
-    /// <see cref="AktuelleBahn"/> wird auf -1 gesetzt. Alle <see cref="Wertungen"/> werden <see cref="Wertung.IsOnline"/> auf FALSE gesetzt
+    /// Schaltet den Teilnehmer offline. <see cref="AktuelleBahn"/> wird auf 0 gesetzt
+    /// und alle Wertungen werden deaktiviert.
     /// </summary>
     public void SetOffline()
     {
@@ -231,13 +271,18 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     }
 
     /// <summary>
-    /// Wenn möglich, wird die nächste Wertung online geschaltet, oder Spieler geht offline
+    /// Wechselt zur nächsten noch nicht vollständig ausgefüllten Wertung,
+    /// oder schaltet den Teilnehmer offline, wenn keine weitere Wertung verfügbar ist.
+    /// Wird aufgerufen, wenn StockTV nach Abschluss aller Versuche ein leeres Ergebnis sendet.
     /// </summary>
     public void SetWertungOfflineOrNext()
     {
         int aktuelleWertung = OnlineWertung.Nummer;
 
+        // Alle Wertungen deaktivieren
         _wertungen.ToList().ForEach(w => w.IsOnline = false);
+
+        // Nächste Wertung aktivieren, falls vorhanden und noch nicht vollständig
         if (_wertungen.Any(w => w.Nummer == aktuelleWertung + 1))
         {
             var nextWertung = _wertungen.First(w => w.Nummer == aktuelleWertung + 1);
@@ -245,6 +290,7 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
                 nextWertung.IsOnline = true;
         }
 
+        // Keine aktive Wertung mehr → Teilnehmer offline setzen
         if (!_wertungen.Any(w => w.IsOnline))
             AktuelleBahn = -1;
 
@@ -256,15 +302,63 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     /// </summary>
     public IEnumerable<IWertung> Wertungen => _wertungen;
 
-    internal void SetVersuch(IStockTVZielbewerb bewerb)
+    /// <summary>
+    /// Überträgt die Versuchsdaten von StockTV in die aktive Wertung des Teilnehmers.
+    /// <br/><br/>
+    /// Das Verhalten hängt vom Spielmodus ab:
+    /// <list type="bullet">
+    ///   <item><b>Ziel:</b> Versuche 1–6 pro Disziplin gehen in die OnlineWertung.
+    ///     Bei mehr als 6 Versuchen pro Disziplin (z.B. 12 Kehren) werden die Versuche 7+
+    ///     automatisch in die nächste Wertung geschrieben.</item>
+    ///   <item><b>Ziel2:</b> Erkennt den Übergang von Runde 1 zu Runde 2 anhand der
+    ///     Ziel2-Zustands-Flags und wechselt dabei in die nächste Wertung.</item>
+    /// </list>
+    /// Die Methode ist idempotent: StockTV sendet den Gesamtstand nach jedem Versuch
+    /// neu, daher wird die Wertung zuerst zurückgesetzt und dann vollständig neu befüllt.
+    /// </summary>
+    /// <param name="bewerb">Aktueller Zielbewerb-Stand von StockTV (alle Disziplinen).</param>
+    /// <param name="modus">Spielmodus; bestimmt die Ziel2-Übergangslogik.</param>
+    internal void SetVersuch(IStockTVZielbewerb bewerb, GameMode modus = GameMode.Ziel)
     {
         if (OnlineWertung == null)
             return;
 
+        if (modus == GameMode.Ziel2)
+        {
+            if (_ziel2NeedsInitialReset)
+            {
+                // Erster Aufruf nach SetOnline: Altdaten in der Wertung löschen,
+                // damit eine volle Wertung aus einer früheren Session keinen
+                // vorzeitigen Runden-Übergang auslöst.
+                OnlineWertung.Reset();
+                _ziel2NeedsInitialReset = false;
+                _ziel2CanTransition = true;
+            }
+            else if (_ziel2CanTransition && OnlineWertung.VersucheAllEntered() && !bewerb.HasNoAttempts())
+            {
+                // Runde 1 ist abgeschlossen (Wertung voll) und StockTV sendet bereits
+                // Runde-2-Daten (StockTV hat seine Listen intern geleert und neu befüllt).
+                // → Zur nächsten Wertung wechseln; anlegen falls noch nicht vorhanden.
+                var currentNummer = OnlineWertung.Nummer;
+                _wertungen.ToList().ForEach(w => w.IsOnline = false);
+                var next = _wertungen.FirstOrDefault(w => w.Nummer == currentNummer + 1) ?? AddNewWertung();
+                next.IsOnline = true;
+
+                // Übergang abgeschlossen: kein weiterer automatischer Wechsel in dieser Session
+                _ziel2CanTransition = false;
+                RaiseOnlineStatusChanged();
+            }
+        }
+
+        // Wertung zurücksetzen und vollständig neu befüllen (idempotentes Update)
         this.OnlineWertung.Reset();
+
+        // Bei mehr als 6 Versuchen pro Disziplin (Ziel mit 12 Kehren): auch die
+        // nächste Wertung zurücksetzen, da sie ebenfalls neu befüllt wird
         if (bewerb.MassenVorne.Versuche.Count > 6)
             Wertungen.FirstOrDefault(w => w.Nummer == OnlineWertung.Nummer + 1)?.Reset();
 
+        // Versuche je Disziplin in die Wertung(en) schreiben
         foreach (var zielDisziplin in bewerb.Disziplinen())
         {
             switch (zielDisziplin.Name)
@@ -301,22 +395,36 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
 
     }
 
+    /// <summary>
+    /// Schreibt einen einzelnen Versuch einer Disziplin in die richtige Wertung.
+    /// Versuche 1–6 gehen in die aktive OnlineWertung, Versuche ab 7 in die nächste
+    /// Wertung (wird automatisch angelegt), verschoben um 6 Positionen.
+    /// </summary>
+    /// <param name="disziplinart">Die Disziplin, der der Versuch zugeordnet wird.</param>
+    /// <param name="versuchNr">Laufende Versuchsnummer aus StockTV (1-basiert).</param>
+    /// <param name="value">Punktwert des Versuchs.</param>
     private void SetVersuch(StockTVZielDisziplinName disziplinart, int versuchNr, int value)
     {
         if (versuchNr <= 6)
             OnlineWertung.Disziplinen.First(d => d.Disziplinart == disziplinart).SetVersuch(versuchNr, value);
         else
         {
+            // Versuch gehört in die Folgewertung (z.B. bei 12 Kehren pro Disziplin);
+            // Wertung anlegen falls noch nicht vorhanden
             var nextWertung = Wertungen.FirstOrDefault(w => w.Nummer == OnlineWertung.Nummer + 1) ?? this.AddNewWertung();
             nextWertung.Disziplinen.First(d => d.Disziplinart == disziplinart).SetVersuch(versuchNr - 6, value);
         }
     }
 
     /// <summary>
-    /// Es wird der Versuch in der OnlineWertung eingetragen
+    /// Schreibt einen einzelnen Versuch über die fortlaufende Gesamtnummer (1–24)
+    /// in die entsprechende Disziplin der OnlineWertung.
+    /// Wird vom Legacy-Broadcast-Protokoll (MessageVersion 0) verwendet.
+    /// <br/>
+    /// Mapping: 1–6 = MassenMitte, 7–12 = Schiessen, 13–18 = MassenSeite, 19–24 = Kombinieren.
     /// </summary>
-    /// <param name="versuchNr"></param>
-    /// <param name="value"></param>
+    /// <param name="versuchNr">Gesamtnummer des Versuchs (1–24).</param>
+    /// <param name="value">Punktwert des Versuchs.</param>
     internal void SetVersuch(int versuchNr, int value)
     {
         if (OnlineWertung == null)
@@ -382,19 +490,20 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     }
 
     /// <summary>
-    /// True, wenn eine neue Wertung angefügt werden kann
+    /// Gibt an, ob eine weitere Wertung angefügt werden kann (maximal 5 Wertungen pro Teilnehmer).
     /// </summary>
     public bool CanAddWertung() => Wertungen.Count() < 5;
 
     /// <summary>
-    /// True, wenn eine Wertung entfernt werden kann
+    /// Gibt an, ob eine Wertung entfernt werden kann (mindestens 1 Wertung muss verbleiben).
     /// </summary>
     public bool CanRemoveWertung() => Wertungen.Count() > 1;
 
     /// <summary>
-    /// Eine zusätzliche Wertung am Ende der Liste anfügen
+    /// Fügt eine neue leere Wertung am Ende der Wertungsliste an.
+    /// Die Nummer der neuen Wertung entspricht der aktuellen Anzahl + 1.
     /// </summary>
-    /// <param name="wertung"></param>
+    /// <returns>Die neu angelegte Wertung.</returns>
     public IWertung AddNewWertung()
     {
         var wertung = Wertung.Create(this._wertungen.Count + 1);
@@ -405,12 +514,15 @@ public class Teilnehmer : TBasePlayer, ITeilnehmer
     }
 
     /// <summary>
-    /// Die Wertung aus der Liste entfernen und neu nummerieren
+    /// Entfernt die angegebene Wertung aus der Liste und nummeriert alle
+    /// verbleibenden Wertungen neu (fortlaufend ab 1).
     /// </summary>
-    /// <param name="wertung"></param>
+    /// <param name="wertung">Die zu entfernende Wertung.</param>
     public void RemoveWertung(IWertung wertung)
     {
         this._wertungen.Remove(wertung);
+
+        // Nummern nach dem Entfernen neu vergeben
         for (int i = 0; i < _wertungen.Count; i++)
         {
             _wertungen[i].Nummer = i + 1;

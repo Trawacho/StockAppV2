@@ -41,6 +41,7 @@ public class GamesViewModel : ViewModelBase
         get => _gamesPrintsViewModel;
         private set
         {
+            _gamesPrintsViewModel?.Dispose();
             SetProperty(ref _gamesPrintsViewModel, value);
         }
     }

@@ -5,13 +5,15 @@
     /// BestOf   = 1   <br/>
     /// Turnier  = 2  <br/>
     /// Ziel     = 100   <br/>
+    /// Ziel2    = 101   <br/>
     /// </summary>
     public enum GameMode
     {
         Training = 0,
         Turnier = 2,
         BestOf = 1,
-        Ziel = 100
+        Ziel = 100,
+        Ziel2 = 101
     }
 
     /// <summary>

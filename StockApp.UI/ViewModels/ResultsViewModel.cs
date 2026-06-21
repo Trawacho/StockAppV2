@@ -1,4 +1,4 @@
-﻿using StockApp.Core.Wettbewerb.Teambewerb;
+using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.Prints.Template;
 using StockApp.UI.Commands;
@@ -31,6 +31,7 @@ public class ResultsViewModel : ViewModelBase
     private readonly ITurnierNetworkManager _turnierNetworkManager;
     private TeamBewerbInputMethod _inputMethod;
     private ViewModelBase _resultsEntryViewModel;
+    private ICommand _showLiveResultCommand;
     private ICommand _printTeamResultsCommand;
 
     public ICommand PrintTeamResultsCommand => _printTeamResultsCommand ??= new AsyncRelayCommand(
@@ -42,7 +43,15 @@ public class ResultsViewModel : ViewModelBase
         },
         (p) => { return true; });
 
-    public ICommand ShowLiveResultCommand { get; set; }
+    public ICommand ShowLiveResultCommand
+    {
+        get => _showLiveResultCommand;
+        set
+        {
+            (_showLiveResultCommand as IDisposable)?.Dispose();
+            _showLiveResultCommand = value;
+        }
+    }
 
 
     public TeamBewerbInputMethod InputMethod
@@ -106,7 +115,7 @@ public class ResultsViewModel : ViewModelBase
         TeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
         SubscribeToTeamBewerbEvents();
 
-        ShowLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
+        _showLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
                 new DialogService<LiveResultsTeamViewModel>(
                     _dialogStore,
                     () => new LiveResultsTeamViewModel(TeamBewerb), false));
@@ -120,7 +129,7 @@ public class ResultsViewModel : ViewModelBase
         TeamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
         SubscribeToTeamBewerbEvents();
 
-        ShowLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
+        _showLiveResultCommand = new DialogCommand<LiveResultsTeamViewModel>(
                 new DialogService<LiveResultsTeamViewModel>(
                     _dialogStore,
                     () => new LiveResultsTeamViewModel(TeamBewerb), false));
