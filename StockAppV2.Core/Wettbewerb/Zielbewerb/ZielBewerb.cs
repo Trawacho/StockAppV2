@@ -314,7 +314,7 @@ internal class ZielBewerb : IZielBewerb
                 }
                 else
                 {
-                    spieler?.SetVersuch(tVResult.ResultZielbewerb);
+                    spieler?.SetVersuch(tVResult.ResultZielbewerb, gameModus);
                 }
             }
         }
