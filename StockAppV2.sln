@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StockApp.Installer", "Stock
 		StockApp.Installer\Dockerfile = StockApp.Installer\Dockerfile
 		StockApp.Installer\FileAssociation.nsh = StockApp.Installer\FileAssociation.nsh
 		StockApp.Installer\installer.nsi = StockApp.Installer\installer.nsi
-		StockApp.Installer\README.txt = StockApp.Installer\README.txt
+		StockApp.Installer\README.md = StockApp.Installer\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockApp.Lib", "StockApp.Lib\StockApp.Lib.csproj", "{FCBEE84C-E7C2-41FD-888E-877395569D97}"
