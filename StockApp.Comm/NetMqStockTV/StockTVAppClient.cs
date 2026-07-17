@@ -54,12 +54,23 @@ namespace StockApp.Comm.NetMqStockTV
         public event EventHandler<StockTVMessageReceivedEventArgs> MessageReceived;
         protected void RaiseMessageReceived(NetMQFrame topic, NetMQFrame value)
         {
-			var handler = MessageReceived;
-            MessageTopic mt = (MessageTopic)Enum.Parse(typeof(MessageTopic), topic.ConvertToString());
-			var valueArr = value.ToByteArray(true);
-			handler?.Invoke(this, new StockTVMessageReceivedEventArgs(mt, valueArr));
-            
-			_logger.Debug($"{mt} received, {string.Join("-", valueArr.Take(10))} {Encoding.UTF8.GetString(valueArr.Skip(10).ToArray())}");
+            // Guards the poller thread: an unrecognized topic or a downstream parsing
+            // error (e.g. malformed settings/result payload) must never escape here,
+            // since an unhandled exception on this background thread crashes the app.
+            try
+            {
+                MessageTopic mt = (MessageTopic)Enum.Parse(typeof(MessageTopic), topic.ConvertToString());
+                var valueArr = value.ToByteArray(true);
+
+                var handler = MessageReceived;
+                handler?.Invoke(this, new StockTVMessageReceivedEventArgs(mt, valueArr));
+
+                _logger.Debug($"{mt} received, {string.Join("-", valueArr.Take(10))} {Encoding.UTF8.GetString(valueArr.Skip(10).ToArray())}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Failed to process message with topic '{topic.ConvertToString()}': {ex.Message}", ex);
+            }
 		}
 
         public event EventHandler<bool> ConnectedChanged;

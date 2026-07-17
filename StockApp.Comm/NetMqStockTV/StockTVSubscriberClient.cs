@@ -82,10 +82,20 @@ namespace StockApp.Comm.NetMqStockTV
 				var message = (e.Socket as SubscriberSocket).ReceiveMultipartMessage();
 				if (message.FrameCount >= 2)
 				{
-					MessageTopic topic = (MessageTopic)Enum.Parse(typeof(MessageTopic), message[0].ConvertToString());
-					byte[] value = message[1].ToByteArray();
+					// Guards the poller thread: an unrecognized topic or a downstream parsing
+					// error must never escape here, since an unhandled exception on this
+					// background thread crashes the app.
+					try
+					{
+						MessageTopic topic = (MessageTopic)Enum.Parse(typeof(MessageTopic), message[0].ConvertToString());
+						byte[] value = message[1].ToByteArray();
 
-					_messageReceiveAction?.Invoke(topic, value);
+						_messageReceiveAction?.Invoke(topic, value);
+					}
+					catch (Exception ex)
+					{
+						_logger.Error($"Failed to process subscribed message with topic '{message[0].ConvertToString()}': {ex.Message}", ex);
+					}
 				}
 			}
 
