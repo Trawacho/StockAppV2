@@ -230,10 +230,20 @@ namespace StockApp.Comm.NetMqStockTV
         private void ReceiveQueue_ReceiveReady(object sender, NetMQQueueEventArgs<NetMQMessage> e)
         {
             var message = e.Queue.Dequeue();
+
             if (message.Count() == 3)
+            {
                 RaiseMessageReceived(message[1], message[2]);
+            }
+            else if (message.Count() == 2 && message[1].ConvertToString() == "ACK")
+            {
+                // Plain protocol-level acknowledgement, not a MessageTopic - expected traffic, not a problem.
+                _logger.Debug("ACK received from StockTV.");
+            }
             else
+            {
                 _logger.Warn($"Discarding message with unexpected frame count {message.Count()} (expected 3).");
+            }
         }
 
         #endregion
