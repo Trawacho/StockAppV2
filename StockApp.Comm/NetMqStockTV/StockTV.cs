@@ -200,7 +200,7 @@ public class StockTV : IStockTV
         TVResult.ResultChanged += RaiseStockTVResultChanged;
         TVSettings.SettingsChanged += RaiseStockTVSettingsChanged;
         Connect();
-        StockTVId = new Guid();
+        StockTVId = Guid.NewGuid();
     }
 
     #endregion
