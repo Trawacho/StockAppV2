@@ -105,6 +105,7 @@ public class StockTV : IStockTV
     /// <returns></returns>
     public bool Equals(IStockTV other)
     {
+        if (other == null) return false;
         return this.HostName.Equals(other.HostName) &&
             this.IPAddress.Equals(other.IPAddress) &&
             this.TVSettings.Bahn.Equals(other.TVSettings.Bahn);
