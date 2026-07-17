@@ -47,7 +47,7 @@ public class StockTVResult : IStockTVResult
 
 	public void SetResult(byte[] array)
 	{
-		if (Data?.Equals(array) ?? false) return;
+		if (Data != null && array != null && Data.AsSpan().SequenceEqual(array)) return;
 
 		Data = array;
 
