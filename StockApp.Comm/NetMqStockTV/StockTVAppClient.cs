@@ -163,7 +163,6 @@ namespace StockApp.Comm.NetMqStockTV
             _monitor.EventReceived += Monitor_EventReceived;
             _monitor.AttachToPoller(_poller);
 
-            Thread.Sleep(50);
             _poller.RunAsync(_identifier);
 
             //Sending Hello to StockTV
