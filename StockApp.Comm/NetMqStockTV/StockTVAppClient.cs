@@ -232,6 +232,8 @@ namespace StockApp.Comm.NetMqStockTV
             var message = e.Queue.Dequeue();
             if (message.Count() == 3)
                 RaiseMessageReceived(message[1], message[2]);
+            else
+                _logger.Warn($"Discarding message with unexpected frame count {message.Count()} (expected 3).");
         }
 
         #endregion

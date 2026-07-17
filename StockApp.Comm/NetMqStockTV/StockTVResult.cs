@@ -60,6 +60,8 @@ public class StockTVResult : IStockTVResult
 			TVSettings?.SetSettings(array.Take(10).ToArray());
 		}
 
+		bool changed = true;
+
 		if (TVSettings.MessageVersion == 0)
 		{
 			byte gamenumber = 1;
@@ -67,10 +69,17 @@ public class StockTVResult : IStockTVResult
 			Results.Clear();
 			foreach (var item in array.Skip(10).Split(2))
 			{
+				var pair = item.ToList();
+				if (pair.Count < 2)
+				{
+					_logger.Warn($"Discarding trailing incomplete byte pair in result payload (odd byte count, gamenumber {gamenumber}).");
+					break;
+				}
+
 				Results.Add(
 					new StockTVGameResult(gamenumber,
-										  item.First(),
-										  item.Last()));
+										  pair[0],
+										  pair[1]));
 				gamenumber++;
 			}
 
@@ -92,16 +101,23 @@ public class StockTVResult : IStockTVResult
 							new StockTVGameResult(game.GameNumber, game.Turns));
 					}
 				}
+				else
+				{
+					changed = false;
+				}
 			}
 			else
 			{
 				//var jsonZielbewerb = JsonSerializer.Deserialize<StockTVZielbewerb>(jsonString);
-				if(TryDesirializeJSONToStockTVZielbewerb(jsonString, out StockTVZielbewerb jsonZielbewerb))
-				ResultZielbewerb = jsonZielbewerb;
+				if (TryDesirializeJSONToStockTVZielbewerb(jsonString, out StockTVZielbewerb jsonZielbewerb))
+					ResultZielbewerb = jsonZielbewerb;
+				else
+					changed = false;
 			}
 		}
 
-		RaiseResultChanged();
+		if (changed)
+			RaiseResultChanged();
 	}
 
 	public StockTVResult()
