@@ -23,6 +23,8 @@ public interface IStockTVSettings : IEquatable<IStockTVSettings>
 
 public class StockTVSettings : IStockTVSettings
 {
+	private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
     #region Fields
 
     private int _bahn;
@@ -120,6 +122,12 @@ public class StockTVSettings : IStockTVSettings
     /// <param name="valueString"></param>
     public void SetSettings(byte[] value)
     {
+        if (value == null || value.Length < 10)
+        {
+            _logger.Warn($"Ignoring malformed settings payload: expected 10 bytes, got {value?.Length.ToString() ?? "null"}.");
+            return;
+        }
+
         Bahn = value[0];
         Spielgruppe = value[1];
         GameModus = (GameMode)value[2];

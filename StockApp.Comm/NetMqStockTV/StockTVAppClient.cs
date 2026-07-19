@@ -54,12 +54,23 @@ namespace StockApp.Comm.NetMqStockTV
         public event EventHandler<StockTVMessageReceivedEventArgs> MessageReceived;
         protected void RaiseMessageReceived(NetMQFrame topic, NetMQFrame value)
         {
-			var handler = MessageReceived;
-            MessageTopic mt = (MessageTopic)Enum.Parse(typeof(MessageTopic), topic.ConvertToString());
-			var valueArr = value.ToByteArray(true);
-			handler?.Invoke(this, new StockTVMessageReceivedEventArgs(mt, valueArr));
-            
-			_logger.Debug($"{mt} received, {string.Join("-", valueArr.Take(10))} {Encoding.UTF8.GetString(valueArr.Skip(10).ToArray())}");
+            // Guards the poller thread: an unrecognized topic or a downstream parsing
+            // error (e.g. malformed settings/result payload) must never escape here,
+            // since an unhandled exception on this background thread crashes the app.
+            try
+            {
+                MessageTopic mt = (MessageTopic)Enum.Parse(typeof(MessageTopic), topic.ConvertToString());
+                var valueArr = value.ToByteArray(true);
+
+                var handler = MessageReceived;
+                handler?.Invoke(this, new StockTVMessageReceivedEventArgs(mt, valueArr));
+
+                _logger.Info($"{mt} received, {string.Join("-", valueArr.Take(10))} {Encoding.UTF8.GetString(valueArr.Skip(10).ToArray())}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Failed to process message with topic '{topic.ConvertToString()}': {ex.Message}", ex);
+            }
 		}
 
         public event EventHandler<bool> ConnectedChanged;
@@ -152,7 +163,6 @@ namespace StockApp.Comm.NetMqStockTV
             _monitor.EventReceived += Monitor_EventReceived;
             _monitor.AttachToPoller(_poller);
 
-            Thread.Sleep(50);
             _poller.RunAsync(_identifier);
 
             //Sending Hello to StockTV
@@ -220,8 +230,20 @@ namespace StockApp.Comm.NetMqStockTV
         private void ReceiveQueue_ReceiveReady(object sender, NetMQQueueEventArgs<NetMQMessage> e)
         {
             var message = e.Queue.Dequeue();
+
             if (message.Count() == 3)
+            {
                 RaiseMessageReceived(message[1], message[2]);
+            }
+            else if (message.Count() == 2 && message[1].ConvertToString() == "ACK")
+            {
+                // Plain protocol-level acknowledgement, not a MessageTopic - expected traffic, not a problem.
+                _logger.Debug("ACK received from StockTV.");
+            }
+            else
+            {
+                _logger.Warn($"Discarding message with unexpected frame count {message.Count()} (expected 3).");
+            }
         }
 
         #endregion
@@ -287,7 +309,17 @@ namespace StockApp.Comm.NetMqStockTV
         {
             try
             {
-                return  message[1].ConvertToString() + "->" + string.Join("-", message[2].ToByteArray()); 
+                var topic = message[1].ConvertToString();
+
+                // Image bytes aren't meaningful in a log and can be large enough to blow
+                // out the rolling log file in one send; log size/filename instead.
+                if (topic == MessageTopic.SetImage.ToString())
+                {
+                    var fileName = message.FrameCount > 3 ? Encoding.UTF8.GetString(message[3].ToByteArray()) : "?";
+                    return $"{topic}->{message[2].ToByteArray().Length} bytes (image), file={fileName}";
+                }
+
+                return topic + "->" + string.Join("-", message[2].ToByteArray());
             }
             catch
             {

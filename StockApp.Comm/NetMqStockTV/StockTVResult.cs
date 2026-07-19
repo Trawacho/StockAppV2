@@ -47,7 +47,7 @@ public class StockTVResult : IStockTVResult
 
 	public void SetResult(byte[] array)
 	{
-		if (Data?.Equals(array) ?? false) return;
+		if (Data != null && array != null && Data.AsSpan().SequenceEqual(array)) return;
 
 		Data = array;
 
@@ -60,6 +60,8 @@ public class StockTVResult : IStockTVResult
 			TVSettings?.SetSettings(array.Take(10).ToArray());
 		}
 
+		bool changed = true;
+
 		if (TVSettings.MessageVersion == 0)
 		{
 			byte gamenumber = 1;
@@ -67,10 +69,17 @@ public class StockTVResult : IStockTVResult
 			Results.Clear();
 			foreach (var item in array.Skip(10).Split(2))
 			{
+				var pair = item.ToList();
+				if (pair.Count < 2)
+				{
+					_logger.Warn($"Discarding trailing incomplete byte pair in result payload (odd byte count, gamenumber {gamenumber}).");
+					break;
+				}
+
 				Results.Add(
 					new StockTVGameResult(gamenumber,
-										  item.First(),
-										  item.Last()));
+										  pair[0],
+										  pair[1]));
 				gamenumber++;
 			}
 
@@ -92,16 +101,23 @@ public class StockTVResult : IStockTVResult
 							new StockTVGameResult(game.GameNumber, game.Turns));
 					}
 				}
+				else
+				{
+					changed = false;
+				}
 			}
 			else
 			{
 				//var jsonZielbewerb = JsonSerializer.Deserialize<StockTVZielbewerb>(jsonString);
-				if(TryDesirializeJSONToStockTVZielbewerb(jsonString, out StockTVZielbewerb jsonZielbewerb))
-				ResultZielbewerb = jsonZielbewerb;
+				if (TryDesirializeJSONToStockTVZielbewerb(jsonString, out StockTVZielbewerb jsonZielbewerb))
+					ResultZielbewerb = jsonZielbewerb;
+				else
+					changed = false;
 			}
 		}
 
-		RaiseResultChanged();
+		if (changed)
+			RaiseResultChanged();
 	}
 
 	public StockTVResult()
@@ -153,9 +169,9 @@ public class StockTVResult : IStockTVResult
 			jObject = JsonSerializer.Deserialize<List<StockTVGame>>(json);
 			return true;
 		}
-		catch 
+		catch (Exception ex)
 		{
-			_logger.Error($"Eror while trying to desirialize json string to List of StockTVGames.");
+			_logger.Error("Error while trying to deserialize json string to List of StockTVGames.", ex);
 			jObject = null;
 			return false;
 		}
@@ -168,9 +184,9 @@ public class StockTVResult : IStockTVResult
 			jObject = JsonSerializer.Deserialize<StockTVZielbewerb>(json);
 			return true;
 		}
-		catch 
+		catch (Exception ex)
 		{
-			_logger.Error($"Error while trying to desirialize json string to StockTVZielbewerb");
+			_logger.Error("Error while trying to deserialize json string to StockTVZielbewerb.", ex);
 			jObject = null;
 			return false;
 		}

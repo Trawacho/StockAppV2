@@ -32,15 +32,17 @@ namespace StockApp.UI.Logging
 					Name = "RollingFile",
 					File = logFile,
 					AppendToFile = true,
-					RollingStyle = RollingFileAppender.RollingMode.Composite,
-					MaxSizeRollBackups = 5,
-					MaximumFileSize = "2MB",
-					// DatePattern used for archived names; PreserveLogFileNameExtension ensures date is placed before ".log"
-					DatePattern = "-yyyy-MM-dd'.log'",
+					// Size-only: no date-based rollover, no backup files. Once the file hits
+					// MaximumFileSize it is truncated and rewritten from empty - the only file
+					// a Store-packaged install's built-in log viewer can ever reach is
+					// "StockApp.log" itself, so archived backups are not actually usable.
+					// 10MB comfortably covers several tournament days at the observed
+					// real-world result rate (~1 result per lane every 3-5 min).
+					RollingStyle = RollingFileAppender.RollingMode.Size,
+					MaxSizeRollBackups = 0,
+					MaximumFileSize = "10MB",
 					// keep current filename as "StockApp.log"
 					StaticLogFileName = true,
-					// insert date before extension for archives: "StockApp-YYYY-MM-DD.log"
-					PreserveLogFileNameExtension = true,
 					Layout = layout,
 					LockingModel = new FileAppender.MinimalLock()
 				};
