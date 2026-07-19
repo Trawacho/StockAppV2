@@ -65,7 +65,7 @@ namespace StockApp.Comm.NetMqStockTV
                 var handler = MessageReceived;
                 handler?.Invoke(this, new StockTVMessageReceivedEventArgs(mt, valueArr));
 
-                _logger.Debug($"{mt} received, {string.Join("-", valueArr.Take(10))} {Encoding.UTF8.GetString(valueArr.Skip(10).ToArray())}");
+                _logger.Info($"{mt} received, {string.Join("-", valueArr.Take(10))} {Encoding.UTF8.GetString(valueArr.Skip(10).ToArray())}");
             }
             catch (Exception ex)
             {
@@ -309,7 +309,17 @@ namespace StockApp.Comm.NetMqStockTV
         {
             try
             {
-                return  message[1].ConvertToString() + "->" + string.Join("-", message[2].ToByteArray()); 
+                var topic = message[1].ConvertToString();
+
+                // Image bytes aren't meaningful in a log and can be large enough to blow
+                // out the rolling log file in one send; log size/filename instead.
+                if (topic == MessageTopic.SetImage.ToString())
+                {
+                    var fileName = message.FrameCount > 3 ? Encoding.UTF8.GetString(message[3].ToByteArray()) : "?";
+                    return $"{topic}->{message[2].ToByteArray().Length} bytes (image), file={fileName}";
+                }
+
+                return topic + "->" + string.Join("-", message[2].ToByteArray());
             }
             catch
             {
