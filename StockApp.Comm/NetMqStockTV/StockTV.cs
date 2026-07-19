@@ -379,6 +379,6 @@ public class StockTV : IStockTV
 
 	public override string ToString()
 	{
-        return $"{IPAddress}, {HostName}, {FW}";
+        return $"HostName={HostName}, IPAddress={IPAddress}, FW={FW}";
 	}
 }
