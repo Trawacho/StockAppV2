@@ -470,7 +470,7 @@ msbuild ".\StockApp.Packaging\StockApp.Packaging.wapproj" \
 
 ## Wichtige Dateien & Ressourcen
 
-- `.rulebook/ifi-rules.pdf` – Offizielle Regelwerk (lokal)
+- `.rulebook/ifi-rules.md` – Offizielle Regelwerk (lokal)
 - `StockAppV2.Core/Factories/gpf.json` – Spielplan-Konfiguration
 - `README.md` – Projekt-Übersicht
 - `StockApp.Packaging/readme.md` – Packaging-Details
