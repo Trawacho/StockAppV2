@@ -50,6 +50,8 @@ public interface IStockTV : IEquatable<IStockTV>, IComparable<IStockTV>, IDispos
 
 public class StockTV : IStockTV
 {
+    private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
     #region EventHandler
 
     public event EventHandler<bool> StockTVDirectorChanged;
@@ -153,7 +155,9 @@ public class StockTV : IStockTV
         get => _isOnline;
         private set
         {
+            if (_isOnline == value) return;
             _isOnline = value;
+            _logger.Info($"StockTV {HostName} ({IPAddress}) is now {(value ? "online" : "offline")}.");
             RaiseStockTVOnlineChanged();
         }
     }
@@ -257,6 +261,8 @@ public class StockTV : IStockTV
     /// </summary>
     public void Connect()
     {
+        _logger.Info($"Connecting to StockTV {HostName} ({IPAddress}).");
+
         if (_appClient == null)
         {
             _appClient = StockTVFactory.Create(IPAddress, this._mDnsHost.ControlServicePort, HostName);
@@ -281,6 +287,7 @@ public class StockTV : IStockTV
     /// </summary>
     public void Disconnect()
     {
+        _logger.Info($"Disconnecting from StockTV {HostName} ({IPAddress}).");
         _subscriberClient?.Stop();
         _appClient?.Stop();
     }
