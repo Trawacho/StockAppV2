@@ -15,6 +15,8 @@ public interface IBroadcastService : IDisposable
 
 public class BroadcastService : IBroadcastService
 {
+    private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
     private bool _disposed;
     private UdpClient _udpClient;
     private UdpState _state;
@@ -24,15 +26,14 @@ public class BroadcastService : IBroadcastService
 
     private protected void RaiseIsRunningChanged(bool isRunning)
     {
-#if DEBUG
-        System.Diagnostics.Debug.WriteLine($"BroadCastService is {(isRunning ? "running" : "stopped")}");
-#endif
+        _logger.Info($"BroadcastService is {(isRunning ? "running" : "stopped")}");
         var handler = IsRunningChanged;
         handler?.Invoke(isRunning);
     }
 
     private protected void RaiseBroadCastReceived(IPEndPoint sender, byte[] data)
     {
+        _logger.Debug($"Broadcast received from {sender}: {data.Length} bytes");
         var handler = BroadCastReceived;
         handler?.Invoke(new BroadCastReceivedEventArgs(sender, data));
     }
@@ -119,15 +120,15 @@ public class BroadcastService : IBroadcastService
 
             r = u?.BeginReceive(new AsyncCallback(ReceiveCallback), _state);
         }
-#if DEBUG
-        catch (Exception e)
+        catch (ObjectDisposedException)
         {
-            System.Diagnostics.Debug.WriteLine($" Error while receiving Broadcast: {e.Message}");
+            // Expected when Stop() closes the socket while a receive is in flight.
+            _logger.Debug("Broadcast listener socket was closed while a receive was pending.");
         }
-#endif
-#if RELEASE
-        catch(Exception){}
-#endif
+        catch (Exception ex)
+        {
+            _logger.Error($"Error while receiving broadcast: {ex.Message}", ex);
+        }
     }
 
     private class UdpState
