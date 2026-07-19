@@ -115,10 +115,14 @@ namespace StockApp.Comm.NetMqStockTV
 		{
 			var handler = SubscriberMessageReceived;
 			handler?.Invoke(this, new StockTVMessageReceivedEventArgs(topic, value));
-			if (topic != MessageTopic.Alive)
-				_logger.Debug($"{topic} received: {string.Join("-",value.Take(10).ToArray())} ### { Encoding.UTF8.GetString(value.Skip(10).ToArray()) }");
+
+			// Alive is a heartbeat, not actual communication content - keep it out of Info
+			// so it doesn't drown out real events, but it must still show up on Debug.
+			if (topic == MessageTopic.Alive)
+				_logger.Debug($"{topic} received: {string.Join("-", value.Take(10).ToArray())} ### {Encoding.UTF8.GetString(value.Skip(10).ToArray())}");
+			else
+				_logger.Info($"{topic} received: {string.Join("-", value.Take(10).ToArray())} ### {Encoding.UTF8.GetString(value.Skip(10).ToArray())}");
 		}
-		//todo: Loglevel überdenken. Evtl. alle Stufen implementieren und auch hier die Alive-Meldungen loggen
 
 		#region Constructor
 
