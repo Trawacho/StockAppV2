@@ -169,9 +169,9 @@ public class StockTVResult : IStockTVResult
 			jObject = JsonSerializer.Deserialize<List<StockTVGame>>(json);
 			return true;
 		}
-		catch 
+		catch (Exception ex)
 		{
-			_logger.Error($"Eror while trying to desirialize json string to List of StockTVGames.");
+			_logger.Error("Error while trying to deserialize json string to List of StockTVGames.", ex);
 			jObject = null;
 			return false;
 		}
@@ -184,9 +184,9 @@ public class StockTVResult : IStockTVResult
 			jObject = JsonSerializer.Deserialize<StockTVZielbewerb>(json);
 			return true;
 		}
-		catch 
+		catch (Exception ex)
 		{
-			_logger.Error($"Error while trying to desirialize json string to StockTVZielbewerb");
+			_logger.Error("Error while trying to deserialize json string to StockTVZielbewerb.", ex);
 			jObject = null;
 			return false;
 		}
