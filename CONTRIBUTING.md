@@ -29,6 +29,16 @@ hotfix/xxx (von main)   ← dringende Produktionsfixes, siehe unten
   anschließend **sowohl in `main` als auch in `develop`** gemergt, damit der
   Fix nicht beim nächsten Release aus `develop` verloren geht.
 
+### Ausnahme: reine Doku-Änderungen
+
+Commits, die **ausschließlich** Dokumentation ändern (z. B. `README.md`,
+`CONTRIBUTING.md`, `CLAUDE.md`, `NETWORKING.md`) und keinerlei Code-,
+Test- oder Konfigurationsänderung enthalten, dürfen ohne den regulären
+Release-Ablauf direkt nach `main` (z. B. per Cherry-Pick) und anschließend
+zurück nach `develop` gemergt werden. Kein Versionsbump, kein Tag nötig.
+Sobald ein Commit auch nur eine Code-Zeile ändert, gilt wieder der normale
+Weg über `develop`.
+
 ## Ablauf für Features & Fixes
 
 1. Branch von `develop` erstellen: `git checkout -b fix/kurzname develop`
