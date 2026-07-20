@@ -12,6 +12,28 @@ public interface ITeam : IEquatable<ITeam>
 	public int StrafSpielpunkte { get; set; }
 
 	/// <summary>
+	/// Spielpunkte "für" aus einem vorangegangenen, nicht in StockAppV2 gespielten Turnier (Vorergebnis).
+	/// Fließt zusätzlich zu den in dieser Anwendung gespielten Spielen in <see cref="GetSpielPunkte"/> ein.
+	/// </summary>
+	public int VorergebnisSpielpunktePlus { get; set; }
+
+	/// <summary>
+	/// Spielpunkte "gegen" aus einem vorangegangenen, nicht in StockAppV2 gespielten Turnier (Vorergebnis).
+	/// </summary>
+	public int VorergebnisSpielpunkteMinus { get; set; }
+
+	/// <summary>
+	/// Stockpunkte "für" aus einem vorangegangenen, nicht in StockAppV2 gespielten Turnier (Vorergebnis).
+	/// Fließt zusätzlich zu den in dieser Anwendung gespielten Spielen in <see cref="GetStockPunkte"/> ein.
+	/// </summary>
+	public int VorergebnisStockpunktePlus { get; set; }
+
+	/// <summary>
+	/// Stockpunkte "gegen" aus einem vorangegangenen, nicht in StockAppV2 gespielten Turnier (Vorergebnis).
+	/// </summary>
+	public int VorergebnisStockpunkteMinus { get; set; }
+
+	/// <summary>
 	/// normal, entschuldigt, unentschuldigt, usw
 	/// </summary>
 	public TeamStatus TeamStatus { get; set; }
@@ -145,7 +167,27 @@ public class Team : ITeam
 										   : TeamName;
 
 	public int StrafSpielpunkte { get; set; }
-	
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public int VorergebnisSpielpunktePlus { get; set; }
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public int VorergebnisSpielpunkteMinus { get; set; }
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public int VorergebnisStockpunktePlus { get; set; }
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public int VorergebnisStockpunkteMinus { get; set; }
+
 	/// <summary>
 	/// <inheritdoc/>
 	/// </summary>
@@ -272,10 +314,12 @@ public class Team : ITeam
 	public (int positiv, int negativ) GetSpielPunkte(bool live = false)
 	{
 		int pos = Games.Where(g => g.TeamA == this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamA(live)) +
-				  Games.Where(g => g.TeamB == this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamB(live));
+				  Games.Where(g => g.TeamB == this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamB(live)) +
+				  VorergebnisSpielpunktePlus;
 
 		int neg = Games.Where(g => g.TeamA != this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamA(live)) +
-				  Games.Where(g => g.TeamB != this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamB(live));
+				  Games.Where(g => g.TeamB != this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetSpielPunkteTeamB(live)) +
+				  VorergebnisSpielpunkteMinus;
 
 		return TeamStatus == TeamStatus.Normal
 			? (pos - StrafSpielpunkte, neg)
@@ -285,10 +329,12 @@ public class Team : ITeam
 	public (int positiv, int negativ) GetStockPunkte(bool live = false)
 	{
 		int pos = Games.Where(g => g.TeamA == this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamA(live)) +
-				  Games.Where(g => g.TeamB == this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamB(live));
+				  Games.Where(g => g.TeamB == this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamB(live)) +
+				  VorergebnisStockpunktePlus;
 
 		int neg = Games.Where(g => g.TeamA != this && g.TeamA.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamA(live)) +
-				  Games.Where(g => g.TeamB != this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamB(live));
+				  Games.Where(g => g.TeamB != this && g.TeamB.TeamStatus == TeamStatus.Normal).Sum(s => s.Spielstand.GetStockPunkteTeamB(live)) +
+				  VorergebnisStockpunkteMinus;
 
 		return TeamStatus == TeamStatus.Normal ? (pos, neg) : (0, 0);
 	}
@@ -323,6 +369,10 @@ public class Team : ITeam
 		this.TeamName = TeamName;
 		TeamStatus = TeamStatus.Normal;
 		StrafSpielpunkte = 0;
+		VorergebnisSpielpunktePlus = 0;
+		VorergebnisSpielpunkteMinus = 0;
+		VorergebnisStockpunktePlus = 0;
+		VorergebnisStockpunkteMinus = 0;
 	}
 
 	public static ITeam Create(string teamName) => new Team(teamName);

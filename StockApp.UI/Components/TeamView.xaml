@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:StockApp.UI.Components" 
-             xmlns:cx="clr-namespace:System.Windows.Controls;assembly=DotNetProjects.Input.Toolkit" 
+             xmlns:local="clr-namespace:StockApp.UI.Components"
+             xmlns:cx="clr-namespace:System.Windows.Controls;assembly=DotNetProjects.Input.Toolkit"
+             xmlns:behaviors="clr-namespace:StockApp.UI.Behaviors"
              mc:Ignorable="d" >
 
     <d:DesignerProperties.DesignStyle x:Name="designBackground">
@@ -33,6 +34,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -75,11 +77,48 @@
             
             <TextBlock Text="Strafen:" Grid.Row="3" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
             <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
-                <TextBox  Text="{Binding StrafSpielpunkte}" Margin="5" Padding="5" Width="30" HorizontalContentAlignment="Center" />
+                <TextBox  Text="{Binding StrafSpielpunkte}" Margin="5" Padding="5" Width="30" HorizontalContentAlignment="Center" 
+                          behaviors:TextBoxSelectAllOnFocusBehavior.Active="True"/>
                 <TextBlock Text="Spielpunkte Abzug (Endwertung)" VerticalAlignment="Center" Margin="1"/>
             </StackPanel>
-           
-            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+
+            <Expander Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                      Header="Punkte aus vorausgegangenem Turnier"
+                      IsExpanded="{Binding HasVorergebnis, Mode=OneTime}"
+                      Margin="5 10 5 10">
+                <Grid Margin="0 5 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Spielpunkte:" Grid.Row="0" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                        <TextBox Text="{Binding VorergebnisSpielpunktePlus}" Margin="5 5 2 5" Padding="5" Width="30" HorizontalContentAlignment="Center"
+                                 behaviors:TextBoxSelectAllOnFocusBehavior.Active="True"/>
+                        <TextBlock Text=":" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding VorergebnisSpielpunkteMinus}" Margin="2 5 5 5" Padding="5" Width="30" HorizontalContentAlignment="Center"
+                                 behaviors:TextBoxSelectAllOnFocusBehavior.Active="True"/>
+                        <TextBlock Text="plus:minus" VerticalAlignment="Center" Margin="1"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Stockpunkte:" Grid.Row="1" Grid.Column="0" TextAlignment="Right" Margin="5" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                        <TextBox Text="{Binding VorergebnisStockpunktePlus}" Margin="5 5 2 5" Padding="5" Width="30" HorizontalContentAlignment="Center"
+                                 behaviors:TextBoxSelectAllOnFocusBehavior.Active="True"/>
+                        <TextBlock Text=":" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding VorergebnisStockpunkteMinus}" Margin="2 5 5 5" Padding="5" Width="30" HorizontalContentAlignment="Center"
+                                 behaviors:TextBoxSelectAllOnFocusBehavior.Active="True"/>
+                        <TextBlock Text="plus:minus" VerticalAlignment="Center" Margin="1"/>
+                    </StackPanel>
+                </Grid>
+            </Expander>
+
+            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5 10 5 10">
                 <Button HorizontalAlignment="Left"
                         Content="Quittung (einzel)" 
                         Padding="10 7"

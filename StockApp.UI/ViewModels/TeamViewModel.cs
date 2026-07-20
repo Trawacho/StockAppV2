@@ -113,6 +113,56 @@ public class TeamViewModel : ViewModelBase
 		}
 	}
 
+	public int VorergebnisSpielpunktePlus
+	{
+		get => _team.VorergebnisSpielpunktePlus;
+		set
+		{
+			_team.VorergebnisSpielpunktePlus = value;
+			RaisePropertyChanged();
+		}
+	}
+
+	public int VorergebnisSpielpunkteMinus
+	{
+		get => _team.VorergebnisSpielpunkteMinus;
+		set
+		{
+			_team.VorergebnisSpielpunkteMinus = value;
+			RaisePropertyChanged();
+		}
+	}
+
+	public int VorergebnisStockpunktePlus
+	{
+		get => _team.VorergebnisStockpunktePlus;
+		set
+		{
+			_team.VorergebnisStockpunktePlus = value;
+			RaisePropertyChanged();
+		}
+	}
+
+	public int VorergebnisStockpunkteMinus
+	{
+		get => _team.VorergebnisStockpunkteMinus;
+		set
+		{
+			_team.VorergebnisStockpunkteMinus = value;
+			RaisePropertyChanged();
+		}
+	}
+
+	/// <summary>
+	/// TRUE, wenn bereits ein Vorergebnis eingetragen ist. Steuert nur den initialen Aufklapp-Zustand
+	/// des entsprechenden Expanders in der View (OneTime-Binding), damit vorhandene Werte nicht versteckt bleiben.
+	/// </summary>
+	public bool HasVorergebnis =>
+		_team.VorergebnisSpielpunktePlus != 0
+		|| _team.VorergebnisSpielpunkteMinus != 0
+		|| _team.VorergebnisStockpunktePlus != 0
+		|| _team.VorergebnisStockpunkteMinus != 0;
+
 	public TeamPlayersViewModel TeamPlayersViewModel
 	{
 		get => _teamPlayersViewModel;

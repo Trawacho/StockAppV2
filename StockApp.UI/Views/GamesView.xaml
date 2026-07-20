@@ -83,7 +83,7 @@
                            Background="White"
                            HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <Slider Value="{Binding SpielRunden, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Minimum="1" Maximum="7" TickPlacement="BottomRight" 
+                        Minimum="{Binding MinSpielRunden, Mode=OneWay}" Maximum="7" TickPlacement="BottomRight"
                         Margin="5"  Width="210"/>
             </StackPanel>
             <StackPanel  Grid.Row="2" Grid.Column="1" Orientation="Horizontal" MinWidth="300"/>
