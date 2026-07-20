@@ -48,6 +48,7 @@ public class RankedTeamsTableViewModel : ViewModelBase
         ShowStockPunkte = showStockPunkte;
         _groupName = isSplitGroupOne ? "Gruppe A" : "Gruppe B";
         _adjustedGames = useParagraph610 ? Paragraph610Evaluator.GetAdjustedGames(teamBewerb, isLive) : null;
+        var currentGameNumberOverAll = isLive ? _teamBewerb.GetCurrentGameNumberOverAll(isLive) : null;
 
         int rank = 1;
         foreach (var t in _teamBewerb.GetSplitTeamsRanked(isSplitGroupOne, isLive))
@@ -58,7 +59,8 @@ public class RankedTeamsTableViewModel : ViewModelBase
                                                 live: _isLive,
                                                 aufAbSteiger: AufAbSteigerZeichen(rank),
                                                 teamNameWithStartnumber: _teamBewerb.TeamNameWithStartnumber,
-                                                filteredGames: _adjustedGames?.ContainsKey(t) == true ? ((List<IGame>)_adjustedGames[t]).AsReadOnly() : null));
+                                                filteredGames: _adjustedGames?.ContainsKey(t) == true ? ((List<IGame>)_adjustedGames[t]).AsReadOnly() : null,
+                                                currentGameNumberOverAll: currentGameNumberOverAll));
             rank++;
         }
         IERVersion2022 = _teamBewerb.IERVersion == Core.Wettbewerb.Teambewerb.IERVersion.v2022;

@@ -274,6 +274,8 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public bool IsEachGameDone(bool live) => throw new NotImplementedException();
 
     public int GetHighestPlayedRound() => throw new NotImplementedException();
+
+    public int? GetCurrentGameNumberOverAll(bool live) => throw new NotImplementedException();
     #endregion
 
     #endregion
