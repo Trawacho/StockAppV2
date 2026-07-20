@@ -192,6 +192,12 @@ public interface ITeamBewerb : IBewerb
 	IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false);
 
 	bool IsEachGameDone(bool live);
+
+	/// <summary>
+	/// Höchste <see cref="IGame.RoundOfGame"/>, für die bereits ein Ergebnis (Live oder Master) eingetragen ist.
+	/// 0, wenn noch kein Ergebnis vorhanden ist.
+	/// </summary>
+	int GetHighestPlayedRound();
 }
 
 
@@ -267,6 +273,7 @@ public class TeamBewerb : ITeamBewerb
 		{
 			if (_numberOfGameRounds == value) return;
 			if (value < 1 || value > 7) return;
+			if (value < GetHighestPlayedRound()) return;
 
 			_numberOfGameRounds = value;
 		}
@@ -504,6 +511,15 @@ public class TeamBewerb : ITeamBewerb
 
 
 	public bool IsEachGameDone(bool live = false) => Teams.Where(t => t.TeamStatus == TeamStatus.Normal).All(t => t.IsEachGameDone(live));
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public int GetHighestPlayedRound()
+	{
+		var playedGames = GetAllGames(withBreaks: false).Where(g => g.IsGameDone(live: true) || g.IsGameDone(live: false));
+		return playedGames.Any() ? playedGames.Max(g => g.RoundOfGame) : 0;
+	}
 
 
 	#endregion

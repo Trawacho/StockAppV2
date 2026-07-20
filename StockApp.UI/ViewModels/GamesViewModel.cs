@@ -6,6 +6,7 @@ using StockApp.UI.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -26,6 +27,8 @@ public class GamesViewModel : ViewModelBase
         {
             if (_currentTeamBewerb != null)
                 _currentTeamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
+
+            _pendingGameplanId = null;
 
             SetProperty(ref _currentTeamBewerb, value);
             if (value != null)
@@ -64,21 +67,28 @@ public class GamesViewModel : ViewModelBase
     public bool HasGames => CountOfGames > 0;
     public bool HasNoGames => !HasGames;
 
+    /// <summary>
+    /// Kleinster Wert, auf den <see cref="SpielRunden"/> gesetzt werden darf, ohne bereits gespielte Runden zu gefährden.
+    /// </summary>
+    public int MinSpielRunden => Math.Max(1, CurrentTeamBewerb.GetHighestPlayedRound());
+
+    private int? _pendingGameplanId;
+
+    /// <summary>
+    /// UI-seitige Auswahl des Spielplans. Wird erst bei tatsächlicher Generierung (<see cref="CreateGamesCommand"/>)
+    /// in <see cref="ITeamBewerb.GameplanId"/> übernommen, damit erkennbar bleibt, ob sich die Auswahl seit der
+    /// letzten Generierung geändert hat.
+    /// </summary>
     public int SelectedGameplanId
     {
-        get
-        {
-            if (Gameplans.Any(g => g.ID == CurrentTeamBewerb.GameplanId))
-                return CurrentTeamBewerb.GameplanId;
-            else
-                return 0;
-        }
+        get => _pendingGameplanId
+            ?? (Gameplans.Any(g => g.ID == CurrentTeamBewerb.GameplanId) ? CurrentTeamBewerb.GameplanId : 0);
         set
         {
-            if (CurrentTeamBewerb.GameplanId == value)
+            if (SelectedGameplanId == value)
                 return;
 
-            CurrentTeamBewerb.GameplanId = value;
+            _pendingGameplanId = value;
             RaisePropertyChanged();
         }
     }
@@ -126,13 +136,65 @@ public class GamesViewModel : ViewModelBase
         {
             IsCreatingGames = true;
 
-            //Entferne alle Spiele von allen Teams
-            foreach (var t in CurrentTeamBewerb.Teams)
-                t.ClearGames();
+            var teamBewerb = CurrentTeamBewerb;
+            var gameplan = Gameplans.FirstOrDefault(g => g.ID == SelectedGameplanId);
+            int currentMaxRound = teamBewerb.Games.Any() ? teamBewerb.Games.Max(g => g.RoundOfGame) : 0;
+            bool gameplanChanged = teamBewerb.GameplanId != SelectedGameplanId;
 
-            CurrentTeamBewerb.IsSplitGruppe = Gameplans.FirstOrDefault(p => p.ID == SelectedGameplanId)?.IsSplit ?? false;
+            bool doAppend = false;
 
-            GamePlanFactory.MatchTeamAndGames(Gameplans.FirstOrDefault(g => g.ID == SelectedGameplanId), CurrentTeamBewerb.Teams, SpielRunden, HasChangeStart);
+            if (teamBewerb.Games.Any())
+            {
+                if (!gameplanChanged && SpielRunden > currentMaxRound)
+                {
+                    var result = MessageBox.Show(
+                        "Es sind bereits Spiele/Ergebnisse vorhanden.\n\n" +
+                        "JA = neue Runde(n) anhängen (bestehende Ergebnisse bleiben erhalten)\n" +
+                        "NEIN = kompletten Spielplan neu erstellen (alle bisherigen Ergebnisse gehen verloren)\n" +
+                        "ABBRECHEN = nichts tun",
+                        "Spielplan erweitern", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.Cancel)
+                    {
+                        IsCreatingGames = false;
+                        return;
+                    }
+
+                    doAppend = result == MessageBoxResult.Yes;
+                }
+                else
+                {
+                    var result = MessageBox.Show(
+                        "Dies löscht alle bisherigen Spiele und Ergebnisse und erstellt den Spielplan neu. Fortfahren?",
+                        "Spielplan neu erstellen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                    if (result != MessageBoxResult.Yes)
+                    {
+                        IsCreatingGames = false;
+                        return;
+                    }
+                }
+            }
+
+            if (doAppend)
+            {
+                int nextGameNumberOverAll = teamBewerb.Games.Max(g => g.GameNumberOverAll) + 1;
+                GamePlanFactory.MatchTeamAndGames(gameplan, teamBewerb.Teams, SpielRunden, HasChangeStart,
+                    startRound: currentMaxRound + 1, startGameNumberOverAll: nextGameNumberOverAll);
+            }
+            else
+            {
+                //Entferne alle Spiele von allen Teams
+                foreach (var t in teamBewerb.Teams)
+                    t.ClearGames();
+
+                teamBewerb.IsSplitGruppe = gameplan?.IsSplit ?? false;
+
+                GamePlanFactory.MatchTeamAndGames(gameplan, teamBewerb.Teams, SpielRunden, HasChangeStart);
+            }
+
+            teamBewerb.GameplanId = SelectedGameplanId;
+            _pendingGameplanId = null;
 
             IsCreatingGames = false;
         },
@@ -183,6 +245,7 @@ public class GamesViewModel : ViewModelBase
         RaisePropertyChanged(nameof(SelectedGameplanId));
         RaisePropertyChanged(nameof(HasChangeStart));
         RaisePropertyChanged(nameof(Has8Turns));
+        RaisePropertyChanged(nameof(MinSpielRunden));
     }
 
     protected override void Dispose(bool disposing)
