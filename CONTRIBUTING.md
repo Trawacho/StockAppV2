@@ -18,9 +18,11 @@ hotfix/xxx (von main)   ← dringende Produktionsfixes, siehe unten
 
 - **`main`** enthält ausschließlich Code-Stände, die released wurden oder
   released werden können. Es wird **nicht direkt** auf `main` committet.
-- **`develop`** ist die Basis für alle laufende Entwicklung. Feature- und
-  Fix-Branches werden von `develop` abgezweigt und nach Aufräumen der
-  Historie direkt nach `develop` gemergt.
+- **`develop`** ist die Basis für alle laufende Entwicklung. Es wird auch
+  hier **nicht direkt committet** – jede Änderung, egal wie klein, läuft über
+  einen eigenen `feature/`-, `fix/`- oder `refactor/`-Branch, der von
+  `develop` abgezweigt und nach Aufräumen der Historie wieder nach `develop`
+  gemergt wird (siehe Ausnahme unten für reine Doku-Änderungen).
 - **`feature/<kurzname>`**, **`fix/<kurzname>`**, **`refactor/<kurzname>`**
   – kurze, sprechende Branch-Namen in Kleinbuchstaben mit Bindestrichen,
   z. B. `fix/netmq-stocktv-stability`, `feature/ziel2-support`.
