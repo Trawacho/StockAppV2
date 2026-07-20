@@ -198,6 +198,16 @@ public interface ITeamBewerb : IBewerb
 	/// 0, wenn noch kein Ergebnis vorhanden ist.
 	/// </summary>
 	int GetHighestPlayedRound();
+
+	/// <summary>
+	/// Die aktuell laufende Spielrunde (alle Spiele mit derselben <see cref="IGame.GameNumberOverAll"/>, die
+	/// gleichzeitig auf den verschiedenen Bahnen gespielt werden): die niedrigste <see cref="IGame.GameNumberOverAll"/>,
+	/// bei der noch nicht alle Spiele (ohne Aussetzer) ein Ergebnis haben.<br></br>
+	/// <see cref="IGame.RoundOfGame"/> eignet sich dafür NICHT, da dieser Wert nur komplette Wiederholungs-Durchgänge
+	/// (<see cref="NumberOfGameRounds"/>) unterscheidet und bei Standardeinstellung (1 Durchgang) für ALLE Spiele gleich ist.<br></br>
+	/// Null, wenn es noch keine Spiele gibt oder bereits alle Runden abgeschlossen sind.
+	/// </summary>
+	int? GetCurrentGameNumberOverAll(bool live);
 }
 
 
@@ -519,6 +529,31 @@ public class TeamBewerb : ITeamBewerb
 	{
 		var playedGames = GetAllGames(withBreaks: false).Where(g => g.IsGameDone(live: true) || g.IsGameDone(live: false));
 		return playedGames.Any() ? playedGames.Max(g => g.RoundOfGame) : 0;
+	}
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public int? GetCurrentGameNumberOverAll(bool live)
+	{
+		var realGames = GetAllGames(withBreaks: false).ToList();
+		if (!realGames.Any()) return null;
+
+		// "IsGameDone" (Master oder Live > 0) meldet schon nach der ERSTEN Kehre "fertig", nicht erst nach dem
+		// vollständigen Spiel. Solange also noch keine Master-Werte feststehen (manuelle Endergebnis-Eingabe
+		// oder von der nächsten Bahn-Runde übernommen), zählt bei live=true erst die volle Anzahl an Kehren
+		// (6, bzw. 8 bei <see cref="Is8TurnsGame"/>) als tatsächlich abgeschlossen.
+		int expectedTurns = Is8TurnsGame ? 8 : 6;
+
+		bool IsConcluded(IGame g) => g.IsGameDone(live: false)
+			|| (live && g.Spielstand.Kehren_Live.Count() >= expectedTurns);
+
+		return realGames
+			.GroupBy(g => g.GameNumberOverAll)
+			.OrderBy(gr => gr.Key)
+			.Where(gr => !gr.All(IsConcluded))
+			.Select(gr => (int?)gr.Key)
+			.FirstOrDefault();
 	}
 
 
