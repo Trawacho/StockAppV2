@@ -109,12 +109,14 @@ public class RankedTeamModel
         int pos = games.Where(g => g.TeamA == _team && g.TeamB.TeamStatus == TeamStatus.Normal)
                 .Sum(s => s.Spielstand.GetSpielPunkteTeamA(_live)) +
                 games.Where(g => g.TeamB == _team && g.TeamA.TeamStatus == TeamStatus.Normal)
-                .Sum(s => s.Spielstand.GetSpielPunkteTeamB(_live));
+                .Sum(s => s.Spielstand.GetSpielPunkteTeamB(_live)) +
+                _team.VorergebnisSpielpunktePlus;
 
         int neg = games.Where(g => g.TeamA != _team && g.TeamA.TeamStatus == TeamStatus.Normal)
                 .Sum(s => s.Spielstand.GetSpielPunkteTeamA(_live)) +
                 games.Where(g => g.TeamB != _team && g.TeamB.TeamStatus == TeamStatus.Normal)
-                .Sum(s => s.Spielstand.GetSpielPunkteTeamB(_live));
+                .Sum(s => s.Spielstand.GetSpielPunkteTeamB(_live)) +
+                _team.VorergebnisSpielpunkteMinus;
 
         return _team.TeamStatus == TeamStatus.Normal ? (pos - _team.StrafSpielpunkte, neg) : (0, 0);
     }
@@ -125,12 +127,14 @@ public class RankedTeamModel
         int pos = games.Where(g => g.TeamA == _team && g.TeamB.TeamStatus == TeamStatus.Normal)
                 .Sum(s => s.Spielstand.GetStockPunkteTeamA(_live)) +
                 games.Where(g => g.TeamB == _team && g.TeamA.TeamStatus == TeamStatus.Normal)
-                .Sum(s => s.Spielstand.GetStockPunkteTeamB(_live));
+                .Sum(s => s.Spielstand.GetStockPunkteTeamB(_live)) +
+                _team.VorergebnisStockpunktePlus;
 
         int neg = games.Where(g => g.TeamA != _team && g.TeamA.TeamStatus == TeamStatus.Normal)
                 .Sum(s => s.Spielstand.GetStockPunkteTeamA(_live)) +
                 games.Where(g => g.TeamB != _team && g.TeamB.TeamStatus == TeamStatus.Normal)
-                .Sum(s => s.Spielstand.GetStockPunkteTeamB(_live));
+                .Sum(s => s.Spielstand.GetStockPunkteTeamB(_live)) +
+                _team.VorergebnisStockpunkteMinus;
 
         return _team.TeamStatus == TeamStatus.Normal ? (pos, neg) : (0, 0);
     }

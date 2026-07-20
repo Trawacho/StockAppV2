@@ -217,4 +217,33 @@ public class TeamRankingComparerTest
         }));
     }
 
+    [Test]
+    public void TestTeamWithOnlyVorergebnisRanksAgainstTeamWithRealGames()
+    {
+        var teamA = Team.Create("Team A");
+        teamA.StartNumber = 1;
+        var teamB = Team.Create("Team B");
+        teamB.StartNumber = 2;
+
+        var game = Game.Create(teamA, teamB, courtNumber: 1, gameNumber: 1, roundOfGame: 1, gameNumberOverAll: 1, isTeamA_Starting: true);
+        game.Spielstand.SetMasterTeamAValue(15);
+        game.Spielstand.SetMasterTeamBValue(5);
+        teamA.AddGame(game);
+        teamB.AddGame(game);
+
+        // TeamC hat keine eigenen Spiele, nur ein (schlechteres) Vorergebnis aus einem Fremdturnier
+        var teamC = Team.Create("Team C");
+        teamC.StartNumber = 3;
+        teamC.VorergebnisSpielpunktePlus = 0;
+        teamC.VorergebnisSpielpunkteMinus = 2;
+        teamC.VorergebnisStockpunktePlus = 5;
+        teamC.VorergebnisStockpunkteMinus = 15;
+
+        var comparer = new TeamRankingComparer(false, IERVersion.v2022);
+
+        Assert.That(teamC.GetSpielPunkte(), Is.EqualTo((0, 2)));
+        Assert.That(teamC.GetStockPunkte(), Is.EqualTo((5, 15)));
+        Assert.That(comparer.Compare(teamA, teamC), Is.EqualTo(-1));
+    }
+
 }
