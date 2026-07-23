@@ -6,7 +6,6 @@ using StockApp.UI.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 
 namespace StockApp.UI.ViewModels;
@@ -131,6 +130,75 @@ public class GamesViewModel : ViewModelBase
 
     #endregion
 
+    #region Confirm-Overlay (Spielplan generieren)
+
+    private bool _isConfirmModalOpen;
+    private string _confirmMessage;
+    private string _confirmYesText;
+    private string _confirmNoText;
+    private Action _pendingConfirmYes;
+    private Action _pendingConfirmNo;
+    private ICommand _confirmYesCommand;
+    private ICommand _confirmNoCommand;
+    private ICommand _confirmCancelCommand;
+
+    public bool IsConfirmModalOpen { get => _isConfirmModalOpen; private set => SetProperty(ref _isConfirmModalOpen, value); }
+    public string ConfirmMessage { get => _confirmMessage; private set => SetProperty(ref _confirmMessage, value); }
+    public string ConfirmYesText { get => _confirmYesText; private set => SetProperty(ref _confirmYesText, value); }
+    public string ConfirmNoText { get => _confirmNoText; private set => SetProperty(ref _confirmNoText, value); }
+
+    /// <summary>
+    /// TRUE, wenn im Confirm-Overlay ein "Nein"-Button angezeigt werden soll (dreigeteilte Abfrage).
+    /// FALSE = nur Ja/Abbrechen (zweigeteilte Abfrage).
+    /// </summary>
+    public bool HasConfirmNoOption => !string.IsNullOrEmpty(ConfirmNoText);
+
+    private void OpenConfirmModal(string message, string yesText, Action onYes, string noText = null, Action onNo = null)
+    {
+        ConfirmMessage = message;
+        ConfirmYesText = yesText;
+        ConfirmNoText = noText;
+        RaisePropertyChanged(nameof(HasConfirmNoOption));
+        _pendingConfirmYes = onYes;
+        _pendingConfirmNo = onNo;
+        IsConfirmModalOpen = true;
+    }
+
+    private void CloseConfirmModal()
+    {
+        IsConfirmModalOpen = false;
+        _pendingConfirmYes = null;
+        _pendingConfirmNo = null;
+    }
+
+    public ICommand ConfirmYesCommand => _confirmYesCommand ??= new RelayCommand(
+        (p) =>
+        {
+            var action = _pendingConfirmYes;
+            CloseConfirmModal();
+            action?.Invoke();
+        },
+        (p) => true);
+
+    public ICommand ConfirmNoCommand => _confirmNoCommand ??= new RelayCommand(
+        (p) =>
+        {
+            var action = _pendingConfirmNo;
+            CloseConfirmModal();
+            action?.Invoke();
+        },
+        (p) => true);
+
+    public ICommand ConfirmCancelCommand => _confirmCancelCommand ??= new RelayCommand(
+        (p) =>
+        {
+            CloseConfirmModal();
+            IsCreatingGames = false;
+        },
+        (p) => true);
+
+    #endregion
+
     public ICommand CreateGamesCommand => _createGamesCommand ??= new RelayCommand
         ((p) =>
         {
@@ -141,48 +209,22 @@ public class GamesViewModel : ViewModelBase
             int currentMaxRound = teamBewerb.Games.Any() ? teamBewerb.Games.Max(g => g.RoundOfGame) : 0;
             bool gameplanChanged = teamBewerb.GameplanId != SelectedGameplanId;
 
-            bool doAppend = false;
-
-            if (teamBewerb.Games.Any())
+            void FinishGeneration()
             {
-                if (!gameplanChanged && SpielRunden > currentMaxRound)
-                {
-                    var result = MessageBox.Show(
-                        "Es sind bereits Spiele/Ergebnisse vorhanden.\n\n" +
-                        "JA = neue Runde(n) anhängen (bestehende Ergebnisse bleiben erhalten)\n" +
-                        "NEIN = kompletten Spielplan neu erstellen (alle bisherigen Ergebnisse gehen verloren)\n" +
-                        "ABBRECHEN = nichts tun",
-                        "Spielplan erweitern", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-
-                    if (result == MessageBoxResult.Cancel)
-                    {
-                        IsCreatingGames = false;
-                        return;
-                    }
-
-                    doAppend = result == MessageBoxResult.Yes;
-                }
-                else
-                {
-                    var result = MessageBox.Show(
-                        "Dies löscht alle bisherigen Spiele und Ergebnisse und erstellt den Spielplan neu. Fortfahren?",
-                        "Spielplan neu erstellen", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-                    if (result != MessageBoxResult.Yes)
-                    {
-                        IsCreatingGames = false;
-                        return;
-                    }
-                }
+                teamBewerb.GameplanId = SelectedGameplanId;
+                _pendingGameplanId = null;
+                IsCreatingGames = false;
             }
 
-            if (doAppend)
+            void AppendRounds()
             {
                 int nextGameNumberOverAll = teamBewerb.Games.Max(g => g.GameNumberOverAll) + 1;
                 GamePlanFactory.MatchTeamAndGames(gameplan, teamBewerb.Teams, SpielRunden, HasChangeStart,
                     startRound: currentMaxRound + 1, startGameNumberOverAll: nextGameNumberOverAll);
+                FinishGeneration();
             }
-            else
+
+            void OverwriteAll()
             {
                 //Entferne alle Spiele von allen Teams
                 foreach (var t in teamBewerb.Teams)
@@ -191,12 +233,28 @@ public class GamesViewModel : ViewModelBase
                 teamBewerb.IsSplitGruppe = gameplan?.IsSplit ?? false;
 
                 GamePlanFactory.MatchTeamAndGames(gameplan, teamBewerb.Teams, SpielRunden, HasChangeStart);
+                FinishGeneration();
             }
 
-            teamBewerb.GameplanId = SelectedGameplanId;
-            _pendingGameplanId = null;
+            if (teamBewerb.Games.Any())
+            {
+                if (!gameplanChanged && SpielRunden > currentMaxRound)
+                {
+                    OpenConfirmModal(
+                        "Es sind bereits Spiele/Ergebnisse vorhanden.",
+                        yesText: "Runde anhängen", onYes: AppendRounds,
+                        noText: "Ergebnisse überschreiben", onNo: OverwriteAll);
+                }
+                else
+                {
+                    OpenConfirmModal(
+                        "Dies löscht alle bisherigen Spiele und Ergebnisse und erstellt den Spielplan neu. Fortfahren?",
+                        yesText: "Ja", onYes: OverwriteAll);
+                }
+                return;
+            }
 
-            IsCreatingGames = false;
+            OverwriteAll();
         },
         (p) => !IsCreatingGames && SelectedGameplanId != 0
         );

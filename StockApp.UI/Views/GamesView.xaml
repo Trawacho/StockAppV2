@@ -147,5 +147,24 @@
 
         </Grid>
         <ContentControl Grid.Row="3" Content="{Binding Path=GamesPrintsViewModel}"/>
+
+        <controls:Modal Grid.Row="0" Grid.RowSpan="4" Panel.ZIndex="10" IsOpen="{Binding IsConfirmModalOpen, Mode=OneWay}">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="{Binding ConfirmMessage}" Grid.Row="0"
+                           TextAlignment="Center" TextWrapping="Wrap" MaxWidth="380" Margin="10"/>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="{Binding ConfirmYesText}" Margin="3" Padding="10 7" Command="{Binding ConfirmYesCommand}"/>
+                    <Button Content="{Binding ConfirmNoText}" Margin="3" Padding="10 7" Command="{Binding ConfirmNoCommand}"
+                            Visibility="{Binding HasConfirmNoOption, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Button Content="Abbrechen" Margin="3" Padding="10 7" Command="{Binding ConfirmCancelCommand}" IsCancel="True" IsDefault="True"/>
+                </StackPanel>
+            </Grid>
+        </controls:Modal>
     </Grid>
 </UserControl>
