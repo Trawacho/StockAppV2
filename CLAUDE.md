@@ -406,6 +406,24 @@ var ranked = _currentTeamBewerb.GetTeamsRanked(live: false);
 #endif
 ```
 
+### ❌ Package-Referenz als "unbenutzt" entfernen, ohne solution-weit zu prüfen
+
+**Fehler**: `grep` nach Typnutzung nur im *einen* Projekt, in dem das `PackageReference` steht — PackageReferences fließen aber transitiv über `ProjectReference`-Ketten in andere Projekte durch, die nichts Eigenes referenzieren müssen. Ebenso kann ein Paket ohne eigenen Code-Aufruf trotzdem eine *notwendige* transitive Abhängigkeit einer anderen Bibliothek sein (z.B. `NetMQ` braucht intern `System.Security.Cryptography.Xml`) — es einfach zu entfernen lässt die Version unkontrolliert auf eine ältere/verwundbare zurückfallen, statt das Problem zu lösen.
+```
+// FALSCH: "System.Drawing.Common wird in StockApp.Comm nirgends benutzt" → aus StockApp.Comm.csproj entfernt
+// → Build bricht in StockApp.UI, weil XmlHelper.cs dort Bitmap nutzt und sich bisher
+//   auf die transitive ProjectReference-Kette verlassen hat.
+
+// FALSCH: "System.Security.Cryptography.Xml wird von uns nicht direkt genutzt" → entfernt
+// → NetMQ braucht es selbst; ohne explizite Version fällt die transitive Auflösung
+//   auf eine ältere (weiterhin verwundbare) Version zurück, der Dependabot-Alert bleibt bestehen.
+
+// RICHTIG: vor dem Entfernen/Ändern prüfen:
+dotnet nuget why <Projekt>.csproj <Paket>          // wer braucht es transitiv?
+dotnet list <Projekt>.csproj package --include-transitive   // welche Version kommt tatsächlich an?
+// und Codenutzung über ALLE Projekte suchen, nicht nur das eine mit der Referenz.
+```
+
 ---
 
 ## Testing (StockApp.Test)
@@ -465,6 +483,28 @@ msbuild ".\StockApp.Packaging\StockApp.Packaging.wapproj" \
 ```
 
 **Wichtig**: `.wapproj` muss `<RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>` haben!
+
+---
+
+## Package-Referenzen prüfen
+
+Kein Standard-Schritt bei jeder Code-Änderung, sondern **auf expliziten Anlass**: wenn der Nutzer nach unbenutzten/veralteten NuGet-Paketen fragt, ein Dependabot-Alert aufkommt, oder als Teil der Release-Vorbereitung (siehe `CONTRIBUTING.md`).
+
+Vorgehen (pro `.csproj` mit `PackageReference`):
+
+1. **Sicherheits-Alerts abrufen** (falls vorhanden):
+   ```bash
+   gh api repos/Trawacho/StockAppV2/dependabot/alerts --jq \
+     '.[] | select(.state=="open") | {package: .dependency.package.name, cve: .security_advisory.cve_id, manifest: .dependency.manifest_path, first_patched: .security_vulnerability.first_patched_version.identifier}'
+   ```
+2. **Für jedes verdächtige Paket klären, wer es tatsächlich braucht**, bevor irgendetwas entfernt/geändert wird:
+   ```bash
+   dotnet nuget why <Projekt>.csproj <Paket>                    # transitiver Bedarf?
+   dotnet list <Projekt>.csproj package --include-transitive    # welche Version kommt an?
+   ```
+3. **Codenutzung solution-weit suchen** (Grep über alle Projekte, nicht nur das mit der Referenz) — Typnutzung kann über eine `ProjectReference`-Kette in ein anderes Projekt „durchgereicht" worden sein, ohne dass dieses eine eigene Referenz hat.
+4. Erst danach entscheiden: Paket ist **echt unbenutzt** (keine transitive Notwendigkeit, keine Codenutzung irgendwo) → entfernen. Paket wird **woanders gebraucht** → Referenz zum richtigen Projekt verschieben. Paket ist **transitiv erforderlich, aber verwundbar** → explizite `PackageReference` auf die gepatchte Version pinnen (nicht einfach entfernen).
+5. Nach jeder Änderung: `dotnet build StockAppV2.sln` + `dotnet test .\StockApp.Test\StockApp.Test.csproj` — siehe auch den Fehlerfall "❌ Package-Referenz als 'unbenutzt' entfernen" im Abschnitt *Häufige Fehler & Lösungen* oben.
 
 ---
 
