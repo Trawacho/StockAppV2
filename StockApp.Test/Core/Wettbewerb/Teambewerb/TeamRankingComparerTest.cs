@@ -217,6 +217,82 @@ public class TeamRankingComparerTest
         }));
     }
 
+    /// <summary>
+    /// v2022 sortiert bei Punktgleichstand nach der DIFFERENZ der Stockpunkte, v2018 nach dem QUOTIENTEN
+    /// (<see cref="ITeam.GetStockNote(bool)"/>). Dieses Szenario ist bewusst so konstruiert, dass beide
+    /// Regelwerke bei identischen Spielergebnissen zu einer UNTERSCHIEDLICHEN Reihenfolge kommen:
+    /// TeamA (10:2, Differenz 8, Quotient 5.0) vs. TeamB (100:80, Differenz 20, Quotient 1.25).
+    /// </summary>
+    [Test]
+    public void TestComparer_V2018UsesStockNoteQuotient_V2022UsesStockDifference_ResultsDiffer()
+    {
+        var teamA = Team.Create("Team A");
+        teamA.StartNumber = 1;
+        var teamB = Team.Create("Team B");
+        teamB.StartNumber = 2;
+        var oppA = Team.Create("Gegner von A");
+        oppA.StartNumber = 3;
+        var oppB = Team.Create("Gegner von B");
+        oppB.StartNumber = 4;
+
+        var gameA = Game.Create(teamA, oppA, courtNumber: 1, gameNumber: 1, roundOfGame: 1, gameNumberOverAll: 1, isTeamA_Starting: true);
+        gameA.Spielstand.SetMasterTeamAValue(10);
+        gameA.Spielstand.SetMasterTeamBValue(2);
+        teamA.AddGame(gameA);
+        oppA.AddGame(gameA);
+
+        var gameB = Game.Create(teamB, oppB, courtNumber: 2, gameNumber: 1, roundOfGame: 1, gameNumberOverAll: 1, isTeamA_Starting: true);
+        gameB.Spielstand.SetMasterTeamAValue(100);
+        gameB.Spielstand.SetMasterTeamBValue(80);
+        teamB.AddGame(gameB);
+        oppB.AddGame(gameB);
+
+        // Testvoraussetzung: gleiche Spielpunkte (je ein Sieg), unterschiedliche Stockpunkte-Relation
+        Assert.That(teamA.GetSpielPunkte(), Is.EqualTo(teamB.GetSpielPunkte()));
+        Assert.That(teamA.GetStockPunkteDifferenz(), Is.EqualTo(8));
+        Assert.That(teamB.GetStockPunkteDifferenz(), Is.EqualTo(20));
+        Assert.That(teamA.GetStockNote(), Is.EqualTo(5.0));
+        Assert.That(teamB.GetStockNote(), Is.EqualTo(1.25));
+
+        var comparer2022 = new TeamRankingComparer(false, IERVersion.v2022);
+        Assert.That(comparer2022.Compare(teamB, teamA), Is.EqualTo(-1), "v2022: TeamB liegt vorne (höhere Stockpunkte-Differenz)");
+
+        var comparer2018 = new TeamRankingComparer(false, IERVersion.v2018);
+        Assert.That(comparer2018.Compare(teamA, teamB), Is.EqualTo(-1), "v2018: TeamA liegt vorne (höherer Stockpunkte-Quotient)");
+    }
+
+    [Test]
+    public void TestComparer_V2022_NonNormalTeamRanksBehindNormalTeam()
+    {
+        var normalTeam = Team.Create("Normal");
+        normalTeam.StartNumber = 1;
+        var withdrawnTeam = Team.Create("Zurückgezogen");
+        withdrawnTeam.StartNumber = 2;
+        withdrawnTeam.TeamStatus = TeamStatus.Unentschuldigt;
+
+        var comparer = new TeamRankingComparer(false, IERVersion.v2022);
+
+        Assert.That(comparer.Compare(withdrawnTeam, normalTeam), Is.EqualTo(1), "nicht-normales Team muss hinter einem normalen Team einsortiert werden");
+        Assert.That(comparer.Compare(normalTeam, withdrawnTeam), Is.EqualTo(-1));
+    }
+
+    [Test]
+    public void TestComparer_V2022_TwoNonNormalTeams_OrderedByStartNumber()
+    {
+        var teamA = Team.Create("A");
+        teamA.StartNumber = 5;
+        teamA.TeamStatus = TeamStatus.Entschuldigt;
+        var teamB = Team.Create("B");
+        teamB.StartNumber = 2;
+        teamB.TeamStatus = TeamStatus.Vorzeitig;
+
+        var comparer = new TeamRankingComparer(false, IERVersion.v2022);
+
+        // Beide ausgeschieden -> die niedrigere Startnummer entscheidet, unabhängig vom Status
+        Assert.That(comparer.Compare(teamB, teamA), Is.EqualTo(-1));
+        Assert.That(comparer.Compare(teamA, teamB), Is.EqualTo(1));
+    }
+
     [Test]
     public void TestTeamWithOnlyVorergebnisRanksAgainstTeamWithRealGames()
     {

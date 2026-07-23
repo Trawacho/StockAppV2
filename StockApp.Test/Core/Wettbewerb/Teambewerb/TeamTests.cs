@@ -15,18 +15,22 @@ public class TeamTests
     }
 
     [Test]
-    public void TestPublicFunctions()
+    public void TestClearGames_RemovesAllGames()
     {
-        Assert.That(_team1.Games.Count == 1, Is.True);
+        Assert.That(_team1.Games.Count, Is.EqualTo(1));
         _team1.ClearGames();
-        Assert.That(_team1.Games.Count == 0, Is.True);
+        Assert.That(_team1.Games.Count, Is.EqualTo(0));
+    }
 
+    [Test]
+    public void TestAddAndRemovePlayer_UpdatesPlayersCollection()
+    {
         _team1.AddPlayer();
         Assert.That(_team1.Players.Any(), Is.True);
+
         var player = _team1.Players.First();
         _team1.RemovePlayer(player);
         Assert.That(_team1.Players.Any(), Is.False);
-
     }
 
     [Test]

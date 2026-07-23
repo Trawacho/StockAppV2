@@ -22,6 +22,41 @@ public class GameplanFactoryTest
     }
 
 
+    /// <summary>
+    /// Grenzwerte laut CLAUDE.md: gpf.json muss Spielpläne für 2 (Minimum) und 22 (Maximum) Teams
+    /// enthalten, und <see cref="GamePlanFactory.MatchTeamAndGames"/> muss für JEDEN davon einen
+    /// gültigen, vollständigen Spielplan erzeugen (kein Selbstspiel, jedes Team taucht auf).
+    /// </summary>
+    [TestCase(2)]
+    [TestCase(22)]
+    public void TestMatchTeamAndGames_BoundaryTeamCounts_ProducesValidSchedule(int teamCount)
+    {
+        var gameplansForCount = GamePlanFactory.LoadAllGameplans().Where(p => p.Teams == teamCount).ToList();
+        Assert.That(gameplansForCount, Is.Not.Empty, $"gpf.json sollte mindestens einen Spielplan für {teamCount} Teams enthalten");
+
+        foreach (var gamePlan in gameplansForCount)
+        {
+            var teamBewerb = TeamBewerb.Create(1);
+            for (int t = 0; t < teamCount; t++)
+                teamBewerb.AddNewTeam();
+
+            GamePlanFactory.MatchTeamAndGames(gamePlan, teamBewerb.Teams);
+
+            Assert.That(teamBewerb.Teams.Count(), Is.EqualTo(teamCount));
+
+            var realGames = teamBewerb.GetAllGames(withBreaks: false).ToList();
+            Assert.That(realGames, Is.Not.Empty, $"Plan {gamePlan.ID} ({teamCount} Teams) sollte reale Spiele erzeugen");
+            Assert.That(realGames.Any(g => g.TeamA == g.TeamB), Is.False, $"Plan {gamePlan.ID}: kein Team darf gegen sich selbst spielen");
+
+            // Jedes Team muss mindestens an einem Spiel beteiligt sein
+            foreach (var team in teamBewerb.Teams)
+            {
+                Assert.That(realGames.Any(g => g.TeamA == team || g.TeamB == team), Is.True,
+                    $"Plan {gamePlan.ID}: Team mit Startnummer {team.StartNumber} hat kein einziges Spiel");
+            }
+        }
+    }
+
     [Test]
     public void TestLoadAndMatchGameplan()
     {

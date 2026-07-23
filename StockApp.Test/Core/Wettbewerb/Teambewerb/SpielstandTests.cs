@@ -16,46 +16,48 @@ namespace StockApp.Test
         }
 
         [Test]
-        public void TestPublicFunctions()
+        public void TestInitialState_AllPointsAreZeroAndNotSetByHand()
         {
-            Assert.That(_spielstand.GetSpielPunkteTeamA(false) == 0, Is.True);
-            Assert.That(_spielstand.GetSpielPunkteTeamB(false) == 0, Is.True);
+            Assert.That(_spielstand.GetSpielPunkteTeamA(false), Is.EqualTo(0));
+            Assert.That(_spielstand.GetSpielPunkteTeamB(false), Is.EqualTo(0));
+            Assert.That(_spielstand.GetSpielPunkteTeamA(true), Is.EqualTo(0));
+            Assert.That(_spielstand.GetSpielPunkteTeamB(true), Is.EqualTo(0));
 
-            Assert.That(_spielstand.GetSpielPunkteTeamA(true) == 0, Is.True);
-            Assert.That(_spielstand.GetSpielPunkteTeamB(true) == 0, Is.True);
-
-
-
-            Assert.That(_spielstand.GetStockPunkteTeamA(false) == 0, Is.True);
-            Assert.That(_spielstand.GetStockPunkteTeamB(false) == 0, Is.True);
-
-            Assert.That(_spielstand.GetStockPunkteTeamA(true) == 0, Is.True);
-            Assert.That(_spielstand.GetStockPunkteTeamB(true) == 0, Is.True );
-
-
+            Assert.That(_spielstand.GetStockPunkteTeamA(false), Is.EqualTo(0));
+            Assert.That(_spielstand.GetStockPunkteTeamB(false), Is.EqualTo(0));
+            Assert.That(_spielstand.GetStockPunkteTeamA(true), Is.EqualTo(0));
+            Assert.That(_spielstand.GetStockPunkteTeamB(true), Is.EqualTo(0));
 
             Assert.That(_spielstand.IsSetByHand, Is.False);
-
-            _spielstand.SetLiveValues(3, 5);
-            Assert.That(_spielstand.IsSetByHand, Is.False);
-
-            Assert.That(_spielstand.Punkte_Live_TeamA == 3, Is.True);
-            Assert.That(_spielstand.Punkte_Live_TeamB == 5, Is.True);
-
-            _spielstand.SetMasterTeamAValue(7);
-            Assert.That(_spielstand.IsSetByHand, Is.True);
-
-            Assert.That(_spielstand.GetStockPunkteTeamA(false) == 7, Is.True);
-            Assert.That(_spielstand.GetStockPunkteTeamB(false) == 0, Is.True);
-
-            Assert.That(_spielstand.GetSpielPunkteTeamA(false) == 2, Is.True);
-            Assert.That(_spielstand.GetSpielPunkteTeamB(false) == 0, Is.True);
         }
 
         [Test]
-        public void TestCountOfWinnningTurns()
+        public void TestSetLiveValues_DoesNotSetIsSetByHand()
         {
-            _spielstand = Spielstand.Create();
+            _spielstand.SetLiveValues(3, 5);
+
+            Assert.That(_spielstand.IsSetByHand, Is.False);
+            Assert.That(_spielstand.Punkte_Live_TeamA, Is.EqualTo(3));
+            Assert.That(_spielstand.Punkte_Live_TeamB, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void TestSetMasterTeamAValue_SetsIsSetByHandAndUpdatesDerivedPoints()
+        {
+            _spielstand.SetMasterTeamAValue(7);
+
+            Assert.That(_spielstand.IsSetByHand, Is.True);
+            Assert.That(_spielstand.GetStockPunkteTeamA(false), Is.EqualTo(7));
+            Assert.That(_spielstand.GetStockPunkteTeamB(false), Is.EqualTo(0));
+
+            // TeamA hat mehr Stockpunkte als TeamB -> 2 Spielpunkte (Sieg)
+            Assert.That(_spielstand.GetSpielPunkteTeamA(false), Is.EqualTo(2));
+            Assert.That(_spielstand.GetSpielPunkteTeamB(false), Is.EqualTo(0));
+        }
+
+        [Test]
+        public void TestCountOfWinningTurns()
+        {
             var kehren = new List<IKehre>()
             {
                 Kehre.Create(1,0,3),
@@ -81,10 +83,8 @@ namespace StockApp.Test
         }
 
         [Test]
-        public void TestSetMasterValue()
+        public void TestSetMasterKehre_OverwritesExistingKehrenNummer_InsteadOfDuplicating()
         {
-            _spielstand = Spielstand.Create();
-
             _spielstand.SetMasterKehre(Kehre.Create(1, 3, 0));
             Assert.That(_spielstand.IsSetByHand, Is.True);
 
@@ -96,8 +96,6 @@ namespace StockApp.Test
             Assert.That(_spielstand.Kehren_Master.Count(), Is.EqualTo(3));
             Assert.That(_spielstand.Kehren_Master.First(k => k.KehrenNummer == 1).PunkteTeamA, Is.EqualTo(0));
             Assert.That(_spielstand.Kehren_Master.First(k => k.KehrenNummer == 1).PunkteTeamB, Is.EqualTo(5));
-
-
         }
     }
 }

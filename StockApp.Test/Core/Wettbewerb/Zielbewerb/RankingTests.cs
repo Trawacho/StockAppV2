@@ -70,11 +70,17 @@ namespace StockApp.Test
             Assert.That(ranked.ElementAt(1).Startnummer, Is.EqualTo(1));    //Startnummer 1 ist auf Platz 2
             Assert.That(ranked.ElementAt(2).Startnummer, Is.EqualTo(3));    //Startnummer 3 ist auf Platz 3
 
-            //Gesamtpunkte wieder gleich setzen
+            //Gesamtpunkte wieder gleich setzen -> vollständiger Gleichstand in allen Kriterien
+            //(GesamtPunkte, Kombinieren, MassenSeite, Schiessen, MassenMitte)
             _bewerb.Teilnehmerliste.First(t => t.Startnummer == 1).Wertungen.ElementAt(0).Disziplinen.First(t => t.Disziplinart == StockTVZielDisziplinName.MassenMitte).Versuch1 = 6;
             _bewerb.Teilnehmerliste.First(t => t.Startnummer == 2).Wertungen.ElementAt(1).Disziplinen.First(t => t.Disziplinart == StockTVZielDisziplinName.MassenMitte).Versuch1 = 6;
             _bewerb.Teilnehmerliste.First(t => t.Startnummer == 3).Wertungen.ElementAt(2).Disziplinen.First(t => t.Disziplinart == StockTVZielDisziplinName.MassenMitte).Versuch1 = 6;
 
+            var rankedAfterTie = _bewerb.GetTeilnehmerRanked().ToList();
+
+            // OrderByDescending ist stabil: bei Gleichstand in ALLEN Kriterien bleibt die
+            // ursprüngliche Reihenfolge (Startnummer 1, 2, 3, so wie angelegt) erhalten.
+            Assert.That(rankedAfterTie.Select(t => t.Startnummer), Is.EqualTo(new[] { 1, 2, 3 }));
         }
 
 
