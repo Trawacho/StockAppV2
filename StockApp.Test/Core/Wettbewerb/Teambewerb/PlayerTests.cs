@@ -16,13 +16,23 @@ namespace StockApp.Test
         }
 
         [Test]
-        public void TestPublicFunctions()
+        public void TestCreate_Default_HasEmptyLicenseNumber()
         {
-            Assert.That(_player1.LicenseNumber == string.Empty, Is.True);
+            Assert.That(_player1.LicenseNumber, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public void TestLicenseNumber_CanBeSet()
+        {
             _player1.LicenseNumber = "321654";
-            Assert.That(_player1.LicenseNumber == "321654");
-            Assert.That(_player2.LastName == "Meier", Is.True);
-            Assert.That(_player2.FirstName == "Josef", Is.True);
+            Assert.That(_player1.LicenseNumber, Is.EqualTo("321654"));
+        }
+
+        [Test]
+        public void TestCreate_WithNames_AssignsLastNameAndFirstNameInCorrectOrder()
+        {
+            Assert.That(_player2.LastName, Is.EqualTo("Meier"));
+            Assert.That(_player2.FirstName, Is.EqualTo("Josef"));
         }
     }
 }

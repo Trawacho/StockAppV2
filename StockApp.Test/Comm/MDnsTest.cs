@@ -3,6 +3,11 @@ using StockApp.Comm.MDns;
 
 namespace StockApp.Test.Comm;
 
+/// <summary>
+/// Requires a real StockTV device broadcasting on the LAN via mDNS.
+/// Excluded from normal `dotnet test` runs; run explicitly by name when hardware is available.
+/// </summary>
+[Category("Manual")]
 internal class MDnsTest
 {
     MDnsService _service;
@@ -12,6 +17,7 @@ internal class MDnsTest
     public void Setup() { }
 
     [Test]
+    [Explicit("Requires a real StockTV device on the LAN broadcasting via mDNS.")]
     public void MdnsTest()
     {
         _found = false;

@@ -14,19 +14,21 @@ namespace StockApp.Test
         }
 
         [Test]
-        public void TestPublicFunctions()
+        public void TestInitialState_SummeIsZero()
         {
-            Assert.That(_disziplin.Summe == 0, Is.True);
+            Assert.That(_disziplin.Summe, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void TestVersucheCountAndSumme_ReflectSetVersuche()
+        {
             _disziplin.Reset();
             _disziplin.Versuch1 = 2;
             _disziplin.Versuch2 = 5;
             _disziplin.Versuch3 = 0;
-            //disziplin.AddVersuch(2);
-            //disziplin.AddVersuch(5);
-            //disziplin.AddVersuch(0);
-            Assert.That(_disziplin.VersucheCount() == 3, Is.True);
 
-            Assert.That(_disziplin.Summe == 7, Is.True);
+            Assert.That(_disziplin.VersucheCount(), Is.EqualTo(3));
+            Assert.That(_disziplin.Summe, Is.EqualTo(7));
         }
     }
 }
