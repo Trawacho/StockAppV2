@@ -6,7 +6,7 @@ Dies ist ein erweiterte Anleitung für Claude Code. Sie ersetzt vage Beschreibun
 
 ## Repository-Überblick
 
-**StockAppV2** ist eine WPF-Desktopanwendung zur Verwaltung von Stocksport-Turnieren (Stocktennis/Boccia).
+**StockAppV2** ist eine WPF-Desktopanwendung zur Verwaltung von Stocksport-Turnieren.
 
 - **Lösung**: `StockAppV2.sln`
 - **.NET-Ziel**: `net8.0` (plattformunabhängig) + `net8.0-windows7.0` (WPF/Druck)
