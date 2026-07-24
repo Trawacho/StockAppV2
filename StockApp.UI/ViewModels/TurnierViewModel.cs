@@ -24,8 +24,21 @@ public class TurnierViewModel : ViewModelBase
     public ExecutiveViewModel RechenbueroViewModel { get; }
     public ExecutiveViewModel WettbewerbsleiterViewModel { get; }
 
-
-
+    protected override void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                EntryFeeViewModel?.Dispose();
+                SchiedsrichterViewModel?.Dispose();
+                RechenbueroViewModel?.Dispose();
+                WettbewerbsleiterViewModel?.Dispose();
+            }
+            _disposed = true;
+        }
+        base.Dispose(disposing);
+    }
 }
 
 public class TurnierDesignViewModel

@@ -2,6 +2,7 @@
 using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Lib.ViewModels;
 using StockApp.UI.Commands;
+using StockApp.UI.Extensions;
 using StockApp.UI.Stores;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,11 +41,7 @@ public class StockTVCollectionViewModel : ViewModelBase
             if (disposing)
             {
                 _stockTVService.StockTVCollectionChanged -= StockTVService_StockTVCollectionChanged;
-                foreach (var item in StockTvViewModels)
-                {
-                    item.Dispose();
-                }
-                StockTvViewModels.Clear();
+                StockTvViewModels.DisposeAndClear();
             }
             _disposed = true;
         }
@@ -77,7 +74,7 @@ public class StockTVCollectionViewModel : ViewModelBase
 
     private void FillStockTvViewModelsCollection()
     {
-        StockTvViewModels.Clear();
+        StockTvViewModels.DisposeAndClear();
         foreach (var stockTv in _stockTVService.StockTVCollection)
         {
             StockTvViewModels.Add(new StockTVViewModel(stockTv, _stockTVCommandStore));
