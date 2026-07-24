@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
 
     <IsPackable>false</IsPackable>
 
@@ -22,6 +23,7 @@
   <ItemGroup>
 	  <ProjectReference Include="..\StockApp.XML\StockApp.XML.csproj" />
 	  <ProjectReference Include="..\StockAppV2.Core\StockApp.Core.csproj" />
+	  <ProjectReference Include="..\StockApp.UI\StockApp.UI.csproj" />
   </ItemGroup>
 
 </Project>
