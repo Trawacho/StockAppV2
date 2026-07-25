@@ -469,9 +469,38 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 
     public bool IsBestOf { get; init; }
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1 || _turnier.ContainerTeamBewerbe.TeamBewerbe.Where(b => b.IsSplitGruppe).Any();
-    public string HeaderString => !string.IsNullOrWhiteSpace(_teamBewerb.ResultHeaderTextOverride)
-        ? _teamBewerb.ResultHeaderTextOverride
-        : (_teamBewerb.UseParagraph610 || _teamBewerb.IsEachGameDone(false)) ? $"E R G E B N I S" : "Zwischenergebnis";
+    public string HeaderString
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(_teamBewerb.ResultHeaderTextOverride))
+                return _teamBewerb.ResultHeaderTextOverride;
+
+            if (_teamBewerb.UseParagraph610 || _teamBewerb.IsEachGameDone(false))
+                return "E R G E B N I S";
+
+            var currentSlot = _teamBewerb.GetCurrentGameNumberOverAll(false);
+            var gamesInCurrentSlot = _teamBewerb.GetAllGames(false).Where(g => g.GameNumberOverAll == currentSlot).ToList();
+
+            // Solange nicht alle Bahnen des laufenden Spiels ein Ergebnis haben, wird kein Spielstand genannt
+            if (gamesInCurrentSlot.Any(g => g.IsGameDone(false)))
+                return "Zwischenergebnis";
+
+            var lastCompletedSlot = (currentSlot ?? 1) - 1;
+            if (lastCompletedSlot < 1)
+                return "Zwischenergebnis";
+
+            if (_teamBewerb.NumberOfGameRounds > 1)
+            {
+                var lastCompletedRound = _teamBewerb.GetAllGames(false).First(g => g.GameNumberOverAll == lastCompletedSlot).RoundOfGame;
+                var currentRound = gamesInCurrentSlot.First().RoundOfGame;
+                if (currentRound > lastCompletedRound)
+                    return $"Zwischenergebnis nach Runde {lastCompletedRound}";
+            }
+
+            return $"Zwischenergebnis nach {lastCompletedSlot}. Spiel";
+        }
+    }
 
     public string Endtext => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext;
     public string Footer
