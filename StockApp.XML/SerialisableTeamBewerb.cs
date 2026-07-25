@@ -42,6 +42,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
         Endtext = bewerb.Endtext;
         VorText = bewerb.VorText;
+        ResultHeaderTextOverride = bewerb.ResultHeaderTextOverride;
         TeamNameWithStartnumber = bewerb.TeamNameWithStartnumber;
         TeamInfo = bewerb.TeamInfo;
         ImageTopLeftFilename = bewerb.ImageTopLeftFilename;
@@ -70,6 +71,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
         teamBewerb.Endtext = Endtext;
         teamBewerb.VorText = VorText;
+        teamBewerb.ResultHeaderTextOverride = ResultHeaderTextOverride;
         teamBewerb.PageBreakSplitGroup = PageBreakSplitGroup;
         teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
         teamBewerb.TeamInfo = TeamInfo;
@@ -182,6 +184,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlElement(ElementName = "VorText")]
     public string VorText { get; set; }
+
+    [XmlElement(ElementName = "ResultHeaderTextOverride")]
+    public string ResultHeaderTextOverride { get; set; }
 
     [XmlElement(ElementName = "TeamNameWithStarnumber")]
     public bool TeamNameWithStartnumber { get; set; }

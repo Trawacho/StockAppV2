@@ -58,6 +58,12 @@ public interface ITeamBewerb : IBewerb
 	public string VorText { get; set; }
 
 	/// <summary>
+	/// Überschreibt die automatisch ermittelte Überschrift der Ergebnisliste ("Ergebnis"/"Zwischenergebnis").
+	/// Leer/null bedeutet: automatisches Verhalten.
+	/// </summary>
+	public string ResultHeaderTextOverride { get; set; }
+
+	/// <summary>
 	/// Anzahl der Mannschaften die als Aufsteiger in der Ergebnisliste gekennzeichnet werden
 	/// </summary>
 	int AnzahlAufsteiger { get; set; }
@@ -248,6 +254,7 @@ public class TeamBewerb : ITeamBewerb
 	private bool _is8TurnsGame;
 	private string _endText;
 	private string _vorText;
+	private string _resultHeaderTextOverride;
 
 	#endregion
 
@@ -323,6 +330,11 @@ public class TeamBewerb : ITeamBewerb
 	/// <inheritdoc/>
 	/// </summary>
 	public string VorText { get => _vorText; set => _vorText = value?.Trim(); }
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public string ResultHeaderTextOverride { get => _resultHeaderTextOverride; set => _resultHeaderTextOverride = value?.Trim(); }
 
 	/// <summary>
 	/// <inheritdoc/>
@@ -428,6 +440,7 @@ public class TeamBewerb : ITeamBewerb
 	{
 		RemoveAllTeams();
 		Endtext = string.Empty;
+		ResultHeaderTextOverride = string.Empty;
 		FontSize = 14;
 		FontSizeVorText = 12;
 		FontSizeEndText = 12;

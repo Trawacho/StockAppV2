@@ -469,7 +469,9 @@ internal class TeamTemplateViewModel : PrintTemplateViewModelBase
 
     public bool IsBestOf { get; init; }
     public bool HasMoreGroups => _turnier.ContainerTeamBewerbe.TeamBewerbe.Count() > 1 || _turnier.ContainerTeamBewerbe.TeamBewerbe.Where(b => b.IsSplitGruppe).Any();
-    public string HeaderString => (_teamBewerb.UseParagraph610 || _teamBewerb.IsEachGameDone(false)) ? $"E R G E B N I S" : "Zwischenergebnis";
+    public string HeaderString => !string.IsNullOrWhiteSpace(_teamBewerb.ResultHeaderTextOverride)
+        ? _teamBewerb.ResultHeaderTextOverride
+        : (_teamBewerb.UseParagraph610 || _teamBewerb.IsEachGameDone(false)) ? $"E R G E B N I S" : "Zwischenergebnis";
 
     public string Endtext => _turnier.ContainerTeamBewerbe.CurrentTeamBewerb.Endtext;
     public string Footer
