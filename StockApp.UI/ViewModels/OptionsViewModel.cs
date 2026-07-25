@@ -129,6 +129,16 @@ public class OptionsViewModel : ViewModelBase
 		}
 	}
 
+	public string ResultHeaderTextOverride
+	{
+		get => TeamBewerb.ResultHeaderTextOverride;
+		set
+		{
+			_turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb.ResultHeaderTextOverride = value;
+			RaisePropertyChanged();
+		}
+	}
+
 	public bool TeamNameWithStartnumber
 	{
 		get => TeamBewerb.TeamNameWithStartnumber;
