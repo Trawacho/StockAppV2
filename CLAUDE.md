@@ -68,6 +68,76 @@ ITurnier (Turnier.cs)
 
 ---
 
+## Spielablauf eines Stockturniers (Teambewerb)
+
+Domänenwissen zum eigentlichen Spielbetrieb (nicht nur zur Datenstruktur) — wichtig, um Tests und neue Features im Teambewerb-Bereich richtig einzuordnen.
+
+### Begriffe
+
+**Hierarchie** (von groß nach klein):
+
+| Begriff | Bedeutung | Code |
+|---|---|---|
+| **Turnier** | Das gesamte Turnier; enthält alle Gruppen (Teambewerbe) und ggf. Zielbewerbe | `ITurnier`, `ITurnier.ContainerTeamBewerbe` |
+| **Gruppe** | Im Programm können manuell mehrere Gruppen angelegt werden, jede mit eigenen Teams und eigenem Spielplan | `IContainerTeamBewerbe.TeamBewerbe`, `ITeamBewerb.SpielGruppe`, UI: `TeamBewerbContainerViewModel.AddNewTeamBewerbCommand` |
+| **Split-Gruppe** | Eigenständiger Spielplan-Typ (unabhängig von "Gruppe" oben): zwei Blöcke teilen sich gleichzeitig dieselben Bahnen (z.B. 10 Teams auf 4 Bahnen als 2×5) — dabei kann sogar eine einzelne Bahn von beiden Blöcken gemeinsam genutzt werden, was mit zwei separat angelegten Gruppen nicht möglich wäre | `ITeamBewerb.IsSplitGruppe`, `IGameplan.IsSplit` |
+| **Runde** | Ein Turnier/eine Gruppe kann aus mehreren Runden bestehen (das komplette Programm nochmal spielen) | `ITeamBewerb.NumberOfGameRounds`; einzelnes Spiel trägt seine Runde in `IGame.RoundOfGame` |
+| **Spiel** | Begegnung zweier Mannschaften auf einer Bahn | `IGame`, `ITeamBewerb.Is8TurnsGame` (6 oder 8 Kehren) |
+| **Kehre** | Ein Spiel besteht aus n Kehren (6 oder 8); 0–4 Punkte pro Mannschaft und Kehre (selten mehr) | `IKehre` (`KehrenNummer`, `PunkteTeamA`, `PunkteTeamB`), gesammelt in `ISpielstand.Kehren_Live`/`Kehren_Master` |
+
+**Ergänzend** (Eigenschaften eines Spiels, nicht Teil der Hierarchie oben):
+
+| Begriff | Bedeutung | Code |
+|---|---|---|
+| **Bahn** | Spielbahn auf einer Stocksportanlage (nicht zwingend eine Halle, auch im Freien); liegen immer nebeneinander, im Spielplan immer lückenlos ab 1 durchnummeriert | `IGame.CourtNumber` |
+| **Anspiel** | `IsTeamA_Starting` legt fest, wer in der **ersten** Kehre des Spiels den ersten Versuch hat. Danach wechselt das Anspiel automatisch mit jeder weiteren Kehre (Kehre 1: wie festgelegt, Kehre 2: die andere Mannschaft, Kehre 3: wieder wie festgelegt, ...) | `IGame.IsTeamA_Starting` — nicht separat pro Kehre gespeichert (`IKehre` hat kein eigenes Anspiel-Feld), sondern aus dem einen Flag pro Spiel abgeleitet |
+| **Aussetzer/Pause** | Pro Runde können n Mannschaften nicht mitspielen (n ≥ 0, auch gar keine ist möglich); sie werden auf Bahn 0 gesetzt | `IGame.IsPauseGame()` (wahr wenn `CourtNumber == 0`) |
+
+### Bahnrotation & Anspiel-Formel
+
+Im Normalfall wandert ein Team nach jedem Spiel eine Bahn weiter (Beispiel 9 Teams/4 Bahnen: Bahn 1→2→3→4, Seitenwechsel auf Bahn 4 — bleibt dort aber auf derselben Bahn —, dann zurück 4→3→2→1, im letzten Spiel Pause). Das ist aber **keine feste Regel**: unter ungünstigen Team-/Bahnenzahl-Konstellationen kann es unvermeidbar sein, dass eine Mannschaft auch außerhalb eines bewussten Seitenwechsels auf derselben Bahn bleibt.
+
+Vier Ziele gleichzeitig verfolgen, die ersten beiden gleichwertig, die letzten beiden nachrangig:
+1. Ein möglichst gleichmäßig verteiltes Anspiel über das Turnier.
+2. Eine möglichst gleichmäßige Verteilung auf Bahn *und* Bahnseite: jede Mannschaft soll im Turnierverlauf jede Bahn möglichst sowohl als TeamA als auch als TeamB belegen — genau wie beim Anspiel.
+3. Möglichst kurze Wege zur jeweils nächsten Bahn.
+4. Wenn möglich soll das Anspiel von Spiel zu Spiel wechseln — eine Mannschaft also nicht mehrfach hintereinander (nicht) im Anspiel sein.
+
+Das Anspiel hängt an der Bahnnummer, nicht direkt an der Mannschaft — deshalb steuert die Reihenfolge, in der die Team-Startnummern innerhalb eines Bahn-Paares in `gpf.json` stehen (wer davon "TeamA" bzw. "TeamB" wird), zusammen mit der Bahnnummer, wie fair sich Anspiel und Bahnseiten-Verteilung am Ende über das Turnier verteilen (`GamePlanFactory.MatchTeamAndGames`):
+
+```csharp
+isTeamA_Starting = (Court % 2 != 0);   // ungerade Bahn -> TeamA (erste Startnummer im Paar) beginnt
+
+// Split-Gruppe: zweite Hälfte der Bahnen spiegeln
+if (gameplan.IsSplit && gameplan.Courts % 4 == 2 && CourtNumber > gameplan.Courts / 2)
+    isTeamA_Starting = !isTeamA_Starting;
+
+// Mehrere Runden: Anspiel in geraden Runden drehen, wenn StartingTeamChange/HasChangeStart aktiv ist
+if (round % 2 == 0 && StartingTeamChange)
+    isTeamA_Starting = !isTeamA_Starting;
+```
+
+### Spielpläne (`gpf.json`) sind handkuratiert
+
+`StockAppV2.Core/Factories/gpf.json` ist **keine generierte, sondern eine von Hand erstellte** Lookup-Tabelle: jede Zeile im `plan`-Array einer Konfiguration ist eine komplette Spielrunde, Zahlenpaare darin sind die Bahn-Paarungen. `GamePlanFactory.MatchTeamAndGames` generiert daraus nichts algorithmisch — Aussetzer pro Runde werden über Mengendifferenz ermittelt (welche Startnummer taucht in dieser Zeile nicht auf).
+
+**Zwei gültige Varianten, wenn eine Runde nicht alle Bahnen braucht** (beide korrekt von der Factory verarbeitet):
+1. Bahn explizit leer lassen mit dem Sentinel `0, 0` (z.B. Plan `20101`, Split-Turnier).
+2. Die Zeile einfach kürzer lassen, also weniger Zahlenpaare (z.B. Plan `631`/`831`/`841`, siehe deren Beschreibung "... Bahnen, ... Aussetzer").
+
+**Feste Regeln für jeden Eintrag in `gpf.json`** (mit Tests abgesichert in `StockApp.Test/Core/Factories/GameplanFactoryTest.cs`):
+- Eine Mannschaft spielt nie gegen sich selbst (`A != B`, außer beim `0,0`-Sentinel).
+- Bahnen sind innerhalb einer Runde lückenlos ab 1 durchnummeriert (`Courts` muss dabei nicht in jeder Runde ausgeschöpft werden).
+- Alle referenzierten Startnummern liegen innerhalb von `1..Teams`.
+
+**Faustregel für neue/geänderte Einträge**: Bei gerader Mannschaftszahl ist eine gleichmäßige Anspiel-Verteilung schwierig.
+
+**Regel für Claude**: Bei jedem neuen oder geänderten Spielplan in `gpf.json` explizit **alle vier** Ziele aus "Bahnrotation & Anspiel-Formel" oben prüfen — (1) gleichmäßig verteiltes Anspiel, (2) gleichmäßige Verteilung auf Bahn und Bahnseite (TeamA/TeamB), nachrangig (3) kurze Wege zur jeweils nächsten Bahn, (4) Anspiel-Wechsel von Spiel zu Spiel. Bei jedem der vier konkrete Verbesserungsvorschläge machen, wenn es nicht gut erfüllt ist — nicht nur eines der vier Ziele isoliert betrachten.
+
+Geplant, aber noch nicht umgesetzt: Nutzer sollen eigene Spielpläne hinterlegen können — die drei Regeln oben wären dafür die Validierungsbasis.
+
+---
+
 ## MVVM-Architektur (StockApp.UI)
 
 ### Schichtenmodell
@@ -406,6 +476,24 @@ var ranked = _currentTeamBewerb.GetTeamsRanked(live: false);
 #endif
 ```
 
+### ❌ Package-Referenz als "unbenutzt" entfernen, ohne solution-weit zu prüfen
+
+**Fehler**: `grep` nach Typnutzung nur im *einen* Projekt, in dem das `PackageReference` steht — PackageReferences fließen aber transitiv über `ProjectReference`-Ketten in andere Projekte durch, die nichts Eigenes referenzieren müssen. Ebenso kann ein Paket ohne eigenen Code-Aufruf trotzdem eine *notwendige* transitive Abhängigkeit einer anderen Bibliothek sein (z.B. `NetMQ` braucht intern `System.Security.Cryptography.Xml`) — es einfach zu entfernen lässt die Version unkontrolliert auf eine ältere/verwundbare zurückfallen, statt das Problem zu lösen.
+```
+// FALSCH: "System.Drawing.Common wird in StockApp.Comm nirgends benutzt" → aus StockApp.Comm.csproj entfernt
+// → Build bricht in StockApp.UI, weil XmlHelper.cs dort Bitmap nutzt und sich bisher
+//   auf die transitive ProjectReference-Kette verlassen hat.
+
+// FALSCH: "System.Security.Cryptography.Xml wird von uns nicht direkt genutzt" → entfernt
+// → NetMQ braucht es selbst; ohne explizite Version fällt die transitive Auflösung
+//   auf eine ältere (weiterhin verwundbare) Version zurück, der Dependabot-Alert bleibt bestehen.
+
+// RICHTIG: vor dem Entfernen/Ändern prüfen:
+dotnet nuget why <Projekt>.csproj <Paket>          // wer braucht es transitiv?
+dotnet list <Projekt>.csproj package --include-transitive   // welche Version kommt tatsächlich an?
+// und Codenutzung über ALLE Projekte suchen, nicht nur das eine mit der Referenz.
+```
+
 ---
 
 ## Testing (StockApp.Test)
@@ -455,6 +543,28 @@ dotnet build .\StockAppV2.sln
 Für den vollständigen Release-Build (MS-Store-AppBundle + Installer-Setup.exe)
 siehe [`RELEASE.md`](./RELEASE.md) im Repository-Root — dort ist der Ablauf
 die einzige Quelle, nicht hier duplizieren.
+
+---
+
+## Package-Referenzen prüfen
+
+Kein Standard-Schritt bei jeder Code-Änderung, sondern **auf expliziten Anlass**: wenn der Nutzer nach unbenutzten/veralteten NuGet-Paketen fragt, ein Dependabot-Alert aufkommt, oder als Teil der Release-Vorbereitung (siehe `CONTRIBUTING.md`).
+
+Vorgehen (pro `.csproj` mit `PackageReference`):
+
+1. **Sicherheits-Alerts abrufen** (falls vorhanden):
+   ```bash
+   gh api repos/Trawacho/StockAppV2/dependabot/alerts --jq \
+     '.[] | select(.state=="open") | {package: .dependency.package.name, cve: .security_advisory.cve_id, manifest: .dependency.manifest_path, first_patched: .security_vulnerability.first_patched_version.identifier}'
+   ```
+2. **Für jedes verdächtige Paket klären, wer es tatsächlich braucht**, bevor irgendetwas entfernt/geändert wird:
+   ```bash
+   dotnet nuget why <Projekt>.csproj <Paket>                    # transitiver Bedarf?
+   dotnet list <Projekt>.csproj package --include-transitive    # welche Version kommt an?
+   ```
+3. **Codenutzung solution-weit suchen** (Grep über alle Projekte, nicht nur das mit der Referenz) — Typnutzung kann über eine `ProjectReference`-Kette in ein anderes Projekt „durchgereicht" worden sein, ohne dass dieses eine eigene Referenz hat.
+4. Erst danach entscheiden: Paket ist **echt unbenutzt** (keine transitive Notwendigkeit, keine Codenutzung irgendwo) → entfernen. Paket wird **woanders gebraucht** → Referenz zum richtigen Projekt verschieben. Paket ist **transitiv erforderlich, aber verwundbar** → explizite `PackageReference` auf die gepatchte Version pinnen (nicht einfach entfernen).
+5. Nach jeder Änderung: `dotnet build StockAppV2.sln` + `dotnet test .\StockApp.Test\StockApp.Test.csproj` — siehe auch den Fehlerfall "❌ Package-Referenz als 'unbenutzt' entfernen" im Abschnitt *Häufige Fehler & Lösungen* oben.
 
 ---
 

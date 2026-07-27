@@ -58,6 +58,12 @@ public interface ITeamBewerb : IBewerb
 	public string VorText { get; set; }
 
 	/// <summary>
+	/// Überschreibt die automatisch ermittelte Überschrift der Ergebnisliste ("Ergebnis"/"Zwischenergebnis").
+	/// Leer/null bedeutet: automatisches Verhalten.
+	/// </summary>
+	public string ResultHeaderTextOverride { get; set; }
+
+	/// <summary>
 	/// Anzahl der Mannschaften die als Aufsteiger in der Ergebnisliste gekennzeichnet werden
 	/// </summary>
 	int AnzahlAufsteiger { get; set; }
@@ -192,6 +198,22 @@ public interface ITeamBewerb : IBewerb
 	IOrderedEnumerable<ITeam> GetSplitTeamsRanked(bool groupOne, bool live = false);
 
 	bool IsEachGameDone(bool live);
+
+	/// <summary>
+	/// Höchste <see cref="IGame.RoundOfGame"/>, für die bereits ein Ergebnis (Live oder Master) eingetragen ist.
+	/// 0, wenn noch kein Ergebnis vorhanden ist.
+	/// </summary>
+	int GetHighestPlayedRound();
+
+	/// <summary>
+	/// Die aktuell laufende Spielrunde (alle Spiele mit derselben <see cref="IGame.GameNumberOverAll"/>, die
+	/// gleichzeitig auf den verschiedenen Bahnen gespielt werden): die niedrigste <see cref="IGame.GameNumberOverAll"/>,
+	/// bei der noch nicht alle Spiele (ohne Aussetzer) ein Ergebnis haben.<br></br>
+	/// <see cref="IGame.RoundOfGame"/> eignet sich dafür NICHT, da dieser Wert nur komplette Wiederholungs-Durchgänge
+	/// (<see cref="NumberOfGameRounds"/>) unterscheidet und bei Standardeinstellung (1 Durchgang) für ALLE Spiele gleich ist.<br></br>
+	/// Null, wenn es noch keine Spiele gibt oder bereits alle Runden abgeschlossen sind.
+	/// </summary>
+	int? GetCurrentGameNumberOverAll(bool live);
 }
 
 
@@ -232,6 +254,7 @@ public class TeamBewerb : ITeamBewerb
 	private bool _is8TurnsGame;
 	private string _endText;
 	private string _vorText;
+	private string _resultHeaderTextOverride;
 
 	#endregion
 
@@ -267,6 +290,7 @@ public class TeamBewerb : ITeamBewerb
 		{
 			if (_numberOfGameRounds == value) return;
 			if (value < 1 || value > 7) return;
+			if (value < GetHighestPlayedRound()) return;
 
 			_numberOfGameRounds = value;
 		}
@@ -306,6 +330,11 @@ public class TeamBewerb : ITeamBewerb
 	/// <inheritdoc/>
 	/// </summary>
 	public string VorText { get => _vorText; set => _vorText = value?.Trim(); }
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public string ResultHeaderTextOverride { get => _resultHeaderTextOverride; set => _resultHeaderTextOverride = value?.Trim(); }
 
 	/// <summary>
 	/// <inheritdoc/>
@@ -411,6 +440,7 @@ public class TeamBewerb : ITeamBewerb
 	{
 		RemoveAllTeams();
 		Endtext = string.Empty;
+		ResultHeaderTextOverride = string.Empty;
 		FontSize = 14;
 		FontSizeVorText = 12;
 		FontSizeEndText = 12;
@@ -504,6 +534,40 @@ public class TeamBewerb : ITeamBewerb
 
 
 	public bool IsEachGameDone(bool live = false) => Teams.Where(t => t.TeamStatus == TeamStatus.Normal).All(t => t.IsEachGameDone(live));
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public int GetHighestPlayedRound()
+	{
+		var playedGames = GetAllGames(withBreaks: false).Where(g => g.IsGameDone(live: true) || g.IsGameDone(live: false));
+		return playedGames.Any() ? playedGames.Max(g => g.RoundOfGame) : 0;
+	}
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public int? GetCurrentGameNumberOverAll(bool live)
+	{
+		var realGames = GetAllGames(withBreaks: false).ToList();
+		if (!realGames.Any()) return null;
+
+		// "IsGameDone" (Master oder Live > 0) meldet schon nach der ERSTEN Kehre "fertig", nicht erst nach dem
+		// vollständigen Spiel. Solange also noch keine Master-Werte feststehen (manuelle Endergebnis-Eingabe
+		// oder von der nächsten Bahn-Runde übernommen), zählt bei live=true erst die volle Anzahl an Kehren
+		// (6, bzw. 8 bei <see cref="Is8TurnsGame"/>) als tatsächlich abgeschlossen.
+		int expectedTurns = Is8TurnsGame ? 8 : 6;
+
+		bool IsConcluded(IGame g) => g.IsGameDone(live: false)
+			|| (live && g.Spielstand.Kehren_Live.Count() >= expectedTurns);
+
+		return realGames
+			.GroupBy(g => g.GameNumberOverAll)
+			.OrderBy(gr => gr.Key)
+			.Where(gr => !gr.All(IsConcluded))
+			.Select(gr => (int?)gr.Key)
+			.FirstOrDefault();
+	}
 
 
 	#endregion

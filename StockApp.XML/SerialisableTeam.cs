@@ -17,6 +17,10 @@ public class SerialisableTeam : ITeam
         Bundesland = team.Bundesland;
         Kreis = team.Kreis;
 		StrafSpielpunkte = team.StrafSpielpunkte;
+        VorergebnisSpielpunktePlus = team.VorergebnisSpielpunktePlus;
+        VorergebnisSpielpunkteMinus = team.VorergebnisSpielpunkteMinus;
+        VorergebnisStockpunktePlus = team.VorergebnisStockpunktePlus;
+        VorergebnisStockpunkteMinus = team.VorergebnisStockpunkteMinus;
         TeamStatus = team.TeamStatus;
         SerialisablePlayers = new List<SerialisablePlayer>();
         foreach (var player in team.Players)
@@ -53,6 +57,10 @@ public class SerialisableTeam : ITeam
             normal.AddPlayer(player);
         }
         normal.StrafSpielpunkte = StrafSpielpunkte;
+        normal.VorergebnisSpielpunktePlus = VorergebnisSpielpunktePlus;
+        normal.VorergebnisSpielpunkteMinus = VorergebnisSpielpunkteMinus;
+        normal.VorergebnisStockpunktePlus = VorergebnisStockpunktePlus;
+        normal.VorergebnisStockpunkteMinus = VorergebnisStockpunkteMinus;
         normal.TeamStatus = TeamStatus;
     }
 
@@ -61,6 +69,14 @@ public class SerialisableTeam : ITeam
     public string TeamName { get; set; }
 
     public int StrafSpielpunkte { get; set; }
+
+    public int VorergebnisSpielpunktePlus { get; set; }
+
+    public int VorergebnisSpielpunkteMinus { get; set; }
+
+    public int VorergebnisStockpunktePlus { get; set; }
+
+    public int VorergebnisStockpunkteMinus { get; set; }
 
     public TeamStatus TeamStatus { get; set; }
 
@@ -119,7 +135,7 @@ public class SerialisableTeam : ITeam
     public bool IsEachGameDone(bool live) => throw new NotImplementedException();
 
     public IOrderedEnumerable<IGame> GetGamesOrderedByGameNumberOverAll() => throw new NotImplementedException();
-    
+
     public IOrderedEnumerable<IGame> GetGamesOrderedForCupModus() => throw new NotImplementedException();
 
 	#endregion

@@ -8,7 +8,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>Ressources\StockApp.ico</ApplicationIcon>
 		<SatelliteResourceLanguages>de</SatelliteResourceLanguages>
-		<Version>1.15.0.0</Version>
+		<Version>1.16.0.0</Version>
 		<Platforms>x86;x64</Platforms>
 		<PackageIcon>StockAPP_512.png</PackageIcon>
 	</PropertyGroup>
@@ -38,8 +38,7 @@
 	<ItemGroup>
 		<PackageReference Include="DotNetProjects.WpfToolkit.Input" Version="6.1.94" />
 		<PackageReference Include="log4net" Version="3.3.1" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
-		<PackageReference Include="Prism.Core" Version="9.0.537" />
+		<PackageReference Include="System.Drawing.Common" Version="10.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>

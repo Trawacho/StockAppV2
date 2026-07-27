@@ -36,15 +36,17 @@ public static class GamePlanFactory
 	/// </summary>
 	/// <param name="gameplan"></param>
 	/// <param name="teams">no virtual teams. without games</param>
-	public static void MatchTeamAndGames(IGameplan gameplan, IEnumerable<ITeam> teams, int rounds = 1, bool isStartingChanged = true)
+	/// <param name="startRound">Erste zu generierende Runde. Erlaubt das additive Anhängen weiterer Runden an einen bestehenden Spielplan, ohne die Runden davor neu zu erzeugen.</param>
+	/// <param name="startGameNumberOverAll">Fortlaufende Spielnummer, mit der die erste generierte Runde beginnt.</param>
+	public static void MatchTeamAndGames(IGameplan gameplan, IEnumerable<ITeam> teams, int rounds = 1, bool isStartingChanged = true, int startRound = 1, int startGameNumberOverAll = 1)
 	{
 		if (gameplan is null) return;
 		//Ein liste für normale "Spiele" erzeugen
 
 		var normalGames = new List<IGame>();
-		var gameNrOverAll = 1;
+		var gameNrOverAll = startGameNumberOverAll;
 
-		for (int round = 1; round <= rounds; round++)
+		for (int round = startRound; round <= rounds; round++)
 		{
 			foreach (var gamenumber in gameplan.GameplanGamenumbers)
 			{

@@ -82,10 +82,20 @@ namespace StockApp.Comm.NetMqStockTV
 				var message = (e.Socket as SubscriberSocket).ReceiveMultipartMessage();
 				if (message.FrameCount >= 2)
 				{
-					MessageTopic topic = (MessageTopic)Enum.Parse(typeof(MessageTopic), message[0].ConvertToString());
-					byte[] value = message[1].ToByteArray();
+					// Guards the poller thread: an unrecognized topic or a downstream parsing
+					// error must never escape here, since an unhandled exception on this
+					// background thread crashes the app.
+					try
+					{
+						MessageTopic topic = (MessageTopic)Enum.Parse(typeof(MessageTopic), message[0].ConvertToString());
+						byte[] value = message[1].ToByteArray();
 
-					_messageReceiveAction?.Invoke(topic, value);
+						_messageReceiveAction?.Invoke(topic, value);
+					}
+					catch (Exception ex)
+					{
+						_logger.Error($"Failed to process subscribed message with topic '{message[0].ConvertToString()}': {ex.Message}", ex);
+					}
 				}
 			}
 
@@ -105,10 +115,14 @@ namespace StockApp.Comm.NetMqStockTV
 		{
 			var handler = SubscriberMessageReceived;
 			handler?.Invoke(this, new StockTVMessageReceivedEventArgs(topic, value));
-			if (topic != MessageTopic.Alive)
-				_logger.Debug($"{topic} received: {string.Join("-",value.Take(10).ToArray())} ### { Encoding.UTF8.GetString(value.Skip(10).ToArray()) }");
+
+			// Alive is a heartbeat, not actual communication content - keep it out of Info
+			// so it doesn't drown out real events, but it must still show up on Debug.
+			if (topic == MessageTopic.Alive)
+				_logger.Debug($"{topic} received: {string.Join("-", value.Take(10).ToArray())} ### {Encoding.UTF8.GetString(value.Skip(10).ToArray())}");
+			else
+				_logger.Info($"{topic} received: {string.Join("-", value.Take(10).ToArray())} ### {Encoding.UTF8.GetString(value.Skip(10).ToArray())}");
 		}
-		//todo: Loglevel überdenken. Evtl. alle Stufen implementieren und auch hier die Alive-Meldungen loggen
 
 		#region Constructor
 

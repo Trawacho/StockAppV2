@@ -130,6 +130,7 @@ public class StockTVService : IStockTVService
                 {
                     if (s is IStockTV stockTV && e == true)
                     {
+                        _logger.Info($"{stockTV} is now director, revoking director on all other displays.");
                         foreach (IStockTV tv in _stockTvList.Where(t => t != stockTV))
                         {
                             tv.Director = false;
@@ -145,7 +146,9 @@ public class StockTVService : IStockTVService
                                 && !e.PropertyName.Equals(nameof(IStockTVSettings.Bahn)))
                         {
                             object newValue = typeof(IStockTVSettings).GetProperty(e.PropertyName).GetValue(s.TVSettings);
-                            foreach (IStockTV stockTV in _stockTvList.Where(t => !t.Director))
+                            var others = _stockTvList.Where(t => !t.Director).ToList();
+                            _logger.Info($"Propagating {e.PropertyName}={newValue} from director {s} to {others.Count} other display(s).");
+                            foreach (IStockTV stockTV in others)
                             {
                                 typeof(IStockTVSettings).GetProperty(e.PropertyName).SetValue(stockTV.TVSettings, newValue);
                             }
@@ -164,7 +167,10 @@ public class StockTVService : IStockTVService
                     lock (_lock)
                     {
                         if (_stockTvList.Remove(stockTV))
+                        {
+                            _logger.Info($"removed StockTV: {stockTV}");
                             RaiseStockTVCollectionChanged(false);
+                        }
                     }
                     stockTV.Dispose();
                 };

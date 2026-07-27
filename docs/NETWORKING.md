@@ -228,23 +228,34 @@ StockTV instance → UI
 ```csharp
 public void Start()
 {
-    _poller = new NetMQPoller();
-    
+    if (_socket != null) return;
+
     _socket = new DealerSocket();
-    _socket.Options.Linger = TimeSpan.FromSeconds(10);
+    _socket.Options.Identity = Encoding.UTF8.GetBytes(this._identifier);
+    _socket.ReceiveReady += Socket_ReceiveReady;
     _socket.Connect($"tcp://{_iPAddress}:{_port}");
-    
-    _monitor = new NetMQMonitor(_socket, $"inproc://clientmonitor-{_identifier}");
-    _monitor.Connected += (s, e) => IsConnected = true;
-    _monitor.Disconnected += (s, e) => IsConnected = false;
-    _monitor.Start();
-    
-    _poller.Add(_socket);
-    _poller.Run();  // Blocking loop
+
+    _sendQueue = new NetMQQueue<List<NetMQFrame>>();
+    _sendQueue.ReceiveReady += SendQueue_ReceiveReady;
+
+    _receiveQueue = new NetMQQueue<NetMQMessage>();
+    _receiveQueue.ReceiveReady += ReceiveQueue_ReceiveReady;
+
+    _poller = new NetMQPoller() { _socket, _receiveQueue, _sendQueue };
+
+    _monitor = new NetMQMonitor(_socket, $"inproc://{_identifier}.inproc", SocketEvents.All);
+    _monitor.EventReceived += Monitor_EventReceived;
+    _monitor.AttachToPoller(_poller);
+
+    _poller.RunAsync(_identifier);  // Non-blocking: starts its own background thread
+
+    SendToStockTV(MessageTopic.Hello);
 }
 ```
 
-**Critical**: `_poller.Run()` blocks the calling thread. Must be called from a background thread or async context.
+**Note**: `_poller.RunAsync(_identifier)` starts the poll loop on its own background thread and returns immediately — `Start()` does not block the caller. Connection state (`IsConnected`) is tracked both via the monitor (`Monitor_EventReceived`) and via an explicit `Welcome` reply to the `Hello` handshake (see `Socket_ReceiveReady`).
+
+**Error handling on the poller thread**: Everything received from the display flows through `RaiseMessageReceived`, which wraps topic parsing and downstream handler invocation in a try/catch. This is deliberate — the poller thread has no `AppDomain.UnhandledException` safety net, so an unrecognized `MessageTopic` or malformed payload is logged and dropped instead of crashing the whole application mid-tournament. Keep this guard when touching that method.
 
 ### Sending Messages
 
@@ -338,8 +349,8 @@ UI binds to `IsConnected` — shows green/red indicator.
 | "Connected" but commands don't reach display | Display disconnected mid-game | Reconnect display, retry command |
 | Display shows stale data | Message lost, no retry logic | Re-send command from UI |
 | Multiple displays out of sync | Director changes not propagated | Click director again |
-| Poller blocks entire app | Mistake: calling `Start()` on UI thread | Use background task/thread |
 | Memory leak when display disconnected | StockTVAppClient not disposed | Ensure StockTV.Dispose() called |
+| App crashed on an unexpected/malformed message | Historically: unhandled exception on the poller thread (no `AppDomain.UnhandledException` handler exists) | Fixed — `RaiseMessageReceived` / `ResultSubscriber_ReceiveReady` now catch and log instead of throwing. Keep this guard when editing those methods. |
 
 ---
 
@@ -354,11 +365,9 @@ public void Dispose(bool disposing)
     {
         if (disposing)
         {
-            Stop();  // Stops poller, closes socket
-            _socket?.Dispose();
-            _monitor?.Dispose();
-            _sendQueue?.Dispose();
-            _receiveQueue?.Dispose();
+            Stop();
+            MessageReceived = null;
+            ConnectedChanged = null;
         }
         _disposed = true;
     }
@@ -366,13 +375,26 @@ public void Dispose(bool disposing)
 
 public void Stop()
 {
+    if (_sendQueue != null)
+        _sendQueue.ReceiveReady -= SendQueue_ReceiveReady;
+    if (_receiveQueue != null)
+        _receiveQueue.ReceiveReady -= ReceiveQueue_ReceiveReady;
+
     _poller?.Stop();
-    _poller?.Dispose();
-    _poller = null;
-    
-    _socket?.Disconnect($"tcp://{_iPAddress}:{_port}");
-    
-    RaiseConnectedChanged();  // Notify UI
+    _poller?.Remove(_socket);
+    _poller?.Remove(_sendQueue); _sendQueue?.Dispose(); _sendQueue = null;
+    _poller?.Remove(_receiveQueue); _receiveQueue?.Dispose(); _receiveQueue = null;
+
+    _monitor?.DetachFromPoller();
+
+    _poller?.Dispose(); _poller = null;
+    _socket?.Dispose(); _socket = null;   // socket is disposed directly, not disconnected first
+
+    if (_monitor != null)
+        _monitor.EventReceived -= Monitor_EventReceived;
+    _monitor?.Dispose(); _monitor = null;
+
+    IsConnected = false;   // triggers ConnectedChanged, notifies UI
 }
 ```
 

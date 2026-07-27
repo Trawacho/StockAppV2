@@ -145,10 +145,11 @@ public class LiveResultsTeamViewModel : ViewModelBase, IDialogRequestClose
         get
         {
             var list = new List<RankedTeamModel>();
+            var currentGameNumberOverAll = IsLive ? _teamBewerb.GetCurrentGameNumberOverAll(IsLive) : null;
             int rank = 1;
             foreach (var team in _teamBewerb.GetTeamsRanked(IsLive))
             {
-                list.Add(new RankedTeamModel(rank: rank, team: team, live: IsLive, printNameOfPlayer: false));
+                list.Add(new RankedTeamModel(rank: rank, team: team, live: IsLive, printNameOfPlayer: false, currentGameNumberOverAll: currentGameNumberOverAll));
                 rank++;
             }
             return new ObservableCollection<RankedTeamModel>(list.AsReadOnly());

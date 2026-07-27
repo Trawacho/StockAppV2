@@ -105,7 +105,7 @@ public class MDnsHost : IMDnsHost, IZeroconfHost
 
 	public override string ToString()
 	{
-        return $"{DisplayName},{HostName},{this.Id},{this.IPAddress},{Version}";
+        return $"DisplayName={DisplayName}, HostName={HostName}, Id={this.Id}, IPAddress={this.IPAddress}, Version={Version}";
 	}
 }
 

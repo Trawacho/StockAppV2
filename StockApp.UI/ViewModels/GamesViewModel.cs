@@ -27,6 +27,8 @@ public class GamesViewModel : ViewModelBase
             if (_currentTeamBewerb != null)
                 _currentTeamBewerb.GamesChanged -= TeamBewerb_GamesChanged;
 
+            _pendingGameplanId = null;
+
             SetProperty(ref _currentTeamBewerb, value);
             if (value != null)
                 GamesPrintsViewModel = new GamesPrintsViewModel(CurrentTeamBewerb, _turnierStore);
@@ -64,21 +66,28 @@ public class GamesViewModel : ViewModelBase
     public bool HasGames => CountOfGames > 0;
     public bool HasNoGames => !HasGames;
 
+    /// <summary>
+    /// Kleinster Wert, auf den <see cref="SpielRunden"/> gesetzt werden darf, ohne bereits gespielte Runden zu gefährden.
+    /// </summary>
+    public int MinSpielRunden => Math.Max(1, CurrentTeamBewerb.GetHighestPlayedRound());
+
+    private int? _pendingGameplanId;
+
+    /// <summary>
+    /// UI-seitige Auswahl des Spielplans. Wird erst bei tatsächlicher Generierung (<see cref="CreateGamesCommand"/>)
+    /// in <see cref="ITeamBewerb.GameplanId"/> übernommen, damit erkennbar bleibt, ob sich die Auswahl seit der
+    /// letzten Generierung geändert hat.
+    /// </summary>
     public int SelectedGameplanId
     {
-        get
-        {
-            if (Gameplans.Any(g => g.ID == CurrentTeamBewerb.GameplanId))
-                return CurrentTeamBewerb.GameplanId;
-            else
-                return 0;
-        }
+        get => _pendingGameplanId
+            ?? (Gameplans.Any(g => g.ID == CurrentTeamBewerb.GameplanId) ? CurrentTeamBewerb.GameplanId : 0);
         set
         {
-            if (CurrentTeamBewerb.GameplanId == value)
+            if (SelectedGameplanId == value)
                 return;
 
-            CurrentTeamBewerb.GameplanId = value;
+            _pendingGameplanId = value;
             RaisePropertyChanged();
         }
     }
@@ -121,20 +130,131 @@ public class GamesViewModel : ViewModelBase
 
     #endregion
 
+    #region Confirm-Overlay (Spielplan generieren)
+
+    private bool _isConfirmModalOpen;
+    private string _confirmMessage;
+    private string _confirmYesText;
+    private string _confirmNoText;
+    private Action _pendingConfirmYes;
+    private Action _pendingConfirmNo;
+    private ICommand _confirmYesCommand;
+    private ICommand _confirmNoCommand;
+    private ICommand _confirmCancelCommand;
+
+    public bool IsConfirmModalOpen { get => _isConfirmModalOpen; private set => SetProperty(ref _isConfirmModalOpen, value); }
+    public string ConfirmMessage { get => _confirmMessage; private set => SetProperty(ref _confirmMessage, value); }
+    public string ConfirmYesText { get => _confirmYesText; private set => SetProperty(ref _confirmYesText, value); }
+    public string ConfirmNoText { get => _confirmNoText; private set => SetProperty(ref _confirmNoText, value); }
+
+    /// <summary>
+    /// TRUE, wenn im Confirm-Overlay ein "Nein"-Button angezeigt werden soll (dreigeteilte Abfrage).
+    /// FALSE = nur Ja/Abbrechen (zweigeteilte Abfrage).
+    /// </summary>
+    public bool HasConfirmNoOption => !string.IsNullOrEmpty(ConfirmNoText);
+
+    private void OpenConfirmModal(string message, string yesText, Action onYes, string noText = null, Action onNo = null)
+    {
+        ConfirmMessage = message;
+        ConfirmYesText = yesText;
+        ConfirmNoText = noText;
+        RaisePropertyChanged(nameof(HasConfirmNoOption));
+        _pendingConfirmYes = onYes;
+        _pendingConfirmNo = onNo;
+        IsConfirmModalOpen = true;
+    }
+
+    private void CloseConfirmModal()
+    {
+        IsConfirmModalOpen = false;
+        _pendingConfirmYes = null;
+        _pendingConfirmNo = null;
+    }
+
+    public ICommand ConfirmYesCommand => _confirmYesCommand ??= new RelayCommand(
+        (p) =>
+        {
+            var action = _pendingConfirmYes;
+            CloseConfirmModal();
+            action?.Invoke();
+        },
+        (p) => true);
+
+    public ICommand ConfirmNoCommand => _confirmNoCommand ??= new RelayCommand(
+        (p) =>
+        {
+            var action = _pendingConfirmNo;
+            CloseConfirmModal();
+            action?.Invoke();
+        },
+        (p) => true);
+
+    public ICommand ConfirmCancelCommand => _confirmCancelCommand ??= new RelayCommand(
+        (p) =>
+        {
+            CloseConfirmModal();
+            IsCreatingGames = false;
+        },
+        (p) => true);
+
+    #endregion
+
     public ICommand CreateGamesCommand => _createGamesCommand ??= new RelayCommand
         ((p) =>
         {
             IsCreatingGames = true;
 
-            //Entferne alle Spiele von allen Teams
-            foreach (var t in CurrentTeamBewerb.Teams)
-                t.ClearGames();
+            var teamBewerb = CurrentTeamBewerb;
+            var gameplan = Gameplans.FirstOrDefault(g => g.ID == SelectedGameplanId);
+            int currentMaxRound = teamBewerb.Games.Any() ? teamBewerb.Games.Max(g => g.RoundOfGame) : 0;
+            bool gameplanChanged = teamBewerb.GameplanId != SelectedGameplanId;
 
-            CurrentTeamBewerb.IsSplitGruppe = Gameplans.FirstOrDefault(p => p.ID == SelectedGameplanId)?.IsSplit ?? false;
+            void FinishGeneration()
+            {
+                teamBewerb.GameplanId = SelectedGameplanId;
+                _pendingGameplanId = null;
+                IsCreatingGames = false;
+            }
 
-            GamePlanFactory.MatchTeamAndGames(Gameplans.FirstOrDefault(g => g.ID == SelectedGameplanId), CurrentTeamBewerb.Teams, SpielRunden, HasChangeStart);
+            void AppendRounds()
+            {
+                int nextGameNumberOverAll = teamBewerb.Games.Max(g => g.GameNumberOverAll) + 1;
+                GamePlanFactory.MatchTeamAndGames(gameplan, teamBewerb.Teams, SpielRunden, HasChangeStart,
+                    startRound: currentMaxRound + 1, startGameNumberOverAll: nextGameNumberOverAll);
+                FinishGeneration();
+            }
 
-            IsCreatingGames = false;
+            void OverwriteAll()
+            {
+                //Entferne alle Spiele von allen Teams
+                foreach (var t in teamBewerb.Teams)
+                    t.ClearGames();
+
+                teamBewerb.IsSplitGruppe = gameplan?.IsSplit ?? false;
+
+                GamePlanFactory.MatchTeamAndGames(gameplan, teamBewerb.Teams, SpielRunden, HasChangeStart);
+                FinishGeneration();
+            }
+
+            if (teamBewerb.Games.Any())
+            {
+                if (!gameplanChanged && SpielRunden > currentMaxRound)
+                {
+                    OpenConfirmModal(
+                        "Es sind bereits Spiele/Ergebnisse vorhanden.",
+                        yesText: "Runde anhängen", onYes: AppendRounds,
+                        noText: "Ergebnisse überschreiben", onNo: OverwriteAll);
+                }
+                else
+                {
+                    OpenConfirmModal(
+                        "Dies löscht alle bisherigen Spiele und Ergebnisse und erstellt den Spielplan neu. Fortfahren?",
+                        yesText: "Ja", onYes: OverwriteAll);
+                }
+                return;
+            }
+
+            OverwriteAll();
         },
         (p) => !IsCreatingGames && SelectedGameplanId != 0
         );
@@ -183,6 +303,7 @@ public class GamesViewModel : ViewModelBase
         RaisePropertyChanged(nameof(SelectedGameplanId));
         RaisePropertyChanged(nameof(HasChangeStart));
         RaisePropertyChanged(nameof(Has8Turns));
+        RaisePropertyChanged(nameof(MinSpielRunden));
     }
 
     protected override void Dispose(bool disposing)

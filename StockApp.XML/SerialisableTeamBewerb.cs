@@ -42,6 +42,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         AnzahlAbsteiger = bewerb.AnzahlAbsteiger;
         Endtext = bewerb.Endtext;
         VorText = bewerb.VorText;
+        ResultHeaderTextOverride = bewerb.ResultHeaderTextOverride;
         TeamNameWithStartnumber = bewerb.TeamNameWithStartnumber;
         TeamInfo = bewerb.TeamInfo;
         ImageTopLeftFilename = bewerb.ImageTopLeftFilename;
@@ -59,7 +60,6 @@ public class SerialisableTeamBewerb : ITeamBewerb
     internal void ToNormal(ITeamBewerb teamBewerb)
     {
         teamBewerb.WertungskarteAsCupCard = WertungskarteAsCupCard;
-		teamBewerb.NumberOfGameRounds = NumberOfGameRounds;
         teamBewerb.Is8TurnsGame = Is8TurnsGame;
         teamBewerb.StartingTeamChange = StartingTeamChange;
         teamBewerb.SpielGruppe = SpielGruppe;
@@ -71,6 +71,7 @@ public class SerialisableTeamBewerb : ITeamBewerb
         teamBewerb.AnzahlAbsteiger = AnzahlAbsteiger;
         teamBewerb.Endtext = Endtext;
         teamBewerb.VorText = VorText;
+        teamBewerb.ResultHeaderTextOverride = ResultHeaderTextOverride;
         teamBewerb.PageBreakSplitGroup = PageBreakSplitGroup;
         teamBewerb.TeamNameWithStartnumber = TeamNameWithStartnumber;
         teamBewerb.TeamInfo = TeamInfo;
@@ -120,6 +121,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
         }
 
         teamBewerb.GameplanId = GameplanId;
+        // Muss erst nach dem Wiederaufbau der Teams/Spiele gesetzt werden: der Setter lehnt eine
+        // Reduzierung unter bereits gespielte Runden ab, was auf dem alten (Vor-Lade-)Zustand fälschlich greifen würde.
+        teamBewerb.NumberOfGameRounds = NumberOfGameRounds;
 
         //Wenn alle Spielstände 0:0 sind, dann jeden Spielstand Resetten, damit IsSetByHand auf false steht
         if (!teamBewerb.Teams.Any(t => t.GetStockPunkteDifferenz() != 0))
@@ -180,6 +184,9 @@ public class SerialisableTeamBewerb : ITeamBewerb
 
     [XmlElement(ElementName = "VorText")]
     public string VorText { get; set; }
+
+    [XmlElement(ElementName = "ResultHeaderTextOverride")]
+    public string ResultHeaderTextOverride { get; set; }
 
     [XmlElement(ElementName = "TeamNameWithStarnumber")]
     public bool TeamNameWithStartnumber { get; set; }
@@ -270,6 +277,10 @@ public class SerialisableTeamBewerb : ITeamBewerb
     public void RemoveAllVirtualTeams() => throw new NotImplementedException();
     
     public bool IsEachGameDone(bool live) => throw new NotImplementedException();
+
+    public int GetHighestPlayedRound() => throw new NotImplementedException();
+
+    public int? GetCurrentGameNumberOverAll(bool live) => throw new NotImplementedException();
     #endregion
 
     #endregion
