@@ -72,8 +72,13 @@ die Kommandozeile:
 dotnet publish StockApp.UI/StockApp.UI.csproj -c Release -r win-x86 --self-contained
 dotnet publish StockApp.UI/StockApp.UI.csproj -c Release -r win-x64 --self-contained
 
+# MSBuild-Pfad ermitteln (Visual-Studio-Ordnername/-Version variiert je Rechner/Update,
+# z.B. "2022\Community" oder "18\Community" - daher über vswhere auflösen statt hart zu kodieren)
+$msbuild = & "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" `
+  -latest -products * -find "MSBuild\**\Bin\MSBuild.exe"
+
 # AppBundle erstellen
-& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe" `
+& $msbuild `
   ".\StockApp.Packaging\StockApp.Packaging.wapproj" `
   /t:Rebuild `
   /p:Configuration=Release `
