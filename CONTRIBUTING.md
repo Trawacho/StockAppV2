@@ -69,12 +69,9 @@ Rauschen zuzumüllen (keine Commits wie `update`, `wip`, `merge conflict`):
 
 ## Release-Ablauf
 
-1. Wenn `develop` einen releasefähigen Stand hat: Versionsnummer anheben
-   (Commit im Stil `chore: Version auf X.Y.Z angehoben`).
-2. `develop` nach `main` mergen (Merge-Commit, kein Squash).
-3. Tag auf `main` setzen: `git tag vX.Y.Z && git push origin vX.Y.Z`.
-4. Release-Build/Packaging gemäß `README.md` / `StockApp.Packaging/readme.md`
-   durchführen.
+Der vollständige Ablauf (Versionsbump an allen Stellen, Merge/Tag, MS-Store-
+Build, Installer-Build, GitHub-Release) steht in [`RELEASE.md`](./RELEASE.md)
+im Repository-Root – dort **nicht** duplizieren, sondern editieren.
 
 Versionierung folgt [SemVer](https://semver.org/lang/de/): `MAJOR.MINOR.PATCH`
 – Breaking Changes/größere Feature-Sprünge erhöhen MINOR (dieses Projekt

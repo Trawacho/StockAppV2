@@ -450,21 +450,11 @@ StockApp.Test/
 ```bash
 # Debug build
 dotnet build .\StockAppV2.sln
-
-# Release (beide Architekturen: x86 + x64)
-msbuild ".\StockApp.Packaging\StockApp.Packaging.wapproj" \
-  /t:"Restore;Publish" \
-  /p:Configuration=Release \
-  /p:Platform=x64 \
-  /p:AppxBundle=Always \
-  /p:AppxBundlePlatforms="x86|x64" \
-  /p:UapAppxPackageBuildMode=StoreUpload \
-  /p:AppxPackageDir="C:\Users\daniel\source\repos\StockAppV2\StockApp.Packaging\AppPackages\" \
-  /p:AppxSymbolPackageEnabled=True \
-  /p:AppxPackageSigningEnabled=false
 ```
 
-**Wichtig**: `.wapproj` muss `<RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>` haben!
+Für den vollständigen Release-Build (MS-Store-AppBundle + Installer-Setup.exe)
+siehe [`RELEASE.md`](./RELEASE.md) im Repository-Root — dort ist der Ablauf
+die einzige Quelle, nicht hier duplizieren.
 
 ---
 
@@ -473,7 +463,7 @@ msbuild ".\StockApp.Packaging\StockApp.Packaging.wapproj" \
 - `.rulebook/ifi-rules.md` – Offizielle Regelwerk (lokal)
 - `StockAppV2.Core/Factories/gpf.json` – Spielplan-Konfiguration
 - `README.md` – Projekt-Übersicht
-- `StockApp.Packaging/readme.md` – Packaging-Details
+- `RELEASE.md` – Vollständiger Release-Ablauf (MS Store + Installer)
 
 ---
 
