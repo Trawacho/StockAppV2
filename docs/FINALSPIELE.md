@@ -596,7 +596,59 @@ Spieler-Versuche abgegeben werden müssen – gleiches Prinzip wie oben.
 *(Wie fügt sich das Konzept in `ITeamBewerb`/`ITeam`/`IGame` bzw. `IZielBewerb` ein?
 Neue Entität nötig, oder Erweiterung bestehender? – wird erst nach Klärung des Fachkonzepts bearbeitet.)*
 
-TODO – nicht vor Abschluss von Abschnitt 1–6 bearbeiten.
+TODO – Design-Entscheidung nicht vor Abschluss von Abschnitt 1–6 treffen. Die folgenden
+Rechercheergebnisse halten nur den **Ist-Stand des Codes** fest (Stand: 2026-08-20), damit die spätere
+Entscheidung nicht bei Null anfangen muss – sie nehmen keine Lösung vorweg.
+
+### Rechercheergebnisse (Ist-Stand, keine Design-Entscheidung)
+
+**Zentraler Befund: Gruppenübergreifende Spiele sind im Domänenmodell strukturell nicht vorgesehen.**
+Betrifft direkt 4.1 (zwingend zwei Gruppen) sowie 4.2/4.3 bei zwei Gruppen.
+
+- `IGame.TeamA`/`TeamB` sind zwar generische `ITeam`-Referenzen, aber ein Spiel wird **pro Team
+  gespeichert**, nicht pro `ITeamBewerb`: `Team._games` (`Team.cs:109`), und `TeamBewerb.Games` ist nur
+  `_teams.SelectMany(t => t.Games)` (`TeamBewerb.cs:273`) – abgeleitet aus den eigenen Teams *dieser
+  einen* Gruppe.
+- `IContainerTeamBewerbe` (`ContainerTeamBewerbe.cs:7-55`) hat **keine eigene Games-Collection**, nur
+  eine Liste von `ITeamBewerb`. Es gibt aktuell keinen Ort im Domänenmodell, an dem ein
+  gruppenübergreifendes Spiel (z.B. A1 vs. B1 bei 4.1) verankert werden könnte.
+- **Noch härter in der XML-Persistenz**: `SerialisableGame` referenziert Teams nur über
+  `StartnumberTeamA`/`StartnumberTeamB` (int), aufgelöst beim Laden ausschließlich **innerhalb derselben**
+  `SerialisableTeamBewerb` (`SerialisableTeamBewerb.cs:109-110`). Zwei Gruppen haben aber je eine eigene
+  Startnummer 1, 2, 3, ... – ein Cross-Gruppen-Spiel lässt sich mit diesem Schema nicht eindeutig
+  referenzieren, unabhängig vom gewählten Speicherformat.
+- `SerialisableContainerTeamBewerbe` transportiert ebenfalls nur die Liste der Gruppen, sonst nichts
+  (`SerialisableContainerTeamBewerbe.cs:9-30`) – auch auf Container-Ebene existiert kein Feld, an das sich
+  ein Finalspiele-Block anhängen ließe.
+
+**Zum Leitsatz "Live-Ansicht" (Abschnitt 1):**
+
+- `LiveResultsTeamViewModel` ist hart an genau ein `ITeamBewerb` gebunden
+  (`LiveResultsTeamViewModel.cs:16,31-33`) und zeigt `_teamBewerb.GetTeamsRanked(IsLive)` – die normale
+  Spielpunkte/Stockpunkte-Rangliste (`TeamRankingComparer`).
+- Das passt strukturell nur zu 4.1 (dort ist das Endergebnis ebenfalls wieder eine Punkte-Rangliste aus
+  Direktvergleichs-Spielen). Für 4.2/4.3 (Leiter-Position auf einer Bahn) und 4.4 (Stufen: Ausscheidung/
+  Qualifikation 1/Qualifikation 2/Finale) ist das vorhandene Ranking-Modell fachlich nicht anwendbar –
+  dort gibt es keine "Rangliste nach Punkten über mehrere Spiele", sondern einen strukturellen Zustand
+  (welche Bahn/welche Stufe). Die Live-Ansicht bräuchte für diese Arten keine Erweiterung, sondern eine
+  grundsätzlich andere Darstellungslogik.
+
+**Zum Leitsatz "StockTV-Fähigkeit" (Abschnitt 1, nur Bestätigung des bereits Geklärten):**
+
+- `StockTVSettings.GetSettings()` (`StockTVSettings.cs:148-163`) sendet pro Bahn ein kompaktes
+  Byte-Telegramm (Bahn, Spielgruppe, Modus, Punkte/Kehren-Konfig) – bestätigt im Code, dass StockTV
+  tatsächlich nur bahn-bezogene Konfiguration + Ergebnisse braucht, keinen kompletten Spielplan.
+
+**Sonstiges, evtl. nützlich für die spätere Modellierung:**
+
+- `IGameplan` (gpf.json-Ebene) hat bereits ein Präzedenzmuster für "Art"-Flags: `IsVergleich`, `IsSplit`
+  (`Gameplan.cs:24-25`) – strukturell unabhängig von Finalspielen, aber ein Beispiel, wie das bestehende
+  Modell "Spielplan-Art" schon anderswo als einfaches Bool-Flag löst.
+
+**Einordnung**: Die Rechercheergebnisse bestätigen, dass Abschnitt 7 zu Recht noch offen ist –
+insbesondere 4.1–4.3 mit zwei Gruppen brauchen eine im Modell bisher nicht existierende Möglichkeit,
+Spiele *außerhalb* einer einzelnen `ITeamBewerb` zu verankern. Das ist vermutlich der zentrale
+Design-Punkt, um den in Abschnitt 7 zuerst eine Entscheidung fallen muss.
 
 ## 8. Offene Fragen
 
