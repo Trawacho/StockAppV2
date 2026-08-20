@@ -1,8 +1,9 @@
 # Finalspiele – Fachkonzept
 
-> Status: **Entwurf / in Diskussion**. Dieses Dokument entsteht gemeinsam mit dem Projektverantwortlichen
-> und dient als fachliche Grundlage für eine spätere Programmerweiterung in StockAppV2.
-> Solange der Status oben "Entwurf / in Diskussion" ist, ist noch nichts hier final abgestimmt.
+> Status: **Fachlich abgeschlossen für 4.1–4.4** (Abschnitt 1–6) – offene Detailfragen dazu siehe
+> Abschnitt 8. Abschnitt 7 (Domänenmodell) ist bewusst noch offen, ebenso 4.5 KO-Runde, das als
+> eigenständiges Konzept separat behandelt wird. Dieses Dokument entstand gemeinsam mit dem
+> Projektverantwortlichen als fachliche Grundlage für eine spätere Programmerweiterung in StockAppV2.
 
 ## Inhaltsverzeichnis
 
@@ -114,6 +115,12 @@ den finalen Ergebnislisten beider Gruppen) abgeleitet. Vor Abschluss der Gruppen
 Arten nicht sinnvoll möglich. **Ausnahme: 4.5 KO-Runde** kann auch ganz ohne vorausgehende Gruppenphase
 als eigenständiges Turnierformat gespielt werden (siehe dort).
 
+✅ **Geklärt**: Als "finale Gruppenphasen-Ergebnisliste" gilt – falls die Gruppenphase über
+`Paragraph610Evaluator` vorzeitig abgebrochen wurde (§610, >50 % gespielte Spiele) – die
+**§610-angepasste** Ergebnisliste (`GetAdjustedGames`), nicht die unangepasste. §610 ist die offizielle
+Regel zum Turnierabschluss bei Frühabbruch; wenn sie angewendet wurde, ist das damit auch offiziell das
+Endergebnis der Gruppenphase, aus dem 4.1–4.4 ihre Teilnehmer/Paarungen ableiten.
+
 **Gruppen-Voraussetzung je Art** (Details siehe jeweils Abschnitt 4):
 
 | Art | Eine Gruppe | Zwei Gruppen (bzw. Split-Gruppe) | Ohne Gruppenphase |
@@ -124,9 +131,19 @@ als eigenständiges Turnierformat gespielt werden (siehe dort).
 | 4.4 Page-PlayOff | ✅ | ✅ | – |
 | 4.5 KO-Runde | ✅ | ✅ | ✅ |
 
-**Auslöser**: Der Nutzer entscheidet aktiv, ob und welche Finalspiele-Art nach der Gruppenphase gespielt
-wird – es ist kein automatischer Turnierbestandteil, sondern eine bewusste, konfigurierbare Erweiterung
-(vgl. die konfigurierbare Rundenzahl bei 4.1–4.3).
+✅ **Geklärt**: "Zwei Gruppen" in der Tabelle oben schließt bei **allen vier Arten (4.1–4.4)** eine
+Split-Gruppe gleichwertig mit ein – nicht nur bei 4.1 (wo das schon vorher explizit im Fließtext stand,
+siehe dort). Eine Split-Gruppe ist strukturell bereits zwei Blöcke auf gemeinsamen Bahnen;
+`TeamBewerb.GetSplitTeamsRanked` liefert dafür bereits die Grundlage – einheitliches Verhalten über alle
+vier Arten.
+
+**Auslöser**: ✅ **Geklärt**: Der Finalspiele-Modus wird **erst nach Abschluss der Gruppenphase**
+festgelegt – er ist keine Vorab-Konfiguration, sondern eine Entscheidung, die der Nutzer trifft, sobald
+die Gruppenphase beendet ist. Dabei wählt der Nutzer **genau eine** Finalspiele-Art aus – eine Kombination
+mehrerer Arten im selben Turnier ist nicht vorgesehen. Da die Auswahl erst nach Gruppenphasen-Ende
+erfolgt, wird unmittelbar die zu diesem Zeitpunkt gültige Gruppenphasen-Ergebnisliste übernommen; ein
+`TeamStatus`-Wechsel zwischen Gruppenphasen-Ende und Finalspiele-Start ist dadurch ausgeschlossen, weil es
+dieses Zeitfenster als eigenständige Lücke gar nicht gibt.
 
 ## 4. Arten von Finalspielen
 
@@ -653,9 +670,16 @@ Design-Punkt, um den in Abschnitt 7 zuerst eine Entscheidung fallen muss.
 ## 8. Offene Fragen
 
 **4.5 KO-Runde**: ⏸ Zurückgestellt als Ganzes (siehe Hinweiskasten bei 4.5) – gehört vermutlich nicht in
-dieses Fachkonzept, da keine Gruppenphase vorausgesetzt wird. Bisher gesammelte offene Punkte (Grundsatz 3
-ohne Gruppenphase, Best-of-N-Details, StockTV-Fähigkeit) bleiben für die spätere separate Betrachtung
+dieses Fachkonzept, da keine Gruppenphase vorausgesetzt wird. Bisher gesammelte offene Punkte (Grundsatz
+2/3 ohne Gruppenphase, Best-of-N-Details, StockTV-Fähigkeit) bleiben für die spätere separate Betrachtung
 notiert, werden hier aber nicht weiterverfolgt.
+
+**Aus dem Abschluss-Check (2026-08-20) identifiziert, mittlerweile geklärt** – siehe jetzt Abschnitt 3
+("Zeitpunkt" und "Auslöser"): Split-Gruppe als Äquivalent bei 4.2–4.4, Ausgangs-Ergebnisliste bei
+§610-Frühabbruch, sowie dass der Finalspiele-Modus erst nach Gruppenphasen-Ende gewählt wird und dabei
+immer nur genau eine Art. Der vierte ursprünglich aufgeworfene Punkt (TeamStatus-Wechsel zwischen
+Gruppenphasen-Ende und Finalspiele-Start) hat sich durch die Klärung des Zeitpunkts erledigt: dieses
+Zeitfenster existiert gar nicht, da die Moduswahl unmittelbar nach Gruppenphasen-Ende erfolgt.
 
 **Bewusst zurückgestellt** (erst bei der Umsetzung zu klären, hier nicht final definiert):
 
