@@ -51,17 +51,13 @@ Daher gilt für die gesamte Finalspiele-Erweiterung:
 > reguläres Spiel der Gruppenphase – die Finalspiele-Erweiterung darf die bestehende StockTV-Anbindung
 > an keiner Stelle einschränken.**
 
-**Korrektur**: An StockTV wird **nicht** der komplette Spielplan übertragen – tatsächlich wird pro Spiel
-jeweils nur eine **Liste der Teamnamen inkl. Anspiel-Hinweis** gesendet. Das entschärft die ursprüngliche
-Sorge, dass 4.2–4.4 (Paarungen erst rundenweise/stufenweise bekannt) einen vorab bekannten Spielplan
-bräuchten – ein solcher ist offenbar ohnehin nicht nötig.
-
-✅ **Geklärt**: Die Übertragung an StockTV erfolgt **dynamisch/ereignisgesteuert** – sobald ein Spiel
-abgeschlossen ist, werden die neuen Paarungen ermittelt und übertragen. Das passt direkt zu 4.2–4.4
-(Paarungen erst rundenweise/stufenweise bekannt), da ohnehin kein vorab bekannter Gesamtplan nötig ist.
-Der **Anspiel-Hinweis ist nicht verpflichtend** und kann entfallen – das löst auch die Frage, wie sich
-der Finale Entscheid (5.1, andere Struktur als ein reguläres Spiel) darin abbildet: notfalls einfach ohne
-Anspiel-Hinweis.
+An StockTV wird **nicht** der komplette Spielplan übertragen – pro Spiel wird jeweils nur eine **Liste
+der Teamnamen inkl. Anspiel-Hinweis** gesendet, und zwar **dynamisch/ereignisgesteuert**: Sobald ein
+Spiel abgeschlossen ist, werden die neuen Paarungen ermittelt und übertragen. Das passt direkt zu 4.2–4.4,
+wo Paarungen erst rundenweise/stufenweise bekannt werden – ein vorab bekannter Gesamt-Spielplan ist dafür
+nicht nötig. Der **Anspiel-Hinweis ist nicht verpflichtend** und kann entfallen; das gilt auch für den
+Finalen Entscheid (5.1, strukturell kein reguläres Spiel) – notfalls wird er ohne Anspiel-Hinweis
+übertragen.
 
 **Leitsatz – Persistenz (`.skmr`)**: Ein Turnier wird vollständig über die `.skmr`-XML-Datei gespeichert
 und wieder geladen (siehe `StockApp.XML`, CLAUDE.md Abschnitt "XML-Persistenz"). Daher gilt ebenfalls für
@@ -115,11 +111,11 @@ den finalen Ergebnislisten beider Gruppen) abgeleitet. Vor Abschluss der Gruppen
 Arten nicht sinnvoll möglich. **Ausnahme: 4.5 KO-Runde** kann auch ganz ohne vorausgehende Gruppenphase
 als eigenständiges Turnierformat gespielt werden (siehe dort).
 
-✅ **Geklärt**: Als "finale Gruppenphasen-Ergebnisliste" gilt – falls die Gruppenphase über
-`Paragraph610Evaluator` vorzeitig abgebrochen wurde (§610, >50 % gespielte Spiele) – die
-**§610-angepasste** Ergebnisliste (`GetAdjustedGames`), nicht die unangepasste. §610 ist die offizielle
-Regel zum Turnierabschluss bei Frühabbruch; wenn sie angewendet wurde, ist das damit auch offiziell das
-Endergebnis der Gruppenphase, aus dem 4.1–4.4 ihre Teilnehmer/Paarungen ableiten.
+Als "finale Gruppenphasen-Ergebnisliste" gilt – falls die Gruppenphase über `Paragraph610Evaluator`
+vorzeitig abgebrochen wurde (§610, >50 % gespielte Spiele) – die **§610-angepasste** Ergebnisliste
+(`GetAdjustedGames`), nicht die unangepasste: §610 ist die offizielle Regel zum Turnierabschluss bei
+Frühabbruch, ihr Ergebnis ist damit auch offiziell das Endergebnis der Gruppenphase, aus dem 4.1–4.4 ihre
+Teilnehmer/Paarungen ableiten.
 
 **Gruppen-Voraussetzung je Art** (Details siehe jeweils Abschnitt 4):
 
@@ -131,19 +127,16 @@ Endergebnis der Gruppenphase, aus dem 4.1–4.4 ihre Teilnehmer/Paarungen ableit
 | 4.4 Page-PlayOff | ✅ | ✅ | – |
 | 4.5 KO-Runde | ✅ | ✅ | ✅ |
 
-✅ **Geklärt**: "Zwei Gruppen" in der Tabelle oben schließt bei **allen vier Arten (4.1–4.4)** eine
-Split-Gruppe gleichwertig mit ein – nicht nur bei 4.1 (wo das schon vorher explizit im Fließtext stand,
-siehe dort). Eine Split-Gruppe ist strukturell bereits zwei Blöcke auf gemeinsamen Bahnen;
-`TeamBewerb.GetSplitTeamsRanked` liefert dafür bereits die Grundlage – einheitliches Verhalten über alle
-vier Arten.
+"Zwei Gruppen" schließt bei **allen vier Arten (4.1–4.4)** eine Split-Gruppe gleichwertig mit ein – eine
+Split-Gruppe ist strukturell bereits zwei Blöcke auf gemeinsamen Bahnen; `TeamBewerb.GetSplitTeamsRanked`
+liefert dafür bereits die Grundlage.
 
-**Auslöser**: ✅ **Geklärt**: Der Finalspiele-Modus wird **erst nach Abschluss der Gruppenphase**
-festgelegt – er ist keine Vorab-Konfiguration, sondern eine Entscheidung, die der Nutzer trifft, sobald
-die Gruppenphase beendet ist. Dabei wählt der Nutzer **genau eine** Finalspiele-Art aus – eine Kombination
-mehrerer Arten im selben Turnier ist nicht vorgesehen. Da die Auswahl erst nach Gruppenphasen-Ende
-erfolgt, wird unmittelbar die zu diesem Zeitpunkt gültige Gruppenphasen-Ergebnisliste übernommen; ein
-`TeamStatus`-Wechsel zwischen Gruppenphasen-Ende und Finalspiele-Start ist dadurch ausgeschlossen, weil es
-dieses Zeitfenster als eigenständige Lücke gar nicht gibt.
+**Auslöser**: Der Finalspiele-Modus wird **erst nach Abschluss der Gruppenphase** festgelegt – er ist
+keine Vorab-Konfiguration, sondern eine Entscheidung, die der Nutzer trifft, sobald die Gruppenphase
+beendet ist. Dabei wählt der Nutzer **genau eine** Finalspiele-Art aus; eine Kombination mehrerer Arten im
+selben Turnier ist nicht vorgesehen. Da die Auswahl erst nach Gruppenphasen-Ende erfolgt, wird unmittelbar
+die zu diesem Zeitpunkt gültige Gruppenphasen-Ergebnisliste übernommen – ein `TeamStatus`-Wechsel
+zwischen Gruppenphasen-Ende und Finalspiele-Start kann also nicht auftreten.
 
 ## 4. Arten von Finalspielen
 
@@ -325,10 +318,8 @@ Teams** platziert (Plätze 1 bis 2X) – die Leiter ist danach vollständig aufg
 "hängen". Beispiel: 2 Gruppen à 9 Teams (18 gesamt), Nutzer wählt nur X=3 Paarungen → nur die 3
 bestplatzierten Paare (6 Teams) nehmen teil und spielen in 3 Runden die Plätze 1–6 untereinander aus. Die
 übrigen 12 Teams nehmen an dieser Finalrunde **gar nicht teil** (Grundsatz 3, Abschnitt 4) – sie bleiben
-nur über die Vorrunden-Ergebnisliste sichtbar.
-
-✅ **Geklärt**: Top- und Bottom-Platzierungen sind durch die Ladder-Mechanik strukturell **gekoppelt** –
-das ist so gewollt.
+nur über die Vorrunden-Ergebnisliste sichtbar. Top- und Bottom-Platzierungen sind durch die
+Ladder-Mechanik strukturell **gekoppelt** – das ist so gewollt.
 
 **Rematch bei zwei Gruppen**: A- und B-Teams sind sich in der Vorrunde nicht begegnet (nur gruppenintern) –
 Runde 1 ist daher immer ein neues Duell. In späteren Runden können zwei Teams **derselben** Gruppe in der
@@ -405,7 +396,7 @@ DSpO ([Deutscher Eisstock-Verband, DSpO-Download](https://www.eisstock-verband.c
 – offizielle Regelung, kein Eigenbau. Offizielle Stufen-Bezeichnungen: **Ausscheidung**,
 **Qualifikation 1**, **Qualifikation 2**, **Finale** (siehe Grundsatz 2, Abschnitt 4).
 
-**Herkunft der 4 Teams** (✅ laut § 4.0.4 DSpO geklärt):
+**Herkunft der 4 Teams** (laut § 4.0.4 DSpO):
 
 - Bei **einer** Vorrundengruppe: Ränge 1–4 spielen weiter. **Qualifikation 1** = Platz 1 vs. Platz 2.
   **Ausscheidung** = Platz 3 vs. Platz 4.
@@ -424,15 +415,15 @@ folgen Qualifikation 2 und das Finale, die jeweils vom Ergebnis der vorherigen S
 1. **Finale**: Sieger Qualifikation 1 vs. Sieger Qualifikation 2 → Sieger = **Platz 1**, Verlierer =
    **Platz 2**.
 
-**Anspiel** (✅ laut § 4.0.4 DSpO geklärt – **abweichend** von 4.1–4.3!):
+**Anspiel** (laut § 4.0.4 DSpO – **abweichend** von 4.1–4.3!):
 
 - Die laut Vorrunde **besserplatzierte Mannschaft darf entscheiden**, wer die erste Kehre anspielt (kein
   automatisches "TeamA = besserplatziert" wie bei 4.1–4.3, sondern ein **Wahlrecht**).
 - Sind die beiden Vorrundenplätze **gleichwertig** (z.B. A1 vs. B1 bei zwei Gruppen – nicht direkt
   vergleichbar), entscheidet das **Los**. Der Losgewinner hat dann das Anspiel-Wahlrecht.
-- ✅ **Geklärt**: 4.4 übernimmt diese offizielle Regel **exakt so** (Wahlrecht + Los). 4.1–4.3 bleiben
-  unverändert bei der automatischen TeamA-Zuordnung – die beiden Konzepte haben nichts miteinander zu tun
-  und werden nicht angeglichen.
+- 4.4 übernimmt diese offizielle Regel **exakt so** (Wahlrecht + Los). 4.1–4.3 bleiben unverändert bei der
+  automatischen TeamA-Zuordnung – die beiden Konzepte haben nichts miteinander zu tun und werden nicht
+  angeglichen.
 - **Hinweis für Abschnitt 7 (Domänenmodell)**: Da das Anspiel hier auf einer **Entscheidung** beruht (nicht
   automatisch berechenbar), braucht 4.4 dafür eine UI-Erfassung (wer entscheidet sich für welches Anspiel;
   bei Gleichwertigkeit ggf. eine "Los"-Erfassung) – anders als bei 4.1–4.3, wo `IsTeamA_Starting` komplett
@@ -440,13 +431,13 @@ folgen Qualifikation 2 und das Finale, die jeweils vom Ergebnis der vorherigen S
 
 **Kehren-Anzahl**: Wie in der Vorrunde.
 
-**Spielanzahl pro Stufe** (✅ laut § 4.0.4 DSpO geklärt):
+**Spielanzahl pro Stufe** (laut § 4.0.4 DSpO):
 
 - Ausscheidung, Qualifikation 1, Qualifikation 2: jeweils **ein** Spiel.
 - Finale bei Damen/Herren auf Eis: **zwei** Spiele (nach dem ersten Spiel wechselt das Anspiel).
 - Finale in allen anderen Wettbewerben (Sommer, Jugend, ...): **ein** Spiel.
 
-**Unentschieden** (✅ laut § 4.0.4 DSpO geklärt – **differenzierter** als bisher angenommen):
+**Unentschieden** (laut § 4.0.4 DSpO):
 
 - Ausscheidung, Qualifikation 1, Qualifikation 2 sowie das **einspielige** Finale: Bei Gleichstand nach
   6 Kehren gewinnt automatisch die laut Vorrunde **besserplatzierte Mannschaft** – **kein** "Finaler
@@ -454,13 +445,13 @@ folgen Qualifikation 2 und das Finale, die jeweils vom Ergebnis der vorherigen S
 - Nur beim **zweispieligen** Finale (Damen/Herren, Eis): Steht es nach beiden Spielen bei Gewinnpunkten
   *und* Differenz gleich, wird der **"Finale Entscheid" nach § 4.0.5 DSpO** gespielt – siehe Abschnitt 5.1
   für das vollständige Verfahren.
-- ✅ **Geklärt**: 4.4 wird exakt so umgesetzt, wie in der DSpO beschrieben (gestufte Eskalation). 4.1
-  bleibt unverändert beim bisherigen "jeder Gleichstand → sofort Finaler Entscheid" – 4.1–4.3 haben mit
-  Page-PlayOff nichts zu tun und werden nicht angeglichen.
+- 4.4 wird exakt so umgesetzt, wie in der DSpO beschrieben (gestufte Eskalation). 4.1 bleibt unverändert
+  beim bisherigen "jeder Gleichstand → sofort Finaler Entscheid" – 4.1–4.3 haben mit Page-PlayOff nichts
+  zu tun und werden nicht angeglichen.
 
-**Bahneinteilung** (✅ geklärt): Die DSpO gibt dazu in "10.3.2" nur eine **unverbindliche Empfehlung** –
-für StockAppV2 gilt daher wie bei 4.1: Die Bahn ist **frei durch den Nutzer wählbar**, für jede der vier
-Stufen (Ausscheidung, Qualifikation 1, Qualifikation 2, Finale) einzeln.
+**Bahneinteilung**: Die DSpO gibt dazu in "10.3.2" nur eine **unverbindliche Empfehlung** – für StockAppV2
+gilt daher wie bei 4.1: Die Bahn ist **frei durch den Nutzer wählbar**, für jede der vier Stufen
+(Ausscheidung, Qualifikation 1, Qualifikation 2, Finale) einzeln.
 
 **Ergebnisliste**: Nur die 4 teilnehmenden Teams bekommen eine Platzierung (1.–4.); alle anderen Teams
 erscheinen nicht in der Page-Playoff-Ergebnisliste (Grundsatz 3, Abschnitt 4).
@@ -485,17 +476,16 @@ abgeschlossene Gruppenphase voraus – sie kann auch als eigenständiges, allein
 ohne vorherige Vorrunde gespielt werden. Das weicht vom bisherigen Grundsatz in Abschnitt 3 ab (bislang:
 "Finalspiele setzen eine abgeschlossene Gruppenphase voraus").
 
-**Paarungsbildung/Setzung** (✅ geklärt): Komplett frei – keine feste Algorithmik und keine
-Setzungs-Empfehlung (wie z.B. "bestplatziert gegen schlechtestplatziert") wie bei 4.1–4.4. Paarungen
-können ausgelost werden, oder – falls eine Gruppenphase vorausgegangen ist – nach einem Muster aus deren
-Ergebnis gebildet werden. Der Nutzer legt das jeweils vollständig selbst fest.
+**Paarungsbildung/Setzung**: Komplett frei – keine feste Algorithmik und keine Setzungs-Empfehlung (wie
+z.B. "bestplatziert gegen schlechtestplatziert") wie bei 4.1–4.4. Paarungen können ausgelost werden, oder
+– falls eine Gruppenphase vorausgegangen ist – nach einem Muster aus deren Ergebnis gebildet werden. Der
+Nutzer legt das jeweils vollständig selbst fest.
 
-**Teilnehmerzahl** (✅ geklärt): Es ist **nur eine gerade Anzahl** an Mannschaften möglich – kein
-automatisches Freilos/Bye-Handling wie bei 4.1–4.3. Bei ungerader Anzahl kann die KO-Runde nicht
-gestartet werden.
+**Teilnehmerzahl**: Es ist **nur eine gerade Anzahl** an Mannschaften möglich – kein automatisches
+Freilos/Bye-Handling wie bei 4.1–4.3. Bei ungerader Anzahl kann die KO-Runde nicht gestartet werden.
 
-**Platzierung früh ausgeschiedener Teams** (✅ geklärt): Alle Teams, die in derselben Runde ausscheiden
-(z.B. alle Achtelfinal-Verlierer), bekommen eine **gemeinsame Platzierungs-Stufe** – keine individuelle
+**Platzierung früh ausgeschiedener Teams**: Alle Teams, die in derselben Runde ausscheiden (z.B. alle
+Achtelfinal-Verlierer), bekommen eine **gemeinsame Platzierungs-Stufe** – keine individuelle
 Differenzierung untereinander.
 
 **Spielplan-Charakter**: Da Paarungsbildung, Bahnzuteilung, Kehrenanzahl und Spielanzahl nicht vorab
@@ -508,15 +498,15 @@ hergeleitete Ablauf bei 4.1–4.4. Konkret vom Nutzer frei festzulegen:
 - Spielanzahl je Begegnung (siehe "Best-of-N" unten)
 - TeamA/TeamB je Begegnung (der Nutzer legt das bei der Paarungsbildung fest)
 
-**Anspiel** (✅ geklärt): Wie bei 4.1–4.3 gilt Grundsatz 1 (Abschnitt 4) – **TeamA hat immer Anspiel**.
-Da die TeamA/TeamB-Zuordnung bei 4.5 manuell im freien Spielplan erfolgt (nicht algorithmisch aus der
+**Anspiel**: Wie bei 4.1–4.3 gilt Grundsatz 1 (Abschnitt 4) – **TeamA hat immer Anspiel**. Da die
+TeamA/TeamB-Zuordnung bei 4.5 manuell im freien Spielplan erfolgt (nicht algorithmisch aus der
 Vorrunden-Leistung), legt der Nutzer damit faktisch auch das Anspiel fest.
 
 **Best-of-N**: Eine Begegnung kann statt in einem einzelnen Spiel auch in einer Serie entschieden werden
 (Best-of-3, Best-of-5, Best-of-7) – wer zuerst die Mehrheit der Spiele gewinnt, gewinnt die Begegnung.
 Neu gegenüber 4.1–4.4, wo jede Begegnung höchstens 2 Spiele hat (4.4-Finale, fest 2 Spiele).
 
-**Unentschieden** (✅ korrigiert):
+**Unentschieden**:
 
 - **Bei einem Spiel** (Einzelspiel-Begegnung, oder jedes einzelne Spiel innerhalb einer Serie): Steht es
   nach regulärer Wertung unentschieden, wird der **"Finale Entscheid"** gespielt (siehe Abschnitt 5.1).
@@ -579,16 +569,8 @@ bzw. kürzere Entfernung), hat sie den Finalen Entscheid gewonnen.
 **Ergebnis-Verwertung**: Der Sieger des Finalen Entscheids bekommt **1 zusätzlichen Stockpunkt** in der
 Endwertung des betreffenden Finalspiels – er **löst den bestehenden Stockpunkte-Gleichstand auf**, ist
 also kein separates/eigenständiges Spielergebnis. IER § 402 und § 454 (Zielwettbewerb-Regeln) gelten
-dabei vollinhaltlich.
-
-⚠️ **Korrektur gegenüber früherer Annahme**: Vor dieser Recherche war im Dokument vereinfachend
-angenommen worden, dass zwei Mannschaften je einen frei erzwungen unterschiedlichen Zahlenwert eingeben
-und der höhere automatisch gewinnt. Das trifft so **nicht zu**: (a) Die Vergleichsrichtung hängt von der
-Variante ab (Punkte: höher gewinnt; Entfernung: niedriger gewinnt), (b) ein Gleichstand nach den ersten
-4 Versuchen ist ausdrücklich vorgesehen und wird über 1-gegen-1-Duelle aufgelöst statt durch erzwungene
-Ungleichheit einer Eingabe, (c) der Sieger bekommt konkret **+1 Stockpunkt**, nicht einfach "gewinnt das
-Spiel". Für Abschnitt 7 (Domänenmodell) bedeutet das: Es braucht eine Erfassung pro Spieler/Versuch
-(mindestens Summen je Mannschaft und Variante), keine zwei einfachen Zahlenfelder.
+dabei vollinhaltlich. Für die Erfassung folgt daraus: Es braucht eine Erfassung pro Spieler/Versuch
+(mindestens Summen je Mannschaft und Variante), keine zwei einfachen Zahlenfelder (siehe Abschnitt 7).
 
 ## 6. Sonderfälle
 
@@ -650,11 +632,17 @@ Betrifft direkt 4.1 (zwingend zwei Gruppen) sowie 4.2/4.3 bei zwei Gruppen.
   (welche Bahn/welche Stufe). Die Live-Ansicht bräuchte für diese Arten keine Erweiterung, sondern eine
   grundsätzlich andere Darstellungslogik.
 
-**Zum Leitsatz "StockTV-Fähigkeit" (Abschnitt 1, nur Bestätigung des bereits Geklärten):**
+**Zum Leitsatz "StockTV-Fähigkeit" (Abschnitt 1):**
 
 - `StockTVSettings.GetSettings()` (`StockTVSettings.cs:148-163`) sendet pro Bahn ein kompaktes
   Byte-Telegramm (Bahn, Spielgruppe, Modus, Punkte/Kehren-Konfig) – bestätigt im Code, dass StockTV
   tatsächlich nur bahn-bezogene Konfiguration + Ergebnisse braucht, keinen kompletten Spielplan.
+
+**Zum Finalen Entscheid (5.1):**
+
+- Da das Ergebnis eines Finalen Entscheids auf einer Erfassung pro Spieler/Versuch beruht (Summen je
+  Mannschaft und Variante, siehe 5.1), braucht die Domänenmodellierung dafür eine eigene, kleine
+  Datenstruktur – keine zwei einfachen Zahlenfelder.
 
 **Sonstiges, evtl. nützlich für die spätere Modellierung:**
 
@@ -669,25 +657,14 @@ Design-Punkt, um den in Abschnitt 7 zuerst eine Entscheidung fallen muss.
 
 ## 8. Offene Fragen
 
-**4.5 KO-Runde**: ⏸ Zurückgestellt als Ganzes (siehe Hinweiskasten bei 4.5) – gehört vermutlich nicht in
-dieses Fachkonzept, da keine Gruppenphase vorausgesetzt wird. Bisher gesammelte offene Punkte (Grundsatz
-2/3 ohne Gruppenphase, Best-of-N-Details, StockTV-Fähigkeit) bleiben für die spätere separate Betrachtung
-notiert, werden hier aber nicht weiterverfolgt.
+**4.5 KO-Runde**: Wie in Abschnitt 4.5 begründet, ist die KO-Runde als Ganzes zurückgestellt und gehört
+vermutlich nicht in dieses Fachkonzept, da sie keine Gruppenphase voraussetzt. Die dort bereits
+gesammelten offenen Punkte (Grundsatz 2/3 ohne Gruppenphase, Best-of-N-Details, StockTV-Fähigkeit) bleiben
+für eine spätere, separate Betrachtung notiert.
 
-**Aus dem Abschluss-Check (2026-08-20) identifiziert, mittlerweile geklärt** – siehe jetzt Abschnitt 3
-("Zeitpunkt" und "Auslöser"): Split-Gruppe als Äquivalent bei 4.2–4.4, Ausgangs-Ergebnisliste bei
-§610-Frühabbruch, sowie dass der Finalspiele-Modus erst nach Gruppenphasen-Ende gewählt wird und dabei
-immer nur genau eine Art. Der vierte ursprünglich aufgeworfene Punkt (TeamStatus-Wechsel zwischen
-Gruppenphasen-Ende und Finalspiele-Start) hat sich durch die Klärung des Zeitpunkts erledigt: dieses
-Zeitfenster existiert gar nicht, da die Moduswahl unmittelbar nach Gruppenphasen-Ende erfolgt.
-
-**Bewusst zurückgestellt** (erst bei der Umsetzung zu klären, hier nicht final definiert):
-
-- **Ergebnisliste/Ausdruck-Layouts** (alle Finalspiele-Arten) und die **Live-Ergebnis-Anzeige**: ✅
-  **Geklärt ist bereits**, dass Finalspiele-Ergebnisse sowohl auf den Ergebnislisten mit abgebildet werden
-  müssen (siehe Grundsatz 3, Abschnitt 4, und 4.1 "Ergebnisliste/Ausdruck") als auch in der bestehenden
-  In-App-Live-Ansicht mitverfolgbar sein müssen (siehe Leitsatz "Live-Ansicht", Abschnitt 1) – das gilt
-  für alle Finalspiele-Arten (4.1–4.4). Offen bleibt nur das **konkrete Layout/die Darstellung** (wie
-  genau Gruppenphasen- und Finalspiele-Ergebnisse gemeinsam dargestellt werden, wie die Live-Ansicht mit
-  Leiter-Positionen/Stufen umgeht) – das wird erst bei der Umsetzung festgelegt, nicht in diesem
-  Fachkonzept.
+**Ergebnisliste/Ausdruck-Layouts und Live-Ergebnis-Anzeige** (alle Finalspiele-Arten, 4.1–4.4): Offen ist
+das konkrete Layout – wie Gruppenphasen- und Finalspiele-Ergebnisse gemeinsam dargestellt werden (siehe
+Grundsatz 3, Abschnitt 4, und 4.1 "Ergebnisliste/Ausdruck") – und wie die Live-Ansicht mit den
+unterschiedlichen Strukturen der einzelnen Arten umgeht (Leiter-Position bei 4.2/4.3, Stufen bei 4.4,
+siehe Leitsatz "Live-Ansicht", Abschnitt 1). Das wird erst bei der Umsetzung festgelegt, nicht in diesem
+Fachkonzept.
