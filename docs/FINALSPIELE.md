@@ -62,6 +62,27 @@ Der **Anspiel-Hinweis ist nicht verpflichtend** und kann entfallen – das löst
 der Finale Entscheid (5.1, andere Struktur als ein reguläres Spiel) darin abbildet: notfalls einfach ohne
 Anspiel-Hinweis.
 
+**Leitsatz – Persistenz (`.skmr`)**: Ein Turnier wird vollständig über die `.skmr`-XML-Datei gespeichert
+und wieder geladen (siehe `StockApp.XML`, CLAUDE.md Abschnitt "XML-Persistenz"). Daher gilt ebenfalls für
+die gesamte Finalspiele-Erweiterung:
+
+> **Jede Finalspiele-Art (4.1–4.4) muss vollständig in der `.skmr`-Datei abgebildet werden können – ein
+> Turnier mit begonnenen oder abgeschlossenen Finalspielen muss sich speichern und verlustfrei wieder
+> laden lassen, genau wie die reguläre Gruppenphase.**
+
+Die konkrete Ausmodellierung (welche DTOs, welche Struktur in der XML) folgt erst in Abschnitt 7 – hier
+ist zunächst nur die Anforderung selbst festgehalten, nicht deren Umsetzung.
+
+**Leitsatz – Live-Ansicht**: Die reguläre Gruppenphase ist bereits über die bestehende In-App-Live-Ansicht
+(z.B. `LiveResultsTeamViewModel`) live mitverfolgbar – unabhängig von StockTV. Daher gilt auch hierfür:
+
+> **Finalspiele (4.1–4.4) müssen sich genauso über die bestehende Live-Ansicht mitverfolgen lassen wie die
+> Gruppenphase – Nutzer dürfen während der Finalspiele nicht auf die Live-Ansicht verzichten müssen.**
+
+Wie die Live-Ansicht die unterschiedlichen Strukturen der einzelnen Finalspiele-Arten (Leiter-Position bei
+4.2/4.3, Stufen bei 4.4, ...) konkret darstellt, ist noch offen (siehe Abschnitt 8) – hier steht zunächst
+nur fest, *dass* sie gebraucht wird.
+
 ## 2. Begriffe
 
 | Begriff | Bedeutung |
@@ -586,5 +607,11 @@ notiert, werden hier aber nicht weiterverfolgt.
 
 **Bewusst zurückgestellt** (erst bei der Umsetzung zu klären, hier nicht final definiert):
 
-- **Ergebnisliste/Ausdruck-Layouts** (alle Finalspiele-Arten) und die **Live-Ergebnis-Anzeige**: Konkrete
-  Darstellung wird erst bei der Umsetzung festgelegt, nicht in diesem Fachkonzept.
+- **Ergebnisliste/Ausdruck-Layouts** (alle Finalspiele-Arten) und die **Live-Ergebnis-Anzeige**: ✅
+  **Geklärt ist bereits**, dass Finalspiele-Ergebnisse sowohl auf den Ergebnislisten mit abgebildet werden
+  müssen (siehe Grundsatz 3, Abschnitt 4, und 4.1 "Ergebnisliste/Ausdruck") als auch in der bestehenden
+  In-App-Live-Ansicht mitverfolgbar sein müssen (siehe Leitsatz "Live-Ansicht", Abschnitt 1) – das gilt
+  für alle Finalspiele-Arten (4.1–4.4). Offen bleibt nur das **konkrete Layout/die Darstellung** (wie
+  genau Gruppenphasen- und Finalspiele-Ergebnisse gemeinsam dargestellt werden, wie die Live-Ansicht mit
+  Leiter-Positionen/Stufen umgeht) – das wird erst bei der Umsetzung festgelegt, nicht in diesem
+  Fachkonzept.
