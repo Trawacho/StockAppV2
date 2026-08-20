@@ -1,9 +1,9 @@
 # Finalspiele – Fachkonzept
 
-> Status: **Fachlich abgeschlossen für 4.1–4.4** (Abschnitt 1–6) – offene Detailfragen dazu siehe
-> Abschnitt 8. Abschnitt 7 (Domänenmodell) ist bewusst noch offen, ebenso 4.5 KO-Runde, das als
-> eigenständiges Konzept separat behandelt wird. Dieses Dokument entstand gemeinsam mit dem
-> Projektverantwortlichen als fachliche Grundlage für eine spätere Programmerweiterung in StockAppV2.
+> Status: **Fachlich abgeschlossen für 4.1–4.4** (Abschnitt 1–6), Domänenmodell-Grundrichtung in
+> Abschnitt 7 festgelegt – offene Detailfragen siehe Abschnitt 8. 4.5 KO-Runde wird als eigenständiges
+> Konzept separat behandelt. Dieses Dokument entstand gemeinsam mit dem Projektverantwortlichen als
+> fachliche Grundlage für eine spätere Programmerweiterung in StockAppV2.
 
 ## Inhaltsverzeichnis
 
@@ -593,11 +593,10 @@ Spieler-Versuche abgegeben werden müssen – gleiches Prinzip wie oben.
 ## 7. Verhältnis zum bestehenden Domänenmodell
 
 *(Wie fügt sich das Konzept in `ITeamBewerb`/`ITeam`/`IGame` bzw. `IZielBewerb` ein?
-Neue Entität nötig, oder Erweiterung bestehender? – wird erst nach Klärung des Fachkonzepts bearbeitet.)*
+Neue Entität nötig, oder Erweiterung bestehender?)*
 
-TODO – Design-Entscheidung nicht vor Abschluss von Abschnitt 1–6 treffen. Die folgenden
-Rechercheergebnisse halten nur den **Ist-Stand des Codes** fest (Stand: 2026-08-20), damit die spätere
-Entscheidung nicht bei Null anfangen muss – sie nehmen keine Lösung vorweg.
+Die folgenden Rechercheergebnisse halten den **Ist-Stand des Codes** fest (Stand: 2026-08-20) und bilden
+die Grundlage für die anschließende Design-Entscheidung.
 
 ### Rechercheergebnisse (Ist-Stand, keine Design-Entscheidung)
 
@@ -650,10 +649,52 @@ Betrifft direkt 4.1 (zwingend zwei Gruppen) sowie 4.2/4.3 bei zwei Gruppen.
   (`Gameplan.cs:24-25`) – strukturell unabhängig von Finalspielen, aber ein Beispiel, wie das bestehende
   Modell "Spielplan-Art" schon anderswo als einfaches Bool-Flag löst.
 
-**Einordnung**: Die Rechercheergebnisse bestätigen, dass Abschnitt 7 zu Recht noch offen ist –
-insbesondere 4.1–4.3 mit zwei Gruppen brauchen eine im Modell bisher nicht existierende Möglichkeit,
-Spiele *außerhalb* einer einzelnen `ITeamBewerb` zu verankern. Das ist vermutlich der zentrale
-Design-Punkt, um den in Abschnitt 7 zuerst eine Entscheidung fallen muss.
+**Einordnung**: Die Rechercheergebnisse bestätigen den zentralen Design-Punkt – insbesondere 4.1–4.3 mit
+zwei Gruppen brauchen eine im Modell bisher nicht existierende Möglichkeit, Spiele *außerhalb* einer
+einzelnen `ITeamBewerb` zu verankern. Die Entscheidung dazu steht im folgenden Abschnitt.
+
+### Design-Entscheidung
+
+Gruppenübergreifende Spiele werden **nicht** in das bestehende `Team.Games`/`TeamBewerb.Games`-Modell
+integriert (das würde Finalspiele-Ergebnisse ungewollt in die Gruppenphasen-Wertung einfließen lassen,
+siehe Grundsatz 3), sondern über eine neue, eigenständige Struktur abgebildet:
+
+**Schicht 1 – `IGame` bleibt unverändert**: Ein einzelnes physisches Spiel (Spielstand, Kehren, Bahn,
+Anspiel, StockTV-fähig) wird weiterhin über `IGame` abgebildet, genau wie in der Gruppenphase (vgl.
+Abschnitt 6.1: alle Finalspiele-Arten basieren auf `IGame`).
+
+**Schicht 2 – neu: `IFinalBegegnung`**: Eine Begegnung zwischen zwei Teams besteht aus **einem oder zwei**
+`IGame`s (zwei nur beim zweispieligen Finale von 4.4) sowie optional einem `IFinalerEntscheid` (eigene,
+kleine Struktur: Werte pro Spieler/Versuch, Variante 1/2 gemäß 5.1). Daraus werden Sieger/Verlierer der
+Begegnung abgeleitet.
+
+**Schicht 3 – art-spezifische Container**: Je Finalspiele-Art ein eigener Typ, der eine gemeinsame, dünne
+Schnittstelle `IFinalspiele` implementiert (Art, Liste der `IFinalBegegnung`, `GetFinalspieleRanking()`):
+
+- `PlatzierungsspieleRunde` (4.1) – flache Liste von Begegnungen.
+- `LadderFinalspiele` (4.2/4.3) – gemeinsame Bahnen-Leiter-Mechanik, unterscheiden sich nur in
+  Bewegungsregel und Terminierung.
+- `PagePlayoff` (4.4) – vier benannte Stufen-Slots (Ausscheidung, Qualifikation 1, Qualifikation 2,
+  Finale).
+
+Bewusst **keine** gemeinsame, generische Struktur für alle vier Arten: Die Arten sind strukturell zu
+unterschiedlich (flache Welle / Leiter-Runden / benannte Stufen); eine generische Lösung müsste
+Leiter-Position, Stufen-Namen und flache Ränge in einer unscharfen Zusatzdaten-Struktur unterbringen.
+
+**Verankerung im Objektgraphen**: Als neue, optionale Property auf `IContainerTeamBewerbe` (nicht auf
+`ITurnier`) – passt zu "Finalspiele gibt es nur im Teambewerb" (Abschnitt 3) und zu "genau eine
+Finalspiele-Art pro Turnier" (Abschnitt 3, Auslöser): ein einzelnes nullable Property, keine Liste.
+
+**Team-Referenzierung**: Im Domänenmodell weiterhin direkte `ITeam`-Objektreferenzen (wie bei `IGame`
+bereits üblich) – funktioniert gruppenübergreifend problemlos. In der **XML-Persistenz** reicht die
+bisherige alleinige `StartNumber`-Referenz dagegen nicht (mehrdeutig über Gruppen hinweg, siehe
+Rechercheergebnisse oben) – dort wird ein zusammengesetzter Schlüssel `(TeamBewerbID, StartNumber)`
+benötigt, analog zum bereits bestehenden Muster mit `SpielGruppe`.
+
+**`RoundOfGame`/Nummerierung**: Gemäß Grundsatz 2 (Abschnitt 4) werden die `IGame`-Felder `RoundOfGame`,
+`GameNumber`, `GameNumberOverAll` bei Finalspielen nur mit technischen Platzhalterwerten befüllt – die
+fachlich relevante Position (Leiter-Runde, Stufe, Gesamt-Platz) lebt in den Schichten 2/3, nicht in
+diesen Feldern.
 
 ## 8. Offene Fragen
 
