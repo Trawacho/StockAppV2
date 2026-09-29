@@ -12,6 +12,7 @@ public class SerialisableTeam : ITeam
     {
         StartNumber = team.StartNumber;
         TeamName = team.TeamName;
+        TeamNameStockTV = team.TeamNameStockTV;
         Nation = team.Nation;
         Region = team.Region;
         Bundesland = team.Bundesland;
@@ -56,6 +57,7 @@ public class SerialisableTeam : ITeam
         {
             normal.AddPlayer(player);
         }
+        normal.TeamNameStockTV = TeamNameStockTV;
         normal.StrafSpielpunkte = StrafSpielpunkte;
         normal.VorergebnisSpielpunktePlus = VorergebnisSpielpunktePlus;
         normal.VorergebnisSpielpunkteMinus = VorergebnisSpielpunkteMinus;
@@ -67,6 +69,11 @@ public class SerialisableTeam : ITeam
     public int StartNumber { get; set; }
 
     public string TeamName { get; set; }
+
+    public string TeamNameStockTV { get; set; }
+
+    [XmlIgnore]
+    public string TeamNameForStockTV { get; }
 
     public int StrafSpielpunkte { get; set; }
 

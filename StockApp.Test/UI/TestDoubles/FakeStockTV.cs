@@ -42,7 +42,8 @@ public class FakeStockTV : IStockTV
     public void SetMarketingImage(byte[] imageAsByteArray, string fileName) { }
     public void ClearMarketingImage() { }
     public void ShowMarketing() { }
-    public void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen, int gameOffset) { }
+    public List<StockTVBegegnung> SentBegegnungen { get; } = new();
+    public void SendTeamNames(IEnumerable<StockTVBegegnung> begegnungen, int gameOffset) => SentBegegnungen.AddRange(begegnungen);
     public void SendTeilnehmer(string teilnehmer) { }
     public void RemoveFromCollection() => RemoveFromCollectionRequested?.Invoke(this, EventArgs.Empty);
 
