@@ -72,4 +72,34 @@ public class TeamTests
         Assert.That(teamA.GetStockPunkte(), Is.EqualTo((15 + 50, 5 + 20)));
     }
 
+    [Test]
+    public void TeamNameForStockTV_FallsBackToTeamName_WhenStockTVNameEmpty()
+    {
+        var team = Team.Create("Langer Teamname");
+
+        Assert.That(team.TeamNameForStockTV, Is.EqualTo("Langer Teamname"));
+
+        team.TeamNameStockTV = "   ";
+        Assert.That(team.TeamNameForStockTV, Is.EqualTo("Langer Teamname"));
+    }
+
+    [Test]
+    public void TeamNameForStockTV_UsesStockTVName_WhenSet()
+    {
+        var team = Team.Create("Langer Teamname");
+        team.TeamNameStockTV = "Kurz";
+
+        Assert.That(team.TeamNameForStockTV, Is.EqualTo("Kurz"));
+    }
+
+    [Test]
+    public void TeamNameStockTV_IsLimitedTo25Characters()
+    {
+        var team = Team.Create("x");
+        team.TeamNameStockTV = new string('a', 40);
+
+        Assert.That(team.TeamNameStockTV, Has.Length.EqualTo(Team.MaxLengthStockTVName));
+        Assert.That(Team.MaxLengthStockTVName, Is.EqualTo(25));
+    }
+
 }

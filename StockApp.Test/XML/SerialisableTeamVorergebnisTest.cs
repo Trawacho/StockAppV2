@@ -48,3 +48,40 @@ public class SerialisableTeamVorergebnisTest
         }
     }
 }
+
+public class SerialisableTeamStockTVNameTest
+{
+    [Test]
+    public void TestStockTVNameRoundTrip()
+    {
+        var filePath = Path.Combine(Path.GetTempPath(), $"stockapp_stocktvname_test_{Guid.NewGuid():N}.xml");
+        try
+        {
+            ITurnier turnier = Turnier.Create();
+            turnier.SetBewerb(Wettbewerbsart.Team);
+            var bewerb = turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+            bewerb.AddNewTeam();
+            bewerb.AddNewTeam();
+            var teams = bewerb.Teams.ToList();
+            teams[0].TeamName = "Langer Name";
+            teams[0].TeamNameStockTV = "Kurz";
+            teams[1].TeamName = "Ohne Kurzname";
+
+            SavingModule.Save(ref turnier, filePath);
+
+            ITurnier loaded = Turnier.Create();
+            LoadingModule.Load(ref loaded, filePath);
+
+            var loadedTeams = loaded.ContainerTeamBewerbe.CurrentTeamBewerb.Teams.ToList();
+            Assert.That(loadedTeams[0].TeamNameStockTV, Is.EqualTo("Kurz"));
+            Assert.That(loadedTeams[0].TeamNameForStockTV, Is.EqualTo("Kurz"));
+            Assert.That(loadedTeams[1].TeamNameStockTV, Is.Null.Or.Empty);
+            Assert.That(loadedTeams[1].TeamNameForStockTV, Is.EqualTo("Ohne Kurzname"));
+        }
+        finally
+        {
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+        }
+    }
+}

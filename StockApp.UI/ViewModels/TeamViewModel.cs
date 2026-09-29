@@ -54,6 +54,18 @@ public class TeamViewModel : ViewModelBase
 		}
 	}
 
+	public string TeamNameStockTV
+	{
+		get => _team.TeamNameStockTV;
+		set
+		{
+			_team.TeamNameStockTV = value;
+			RaisePropertyChanged();
+		}
+	}
+
+	public int MaxLengthTeamNameStockTV => Core.Wettbewerb.Teambewerb.Team.MaxLengthStockTVName;
+
 	public string Nation
 	{
 		get => _team.Nation;

@@ -9,6 +9,17 @@ public interface ITeam : IEquatable<ITeam>
 	/// TeamName mit Erweiterung bei Strafen oder Status != normal
 	/// </summary>
 	public string TeamNamePublic { get; }
+
+	/// <summary>
+	/// Optionaler, alternativer (kürzerer) Name für die Anzeige auf StockTV.
+	/// Leer, wenn nicht gesetzt. Maximal <see cref="Team.MaxLengthStockTVName"/> Zeichen.
+	/// </summary>
+	public string TeamNameStockTV { get; set; }
+
+	/// <summary>
+	/// Name für StockTV: <see cref="TeamNameStockTV"/>, falls gesetzt, sonst <see cref="TeamName"/>
+	/// </summary>
+	public string TeamNameForStockTV { get; }
 	public int StrafSpielpunkte { get; set; }
 
 	/// <summary>
@@ -159,6 +170,29 @@ public class Team : ITeam
 	/// Teamname
 	/// </summary>
 	public string TeamName { get => _teamName; set => _teamName = value; }
+
+	/// <summary>
+	/// Maximale Länge des alternativen StockTV-Namens
+	/// </summary>
+	public const int MaxLengthStockTVName = 25;
+
+	private string _teamNameStockTV;
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public string TeamNameStockTV
+	{
+		get => _teamNameStockTV;
+		set => _teamNameStockTV = value?.Length > MaxLengthStockTVName
+									  ? value.Substring(0, MaxLengthStockTVName)
+									  : value;
+	}
+
+	/// <summary>
+	/// <inheritdoc/>
+	/// </summary>
+	public string TeamNameForStockTV => string.IsNullOrWhiteSpace(TeamNameStockTV) ? TeamName : TeamNameStockTV;
 
 	public string TeamNamePublic => TeamStatus != TeamStatus.Normal
 									   ? String.Concat(TeamName, " (", TeamStatus.Abbreviation(), ")")

@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using StockApp.Core.Wettbewerb;
+using StockApp.Core.Wettbewerb.Teambewerb;
 using StockApp.Test.UI.TestDoubles;
 using StockApp.UI.ViewModels;
 using System.Collections.Generic;
@@ -69,5 +71,43 @@ public class StockTVCollectionViewModelTest
         // ViewModel nach Dispose() fälschlich abonniert, würde dieser Aufruf hier crashen - läuft er
         // durch, ist die Abmeldung nachgewiesen.
         _service.AddStockTv(new FakeStockTV());
+    }
+
+    [Test]
+    public void SendTeamNamesCommand_UsesStockTVName_AndFallsBackToTeamName()
+    {
+        _turnierStore.Turnier.SetBewerb(Wettbewerbsart.Team);
+        var teamBewerb = _turnierStore.Turnier.ContainerTeamBewerbe.CurrentTeamBewerb;
+        for (int i = 0; i < 4; i++)
+            teamBewerb.AddNewTeam();
+        var teams = teamBewerb.Teams.ToList();
+        teams[0].TeamName = "Sehr langer Vereinsname Nr 1";
+        teams[0].TeamNameStockTV = "Kurz 1";
+        teams[1].TeamName = "Team 2 ohne StockTV-Name";
+
+        using (var games = new GamesViewModel(_turnierStore))
+        {
+            games.SelectedGameplanId = games.Gameplans.First().ID;
+            games.CreateGamesCommand.Execute(null);
+        }
+
+        var tvs = new List<FakeStockTV>();
+        for (int court = 1; court <= teamBewerb.Teams.Max(t => t.Games.Max(g => g.CourtNumber)); court++)
+        {
+            var tv = new FakeStockTV();
+            tv.TVSettings.Bahn = court;
+            tv.TVSettings.Spielgruppe = teamBewerb.SpielGruppe;
+            tvs.Add(tv);
+            _service.AddStockTv(tv);
+        }
+
+        using var sut = new StockTVCollectionViewModel(_service, _commandStore, _turnierStore);
+        sut.SendTeamNamesCommand.Execute(null);
+
+        var sent = tvs.SelectMany(t => t.SentBegegnungen).ToList();
+        var names = sent.SelectMany(b => new[] { b.TeamNameA, b.TeamNameB }).ToList();
+        Assert.That(names, Does.Contain("Kurz 1"));
+        Assert.That(names, Does.Not.Contain("Sehr langer Vereinsname Nr 1"));
+        Assert.That(names, Does.Contain("Team 2 ohne StockTV-Name"));
     }
 }
